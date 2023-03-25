@@ -2549,7 +2549,6 @@ CBaseEntity * CBasePlayer::GetObserverTarget()
 
 void CBasePlayer::ObserverUse( bool bIsPressed )
 {
-#ifndef _XBOX
 	if ( !HLTVDirector()->IsActive() )
 		return;
 
@@ -2608,7 +2607,6 @@ void CBasePlayer::ObserverUse( bool bIsPressed )
 		return;
 
 	SetAbsOrigin( tr.endpos ); */
-#endif
 }
 
 void CBasePlayer::JumptoPosition(const Vector &origin, const QAngle &angles)

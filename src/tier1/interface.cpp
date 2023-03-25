@@ -198,19 +198,8 @@ HMODULE Sys_LoadLibrary( const char *pLibraryName, Sys_Flags flags )
 
 	Q_strncpy( str, pLibraryName, sizeof(str) );
 
-	if ( IsX360() )
-	{
-		// old, probably busted, behavior for xbox
-		if ( !Q_stristr( str, pModuleExtension ) )
-		{
-			V_SetExtension( str, pModuleExtension, sizeof(str) );
-		}
-	}
-	else
-	{
-		// always force the final extension to be .dll
-		V_SetExtension( str, pModuleExtension, sizeof(str) );
-	}
+        // always force the final extension to be .dll
+        V_SetExtension( str, pModuleExtension, sizeof(str) );
 
 	Q_FixSlashes( str );
 
@@ -227,10 +216,6 @@ HMODULE Sys_LoadLibrary( const char *pLibraryName, Sys_Flags flags )
 	context.m_hLibrary = 0;
 
 	ThreadHandle_t h = CreateSimpleThread( ThreadedLoadLibraryFunc, &context );
-
-#ifdef _X360
-	ThreadSetAffinity( h, XBOX_PROCESSOR_3 );
-#endif
 
 	unsigned int nTimeout = 0;
 	while( ThreadWaitForObject( h, true, nTimeout ) == TW_TIMEOUT )

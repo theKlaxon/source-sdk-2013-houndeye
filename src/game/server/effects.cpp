@@ -1466,7 +1466,6 @@ void CItemSoda::CanTouch ( CBaseEntity *pOther )
 	SetNextThink( gpGlobals->curtime );
 }
 
-#ifndef _XBOX
 //=========================================================
 // func_precipitation - temporary snow solution for first HL2
 // technology demo
@@ -1520,7 +1519,6 @@ void CPrecipitation::Spawn( void )
 
 	m_nRenderMode = kRenderEnvironmental;
 }
-#endif
 
 //-----------------------------------------------------------------------------
 // EnvWind - global wind info

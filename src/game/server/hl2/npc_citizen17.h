@@ -338,10 +338,7 @@ private:
 	//-----------------------------------------------------
 	
 	DECLARE_DATADESC();
-#ifdef _XBOX
-protected:
-#endif
-	DEFINE_CUSTOM_AI;
+        DEFINE_CUSTOM_AI;
 };
 
 //---------------------------------------------------------

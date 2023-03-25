@@ -49,7 +49,6 @@ ConVar sniperLines( "showsniperlines", "0" );
 ConVar sniperviewdist("sniperviewdist", "35" );
 ConVar showsniperdist("showsniperdist", "0" );
 ConVar sniperspeak( "sniperspeak", "0" );
-ConVar sniper_xbox_delay( "sniper_xbox_delay", "1" );
 
 // Moved to HL2_SharedGameRules because these are referenced by shared AmmoDef functions
 extern ConVar sk_dmg_sniper_penetrate_plr;
@@ -82,7 +81,7 @@ extern ConVar sk_dmg_sniper_penetrate_npc;
 #define	SNIPER_DEFAULT_PAINT_NPC_TIME_NOISE		0.75f
 #endif
 
-#define SNIPER_SUBSEQUENT_PAINT_TIME	( ( IsXbox() ) ? 1.0f : 0.4f )
+#define SNIPER_SUBSEQUENT_PAINT_TIME	( 0.4f )
 
 #define SNIPER_FOG_PAINT_ENEMY_TIME	    0.25f
 #define SNIPER_PAINT_DECOY_TIME			2.0f
@@ -2026,9 +2025,6 @@ void CProtoSniper::StartTask( const Task_t *pTask )
 			if( GetEnemy()->IsPlayer() )
 			{
 				float delay = 0;
-#ifdef _XBOX
-				delay += sniper_xbox_delay.GetFloat();
-#endif
 
 				if( gpGlobals->curtime - m_flTimeLastAttackedPlayer <= SNIPER_FASTER_ATTACK_PERIOD )
 				{

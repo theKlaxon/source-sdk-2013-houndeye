@@ -37,9 +37,6 @@
 #include "hud_vote.h"
 #include "ienginevgui.h"
 #include "sourcevr/isourcevirtualreality.h"
-#if defined( _X360 )
-#include "xbox/xbox_console.h"
-#endif
 
 #if defined( REPLAY_ENABLED )
 #include "replay/replaycamera.h"
@@ -151,7 +148,7 @@ CON_COMMAND( hud_reloadscheme, "Reloads hud layout and animation scripts." )
 }
 
 #ifdef _DEBUG
-CON_COMMAND_F( crash, "Crash the client. Optional parameter -- type of crash:\n 0: read from NULL\n 1: write to NULL\n 2: DmCrashDump() (xbox360 only)", FCVAR_CHEAT )
+CON_COMMAND_F( crash, "Crash the client. Optional parameter -- type of crash:\n 0: read from NULL\n 1: write to NULL", FCVAR_CHEAT )
 {
 	int crashtype = 0;
 	int dummy;
@@ -168,12 +165,7 @@ CON_COMMAND_F( crash, "Crash the client. Optional parameter -- type of crash:\n 
 		case 1:
 			*((int *)NULL) = 42;
 			break;
-#if defined( _X360 )
-		case 2:
-			XBX_CrashDump(false);
-			break;
-#endif
-		default:
+ 		default:
 			Msg("Unknown variety of crash. You have now failed to crash. I hope you're happy.\n");
 			break;
 	}
@@ -367,11 +359,9 @@ void ClientModeShared::Init()
 	ListenForGameEvent( "game_newmap" );
 #endif
 
-#ifndef _XBOX
 	HLTVCamera()->Init();
 #if defined( REPLAY_ENABLED )
 	ReplayCamera()->Init();
-#endif
 #endif
 
 	m_CursorNone = vgui::dc_none;

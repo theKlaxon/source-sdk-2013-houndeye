@@ -412,9 +412,7 @@ CBaseEntity::CBaseEntity( bool bServerOnly )
 	}
 	NetworkProp()->MarkPVSInformationDirty();
 
-#ifndef _XBOX
 	AddEFlags( EFL_USE_PARTITION_WHEN_NOT_SOLID );
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -2790,7 +2788,7 @@ bool CBaseEntity::FVisible( CBaseEntity *pEntity, int traceMask, CBaseEntity **p
 	Vector vecTargetOrigin = pEntity->EyePosition();
 
 	trace_t tr;
-	if ( !IsXbox() && ai_LOS_mode.GetBool() )
+	if ( ai_LOS_mode.GetBool() )
 	{
 		UTIL_TraceLine(vecLookerOrigin, vecTargetOrigin, traceMask, this, COLLISION_GROUP_NONE, &tr);
 	}
@@ -6986,26 +6984,12 @@ void CBaseEntity::RemoveRecipientsIfNotCloseCaptioning( CRecipientFilter& filter
 		CBasePlayer *player = static_cast< CBasePlayer * >( CBaseEntity::Instance( playerIndex ) );
 		if ( !player )
 			continue;
-#if !defined( _XBOX )
 		const char *cvarvalue = engine->GetClientConVarValue( playerIndex, "closecaption" );
 		Assert( cvarvalue );
 		if ( !cvarvalue[ 0 ] )
 			continue;
 
 		int value = atoi( cvarvalue );
-#else
-		static ConVar *s_pCloseCaption = NULL;
-		if ( !s_pCloseCaption )
-		{
-			s_pCloseCaption = cvar->FindVar( "closecaption" );
-			if ( !s_pCloseCaption )
-			{
-				Error( "XBOX couldn't find closecaption convar!!!" );
-			}
-		}
-
-		int value = s_pCloseCaption->GetInt();
-#endif
 		// No close captions?
 		if ( value == 0 )
 		{
@@ -7191,12 +7175,10 @@ bool CBaseEntity::SUB_AllowedToFade( void )
 	}
 
 	// on Xbox, allow these to fade out
-#ifndef _XBOX
 	CBasePlayer *pPlayer = ( AI_IsSinglePlayer() ) ? UTIL_GetLocalPlayer() : NULL;
 
 	if ( pPlayer && pPlayer->FInViewCone( this ) )
 		return false;
-#endif
 
 	return true;
 }

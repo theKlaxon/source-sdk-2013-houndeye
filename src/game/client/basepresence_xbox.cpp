@@ -7,7 +7,6 @@
 #include "cbase.h"
 #include "basepresence.h"
 #include "cdll_client_int.h"
-#include "ixboxsystem.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -53,10 +52,6 @@ void CBasePresence::Update( float frametime )
 //-----------------------------------------------------------------------------
 void CBasePresence::UserSetContext( unsigned int nUserIndex, unsigned int nContextId, unsigned int nContextValue, bool bAsync )
 {
-	if ( !xboxsystem->UserSetContext( nUserIndex, nContextId, nContextValue, bAsync ) )
-	{
-		Warning( "CBasePresence: UserSetContext failed.\n" );
-	}
 }
 
 
@@ -65,10 +60,6 @@ void CBasePresence::UserSetContext( unsigned int nUserIndex, unsigned int nConte
 //-----------------------------------------------------------------------------
 void CBasePresence::UserSetProperty( unsigned int nUserIndex, unsigned int nPropertyId, unsigned int nBytes, const void *pvValue, bool bAsync )
 {
- 	if ( !xboxsystem->UserSetProperty( nUserIndex, nPropertyId, nBytes, pvValue, bAsync ) )
- 	{
- 		Warning( "CBasePresence: UserSetProperty failed.\n" );
- 	}
 }
 
 //-----------------------------------------------------------------------------

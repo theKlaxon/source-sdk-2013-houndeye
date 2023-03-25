@@ -487,7 +487,6 @@ void IN_Grenade1Up( const CCommand &args ) { KeyUp( &in_grenade1, args[1] ); }
 void IN_Grenade1Down( const CCommand &args ) { KeyDown( &in_grenade1, args[1] ); }
 void IN_Grenade2Up( const CCommand &args ) { KeyUp( &in_grenade2, args[1] ); }
 void IN_Grenade2Down( const CCommand &args ) { KeyDown( &in_grenade2, args[1] ); }
-void IN_XboxStub( const CCommand &args ) { /*do nothing*/ }
 void IN_Attack3Down( const CCommand &args ) { KeyDown(&in_attack3, args[1] );}
 void IN_Attack3Up( const CCommand &args ) { KeyUp(&in_attack3, args[1] );}
 
@@ -1630,10 +1629,6 @@ static ConCommand endattack3("-attack3", IN_Attack3Up);
 #ifdef TF_CLIENT_DLL
 static ConCommand toggle_duck( "toggle_duck", IN_DuckToggle );
 #endif
-
-// Xbox 360 stub commands
-static ConCommand xboxmove("xmove", IN_XboxStub);
-static ConCommand xboxlook("xlook", IN_XboxStub);
 
 /*
 ============

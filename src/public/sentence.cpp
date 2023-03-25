@@ -26,7 +26,6 @@
 //-----------------------------------------------------------------------------
 int ConvertANSIToUnicode(const char *ansi, wchar_t *unicode, int unicodeBufferSize);
 
-#if PHONEME_EDITOR
 void CEmphasisSample::SetSelected( bool isSelected )
 {
 	selected = isSelected;
@@ -73,20 +72,6 @@ unsigned int CWordTag::GetEndByte() const
 {
 	return m_uiEndByte;
 }
-#else
-// xbox doesn't store this data
-void CEmphasisSample::SetSelected( bool isSelected ) {}
-void CPhonemeTag::SetSelected( bool isSelected ) {}
-bool CPhonemeTag::GetSelected() const { return false; }
-void CPhonemeTag::SetStartAndEndBytes( unsigned int start, unsigned int end ) {}
-unsigned int CPhonemeTag::GetStartByte() const { return 0; }
-unsigned int CPhonemeTag::GetEndByte() const { return 0; }
-void CWordTag::SetSelected( bool isSelected ) {}
-bool CWordTag::GetSelected() const { return false; }
-void CWordTag::SetStartAndEndBytes( unsigned int start, unsigned int end ) {}
-unsigned int CWordTag::GetStartByte() const { return 0; }
-unsigned int CWordTag::GetEndByte() const { return 0; }
-#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: 
