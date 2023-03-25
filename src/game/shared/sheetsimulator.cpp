@@ -12,8 +12,9 @@
 //=============================================================================//
 
 #include "sheetsimulator.h"
-#include "edict.h"
 #include "collisionutils.h"
+#include "edict.h"
+#include <cassert>
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

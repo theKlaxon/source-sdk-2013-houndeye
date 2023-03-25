@@ -26,11 +26,12 @@
 #undef _DEBUG
 #endif
 
+#include "memdbgoff.h"
 #include "tier0/dbg.h"
 #include "tier0/memalloc.h"
-#include <string.h>
+#include <cassert>
 #include <stdio.h>
-#include "memdbgoff.h"
+#include <string.h>
 
 // Turn this back off in release mode.
 #ifdef NDEBUG
@@ -1008,7 +1009,7 @@ size_t __crtDebugFillThreshold = 0;
 
 extern "C" void * __cdecl _heap_alloc_base (size_t size) {
     assert(0);
-	return NULL;
+    return NULL;
 }
 
 
