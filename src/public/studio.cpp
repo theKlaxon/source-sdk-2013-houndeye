@@ -140,7 +140,7 @@ mstudioanim_t *mstudioanimdesc_t::pAnim( int *piFrame, float &flStall ) const
 		}
 	}
 
-	// try to guess a valid stall time interval (tuned for the X360)
+	// try to guess a valid stall time interval (tuned for the \X360)
 	flStall = 0.0f;
 	if (panim == NULL && section <= 0)
 	{

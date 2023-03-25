@@ -1077,9 +1077,7 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	// NVNT connect haptics sytem
 	ConnectHaptics(appSystemFactory);
 #endif
-#ifndef _X360
 	HookHapticMessages(); // Always hook the messages
-#endif
 
 	return true;
 }

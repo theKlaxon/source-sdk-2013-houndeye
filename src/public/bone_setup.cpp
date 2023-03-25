@@ -430,15 +430,7 @@ void CalcBoneQuaternion( int frame, float s,
 			AngleQuaternion( angle1, q1 );
 			AngleQuaternion( angle2, q2 );
 
-	#ifdef _X360
-			fltx4 q1simd, q2simd, qsimd;
-			q1simd = LoadAlignedSIMD( q1 );
-			q2simd = LoadAlignedSIMD( q2 );
-			qsimd = QuaternionBlendSIMD( q1simd, q2simd, s );
-			StoreUnalignedSIMD( q.Base(), qsimd );
-	#else
 			QuaternionBlend( q1, q2, s, q );
-	#endif
 		}
 		else
 		{
@@ -2625,14 +2617,14 @@ public:
          X[i] = P[i];
       normalize(X);
 
-// Its y axis is perpendicular to P, so Y = unit( E - X(E·X) ).
+// Its y axis is perpendicular to P, so Y = unit( E - X(Eï¿½X) ).
 
       float dDOTx = dot(D,X);
       for (i = 0 ; i < 3 ; i++)
          Y[i] = D[i] - dDOTx * X[i];
       normalize(Y);
 
-// Its z axis is perpendicular to both X and Y, so Z = X×Y.
+// Its z axis is perpendicular to both X and Y, so Z = Xï¿½Y.
 
       cross(X,Y,Z);
 
