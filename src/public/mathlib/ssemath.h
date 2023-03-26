@@ -1807,20 +1807,6 @@ public:
 	{
 		// TransposeSIMD has large sub-expressions that the compiler can't eliminate on x360
 		// use an unfolded implementation here
-#if _X360
-		fltx4 tx = LoadUnalignedSIMD( &a.x );
-		fltx4 ty = LoadUnalignedSIMD( &b.x );
-		fltx4 tz = LoadUnalignedSIMD( &c.x );
-		fltx4 tw = LoadUnalignedSIMD( &d.x );
-		fltx4 r0 = __vmrghw(tx, tz);
-		fltx4 r1 = __vmrghw(ty, tw);
-		fltx4 r2 = __vmrglw(tx, tz);
-		fltx4 r3 = __vmrglw(ty, tw);
-
-		x = __vmrghw(r0, r1);
-		y = __vmrglw(r0, r1);
-		z = __vmrghw(r2, r3);
-#else
 		x		= LoadUnalignedSIMD( &( a.x ));
 		y		= LoadUnalignedSIMD( &( b.x ));
 		z		= LoadUnalignedSIMD( &( c.x ));
@@ -1831,27 +1817,12 @@ public:
 		// x y z ?
 		// x y z ?
 		TransposeSIMD(x, y, z, w);
-#endif
 	}
 
 	/// LoadAndSwizzleAligned - load 4 Vectors into a FourVectors, performing transpose op.
 	/// all 4 vectors must be 128 bit boundary
 	FORCEINLINE void LoadAndSwizzleAligned(const float *RESTRICT a, const float *RESTRICT b, const float *RESTRICT c, const float *RESTRICT d)
 	{
-#if _X360
-		fltx4 tx = LoadAlignedSIMD(a);
-		fltx4 ty = LoadAlignedSIMD(b);
-		fltx4 tz = LoadAlignedSIMD(c);
-		fltx4 tw = LoadAlignedSIMD(d);
-		fltx4 r0 = __vmrghw(tx, tz);
-		fltx4 r1 = __vmrghw(ty, tw);
-		fltx4 r2 = __vmrglw(tx, tz);
-		fltx4 r3 = __vmrglw(ty, tw);
-
-		x = __vmrghw(r0, r1);
-		y = __vmrglw(r0, r1);
-		z = __vmrghw(r2, r3);
-#else
 		x		= LoadAlignedSIMD( a );
 		y		= LoadAlignedSIMD( b );
 		z		= LoadAlignedSIMD( c );
@@ -1862,7 +1833,6 @@ public:
 		// x y z ?
 		// x y z ?
 		TransposeSIMD( x, y, z, w );
-#endif
 	}
 
 	FORCEINLINE void LoadAndSwizzleAligned(Vector const &a, Vector const &b, Vector const &c, Vector const &d)

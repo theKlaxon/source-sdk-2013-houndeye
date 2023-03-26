@@ -1194,7 +1194,7 @@ int CBasePlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 	}
 
 
-#if defined( WIN32 ) && !defined( _X360 )
+#if defined( WIN32 )
 	// NVNT if player's client has a haptic device send them a user message with the damage.
 	if(HasHaptics())
 		HapticsDamage(this,info);
@@ -1666,7 +1666,7 @@ void CBasePlayer::Event_Killed( const CTakeDamageInfo &info )
 
 	RumbleEffect( RUMBLE_STOP_ALL, 0, RUMBLE_FLAGS_NONE );
 
-#if defined( WIN32 ) && !defined( _X360 )
+#if defined( WIN32 )
 	// NVNT set the drag to zero in the case of underwater death.
 	HapticSetDrag(this,0);
 #endif
@@ -6642,14 +6642,6 @@ bool CBasePlayer::BumpWeapon( CBaseCombatWeapon *pWeapon )
 		else
 		{
 #ifdef HL2_DLL
-
-			if ( IsX360() )
-			{
-				CFmtStr hint;
-				hint.sprintf( "#valve_hint_select_%s", pWeapon->GetClassname() );
-				UTIL_HudHintText( this, hint.Access() );
-			}
-
 			// Always switch to a newly-picked up weapon
 			if ( !PlayerHasMegaPhysCannon() )
 			{
@@ -6912,7 +6904,7 @@ bool CBasePlayer::ShouldAutoaim( void )
 		return false;
 
 	// autoaiming is only for easy and medium skill
-	return ( IsX360() || !g_pGameRules->IsSkillLevel(SKILL_HARD) );
+	return !g_pGameRules->IsSkillLevel(SKILL_HARD);
 }
 
 //-----------------------------------------------------------------------------

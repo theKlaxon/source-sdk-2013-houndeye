@@ -530,7 +530,7 @@ struct VTFFileHeader_t : public VTFFileHeaderV7_3_t
 
 #define VTF_X360_MAJOR_VERSION	0x0360
 #define VTF_X360_MINOR_VERSION	8
-struct VTFFileHeaderX360_t : public VTFFileBaseHeader_t 
+struct VTFFileHeaderX360_t : public VTFFileBaseHeader_t
 {
 	DECLARE_BYTESWAP_DATADESC();
 	unsigned int	flags;

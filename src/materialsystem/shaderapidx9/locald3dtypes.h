@@ -49,7 +49,7 @@ public:
 #endif // defined( DX10 ) && !defined( DX_TO_GL_ABSTRACTION )
 
 
-#if !defined( _X360 ) && !defined( DX_TO_GL_ABSTRACTION )
+#if !defined( DX_TO_GL_ABSTRACTION )
 #ifdef _DEBUG
 #define D3D_DEBUG_INFO 1
 #endif
@@ -127,8 +127,6 @@ typedef int PixelShader_t;
 
 #include "togl/rendermechanism.h"
 
-#if defined( _X360 )
-
 // not supported, keeping for port ease
 #define D3DSAMP_SRGBTEXTURE						D3DSAMP_NOTSUPPORTED
 #define D3DRS_LIGHTING							D3DRS_NOTSUPPORTED
@@ -185,7 +183,5 @@ typedef enum D3DSHADEMODE
 	D3DSHADE_FLAT = 0,
 	D3DSHADE_GOURAUD = 0,
 };
-
-#endif // _X360
 
 #endif // LOCALD3DTYPES_H

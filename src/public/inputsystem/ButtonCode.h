@@ -177,7 +177,6 @@ enum ButtonCode_t
 
 	JOYSTICK_LAST = JOYSTICK_LAST_AXIS_BUTTON,
 
-#if !defined ( _X360 )
 	NOVINT_FIRST = JOYSTICK_LAST + 2, // plus 1 missing key. +1 seems to cause issues on the first button.
 	
 	NOVINT_LOGO_0 = NOVINT_FIRST,
@@ -190,7 +189,6 @@ enum ButtonCode_t
 	NOVINT_PLUS_1,
 	
 	NOVINT_LAST = NOVINT_PLUS_1,
-#endif
 
 	BUTTON_CODE_LAST,
 	BUTTON_CODE_COUNT = BUTTON_CODE_LAST - KEY_FIRST + 1,
@@ -261,20 +259,12 @@ inline bool IsMouseCode( ButtonCode_t code )
 
 inline bool IsNovintCode( ButtonCode_t code )
 {
-#if !defined ( _X360 )
 	return ( ( code >= NOVINT_FIRST ) && ( code <= NOVINT_LAST ) );
-#else
-	return false;
-#endif
 }
 
 inline bool IsNovintButtonCode( ButtonCode_t code )
 {
-#if !defined ( _X360 )
 	return IsNovintCode( code );
-#else
-	return false;
-#endif
 }
 
 inline bool IsJoystickCode( ButtonCode_t code )
