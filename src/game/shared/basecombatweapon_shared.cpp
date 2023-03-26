@@ -200,11 +200,6 @@ void CBaseCombatWeapon::Spawn( void )
 	}
 
 #if !defined( CLIENT_DLL )
-	if( IsX360() )
-	{
-		AddEffects( EF_ITEM_BLINK );
-	}
-
 	FallInit();
 	SetCollisionGroup( COLLISION_GROUP_WEAPON );
 	m_takedamage = DAMAGE_EVENTS_ONLY;
@@ -1201,9 +1196,7 @@ bool CBaseCombatWeapon::SendWeaponAnim( int iActivity )
 #ifdef CLIENT_DLL
 	if ( prediction->InPrediction() && prediction->IsFirstTimePredicted() )
 #endif
-#ifndef _X360
 		HapticSendWeaponAnim(this,iActivity);
-#endif
 #endif
 	//For now, just set the ideal activity and be done with it
 	return SetIdealActivity( (Activity) iActivity );
@@ -1632,7 +1625,7 @@ void CBaseCombatWeapon::ItemPreFrame( void )
 
 #ifndef CLIENT_DLL
 #ifndef HL2_EPISODIC
-	if ( IsX360() )
+	if ( IsX360() ) // FIXME: aurora-source: Figure this out
 #endif
 	{
 		// If we haven't displayed the hint enough times yet, it's time to try to 

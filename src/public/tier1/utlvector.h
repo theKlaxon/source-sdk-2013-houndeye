@@ -979,9 +979,7 @@ void CUtlVector<T, A>::Swap( CUtlVector< T, A > &vec )
 	m_Memory.Swap( vec.m_Memory );
 	V_swap( m_Size, vec.m_Size );
 
-#ifndef _X360
 	V_swap( m_pElements, vec.m_pElements );
-#endif
 }
 
 template< typename T, class A >

@@ -1600,7 +1600,7 @@ void CPropAirboat::FireGun( )
 	CAmmoDef *pAmmoDef = GetAmmoDef();
 	int ammoType = pAmmoDef->Index( "AirboatGun" );
 
-#if defined( WIN32 ) && !defined( _X360 ) 
+#if defined( WIN32 )
 	// NVNT punch the players haptics by the magnitude cvar each round fired
 	HapticPunch(m_hPlayer,0,0,hap_airboat_gun_mag.GetFloat());
 #endif
@@ -1660,15 +1660,8 @@ void CPropAirboat::FireGun( )
 	Vector vecEyeDirection, vecEyePosition;
 	if ( !m_bUnableToFire )
 	{
-		if ( IsX360() )
-		{
-			GetAttachment( m_nGunBarrelAttachment, vecEyePosition, &vecEyeDirection );
-		}
-		else
-		{
-			vecEyePosition = m_hPlayer->EyePosition();
-			m_hPlayer->EyeVectors( &vecEyeDirection, NULL, NULL );
-		}
+                vecEyePosition = m_hPlayer->EyePosition();
+                m_hPlayer->EyeVectors( &vecEyeDirection, NULL, NULL );
 	}
 	else
 	{

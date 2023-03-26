@@ -44,7 +44,7 @@ using sixenseMath::Vector4;
 using sixenseMath::Quat;
 using sixenseMath::Line;
 
-#if defined( WIN32 ) && !defined( _X360 )
+#if defined( WIN32 )
 #define _WIN32_WINNT 0x0502
 #endif
 #include <winlite.h>
@@ -609,7 +609,7 @@ static void SixenseAutosave( const CCommand &args )
 
 		engine->SaveGame( 
 			szSaveName, 
-			IsX360(), 
+			false,
 			szFullSaveFileName, 
 			sizeof( szFullSaveFileName ),
 			szComment,
