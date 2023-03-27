@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -120,11 +120,6 @@ BEGIN_VS_SHADER_FLAGS( SDK_screenspace_general_dx9, "Help for screenspace_genera
 			}				
 			int fmt = VERTEX_POSITION;
 
-			if ( IS_PARAM_DEFINED( X360APPCHOOSER ) && ( params[X360APPCHOOSER]->GetIntValue() ) )
-			{
-				fmt |= VERTEX_COLOR;
-				EnableAlphaBlending( SHADER_BLEND_SRC_ALPHA, SHADER_BLEND_ONE_MINUS_SRC_ALPHA );
-			}
 			pShaderShadow->VertexShaderVertexFormat( fmt, 1, 0, 0 );
 
 			// maybe convert from linear to gamma on write.
@@ -135,7 +130,7 @@ BEGIN_VS_SHADER_FLAGS( SDK_screenspace_general_dx9, "Help for screenspace_genera
 
 			// Pre-cache shaders
 			DECLARE_STATIC_VERTEX_SHADER( sdk_screenspaceeffect_vs20 );
-			SET_STATIC_VERTEX_SHADER_COMBO( X360APPCHOOSER, IS_PARAM_DEFINED( X360APPCHOOSER ) ? params[X360APPCHOOSER]->GetIntValue() : 0 );
+			SET_STATIC_VERTEX_SHADER_COMBO( X360APPCHOOSER, 0 );
 			vsh_forgot_to_set_static_X360APPCHOOSER = 0; // This is a dirty workaround to the shortcut [= 0] in the fxc
 			SET_STATIC_VERTEX_SHADER( sdk_screenspaceeffect_vs20 );
 
