@@ -891,7 +891,6 @@ bool FASTCALL IsBoxIntersectingRay( const fltx4 &inBoxMin, const fltx4 & inBoxMa
 								   const fltx4 & origin, const fltx4 & delta, const fltx4 & invDelta, // ray parameters
 								   const fltx4 & vTolerance ///< eg from ReplicateX4(flTolerance)
 								   )
-#endif
 {
 	// Load the unaligned ray/box parameters into SIMD registers
 	// compute the mins/maxs of the box expanded by the ray extents
