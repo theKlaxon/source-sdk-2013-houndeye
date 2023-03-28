@@ -256,9 +256,6 @@ END_SHADER_PARAMS
 			SET_STATIC_VERTEX_SHADER_COMBO( VERTEXALPHATEXBLENDFACTOR, false );
 			SET_STATIC_VERTEX_SHADER_COMBO( RELIEF_MAPPING, 0 ); //( bumpmap_variant == 2 )?1:0);
 			SET_STATIC_VERTEX_SHADER_COMBO( SEAMLESS, bSeamlessMapping ); //( bumpmap_variant == 2 )?1:0);
-#ifdef _X360
-			SET_STATIC_VERTEX_SHADER_COMBO( FLASHLIGHT, hasFlashlight );
-#endif
 			SET_STATIC_VERTEX_SHADER( lightmappedgeneric_vs20 );
 
 			if ( g_pHardwareConfig->SupportsPixelShaders_2_b() )
@@ -485,7 +482,7 @@ END_SHADER_PARAMS
 	SHADER_DRAW
 	{
 		bool bHasFlashlight = UsingFlashlight( params );
-		if ( bHasFlashlight && ( IsX360() || r_flashlight_version2.GetInt() ) )
+		if ( bHasFlashlight && r_flashlight_version2.GetInt() )
 		{
 			DrawPass( params, pShaderAPI, pShaderShadow, false, vertexCompression );
 			SHADOW_STATE

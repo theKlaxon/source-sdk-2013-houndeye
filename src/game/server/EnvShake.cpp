@@ -116,7 +116,7 @@ END_DATADESC()
 #define SF_SHAKE_PHYSICS	0x0008		// Shake physically (not just camera)
 #define SF_SHAKE_ROPES		0x0010		// Shake ropes too.
 #define SF_SHAKE_NO_VIEW	0x0020		// DON'T shake the view (only ropes and/or physics objects)
-#define SF_SHAKE_NO_RUMBLE	0x0040		// DON'T Rumble the XBox Controller
+#define SF_SHAKE_NO_RUMBLE	0x0040		// DON'T Rumble the Controller
 
 
 //-----------------------------------------------------------------------------

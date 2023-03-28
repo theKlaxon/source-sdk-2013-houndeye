@@ -652,7 +652,7 @@ void CHL2GameMovement::FullLadderMove()
 		// Otherwise, if the move would leave the ladder, disallow it.
 		if ( pressed_use )
 		{
-			if ( ExitLadderViaDismountNode( ladder, false, IsX360() ) )
+			if ( ExitLadderViaDismountNode( ladder, false, false ) )
 			{
 				// See if they +used a dismount point mid-span..
 				return;
@@ -1089,21 +1089,6 @@ bool CHL2GameMovement::LadderMove( void )
 				factor = -1.0f;
 			}
 		}
-
-#ifdef _XBOX
-		if( sv_ladders_useonly.GetBool() )
-		{
-			// Stick up climbs up, stick down climbs down. No matter which way you're looking.
-			if ( mv->m_nButtons & IN_FORWARD )
-			{
-				factor = 1.0f;
-			}
-			else if( mv->m_nButtons & IN_BACK )
-			{
-				factor = -1.0f;
-			}
-		}
-#endif//_XBOX
 
 		mv->m_vecVelocity = MAX_CLIMB_SPEED * factor * ladderUp;
 	}

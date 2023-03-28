@@ -6,6 +6,7 @@
 //			with an extra extension in the form of <filename>.360.<ext>
 //
 //=============================================================================//
+// TODO: Remove this file after it is checked to be unused
 
 #include "studio.h"
 #include "optimize.h"
@@ -453,9 +454,6 @@ BEGIN_BYTESWAP_DATADESC( swapcompactsurfaceheader_t )
 END_BYTESWAP_DATADESC()
 
 // Fake header declaration for old style phy format
-#if defined( _X360 )
-#pragma bitfield_order( push, lsb_to_msb )
-#endif
 struct legacysurfaceheader_t
 {
 	DECLARE_BYTESWAP_DATADESC();
@@ -470,9 +468,6 @@ struct legacysurfaceheader_t
 	int		offset_ledgetree_root;
 	int		dummy[3];
 };
-#if defined( _X360 )
-#pragma bitfield_order( pop )
-#endif
 
 BEGIN_BYTESWAP_DATADESC( legacysurfaceheader_t )
 	DEFINE_FIELD( size, FIELD_INTEGER ),

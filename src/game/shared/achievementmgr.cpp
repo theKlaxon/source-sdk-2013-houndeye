@@ -26,20 +26,13 @@
 #else
 #include "enginecallback.h"
 #endif // CLIENT_DLL
-#ifndef _X360
 #include "steam/isteamuserstats.h"
 #include "steam/isteamfriends.h"
 #include "steam/isteamutils.h"
 #include "steam/steam_api.h"
 #include "steam/isteamremotestorage.h"
-#else
-#include "xbox/xbox_win32stubs.h"
-#endif
 #include "tier3/tier3.h"
 #include "vgui/ILocalize.h"
-#ifdef _X360
-#include "ixboxsystem.h"
-#endif  // _X360
 #include "engine/imatchmaking.h"
 #include "tier0/vprof.h"
 
@@ -89,21 +82,9 @@ static void WriteAchievementGlobalState( KeyValues *pKV, bool bPersistToSteamClo
 //=============================================================================
 
 {
-#ifdef _X360
-	if ( XBX_GetStorageDeviceId() == XBX_INVALID_STORAGE_ID || XBX_GetStorageDeviceId() == XBX_STORAGE_DECLINED )
-		return;
-#endif
-
 	char szFilename[_MAX_PATH];
 
-	if ( IsX360() )
-	{
-		Q_snprintf( szFilename, sizeof( szFilename ), "cfg:/%s_GameState.txt", COM_GetModDirectory() );
-	}
-	else
-	{
-		Q_snprintf( szFilename, sizeof( szFilename ), "GameState.txt" );
-	}
+        Q_snprintf( szFilename, sizeof( szFilename ), "GameState.txt" );
 
 	// Never call pKV->SaveToFile!!!!
 	// Save to a buffer instead.
@@ -120,14 +101,7 @@ static void WriteAchievementGlobalState( KeyValues *pKV, bool bPersistToSteamClo
     if ( bPersistToSteamCloud )
     {
 #ifndef NO_STEAM
-		if ( IsX360() )
-        {
-            Q_snprintf( szFilename, sizeof( szFilename ), "cfg:/%s_GameState.txt", COM_GetModDirectory() );
-        }
-        else
-        {
-            Q_snprintf( szFilename, sizeof( szFilename ), "GameState.txt" );
-        }
+        Q_snprintf( szFilename, sizeof( szFilename ), "GameState.txt" );
 
         ISteamRemoteStorage *pRemoteStorage = SteamClient()?(ISteamRemoteStorage *)SteamClient()->GetISteamGenericInterface(
             SteamAPI_GetHSteamUser(), SteamAPI_GetHSteamPipe(), STEAMREMOTESTORAGE_INTERFACE_VERSION ):NULL;
@@ -177,13 +151,6 @@ static void WriteAchievementGlobalState( KeyValues *pKV, bool bPersistToSteamClo
     //=============================================================================
     // HPE_END
     //=============================================================================
-
-#ifdef _X360
-	if ( xboxsystem )
-	{
-		xboxsystem->FinishContainerWrites();
-	}
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -341,12 +308,6 @@ void CAchievementMgr::PostInit()
 	if ( !g_AchievementSaveThread.IsAlive() )
 	{
 		g_AchievementSaveThread.Start();
-#ifdef WIN32
-		if ( IsX360() )
-		{
-			ThreadSetAffinity( (ThreadHandle_t)g_AchievementSaveThread.GetThreadHandle(), XBOX_PROCESSOR_3 );
-		}
-#endif // WIN32
 	}
 
 	// get current game dir
@@ -520,16 +481,6 @@ void CAchievementMgr::LevelInitPreEntity()
 	Q_strncpy( m_szMap, gpGlobals->mapname.ToCStr(), ARRAYSIZE( m_szMap ) );
 #endif // CLIENT_DLL
 
-	if ( IsX360() )
-	{
-		// need to remove the .360 extension on the end of the map name
-		char *pExt = Q_stristr( m_szMap, ".360" );
-		if ( pExt )
-		{
-			*pExt = '\0';
-		}
-	}
-
 	// look through all achievements, see which ones we want to have listen for events
 	FOR_EACH_MAP( m_mapAchievement, iAchievement )
 	{
@@ -642,58 +593,6 @@ void CAchievementMgr::DownloadUserData()
 		}
 #endif
 	}
-	else if ( IsX360() )
-	{
-#if defined( _X360 )
-		if ( XBX_GetPrimaryUserId() == INVALID_USER_ID )
-			return;
-
-		// Download achievements from XBox Live
-		bool bDownloadSuccessful = true;
-		int nTotalAchievements = 99;
-		uint bytes;
-		int ret = xboxsystem->EnumerateAchievements( XBX_GetPrimaryUserId(), 0, 0, nTotalAchievements, &bytes, 0, false );
-		if ( ret != ERROR_SUCCESS )
-		{
-			Warning( "Enumerate Achievements failed! Error %d", ret );
-			bDownloadSuccessful = false;
-		}
-		
-		// Enumerate the achievements from Live
-		void *pBuffer = new byte[bytes];
-		if ( bDownloadSuccessful )
-		{
-			ret = xboxsystem->EnumerateAchievements( XBX_GetPrimaryUserId(), 0, 0, nTotalAchievements, pBuffer, bytes, false );
-
-			if ( ret != nTotalAchievements )
-			{
-				Warning( "Enumerate Achievements failed! Error %d", ret );
-				bDownloadSuccessful = false;
-			}
-		}
-
-		if ( bDownloadSuccessful )
-		{
-			// Give live a chance to mark achievements as unlocked, in case the achievement manager
-			// wasn't able to get that data (storage device missing, read failure, etc)
-			XACHIEVEMENT_DETAILS *pXboxAchievements = (XACHIEVEMENT_DETAILS*)pBuffer;
-			for ( int i = 0; i < nTotalAchievements; ++i )
-			{
-				CBaseAchievement *pAchievement = GetAchievementByID( pXboxAchievements[i].dwId );
-				if ( !pAchievement )
-					continue;
-
-				// Give Live a chance to claim the achievement as unlocked
-				if ( AchievementEarned( pXboxAchievements[i].dwFlags ) )
-				{
-					pAchievement->SetAchieved( true );
-				}
-			}
-		}
-
-		delete pBuffer;
-#endif // X360
-	}
 }
 
 const char *COM_GetModDirectory()
@@ -738,24 +637,9 @@ void CAchievementMgr::UploadUserData()
 //-----------------------------------------------------------------------------
 void CAchievementMgr::LoadGlobalState()
 {
-	if ( IsX360() )
-	{
-#ifdef _X360
-		if ( XBX_GetStorageDeviceId() == XBX_INVALID_STORAGE_ID || XBX_GetStorageDeviceId() == XBX_STORAGE_DECLINED )
-			return;
-#endif
-	}
-
 	char	szFilename[_MAX_PATH];
 
-	if ( IsX360() )
-	{
-		Q_snprintf( szFilename, sizeof( szFilename ), "cfg:/%s_GameState.txt", COM_GetModDirectory() );
-	}
-	else
-	{
-		Q_snprintf( szFilename, sizeof( szFilename ), "GameState.txt" );
-	}
+        Q_snprintf( szFilename, sizeof( szFilename ), "GameState.txt" );
 
     //=============================================================================
     // HPE_BEGIN
@@ -965,13 +849,6 @@ void CAchievementMgr::AwardAchievement( int iAchievementID )
 		}
 #endif
     }
-	else if ( IsX360() )
-	{
-#ifdef _X360
-		if ( xboxsystem )
-			xboxsystem->AwardAchievement( XBX_GetPrimaryUserId(), iAchievementID );
-#endif
-	}
 }
 
 //-----------------------------------------------------------------------------
@@ -1039,15 +916,6 @@ bool CAchievementMgr::CheckAchievementsEnabled()
 		Msg( "Achievements disabled: Steam not running.\n" );
 		return false;
 	}
-
-#if defined( _X360 )
-	uint state = XUserGetSigninState( XBX_GetPrimaryUserId() );
-	if ( state == eXUserSigninState_NotSignedIn )
-	{
-		Msg( "Achievements disabled: not signed in to XBox user account.\n" );
-		return false;
-	}
-#endif
 
 	// can't be in commentary mode, user is invincible
 	if ( IsInCommentaryMode() )
@@ -1160,13 +1028,6 @@ bool CalcPlayersOnFriendsList( int iMinFriends )
 			return false;
 
 	}
-	else if ( IsX360() )
-	{
-		if ( !matchmaking )
-			return false;
-
-		XPlayerUid = XBX_GetPrimaryUserId();
-	}
 	else
 	{
 		// other platforms...?
@@ -1193,17 +1054,6 @@ bool CalcPlayersOnFriendsList( int iMinFriends )
 					continue;
 #endif
 			}
-			else if ( IsX360() )
-			{
-				uint64 XUid[1];
-				XUid[0] = matchmaking->PlayerIdToXuid( iPlayerIndex );
-				BOOL bFriend;
-#ifdef _X360
-				XUserAreUsersFriends( XPlayerUid, XUid, 1, &bFriend, NULL );
-#endif // _X360
-				if ( !bFriend )
-					continue;
-			}
 
 			iTotalFriends++;
 		}
@@ -1223,7 +1073,6 @@ bool CalcHasNumClanPlayers( int iClanTeammates )
 
 	if ( IsPC() )
 	{
-#ifndef _X360
 		// Do a cheap rejection: check teammate count first to see if we even need to bother checking w/Steam
 		// Subtract 1 for the local player.
 		if ( CalcPlayerCount()-1 < iClanTeammates )
@@ -1259,15 +1108,9 @@ bool CalcHasNumClanPlayers( int iClanTeammates )
 				}
 			}
 		}
-#endif
 		return false;
 	}
-	else if ( IsX360() )
-	{
-		// TODO: implement for 360
-		return false;
-	}
-	else 
+	else
 	{
 		// other platforms...?
 		return false;

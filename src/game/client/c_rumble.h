@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: Rumble effects mixer for XBox
+// Purpose: Rumble effects mixer for Controllers
 //
 // $NoKeywords: $
 //

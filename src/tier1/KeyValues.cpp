@@ -6,7 +6,7 @@
 //
 //=============================================================================//
 
-#if defined( _WIN32 ) && !defined( _X360 )
+#if defined( _WIN32 )
 #include <windows.h>		// for WideCharToMultiByte and MultiByteToWideChar
 #elif defined(POSIX)
 #include <wchar.h> // wcslen()
@@ -647,7 +647,7 @@ bool KeyValues::LoadFromFile( IBaseFileSystem *filesystem, const char *resourceN
 {
 	Assert(filesystem);
 #ifdef WIN32
-	Assert( IsX360() || ( IsPC() && _heapchk() == _HEAPOK ) );
+	Assert( IsPC() && _heapchk() == _HEAPOK );
 #endif
 
 #ifdef STAGING_ONLY

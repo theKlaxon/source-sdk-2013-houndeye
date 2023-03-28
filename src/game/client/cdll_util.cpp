@@ -26,7 +26,6 @@
 #include <vgui/ISurface.h>
 #include <vgui/ILocalize.h>
 #include "view.h"
-#include "ixboxsystem.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -931,28 +930,13 @@ void UTIL_ReplaceKeyBindings( const wchar_t *inbuf, int inbufsizebytes, OUT_Z_BY
 				const char *key = engine->Key_LookupBinding( *binding == '+' ? binding + 1 : binding );
 				if ( !key )
 				{
-					key = IsX360() ? "" : "< not bound >";
+					key = "< not bound >";
 				}
 
 				//!! change some key names into better names
 				char friendlyName[64];
 				bool bAddBrackets = false;
-				if ( IsX360() )
-				{
-					if ( !key || !key[0] )
-					{
-						Q_snprintf( friendlyName, sizeof(friendlyName), "#GameUI_None" );
-						bAddBrackets = true;
-					}
-					else
-					{
-						Q_snprintf( friendlyName, sizeof(friendlyName), "#GameUI_KeyNames_%s", key );
-					}
-				}
-				else
-				{
-					Q_snprintf( friendlyName, sizeof(friendlyName), "%s", key );
-				}
+                                Q_snprintf( friendlyName, sizeof(friendlyName), "%s", key );
 				Q_strupr( friendlyName );
 
 				wchar_t *locName = g_pVGuiLocalize->Find( friendlyName );
@@ -1135,7 +1119,7 @@ unsigned char UTIL_ComputeEntityFade( C_BaseEntity *pEntity, float flMinDist, fl
 			vecAbsCenter = pEntity->GetRenderOrigin();
 		}
 
-		unsigned char nGlobalAlpha = IsXbox() ? 255 : modelinfo->ComputeLevelScreenFade( vecAbsCenter, flRadius, flFadeScale );
+		unsigned char nGlobalAlpha = modelinfo->ComputeLevelScreenFade( vecAbsCenter, flRadius, flFadeScale );
 		unsigned char nDistAlpha;
 
 		if ( !engine->IsLevelMainMenuBackground() )
@@ -1175,33 +1159,14 @@ void UTIL_BoundToWorldSize( Vector *pVecPos )
 	}
 }
 
-#ifdef _X360
-#define MAP_KEY_FILE_DIR	"cfg"
-#else
 #define MAP_KEY_FILE_DIR	"media"
-#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: Returns the filename to count map loads in
 //-----------------------------------------------------------------------------
 bool UTIL_GetMapLoadCountFileName( const char *pszFilePrependName, char *pszBuffer, int iBuflen )
 {
-	if ( IsX360() )
-	{
-#ifdef _X360
-		if ( XBX_GetStorageDeviceId() == XBX_INVALID_STORAGE_ID || XBX_GetStorageDeviceId() == XBX_STORAGE_DECLINED )
-			return false;
-#endif
-	}
-
-	if ( IsX360() )
-	{
-		Q_snprintf( pszBuffer, iBuflen, "%s:/%s", MAP_KEY_FILE_DIR, pszFilePrependName );
-	}
-	else
-	{
-		Q_snprintf( pszBuffer, iBuflen, "%s/%s", MAP_KEY_FILE_DIR, pszFilePrependName );
-	}
+        Q_snprintf( pszBuffer, iBuflen, "%s/%s", MAP_KEY_FILE_DIR, pszFilePrependName );
 
 	return true;
 }
@@ -1259,13 +1224,6 @@ void UTIL_IncrementMapKey( const char *pszCustomKey )
 		g_pFullFileSystem->WriteFile( szFilename, "MOD", buf );
 
 		kvMapLoadFile->deleteThis();
-	}
-
-	if ( IsX360() )
-	{
-#ifdef _X360
-		xboxsystem->FinishContainerWrites();
-#endif
 	}
 }
 

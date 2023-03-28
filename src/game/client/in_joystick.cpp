@@ -29,11 +29,7 @@
 #include "tier1/convar_serverbounded.h"
 #include "cam_thirdperson.h"
 
-#if defined( _X360 )
-#include "xbox/xbox_win32stubs.h"
-#else
 #include "../common/xbox/xboxstubs.h"
-#endif
 
 #ifdef HL2_CLIENT_DLL
 // FIXME: Autoaim support needs to be moved from HL2_DLL to the client dll, so this include should be c_baseplayer.h
@@ -65,8 +61,8 @@ static ConVar joy_pitchthreshold( "joy_pitchthreshold", "0.15", FCVAR_ARCHIVE );
 static ConVar joy_yawthreshold( "joy_yawthreshold", "0.15", FCVAR_ARCHIVE );
 static ConVar joy_forwardsensitivity( "joy_forwardsensitivity", "-1", FCVAR_ARCHIVE );
 static ConVar joy_sidesensitivity( "joy_sidesensitivity", "1", FCVAR_ARCHIVE );
-static ConVar joy_pitchsensitivity( "joy_pitchsensitivity", "1", FCVAR_ARCHIVE | FCVAR_ARCHIVE_XBOX );
-static ConVar joy_yawsensitivity( "joy_yawsensitivity", "-1", FCVAR_ARCHIVE | FCVAR_ARCHIVE_XBOX );
+static ConVar joy_pitchsensitivity( "joy_pitchsensitivity", "1", FCVAR_ARCHIVE );
+static ConVar joy_yawsensitivity( "joy_yawsensitivity", "-1", FCVAR_ARCHIVE );
 
 // Advanced sensitivity and response
 static ConVar joy_response_move( "joy_response_move", "1", FCVAR_ARCHIVE, "'Movement' stick response mode: 0=Linear, 1=quadratic, 2=cubic, 3=quadratic extreme, 4=power function(i.e., pow(x,1/sensitivity)), 5=two-stage" );
@@ -89,21 +85,21 @@ static ConVar joy_display_input("joy_display_input", "0", FCVAR_ARCHIVE);
 static ConVar joy_wwhack2( "joy_wingmanwarrior_turnhack", "0", FCVAR_ARCHIVE, "Wingman warrior hack related to turn axes." );
 ConVar joy_autosprint("joy_autosprint", "0", 0, "Automatically sprint when moving with an analog joystick" );
 
-static ConVar joy_inverty("joy_inverty", "0", FCVAR_ARCHIVE | FCVAR_ARCHIVE_XBOX, "Whether to invert the Y axis of the joystick for looking." );
+static ConVar joy_inverty("joy_inverty", "0", FCVAR_ARCHIVE, "Whether to invert the Y axis of the joystick for looking." );
 
-// XBox Defaults
+// Controller Defaults
 static ConVar joy_yawsensitivity_default( "joy_yawsensitivity_default", "-1.25", FCVAR_NONE );
 static ConVar joy_pitchsensitivity_default( "joy_pitchsensitivity_default", "-1.0", FCVAR_NONE );
 static ConVar option_duck_method_default( "option_duck_method_default", "1.0", FCVAR_NONE );
-static ConVar joy_inverty_default( "joy_inverty_default", "0", FCVAR_ARCHIVE_XBOX );				// Extracted & saved from profile
-static ConVar joy_movement_stick_default( "joy_movement_stick_default", "0", FCVAR_ARCHIVE_XBOX );	// Extracted & saved from profile
+static ConVar joy_inverty_default( "joy_inverty_default", "0", FCVAR_ARCHIVE );				// Extracted & saved from profile
+static ConVar joy_movement_stick_default( "joy_movement_stick_default", "0", FCVAR_ARCHIVE );	// Extracted & saved from profile
 static ConVar sv_stickysprint_default( "sv_stickysprint_default", "0", FCVAR_NONE );
 
 void joy_movement_stick_Callback( IConVar *var, const char *pOldString, float flOldValue )
 {
 	engine->ClientCmd( "joyadvancedupdate" );
 }
-static ConVar joy_movement_stick("joy_movement_stick", "0", FCVAR_ARCHIVE | FCVAR_ARCHIVE_XBOX, "Which stick controls movement (0 is left stick)", joy_movement_stick_Callback );
+static ConVar joy_movement_stick("joy_movement_stick", "0", FCVAR_ARCHIVE, "Which stick controls movement (0 is left stick)", joy_movement_stick_Callback );
 
 static ConVar joy_xcontroller_cfg_loaded( "joy_xcontroller_cfg_loaded", "0", FCVAR_ARCHIVE, "If 0, the 360controller.cfg file will be executed on startup & option changes." );
 
@@ -459,12 +455,6 @@ void CInput::Joystick_Advanced(void)
 	int	i;
 	DWORD dwTemp;
 
-	if ( IsX360() )
-	{
-		// Xbox always uses a joystick
-		in_joystick.SetValue( 1 );
-	}
-
 	// Initialize all the maps
 	for ( i = 0; i < MAX_JOYSTICK_AXES; i++ )
 	{
@@ -615,22 +605,14 @@ float CInput::ScaleAxisValue( const float axisValue, const float axisThreshold )
 	// has a (potentially) unique threshold value.  If all axes were restricted to a single threshold
 	// as they are on the Xbox, this function could move to inputsystem and be slightly more optimal.
 	float result = 0.f;
-	if ( IsPC() )
-	{
-		if ( axisValue < -axisThreshold )
-		{
-			result = ( axisValue + axisThreshold ) / ( MAX_BUTTONSAMPLE - axisThreshold );
-		}
-		else if ( axisValue > axisThreshold )
-		{
-			result = ( axisValue - axisThreshold ) / ( MAX_BUTTONSAMPLE - axisThreshold );
-		}
-	}
-	else
-	{
-		// IsXbox
-		result =  axisValue * ( 1.f / MAX_BUTTONSAMPLE );
-	}
+        if ( axisValue < -axisThreshold )
+        {
+                result = ( axisValue + axisThreshold ) / ( MAX_BUTTONSAMPLE - axisThreshold );
+        }
+        else if ( axisValue > axisThreshold )
+        {
+                result = ( axisValue - axisThreshold ) / ( MAX_BUTTONSAMPLE - axisThreshold );
+        }
 
 	return result;
 }
@@ -852,7 +834,7 @@ void CInput::JoyStickMove( float frametime, CUserCmd *cmd )
 	cmd->mousedx = angle;
 
 	// apply look control
-	if ( IsX360() || in_jlook.state & 1 )
+	if ( sin_jlook.state & 1 )
 	{
 		float angle = 0;
 		if ( JOY_ABSOLUTE_AXIS == gameAxes[GAME_AXIS_PITCH].controlType )

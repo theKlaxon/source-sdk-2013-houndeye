@@ -5,7 +5,7 @@
 // $NoKeywords: $
 //
 //=============================================================================//
- //========= Copyright © 1996-2003, Valve LLC, All rights reserved. ============
+ //========= Copyright ï¿½ 1996-2003, Valve LLC, All rights reserved. ============
 //
 // The copyright to the contents herein is the property of Valve, L.L.C.
 // The contents may be used and/or copied only with the written permission of
@@ -39,10 +39,6 @@
 #include <vgui_controls/EditablePanel.h>
 #include <vgui_controls/MessageBox.h>
 #include "filesystem.h"
-
-#if defined( _X360 )
-#include "xbox/xbox_win32stubs.h"
-#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include <tier0/memdbgon.h>
@@ -892,10 +888,6 @@ void BuildGroup::LoadControlSettings(const char *controlResourceName, const char
 
 		if ( bSuccess )
 		{
-			if ( IsX360() )
-			{
-				rDat->ProcessResolutionKeys( surface()->GetResolutionKey() );
-			}
 			if ( IsPC() )
 			{
 				ConVarRef cl_hud_minmode( "cl_hud_minmode", true );

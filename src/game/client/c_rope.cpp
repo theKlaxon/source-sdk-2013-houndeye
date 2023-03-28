@@ -740,7 +740,7 @@ void CRopeManager::RenderSolidRopes( IMatRenderContext *pRenderContext, IMateria
 				BeamSeg_t *pSeg = &m_aSegmentCache[iSegmentCache].m_Segments[iSegment];
 				pSeg->m_flWidth = m_aSegmentCache[iSegmentCache].m_BackWidths[iSegment];
 
-				// To avoid aliasing, the "solid" version of the rope on xbox is just "more solid",
+				// To avoid aliasing, the "solid" version of the rope on x box is just "more solid",
 				// and it has its own values controlling its alpha.
 				pSeg->m_flAlpha = RemapVal( pSeg->m_flWidth, 
 					rope_solid_minwidth.GetFloat(),

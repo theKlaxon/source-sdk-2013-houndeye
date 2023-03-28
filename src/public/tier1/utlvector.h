@@ -179,7 +179,6 @@ protected:
 	CAllocator m_Memory;
 	int m_Size;
 
-#ifndef _X360
 	// For easier access to the elements through the debugger
 	// it's in release builds so this can be used in libraries correctly
 	T *m_pElements;
@@ -188,10 +187,6 @@ protected:
 	{
 		m_pElements = Base();
 	}
-#else
-	inline void ResetDbgInfo() {}
-#endif
-
 private:
 	// Can't copy this unless we explicitly do it!
 	// Use CCopyableUtlVector<T> to get this functionality
@@ -984,9 +979,7 @@ void CUtlVector<T, A>::Swap( CUtlVector< T, A > &vec )
 	m_Memory.Swap( vec.m_Memory );
 	V_swap( m_Size, vec.m_Size );
 
-#ifndef _X360
 	V_swap( m_pElements, vec.m_pElements );
-#endif
 }
 
 template< typename T, class A >

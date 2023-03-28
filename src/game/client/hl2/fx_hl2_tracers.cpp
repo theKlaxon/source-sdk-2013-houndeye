@@ -441,7 +441,7 @@ void MuzzleFlash_Airboat( ClientEntityHandle_t hEntity, int attachmentIndex )
 	SimpleParticle *pParticle;
 	Vector			forward(1,0,0), offset; //NOTENOTE: All coords are in local space
 
-	float flScale = random->RandomFloat( 0.75f, IsXbox() ? 2.0f : 2.5f );
+	float flScale = random->RandomFloat( 0.75f, 2.5f );
 
 	PMaterialHandle pMuzzle[2];
 	pMuzzle[0] = pSimple->GetPMaterial( "effects/combinemuzzle1" );
@@ -458,7 +458,7 @@ void MuzzleFlash_Airboat( ClientEntityHandle_t hEntity, int attachmentIndex )
 			return;
 
 		pParticle->m_flLifetime		= 0.0f;
-		pParticle->m_flDieTime		= IsXbox() ? 0.0001f : 0.01f;
+		pParticle->m_flDieTime		= 0.01f;
 
 		pParticle->m_vecVelocity.Init();
 
@@ -501,7 +501,6 @@ void MuzzleFlash_Airboat( ClientEntityHandle_t hEntity, int attachmentIndex )
 	pParticle->m_flRoll			= (360.0/6.0f)*spokePos;
 	pParticle->m_flRollDelta	= 0.0f;
 	
-#ifndef _XBOX
 	// Grab the origin out of the transform for the attachment
 	if ( muzzleflash_light.GetInt() )
 	{
@@ -514,7 +513,6 @@ void MuzzleFlash_Airboat( ClientEntityHandle_t hEntity, int attachmentIndex )
 			CreateMuzzleflashELight( origin, 5, 64, 128, hEntity );
 		}
 	}
-#endif
 }
 
 //-----------------------------------------------------------------------------
