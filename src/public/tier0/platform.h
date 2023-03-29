@@ -76,16 +76,29 @@
 #define IsDebug() false
 #endif
 
+//-----------------------------------------------------------------------------
+// Set up platform type defines.
+//-----------------------------------------------------------------------------
+#ifdef PLATFORM_64BITS
+#define IsPlatform64Bits()	true
+#else
+#define IsPlatform64Bits()	false
+#endif
+
+#define IsPC() true
+#define IsConsole() false
+#define IsX360() false
+#define IsGameConsole()	false
+#define IsPS3() false
+// TODO: Remove OSX support too
+#define IsOSX() false
+
 #ifdef _WIN32
 	#define IsLinux() false
-	#define IsOSX() false
 	#define IsPosix() false
 	#define PLATFORM_WINDOWS 1
         #define IsWindows() true
-        #define IsPC() true
-        #define IsConsole() false
-        #define IsX360() false
-        #define IsPS3() false
+
         #define IS_WINDOWS_PC
         #define PLATFORM_WINDOWS_PC 1 // Windows PC
         #ifdef _WIN64
@@ -104,21 +117,11 @@
 		#define IsPlatformOpenGL() false
 	#endif
 #elif defined(POSIX)
-	#define IsPC() true
 	#define IsWindows() false
-	#define IsConsole() false
-	#define IsX360() false
-	#define IsPS3() false
 	#if defined( LINUX )
 		#define IsLinux() true
 	#else
 		#define IsLinux() false
-	#endif
-	
-	#if defined( OSX )
-		#define IsOSX() true
-	#else
-		#define IsOSX() false
 	#endif
 	
 	#define IsPosix() true
@@ -186,26 +189,6 @@ typedef signed char int8;
 
 #endif // else _WIN32
 
-//-----------------------------------------------------------------------------
-// Set up platform type defines.
-//-----------------------------------------------------------------------------
-#if defined( _PS3 )
-	#if !defined( _GAMECONSOLE )
-		#define _GAMECONSOLE
-	#endif
-	#define IsPC()			false
-	#define IsGameConsole()	true
-#else
-	#define IsPC()			true
-	#define IsGameConsole()	false
-#endif
-
-#ifdef PLATFORM_64BITS
-	#define IsPlatform64Bits()	true
-#else
-	#define IsPlatform64Bits()	false
-#endif
-
 // From steam/steamtypes.h
 // RTime32
 // We use this 32 bit time representing real world time.
@@ -263,7 +246,7 @@ typedef unsigned int		uint;
 #endif
 
 // This can be used to declare an abstract (interface only) class.
-// Classes marked abstract should not be instantiated.  If they are, and access violation will occur.
+// Classes marked abstract should not be instantiated.  If they are, an access violation will occur.
 //
 // Example of use:
 //
@@ -274,10 +257,10 @@ typedef unsigned int		uint;
 //
 // MSDN __declspec(novtable) documentation: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclang/html/_langref_novtable.asp
 //
-// Note: NJS: This is not enabled for regular PC, due to not knowing the implications of exporting a class with no no vtable.
+// Note: NJS: This is not enabled for regular PC, due to not knowing the implications of exporting a class with no vtable.
 //       It's probable that this shouldn't be an issue, but an experiment should be done to verify this.
 //
-#define abstract_class class
+#define abstract_class /*__declspec(novtable)*/ class
 
 
 // MSVC CRT uses 0x7fff while gcc uses MAX_INT, leading to mismatches between platforms

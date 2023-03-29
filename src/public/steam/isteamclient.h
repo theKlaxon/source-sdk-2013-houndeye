@@ -91,7 +91,6 @@ class ISteamScreenshots;
 class ISteamMusic;
 class ISteamMusicRemote;
 class ISteamGameServerStats;
-class ISteamPS3OverlayRender;
 class ISteamHTTP;
 class ISteamUnifiedMessages;
 class ISteamController;
@@ -190,10 +189,6 @@ public:
 
 	// Trigger global shutdown for the DLL
 	virtual bool BShutdownIfAllPipesClosed() = 0;
-
-#ifdef _PS3
-	virtual ISteamPS3OverlayRender *GetISteamPS3OverlayRender() = 0;
-#endif
 
 	// Expose HTTP interface
 	virtual ISteamHTTP *GetISteamHTTP( HSteamUser hSteamuser, HSteamPipe hSteamPipe, const char *pchVersion ) = 0;
