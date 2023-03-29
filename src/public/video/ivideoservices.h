@@ -155,16 +155,16 @@ namespace VideoSoundDeviceOperation
 {
 	enum EVideoSoundDeviceOperation_t
 	{
-		SET_DIRECT_SOUND_DEVICE = 0,			// Windows option
-		SET_MILES_SOUND_DEVICE,					// Supported by RAD
-		HOOK_X_AUDIO,							// Xbox Option
-		SET_SOUND_MANAGER_DEVICE,				// OSX Option
-		SET_LIB_AUDIO_DEVICE,					// PS3 Option
-		SET_SDL_SOUND_DEVICE,					// SDL Audio
-		SET_SDL_PARAMS,							// SDL Audio params
-		SDLMIXER_CALLBACK,						// SDLMixer callback
+		SET_DIRECT_SOUND_DEVICE = 0,         // Windows option
+		SET_MILES_SOUND_DEVICE = 1,	     // Supported by RAD
+		HOOK_X_AUDIO = 2,		     // Xbox Option
+		SET_SOUND_MANAGER_DEVICE = 3,        // OSX Option
+		SET_LIB_AUDIO_DEVICE = 4,	     // PS3 Option
+		SET_SDL_SOUND_DEVICE = 5,	     // SDL Audio
+		SET_SDL_PARAMS = 6,	             // SDL Audio params
+		SDLMIXER_CALLBACK = 7,               // SDLMixer callback
 				
-		OPERATION_COUNT
+		OPERATION_COUNT = 8
 	};
 };
 typedef VideoSoundDeviceOperation::EVideoSoundDeviceOperation_t VideoSoundDeviceOperation_t;
