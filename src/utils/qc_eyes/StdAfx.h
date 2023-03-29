@@ -3,6 +3,7 @@
 //  or project specific include files that are used frequently, but
 //      are changed infrequently
 //
+#define AFX_STDAFX_H__88FA48B3_A92C_49CA_8A82_50D120A84756__INCLUDED_ // HACK: This is here so cmake can load, not sure why it doesn't if not present but ok
 
 #if !defined(AFX_STDAFX_H__88FA48B3_A92C_49CA_8A82_50D120A84756__INCLUDED_)
 #define AFX_STDAFX_H__88FA48B3_A92C_49CA_8A82_50D120A84756__INCLUDED_

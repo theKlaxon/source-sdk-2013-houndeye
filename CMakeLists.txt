@@ -45,7 +45,7 @@ set_property(
 
 set(SRCDIR "${CMAKE_CURRENT_LIST_DIR}/src")
 set(GAMEDIR "${CMAKE_CURRENT_LIST_DIR}/game")
-set(THIRDPARTYDIR "${SRCDIR}/thirdparty")
+set(THIRDPARTYDIR "${CMAKE_CURRENT_LIST_DIR}/thirdparty")
 
 # Compile options that are populated and set for each target depending on their type
 set(ADDITIONAL_COMPILE_OPTIONS_EXE)
