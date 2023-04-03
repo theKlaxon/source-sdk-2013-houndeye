@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: Utility to interrogate and modify the data in the OSX IPC Server
+// Purpose: Case insensitive file system wrapper for case-sensitive OSes
 //
 // $NoKeywords: $
 //=============================================================================

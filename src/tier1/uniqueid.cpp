@@ -65,17 +65,7 @@ bool UniqueIdFromString( UniqueId_t *pDest, const char *pBuf, int nMaxLen )
 		return false;
 	}
 #else
-	// X360TBD: Need a real UUID Implementation
-	// For now, use crc to generate a unique ID from the UUID string.
-	Q_memset( pDest, 0, sizeof( UniqueId_t ) );
-	if ( nMaxLen > 0 )
-	{
-		CRC32_t crc;
-		CRC32_Init( &crc );
-		CRC32_ProcessBuffer( &crc, pBuf, nMaxLen );
-		CRC32_Final( &crc );
-		Q_memcpy( pDest, &crc, sizeof( CRC32_t ) );
-	}
+  #error "need UUID implementation"
 #endif
 
 	return true;

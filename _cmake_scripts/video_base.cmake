@@ -12,7 +12,6 @@ endif()
 
 
 add_compile_definitions(
-	"$<${IS_OSX}:QUICKTIME_VIDEO;FORCE_QUICKTIME>"
 	$<$<AND:${QUICKTIME_WINDOWS},${IS_WINDOWS}>:BINK_VIDEO>
 	$<${IS_LINUX}:BINK_VIDEO>
 	AVI_VIDEO

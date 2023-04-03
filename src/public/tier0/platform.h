@@ -83,10 +83,6 @@
 
 #define IsPC() true
 #define IsConsole() false
-#define IsX360() false
-#define IsGameConsole()	false
-#define IsPS3() false
-#define IsOSX() false
 
 #ifdef _WIN32
 	#define IsLinux() false

@@ -128,17 +128,6 @@ extern const ALIGN16 int32 g_SIMD_Low16BitsMask[] ALIGN16_POST;			// 0xffff x 4
 // to mask out the tail, g_SIMD_SkipTailMask[N & 3] what you want to use for the last iteration.
 extern const int32 ALIGN16 g_SIMD_SkipTailMask[4][4] ALIGN16_POST;
 
-// Define prefetch macros.
-// The characteristics of cache and prefetch are completely 
-// different between the different platforms, so you DO NOT
-// want to just define one macro that maps to every platform
-// intrinsic under the hood -- you need to prefetch at different
-// intervals between x86 and PPC, for example, and that is
-// a higher level code change. 
-// On the other hand, I'm tired of typing #ifdef _X360
-// all over the place, so this is just a nop on Intel, PS3.
-#define PREFETCH360(x,y) // nothing
-
 #if USE_STDC_FOR_SIMD
 
 //---------------------------------------------------------------------

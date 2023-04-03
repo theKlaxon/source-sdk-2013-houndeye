@@ -5,17 +5,6 @@ string(REPLACE "-O3" "-O2" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
 
 find_package(Threads REQUIRED)
 
-if (${IS_XCODE})
-	if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
-		message(
-			FATAL_ERROR
-			"  Source SDK 2013 only supports 32-bit generation\n"
-			"  Please add -DCMAKE_OSX_ARCHITECTURES=i386 for Xcode generation\n"
-			"  NOTE: Only Xcode 9.4.1 and earlier support i386"
-		)
-	endif()
-endif()
-
 add_compile_options(
 	-g
 	-m32
@@ -40,11 +29,6 @@ add_compile_definitions(
 	NO_MALLOC_OVERRIDE
 	$<${IS_LINUX}:_LINUX>
 	$<${IS_LINUX}:LINUX>
-	$<${IS_OSX}:_OSX>
-	$<${IS_OSX}:OSX>
-	$<${IS_OSX}:_DARWIN_UNLIMITED_SELECT>
-	$<${IS_OSX}:FD_SETSIZE=10240>
-	$<${IS_OSX}:OVERRIDE_V_DEFINES>
 )
 
 if (${IS_LINUX})
@@ -86,7 +70,3 @@ list(
 	tier1
 	vstdlib
 )
-
-if (${IS_OSX})
-	set(CMAKE_SHARED_MODULE_SUFFIX ".dylib")
-endif()

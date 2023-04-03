@@ -154,8 +154,4 @@ target_compile_definitions(
 target_link_libraries(
 	tier1 INTERFACE
 	$<${IS_WINDOWS}:Rpcrt4>
-
-	# strtools depends on this, so make it an interface
-	# instead of linking it everywhere
-	$<${IS_OSX}:iconv>
 )

@@ -182,24 +182,24 @@ enum EBeginAuthSessionResult
 // Callback values for callback ValidateAuthTicketResponse_t which is a response to BeginAuthSession
 enum EAuthSessionResponse
 {
-	k_EAuthSessionResponseOK = 0,							// Steam has verified the user is online, the ticket is valid and ticket has not been reused.
-	k_EAuthSessionResponseUserNotConnectedToSteam = 1,		// The user in question is not connected to steam
-	k_EAuthSessionResponseNoLicenseOrExpired = 2,			// The license has expired.
-	k_EAuthSessionResponseVACBanned = 3,					// The user is VAC banned for this game.
-	k_EAuthSessionResponseLoggedInElseWhere = 4,			// The user account has logged in elsewhere and the session containing the game instance has been disconnected.
-	k_EAuthSessionResponseVACCheckTimedOut = 5,				// VAC has been unable to perform anti-cheat checks on this user
-	k_EAuthSessionResponseAuthTicketCanceled = 6,			// The ticket has been canceled by the issuer
-	k_EAuthSessionResponseAuthTicketInvalidAlreadyUsed = 7,	// This ticket has already been used, it is not valid.
-	k_EAuthSessionResponseAuthTicketInvalid = 8,			// This ticket is not from a user instance currently connected to steam.
-	k_EAuthSessionResponsePublisherIssuedBan = 9,			// The user is banned for this game. The ban came via the web api and not VAC
+	k_EAuthSessionResponseOK = 0,                           // Steam has verified the user is online, the ticket is valid and ticket has not been reused.
+	k_EAuthSessionResponseUserNotConnectedToSteam = 1,      // The user in question is not connected to steam
+	k_EAuthSessionResponseNoLicenseOrExpired = 2,           // The license has expired.
+	k_EAuthSessionResponseVACBanned = 3,                    // The user is VAC banned for this game.
+	k_EAuthSessionResponseLoggedInElseWhere = 4,            // The user account has logged in elsewhere and the session containing the game instance has been disconnected.
+	k_EAuthSessionResponseVACCheckTimedOut = 5,             // VAC has been unable to perform anti-cheat checks on this user
+	k_EAuthSessionResponseAuthTicketCanceled = 6,           // The ticket has been canceled by the issuer
+	k_EAuthSessionResponseAuthTicketInvalidAlreadyUsed = 7, // This ticket has already been used, it is not valid.
+	k_EAuthSessionResponseAuthTicketInvalid = 8,            // This ticket is not from a user instance currently connected to steam.
+	k_EAuthSessionResponsePublisherIssuedBan = 9,           // The user is banned for this game. The ban came via the web api and not VAC
 };
 
 // results from UserHasLicenseForApp
 enum EUserHasLicenseForAppResult
 {
-	k_EUserHasLicenseResultHasLicense = 0,					// User has a license for specified app
-	k_EUserHasLicenseResultDoesNotHaveLicense = 1,			// User does not have a license for the specified app
-	k_EUserHasLicenseResultNoAuth = 2,						// User has not been authenticated
+	k_EUserHasLicenseResultHasLicense = 0,         // User has a license for specified app
+	k_EUserHasLicenseResultDoesNotHaveLicense = 1, // User does not have a license for the specified app
+	k_EUserHasLicenseResultNoAuth = 2,             // User has not been authenticated
 };
 
 
@@ -207,15 +207,15 @@ enum EUserHasLicenseForAppResult
 enum EAccountType
 {
 	k_EAccountTypeInvalid = 0,			
-	k_EAccountTypeIndividual = 1,		// single user account
-	k_EAccountTypeMultiseat = 2,		// multiseat (e.g. cybercafe) account
-	k_EAccountTypeGameServer = 3,		// game server account
-	k_EAccountTypeAnonGameServer = 4,	// anonymous game server account
-	k_EAccountTypePending = 5,			// pending
-	k_EAccountTypeContentServer = 6,	// content server
+	k_EAccountTypeIndividual = 1,                  // single user account
+	k_EAccountTypeMultiseat = 2,                   // multiseat (e.g. cybercafe) account
+	k_EAccountTypeGameServer = 3,                  // game server account
+	k_EAccountTypeAnonGameServer = 4,              // anonymous game server account
+	k_EAccountTypePending = 5,                     // pending
+	k_EAccountTypeContentServer = 6,	       // content server
 	k_EAccountTypeClan = 7,
 	k_EAccountTypeChat = 8,
-	k_EAccountTypeConsoleUser = 9,		// Fake SteamID for local PSN account on PS3 or Live account on 360, etc.
+	k_EAccountTypeConsoleUser [[deprecated]] = 9,  // Fake SteamID for local PSN account on PS3 or Live account on 360, etc.
 	k_EAccountTypeAnonUser = 10,
 
 	// Max of 16 items in this field
@@ -229,11 +229,11 @@ enum EAccountType
 //-----------------------------------------------------------------------------
 enum EAppReleaseState
 {
-	k_EAppReleaseState_Unknown			= 0,	// unknown, required appinfo or license info is missing
-	k_EAppReleaseState_Unavailable		= 1,	// even if user 'just' owns it, can see game at all
-	k_EAppReleaseState_Prerelease		= 2,	// can be purchased and is visible in games list, nothing else. Common appInfo section released
-	k_EAppReleaseState_PreloadOnly		= 3,	// owners can preload app, not play it. AppInfo fully released.
-	k_EAppReleaseState_Released			= 4,	// owners can download and play app.
+	k_EAppReleaseState_Unknown = 0,     // unknown, required appinfo or license info is missing
+	k_EAppReleaseState_Unavailable = 1, // even if user 'just' owns it, can see game at all
+	k_EAppReleaseState_Prerelease = 2,  // can be purchased and is visible in games list, nothing else. Common appInfo section released
+	k_EAppReleaseState_PreloadOnly = 3, // owners can preload app, not play it. AppInfo fully released.
+	k_EAppReleaseState_Released = 4,    // owners can download and play app.
 };
 
 
@@ -242,22 +242,22 @@ enum EAppReleaseState
 //-----------------------------------------------------------------------------
 enum EAppOwnershipFlags
 {
-	k_EAppOwnershipFlags_None				= 0x0000,	// unknown
-	k_EAppOwnershipFlags_OwnsLicense		= 0x0001,	// owns license for this game
-	k_EAppOwnershipFlags_FreeLicense		= 0x0002,	// not paid for game
-	k_EAppOwnershipFlags_RegionRestricted	= 0x0004,	// owns app, but not allowed to play in current region
-	k_EAppOwnershipFlags_LowViolence		= 0x0008,	// only low violence version
-	k_EAppOwnershipFlags_InvalidPlatform	= 0x0010,	// app not supported on current platform
-	k_EAppOwnershipFlags_SharedLicense		= 0x0020,	// license was granted by authorized local device
-	k_EAppOwnershipFlags_FreeWeekend		= 0x0040,	// owned by a free weekend licenses
-	k_EAppOwnershipFlags_RetailLicense		= 0x0080,	// has a retail license for game, (CD-Key etc)
-	k_EAppOwnershipFlags_LicenseLocked		= 0x0100,	// shared license is locked (in use) by other user
-	k_EAppOwnershipFlags_LicensePending		= 0x0200,	// owns app, but transaction is still pending. Can't install or play
-	k_EAppOwnershipFlags_LicenseExpired		= 0x0400,	// doesn't own app anymore since license expired
-	k_EAppOwnershipFlags_LicensePermanent	= 0x0800,	// permanent license, not borrowed, or guest or freeweekend etc
-	k_EAppOwnershipFlags_LicenseRecurring	= 0x1000,	// Recurring license, user is charged periodically
-	k_EAppOwnershipFlags_LicenseCanceled	= 0x2000,	// Mark as canceled, but might be still active if recurring
-	k_EAppOwnershipFlags_AutoGrant			= 0x4000,	// Ownership is based on any kind of autogrant license
+	k_EAppOwnershipFlags_None = 0x0000,             // unknown
+	k_EAppOwnershipFlags_OwnsLicense = 0x0001,      // owns license for this game
+	k_EAppOwnershipFlags_FreeLicense = 0x0002,      // not paid for game
+	k_EAppOwnershipFlags_RegionRestricted = 0x0004, // owns app, but not allowed to play in current region
+	k_EAppOwnershipFlags_LowViolence = 0x0008,      // only low violence version
+	k_EAppOwnershipFlags_InvalidPlatform = 0x0010,  // app not supported on current platform
+	k_EAppOwnershipFlags_SharedLicense = 0x0020,    // license was granted by authorized local device
+	k_EAppOwnershipFlags_FreeWeekend = 0x0040,      // owned by a free weekend licenses
+	k_EAppOwnershipFlags_RetailLicense = 0x0080,    // has a retail license for game, (CD-Key etc)
+	k_EAppOwnershipFlags_LicenseLocked = 0x0100,    // shared license is locked (in use) by other user
+	k_EAppOwnershipFlags_LicensePending = 0x0200,   // owns app, but transaction is still pending. Can't install or play
+	k_EAppOwnershipFlags_LicenseExpired = 0x0400,   // doesn't own app anymore since license expired
+	k_EAppOwnershipFlags_LicensePermanent = 0x0800, // permanent license, not borrowed, or guest or freeweekend etc
+	k_EAppOwnershipFlags_LicenseRecurring = 0x1000, // Recurring license, user is charged periodically
+	k_EAppOwnershipFlags_LicenseCanceled = 0x2000,  // Mark as canceled, but might be still active if recurring
+	k_EAppOwnershipFlags_AutoGrant = 0x4000,        // Ownership is based on any kind of autogrant license
 };
 
 
@@ -266,24 +266,24 @@ enum EAppOwnershipFlags
 //-----------------------------------------------------------------------------
 enum EAppType
 {
-	k_EAppType_Invalid				= 0x000,	// unknown / invalid
-	k_EAppType_Game					= 0x001,	// playable game, default type
-	k_EAppType_Application			= 0x002,	// software application
-	k_EAppType_Tool					= 0x004,	// SDKs, editors & dedicated servers
-	k_EAppType_Demo					= 0x008,	// game demo
-	k_EAppType_Media_DEPRECATED		= 0x010,	// legacy - was used for game trailers, which are now just videos on the web
-	k_EAppType_DLC					= 0x020,	// down loadable content
-	k_EAppType_Guide				= 0x040,	// game guide, PDF etc
-	k_EAppType_Driver				= 0x080,	// hardware driver updater (ATI, Razor etc)
-	k_EAppType_Config				= 0x100,	// hidden app used to config Steam features (backpack, sales, etc)
-	k_EAppType_Hardware				= 0x200,	// a hardware device (Steam Machine, Steam Controller, Steam Link, etc.)
+	k_EAppType_Invalid          = 0x000,      // unknown / invalid
+	k_EAppType_Game             = 0x001,      // playable game, default type
+	k_EAppType_Application      = 0x002,      // software application
+	k_EAppType_Tool             = 0x004,      // SDKs, editors & dedicated servers
+	k_EAppType_Demo             = 0x008,      // game demo
+	k_EAppType_Media_DEPRECATED = 0x010,      // legacy - was used for game trailers, which are now just videos on the web
+	k_EAppType_DLC              = 0x020,      // down loadable content
+	k_EAppType_Guide            = 0x040,      // game guide, PDF etc
+	k_EAppType_Driver           = 0x080,      // hardware driver updater (ATI, Razor etc)
+	k_EAppType_Config           = 0x100,      // hidden app used to config Steam features (backpack, sales, etc)
+	k_EAppType_Hardware         = 0x200,      // a hardware device (Steam Machine, Steam Controller, Steam Link, etc.)
 	// 0x400 is up for grabs here
-	k_EAppType_Video				= 0x800,	// A video component of either a Film or TVSeries (may be the feature, an episode, preview, making-of, etc)
-	k_EAppType_Plugin				= 0x1000,	// Plug-in types for other Apps
-	k_EAppType_Music				= 0x2000,	// Music files
+	k_EAppType_Video            = 0x800,      // A video component of either a Film or TVSeries (may be the feature, an episode, preview, making-of, etc)
+	k_EAppType_Plugin           = 0x1000,     // Plug-in types for other Apps
+	k_EAppType_Music            = 0x2000,     // Music files
 		
-	k_EAppType_Shortcut				= 0x40000000,	// just a shortcut, client side only
-	k_EAppType_DepotOnly			= 0x80000000,	// placeholder since depots and apps share the same namespace
+	k_EAppType_Shortcut         = 0x40000000, // just a shortcut, client side only
+	k_EAppType_DepotOnly        = 0x80000000, // placeholder since depots and apps share the same namespace
 };
 
 
@@ -312,22 +312,22 @@ enum ESteamUserStatType
 //-----------------------------------------------------------------------------
 enum EChatEntryType
 {
-	k_EChatEntryTypeInvalid = 0, 
-	k_EChatEntryTypeChatMsg = 1,		// Normal text message from another user
-	k_EChatEntryTypeTyping = 2,			// Another user is typing (not used in multi-user chat)
-	k_EChatEntryTypeInviteGame = 3,		// Invite from other user into that users current game
-	k_EChatEntryTypeEmote = 4,			// text emote message (deprecated, should be treated as ChatMsg)
-	//k_EChatEntryTypeLobbyGameStart = 5,	// lobby game is starting (dead - listen for LobbyGameCreated_t callback instead)
+	k_EChatEntryTypeInvalid = 0,
+	k_EChatEntryTypeChatMsg = 1,          // Normal text message from another user
+	k_EChatEntryTypeTyping = 2,           // Another user is typing (not used in multi-user chat)
+	k_EChatEntryTypeInviteGame = 3,       // Invite from other user into that users current game
+	k_EChatEntryTypeEmote = 4,            // text emote message (deprecated, should be treated as ChatMsg)
+	//k_EChatEntryTypeLobbyGameStart = 5  // lobby game is starting (dead - listen for LobbyGameCreated_t callback instead)
 	k_EChatEntryTypeLeftConversation = 6, // user has left the conversation ( closed chat window )
 	// Above are previous FriendMsgType entries, now merged into more generic chat entry types
-	k_EChatEntryTypeEntered = 7,		// user has entered the conversation (used in multi-user chat and group chat)
-	k_EChatEntryTypeWasKicked = 8,		// user was kicked (data: 64-bit steamid of actor performing the kick)
-	k_EChatEntryTypeWasBanned = 9,		// user was banned (data: 64-bit steamid of actor performing the ban)
-	k_EChatEntryTypeDisconnected = 10,	// user disconnected
-	k_EChatEntryTypeHistoricalChat = 11,	// a chat message from user's chat history or offilne message
+	k_EChatEntryTypeEntered = 7,          // user has entered the conversation (used in multi-user chat and group chat)
+	k_EChatEntryTypeWasKicked = 8,        // user was kicked (data: 64-bit steamid of actor performing the kick)
+	k_EChatEntryTypeWasBanned = 9,        // user was banned (data: 64-bit steamid of actor performing the ban)
+	k_EChatEntryTypeDisconnected = 10,    // user disconnected
+	k_EChatEntryTypeHistoricalChat = 11,  // a chat message from user's chat history or offilne message
 	k_EChatEntryTypeReserved1 = 12,
 	k_EChatEntryTypeReserved2 = 13,
-	k_EChatEntryTypeLinkBlocked = 14, // a link was removed by the chat filter.
+	k_EChatEntryTypeLinkBlocked = 14,     // a link was removed by the chat filter.
 };
 
 
@@ -336,20 +336,20 @@ enum EChatEntryType
 //-----------------------------------------------------------------------------
 enum EChatRoomEnterResponse
 {
-	k_EChatRoomEnterResponseSuccess = 1,		// Success
-	k_EChatRoomEnterResponseDoesntExist = 2,	// Chat doesn't exist (probably closed)
-	k_EChatRoomEnterResponseNotAllowed = 3,		// General Denied - You don't have the permissions needed to join the chat
-	k_EChatRoomEnterResponseFull = 4,			// Chat room has reached its maximum size
-	k_EChatRoomEnterResponseError = 5,			// Unexpected Error
-	k_EChatRoomEnterResponseBanned = 6,			// You are banned from this chat room and may not join
-	k_EChatRoomEnterResponseLimited = 7,		// Joining this chat is not allowed because you are a limited user (no value on account)
-	k_EChatRoomEnterResponseClanDisabled = 8,	// Attempt to join a clan chat when the clan is locked or disabled
-	k_EChatRoomEnterResponseCommunityBan = 9,	// Attempt to join a chat when the user has a community lock on their account
+	k_EChatRoomEnterResponseSuccess = 1,           // Success
+	k_EChatRoomEnterResponseDoesntExist = 2,       // Chat doesn't exist (probably closed)
+	k_EChatRoomEnterResponseNotAllowed = 3,        // General Denied - You don't have the permissions needed to join the chat
+	k_EChatRoomEnterResponseFull = 4,              // Chat room has reached its maximum size
+	k_EChatRoomEnterResponseError = 5,             // Unexpected Error
+	k_EChatRoomEnterResponseBanned = 6,            // You are banned from this chat room and may not join
+	k_EChatRoomEnterResponseLimited = 7,           // Joining this chat is not allowed because you are a limited user (no value on account)
+	k_EChatRoomEnterResponseClanDisabled = 8,      // Attempt to join a clan chat when the clan is locked or disabled
+	k_EChatRoomEnterResponseCommunityBan = 9,      // Attempt to join a chat when the user has a community lock on their account
 	k_EChatRoomEnterResponseMemberBlockedYou = 10, // Join failed - some member in the chat has blocked you from joining
 	k_EChatRoomEnterResponseYouBlockedMember = 11, // Join failed - you have blocked some member already in the chat
-	// k_EChatRoomEnterResponseNoRankingDataLobby = 12,  // No longer used
-	// k_EChatRoomEnterResponseNoRankingDataUser = 13,  //  No longer used
-	// k_EChatRoomEnterResponseRankOutOfRange = 14, //  No longer used
+//	 k_EChatRoomEnterResponseNoRankingDataLobby = 12,  // No longer used
+//	 k_EChatRoomEnterResponseNoRankingDataUser = 13,  //  No longer used
+//	 k_EChatRoomEnterResponseRankOutOfRange = 14, //  No longer used
 };
 
 
@@ -414,19 +414,19 @@ enum ENotificationPosition
 //-----------------------------------------------------------------------------
 enum EBroadcastUploadResult
 {
-	k_EBroadcastUploadResultNone = 0,	// broadcast state unknown
-	k_EBroadcastUploadResultOK = 1,		// broadcast was good, no problems
-	k_EBroadcastUploadResultInitFailed = 2,	// broadcast init failed
-	k_EBroadcastUploadResultFrameFailed = 3,	// broadcast frame upload failed
-	k_EBroadcastUploadResultTimeout = 4,	// broadcast upload timed out
-	k_EBroadcastUploadResultBandwidthExceeded = 5,	// broadcast send too much data
-	k_EBroadcastUploadResultLowFPS = 6,	// broadcast FPS too low
-	k_EBroadcastUploadResultMissingKeyFrames = 7,	// broadcast sending not enough key frames
-	k_EBroadcastUploadResultNoConnection = 8,	// broadcast client failed to connect to relay
-	k_EBroadcastUploadResultRelayFailed = 9,	// relay dropped the upload
-	k_EBroadcastUploadResultSettingsChanged = 10,	// the client changed broadcast settings 
-	k_EBroadcastUploadResultMissingAudio = 11,	// client failed to send audio data
-	k_EBroadcastUploadResultTooFarBehind = 12,	// clients was too slow uploading
+	k_EBroadcastUploadResultNone = 0,              // broadcast state unknown
+	k_EBroadcastUploadResultOK = 1,                // broadcast was good, no problems
+	k_EBroadcastUploadResultInitFailed = 2,        // broadcast init failed
+	k_EBroadcastUploadResultFrameFailed = 3,       // broadcast frame upload failed
+	k_EBroadcastUploadResultTimeout = 4,           // broadcast upload timed out
+	k_EBroadcastUploadResultBandwidthExceeded = 5, // broadcast send too much data
+	k_EBroadcastUploadResultLowFPS = 6,            // broadcast FPS too low
+	k_EBroadcastUploadResultMissingKeyFrames = 7,  // broadcast sending not enough key frames
+	k_EBroadcastUploadResultNoConnection = 8,      // broadcast client failed to connect to relay
+	k_EBroadcastUploadResultRelayFailed = 9,       // relay dropped the upload
+	k_EBroadcastUploadResultSettingsChanged = 10,  // the client changed broadcast settings
+	k_EBroadcastUploadResultMissingAudio = 11,     // client failed to send audio data
+	k_EBroadcastUploadResultTooFarBehind = 12,     // clients was too slow uploading
 };
 
 
