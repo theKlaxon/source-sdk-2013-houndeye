@@ -1196,7 +1196,7 @@ void FileOpenDialog::PopulateFileList()
 			const char *pszFileName = g_pFullFileSystem->FindFirst( dir, &findHandle );
 			while ( pszFileName )
 			{
-				if ( !g_pFullFileSystem->FindIsDirectory( findHandle ) || !IsOSX() )
+				if ( g_pFullFileSystem->FindIsDirectory( findHandle ) )
 				{
 					char pFullPath[MAX_PATH];
 					Q_snprintf( pFullPath, MAX_PATH, "%s%s", currentDir, pszFileName );

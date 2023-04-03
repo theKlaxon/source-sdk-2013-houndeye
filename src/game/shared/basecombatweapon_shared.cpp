@@ -1624,36 +1624,31 @@ void CBaseCombatWeapon::ItemPreFrame( void )
 	MaintainIdealActivity();
 
 #ifndef CLIENT_DLL
-#ifndef HL2_EPISODIC
-	if ( IsX360() ) // FIXME: aurora-source: Figure this out
-#endif
-	{
-		// If we haven't displayed the hint enough times yet, it's time to try to 
-		// display the hint, and the player is not standing still, try to show a hud hint.
-		// If the player IS standing still, assume they could change away from this weapon at
-		// any second.
-		if( (!m_bAltFireHudHintDisplayed || !m_bReloadHudHintDisplayed) && gpGlobals->curtime > m_flHudHintMinDisplayTime && gpGlobals->curtime > m_flHudHintPollTime && GetOwner() && GetOwner()->IsPlayer() )
-		{
-			CBasePlayer *pPlayer = (CBasePlayer*)(GetOwner());
+        // If we haven't displayed the hint enough times yet, it's time to try to
+        // display the hint, and the player is not standing still, try to show a hud hint.
+        // If the player IS standing still, assume they could change away from this weapon at
+        // any second.
+        if( (!m_bAltFireHudHintDisplayed || !m_bReloadHudHintDisplayed) && gpGlobals->curtime > m_flHudHintMinDisplayTime && gpGlobals->curtime > m_flHudHintPollTime && GetOwner() && GetOwner()->IsPlayer() )
+        {
+                CBasePlayer *pPlayer = (CBasePlayer*)(GetOwner());
 
-			if( pPlayer && pPlayer->GetStickDist() > 0.0f )
-			{
-				// If the player is moving, they're unlikely to switch away from the current weapon
-				// the moment this weapon displays its HUD hint.
-				if( ShouldDisplayReloadHUDHint() )
-				{
-					DisplayReloadHudHint();
-				}
-				else if( ShouldDisplayAltFireHUDHint() )
-				{
-					DisplayAltFireHudHint();
-				}
-			}
-			else
-			{
-				m_flHudHintPollTime = gpGlobals->curtime + 2.0f;
-			}
-		}
+                if( pPlayer && pPlayer->GetStickDist() > 0.0f )
+                {
+                        // If the player is moving, they're unlikely to switch away from the current weapon
+                        // the moment this weapon displays its HUD hint.
+                        if( ShouldDisplayReloadHUDHint() )
+                        {
+                                DisplayReloadHudHint();
+                        }
+                        else if( ShouldDisplayAltFireHUDHint() )
+                        {
+                                DisplayAltFireHudHint();
+                        }
+                }
+                else
+                {
+                        m_flHudHintPollTime = gpGlobals->curtime + 2.0f;
+                }
 	}
 #endif
 }
@@ -1706,16 +1701,7 @@ void CBaseCombatWeapon::ItemPostFrame( void )
 		}
 		else
 		{
-			// FIXME: This isn't necessarily true if the weapon doesn't have a secondary fire!
-			// For instance, the crossbow doesn't have a 'real' secondary fire, but it still 
-			// stops the crossbow from firing on the 360 if the player chooses to hold down their
-			// zoom button. (sjb) Orange Box 7/25/2007
-#if !defined(CLIENT_DLL)
-			if( !IsX360() || !ClassMatches("weapon_crossbow") )
-#endif
-			{
-				bFired = ShouldBlockPrimaryFire();
-			}
+                        bFired = ShouldBlockPrimaryFire();
 
 			SecondaryAttack();
 
