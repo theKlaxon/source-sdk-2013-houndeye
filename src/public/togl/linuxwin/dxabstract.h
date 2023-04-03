@@ -521,13 +521,7 @@ struct TOGL_CLASS IDirect3DDevice9 : public IUnknown
 
 	FORCEINLINE void TOGLMETHODCALLTYPE SetSamplerStates(DWORD Sampler, DWORD AddressU, DWORD AddressV, DWORD AddressW, DWORD MinFilter, DWORD MagFilter, DWORD MipFilter );
 	void TOGLMETHODCALLTYPE SetSamplerStatesNonInline(DWORD Sampler, DWORD AddressU, DWORD AddressV, DWORD AddressW, DWORD MinFilter, DWORD MagFilter, DWORD MipFilter );
-			
-#ifdef OSX
-	// required for 10.6 support
-	HRESULT TOGLMETHODCALLTYPE FlushIndexBindings(void);		// push index buffer (set index ptr)
-	HRESULT	TOGLMETHODCALLTYPE FlushVertexBindings(uint baseVertexIndex);	// push vertex streams (set attrib ptrs)
-#endif
-
+        
 	// Draw.
     HRESULT TOGLMETHODCALLTYPE DrawPrimitive(D3DPRIMITIVETYPE PrimitiveType,UINT StartVertex,UINT PrimitiveCount);
     HRESULT TOGLMETHODCALLTYPE DrawIndexedPrimitive(D3DPRIMITIVETYPE PrimitiveType,INT BaseVertexIndex,UINT MinVertexIndex,UINT NumVertices,UINT startIndex,UINT primCount);

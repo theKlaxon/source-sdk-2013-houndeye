@@ -9,11 +9,7 @@
 
 //#include <stdafx.h>
 #include <stdlib.h>
-#ifdef OSX
-#include <malloc/malloc.h>
-#else
 #include <malloc.h>
-#endif
 #include "builddisp.h"
 #include "collisionutils.h"
 #include "tier1/strtools.h"

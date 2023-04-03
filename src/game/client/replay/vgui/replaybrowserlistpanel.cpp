@@ -379,7 +379,7 @@ CReplayBrowserThumbnail *CReplayListPanel::FindThumbnailAtCursor( int x, int y )
 
 #if defined( WIN32 )
 	#define Q_wcstok( text, delimiters, context ) wcstok( text, delimiters ); context;
-#elif defined( OSX ) || defined( LINUX )
+#elif defined( LINUX )
 	#define Q_wcstok( text, delimiters, context ) wcstok( text, delimiters, context )
 #endif
 

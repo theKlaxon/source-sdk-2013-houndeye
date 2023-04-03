@@ -31,9 +31,6 @@
 #define MEM_DEBUG_CLASSNAME 1
 
 #include <stddef.h>
-#if defined( OSX )
-#include <malloc/malloc.h>
-#endif
 
 #include "tier0/mem.h"
 
@@ -465,12 +462,6 @@ struct MemAllocFileLine_t
 
 #elif defined( POSIX )
 
-#if defined( OSX )
-// Mac always aligns allocs, don't need to call posix_memalign which doesn't exist in 10.5.8 which TF2 still needs to run on
-//inline void *memalign(size_t alignment, size_t size) {void *pTmp=NULL; posix_memalign(&pTmp, alignment, size); return pTmp;}
-inline void *memalign(size_t alignment, size_t size) {void *pTmp=NULL; pTmp = malloc(size); return pTmp;}
-#endif
-
 inline void *_aligned_malloc( size_t nSize, size_t align )															{ return memalign( align, nSize ); }
 inline void _aligned_free( void *ptr )																				{ free( ptr ); }
 
@@ -481,11 +472,7 @@ inline void *MemAlloc_AllocAligned( size_t size, size_t align, const char *pszFi
 inline void *MemAlloc_AllocAlignedFileLine( size_t size, size_t align, const char *pszFile = NULL, int nLine = 0 )	{ return memalign( align, size ); }
 inline void MemAlloc_FreeAligned( void *pMemBlock, const char *pszFile = NULL, int nLine = 0 ) 						{ free( pMemBlock ); }
 
-#if defined( OSX )
-inline size_t _msize( void *ptr )																					{ return malloc_size( ptr ); }
-#else
 inline size_t _msize( void *ptr )																					{ return malloc_usable_size( ptr ); }
-#endif
 
 inline void *MemAlloc_ReallocAligned( void *ptr, size_t size, size_t align )
 {

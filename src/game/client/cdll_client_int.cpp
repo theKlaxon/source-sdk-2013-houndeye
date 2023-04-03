@@ -1919,10 +1919,7 @@ void CHLClient::PrecacheMaterial( const char *pMaterialName )
 	}
 	else
 	{
-		if (IsOSX())
-		{
-			printf("\n ##### CHLClient::PrecacheMaterial could not find material %s (%s)", pMaterialName, pTempBuf );
-		}
+                printf("\n ##### CHLClient::PrecacheMaterial could not find material %s (%s)", pMaterialName, pTempBuf );
 	}
 }
 

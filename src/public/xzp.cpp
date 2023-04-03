@@ -8,11 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#ifdef OSX
-#include <malloc/malloc.h>
-#else
 #include <malloc.h>
-#endif
 #ifdef _WIN32
 #include <process.h>
 #include <io.h>

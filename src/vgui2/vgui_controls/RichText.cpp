@@ -1724,7 +1724,7 @@ void RichText::OnKeyCodeTyped(KeyCode code)
 	bool winkey = (input()->IsKeyDown(KEY_LWIN) || input()->IsKeyDown(KEY_RWIN));
 	bool fallThrough = false;
 		
-	if ( ctrl || ( winkey && IsOSX() ) )
+	if ( ctrl )
 	{
 		switch(code)
 		{

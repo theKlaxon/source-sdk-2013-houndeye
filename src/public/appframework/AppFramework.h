@@ -52,13 +52,6 @@ void AppShutdown( CAppSystemGroup *pAppSystemGroup );
 	{																							\
 		return AppMain( hInstance, hPrevInstance, lpCmdLine, nCmdShow, &_globalVarName );		\
 	}
-#elif defined( OSX )
-#define DEFINE_WINDOWED_APPLICATION_OBJECT_GLOBALVAR( _globalVarName ) \
-	int main( int argc, char **argv )										\
-	{																							\
-		extern int ValveCocoaMain( int argc, char **argv, CAppSystemGroup *pAppSystemGroup ); \
-		return ValveCocoaMain( argc, argv, &_globalVarName ); \
-	}
 #elif defined( LINUX )
 #define DEFINE_WINDOWED_APPLICATION_OBJECT_GLOBALVAR( _globalVarName ) \
 	int main( int argc, char **argv )										\

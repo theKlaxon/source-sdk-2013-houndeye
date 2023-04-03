@@ -557,9 +557,7 @@ void FileOpenDialog::Init( const char *title, KeyValues *pContextKeyValues )
 	m_pNewFolderButton->GetTooltip()->SetText( "#FileOpenDialog_ToolTip_NewFolder" );
 	m_pOpenInExplorerButton = new Button( this, "OpenInExplorerButton", "", this );
 
-#if defined ( OSX )	
-	m_pOpenInExplorerButton->GetTooltip()->SetText( "#FileOpenDialog_ToolTip_OpenInFinderButton" );
-#elif defined ( POSIX )
+#if defined ( POSIX )
 	m_pOpenInExplorerButton->GetTooltip()->SetText( "#FileOpenDialog_ToolTip_OpenInDesktopManagerButton" );
 #else // Assume Windows / Explorer
 	m_pOpenInExplorerButton->GetTooltip()->SetText( "#FileOpenDialog_ToolTip_OpenInExplorerButton" );
@@ -642,7 +640,7 @@ void FileOpenDialog::Init( const char *title, KeyValues *pContextKeyValues )
 	// Set our starting path to the current directory
 	char pLocalPath[255];
 	g_pFullFileSystem->GetCurrentDirectory( pLocalPath , 255 );
-	if ( !pLocalPath[0] || ( IsOSX() && V_strlen(pLocalPath) <= 2 ) )
+	if ( !pLocalPath[0] )
 	{
 		const char *pszHomeDir = getenv( "HOME" );
 		V_strcpy_safe( pLocalPath, pszHomeDir );
@@ -854,10 +852,6 @@ void FileOpenDialog::OnOpenInExplorer()
 	GetCurrentDirectory( pCurrentDirectory, sizeof(pCurrentDirectory) );
 #if defined( WIN32 )
 	ShellExecute( NULL, NULL, pCurrentDirectory, NULL, NULL, SW_SHOWNORMAL );
-#elif defined( OSX )
-	char szCmd[ MAX_PATH * 2];
-	Q_snprintf( szCmd, sizeof(szCmd), "/usr/bin/open \"%s\"", pCurrentDirectory );
-	::system( szCmd );
 #elif defined( LINUX )
 	char szCmd[ MAX_PATH * 2 ];	
 	Q_snprintf( szCmd, sizeof(szCmd), "xdg-open \"%s\" &", pCurrentDirectory );
@@ -1202,9 +1196,7 @@ void FileOpenDialog::PopulateFileList()
 			const char *pszFileName = g_pFullFileSystem->FindFirst( dir, &findHandle );
 			while ( pszFileName )
 			{
-				if ( !g_pFullFileSystem->FindIsDirectory( findHandle )
-					|| !IsOSX()
-					|| ( IsOSX() && g_pFullFileSystem->FindIsDirectory( findHandle ) && Q_stristr( pszFileName, ".app" ) ) )
+				if ( !g_pFullFileSystem->FindIsDirectory( findHandle ) || !IsOSX() )
 				{
 					char pFullPath[MAX_PATH];
 					Q_snprintf( pFullPath, MAX_PATH, "%s%s", currentDir, pszFileName );
@@ -1254,8 +1246,7 @@ void FileOpenDialog::PopulateFileList()
 	const char *pszFileName = g_pFullFileSystem->FindFirst( dir, &findHandle );
 	while ( pszFileName )
 	{
-		if ( pszFileName[0] != '.' && g_pFullFileSystem->FindIsDirectory( findHandle )
-			&& ( !IsOSX() || ( IsOSX() && !Q_stristr( pszFileName, ".app" ) ) ) )
+		if ( pszFileName[0] != '.' && g_pFullFileSystem->FindIsDirectory( findHandle ) )
 		{
 			char pFullPath[MAX_PATH];
 			Q_snprintf( pFullPath, MAX_PATH, "%s%s", currentDir, pszFileName );
@@ -1493,7 +1484,7 @@ void FileOpenDialog::OnOpen()
 	GetSelectedFileName( pFileName, sizeof( pFileName ) );
 
 	int nLen = Q_strlen( pFileName );
-	bool bSpecifiedDirectory = ( pFileName[nLen-1] == '/' || pFileName[nLen-1] == '\\' ) && (!IsOSX() || ( IsOSX() && !Q_stristr( pFileName, ".app" ) ) );
+	bool bSpecifiedDirectory = pFileName[nLen-1] == '/' || pFileName[nLen-1] == '\\';
 	Q_StripTrailingSlash( pFileName );
 
 	if ( !stricmp(pFileName, "..") )
@@ -1543,8 +1534,7 @@ void FileOpenDialog::OnOpen()
 
 	
 	// If the name specified is a directory, then change directory
-	if ( g_pFullFileSystem->IsDirectory( pFullPath, NULL ) && 
-		( !IsOSX() || ( IsOSX() && !Q_stristr( pFullPath, ".app" ) ) ) )
+	if ( g_pFullFileSystem->IsDirectory( pFullPath, NULL ) )
 	{
 		// it's a directory; change to the specified directory
 		if ( !bSpecifiedDirectory )

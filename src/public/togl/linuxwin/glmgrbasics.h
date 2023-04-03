@@ -36,18 +36,6 @@
 #include "SDL_opengl.h"
 #endif
 
-#ifdef OSX
-	#include <OpenGL/CGLTypes.h>
-	#include <OpenGL/CGLRenderers.h>
-	#include <OpenGL/CGLCurrent.h>
-	#include <AvailabilityMacros.h>
-
-#ifndef MAC_OS_X_VERSION_10_9
-	#include <OpenGL/CGLProfiler.h>
-	#include <ApplicationServices/ApplicationServices.h>
-#endif
-#endif
-
 #include "tier0/platform.h"
 
 #include "bitmap/imageformat.h"

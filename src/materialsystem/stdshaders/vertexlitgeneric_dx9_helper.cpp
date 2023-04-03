@@ -538,16 +538,6 @@ static void DrawVertexLitGeneric_DX9_Internal( CBaseVSShader *pShader, IMaterial
 					pShaderShadow->EnableSRGBRead( SHADER_SAMPLER0, false );
 				else
 					pShaderShadow->EnableSRGBRead( SHADER_SAMPLER0, true );
-
-				// If we're on OSX GL on a crappy OS which can't do sRGB from render targets, check to see if we're reading from one...
-				if ( IsOSX() && !g_pHardwareConfig->CanDoSRGBReadFromRTs() )
-				{
-					ITexture *pBaseTexture = params[info.m_nBaseTexture]->GetTextureValue();
-					if ( pBaseTexture && pBaseTexture->IsRenderTarget() )
-					{
-						bSRGBInputAdapter = true;
-					}
-				}
 			}
 
 			if ( bHasEnvmap )

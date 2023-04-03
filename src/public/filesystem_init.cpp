@@ -1010,11 +1010,11 @@ FSReturnCode_t FileSystem_GetFileSystemDLLName( char *pFileSystemDLL, int nMaxLe
 	Q_snprintf( pFileSystemDLL, nMaxLen, "%s%cfilesystem_stdio" DLL_EXT_STRING, executablePath, CORRECT_PATH_SEPARATOR );
 
         // Use filsystem_steam if it exists?
-        #if defined( OSX ) || defined( LINUX )
+        #if defined( LINUX )
                 struct stat statBuf;
         #endif
         if (
-                #if defined( OSX ) || defined( LINUX )
+                #if defined( LINUX )
                         stat( pFileSystemDLL, &statBuf ) != 0
                 #else
                         _access( pFileSystemDLL, 0 ) != 0

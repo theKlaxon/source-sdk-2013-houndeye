@@ -113,10 +113,6 @@
 	#pragma GCC diagnostic ignored "-Wdangling-else"	// warning: add explicit braces to avoid dangling else [-Wdangling-else]
 #endif
 
-#ifdef OSX
-#define MAP_ANONYMOUS MAP_ANON
-#endif
-
 #ifdef XZIP_NOT_THREAD_SAFE
 static ZRESULT lasterrorZ=ZR_OK;
 #else

@@ -10,11 +10,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#ifdef OSX
-#include <malloc/malloc.h>
-#else
 #include <malloc.h>
-#endif
 #include <string.h>
 #include "tier1/strtools.h"
 #include <sys/stat.h>
