@@ -9,11 +9,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <assert.h>
-#ifdef OSX
-#include <malloc/malloc.h>
-#else
 #include <malloc.h>
-#endif
 
 #include <vgui/IPanel.h>
 #include <vgui/ISurface.h>
@@ -564,11 +560,6 @@ void TextImage::GetTextSize(int &wide, int &tall)
 		}
 		
 	}
-#ifdef OSX
-	wide += 2;
-	if ( textLen < 3 )
-		wide += 3;
-#endif
 	if (wide < maxWide)
 	{ 
 		// maxWide only gets set if a newline is in the label

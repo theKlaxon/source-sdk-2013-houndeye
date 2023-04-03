@@ -365,11 +365,7 @@ extern "C"
 // ensures they are here even when linking against debug or release static libs
 //-----------------------------------------------------------------------------
 #ifndef NO_MEMOVERRIDE_NEW_DELETE
-#ifdef OSX
-void *__cdecl operator new( size_t nSize ) throw (std::bad_alloc)
-#else
 void *__cdecl operator new( size_t nSize )
-#endif
 {
 	return AllocUnattributed( nSize );
 }
@@ -379,20 +375,12 @@ void *__cdecl operator new( size_t nSize, int nBlockUse, const char *pFileName, 
 	return g_pMemAlloc->Alloc(nSize, pFileName, nLine);
 }
 
-#ifdef OSX
-void __cdecl operator delete( void *pMem ) throw()
-#else
 void __cdecl operator delete( void *pMem )
-#endif
 {
 	g_pMemAlloc->Free( pMem );
 }
 
-#ifdef OSX
-void *__cdecl operator new[]( size_t nSize ) throw (std::bad_alloc)
-#else
 void *__cdecl operator new[]( size_t nSize )
-#endif
 {
 	return AllocUnattributed( nSize );
 }
@@ -402,11 +390,7 @@ void *__cdecl operator new[] ( size_t nSize, int nBlockUse, const char *pFileNam
 	return g_pMemAlloc->Alloc(nSize, pFileName, nLine);
 }
 
-#ifdef OSX
-void __cdecl operator delete[]( void *pMem ) throw()
-#else
 void __cdecl operator delete[]( void *pMem )
-#endif
 {
 	g_pMemAlloc->Free( pMem );
 }

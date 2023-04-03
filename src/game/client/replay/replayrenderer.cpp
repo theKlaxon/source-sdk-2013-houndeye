@@ -461,8 +461,8 @@ void CReplayRenderer::DrawResolvingQuad( int nWidth, int nHeight )
 	CMeshBuilder meshBuilder;
 
 	// Epsilons for 1:1 texel to pixel mapping
-	float fWidthEpsilon = IsOSX() ? 0.0f : 0.5f / ((float) nWidth);
-	float fHeightEpsilon = IsOSX() ? 0.0f : 0.5f / ((float) nHeight);
+	float fWidthEpsilon = 0.5f / ((float) nWidth);
+	float fHeightEpsilon = 0.5f / ((float) nHeight);
 
 	meshBuilder.Begin( pMesh, MATERIAL_QUADS, 1 );
 

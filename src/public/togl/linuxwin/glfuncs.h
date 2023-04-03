@@ -63,9 +63,6 @@ GL_FUNC_VOID(OpenGL,true,glDrawArrays,(GLenum a,GLint b,GLsizei c),(a,b,c))
 GL_FUNC_VOID(OpenGL,true,glDrawBuffer,(GLenum a),(a))
 GL_FUNC_VOID(OpenGL,true,glDrawBuffers,(GLsizei a,const GLenum *b),(a,b))
 GL_FUNC_VOID(OpenGL,true,glDrawRangeElements,(GLenum a,GLuint b,GLuint c,GLsizei d,GLenum e,const GLvoid *f),(a,b,c,d,e,f))
-#ifndef OSX // 10.6/GL 2.1 compatability
-GL_FUNC_VOID(OpenGL,true,glDrawRangeElementsBaseVertex,(GLenum a,GLuint b,GLuint c,GLsizei d,GLenum e,const GLvoid *f, GLenum g),(a,b,c,d,e,f,g))
-#endif
 GL_FUNC_VOID(OpenGL,true,glEnable,(GLenum a),(a))
 GL_FUNC_VOID(OpenGL,true,glEnableVertexAttribArray,(GLuint a),(a))
 GL_FUNC_VOID(OpenGL,true,glEnd,(void),())
@@ -210,18 +207,13 @@ GL_FUNC_VOID(GL_ARB_framebuffer_object,false,glRenderbufferStorageMultisample,(G
 GL_EXT(GL_GREMEDY_string_marker,-1,-1)
 GL_FUNC_VOID(GL_GREMEDY_string_marker,false,glStringMarkerGREMEDY,(GLsizei a,const void *b),(a,b))
 GL_EXT(GL_ARB_debug_output,-1,-1)
-#ifdef OSX
-GL_FUNC_VOID(GL_ARB_debug_output,false,glDebugMessageCallbackARB,(void ( *a)(GLenum, GLenum , GLuint , GLenum , GLsizei , const GLchar* , GLvoid*) ,void* b),(a,b))
-#else
 GL_FUNC_VOID(GL_ARB_debug_output,false,glDebugMessageCallbackARB,(void (APIENTRY *a)(GLenum, GLenum , GLuint , GLenum , GLsizei , const GLchar* , GLvoid*) ,void* b),(a,b))
-#endif
 GL_FUNC_VOID(GL_ARB_debug_output,false,glDebugMessageControlARB,(GLenum a, GLenum b, GLenum c, GLsizei d, const GLuint* e, GLboolean f),(a,b,c,d,e,f))
 
 GL_EXT(GL_EXT_direct_state_access,-1,-1)
 GL_FUNC_VOID(GL_EXT_direct_state_access,false,glBindMultiTextureEXT,(GLenum a,GLuint b, GLuint c),(a,b,c))
 GL_EXT(GL_NV_bindless_texture,-1,-1)
 
-#ifndef OSX
 GL_FUNC_VOID(OpenGL, true, glGenSamplers, (GLuint a, GLuint *b), (a, b))
 GL_FUNC_VOID(OpenGL, true, glDeleteSamplers, (GLsizei a, const GLuint *b), (a, b))
 GL_FUNC_VOID(OpenGL, true, glBindSampler, (GLuint a, GLuint b), (a, b))
@@ -245,16 +237,13 @@ GL_FUNC_VOID(OpenGL,true,glQueryCounter,(GLuint id, GLenum target), (id, target)
 GL_FUNC_VOID(OpenGL,true,glGetQueryObjectiv,(GLuint id, GLenum pname, GLint *params), (id, pname, params))
 GL_FUNC_VOID(OpenGL,true,glGetQueryObjectui64v,(GLuint id, GLenum pname, GLuint64 *params), (id, pname, params))
 GL_FUNC_VOID(OpenGL,true,glCopyBufferSubData,(GLenum readtarget, GLenum writetarget, GLintptr readoffset, GLintptr writeoffset, GLsizeiptr size),(readtarget, writetarget, readoffset, writeoffset, size))
-#endif // !OSX
 
 GL_EXT(GL_AMD_pinned_memory,-1,-1)
 GL_EXT(GL_EXT_framebuffer_multisample_blit_scaled,-1,-1)
 
-#ifndef OSX
 GL_FUNC_VOID(OpenGL,true,glGenVertexArrays,(GLsizei n, GLuint *arrays),(n, arrays))
 GL_FUNC_VOID(OpenGL,true,glDeleteVertexArrays,(GLsizei n, GLuint *arrays),(n, arrays))
 GL_FUNC_VOID(OpenGL,true,glBindVertexArray,(GLuint a),(a))
-#endif // !OSX
 
 GL_EXT(GL_EXT_texture_sRGB_decode,-1,-1)
 GL_FUNC_VOID(OpenGL,true,glPushClientAttrib,(GLbitfield a),(a))

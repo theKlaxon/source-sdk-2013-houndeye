@@ -1244,11 +1244,7 @@ int CScriptLib::GetFileList( const char* pDirPath, const char* pPattern, CUtlVec
 		fileList[j].fileName.Set( fileName );
 		struct stat statbuf;
 		if ( stat( fileName, &statbuf ) )
-#ifdef OSX
-			fileList[j].timeWrite = statbuf.st_mtimespec.tv_sec;
-#else
 			fileList[j].timeWrite = statbuf.st_mtime;
-#endif
 		else
 			fileList[j].timeWrite = 0;
 	}

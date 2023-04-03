@@ -33,18 +33,14 @@
 
 #undef HAVE_GL_ARB_SYNC
 
-#ifndef OSX
 #define HAVE_GL_ARB_SYNC 1
-#endif
 
 #ifdef USE_SDL
 #include "SDL_opengl.h"
 #endif
 
-#ifdef OSX
 #include <OpenGL/CGLCurrent.h>
 #include <ApplicationServices/ApplicationServices.h>
-#endif
 
 #ifdef DX_TO_GL_ABSTRACTION
 	#ifndef WIN32
@@ -55,15 +51,6 @@
 	#if defined( USE_SDL )
 		#include "SDL.h"
 	#endif
-#endif
-
-//===============================================================================
-// glue to call out to Obj-C land (these are in glmgrcocoa.mm)
-#ifdef OSX
-	typedef void _PseudoNSGLContext;					// aka NSOpenGLContext
-	typedef _PseudoNSGLContext	*PseudoNSGLContextPtr;
-	
-	CGLContextObj	GetCGLContextFromNSGL( PseudoNSGLContextPtr nsglCtx );
 #endif
 
 // Set TOGL_SUPPORT_NULL_DEVICE to 1 to support the NULL ref device

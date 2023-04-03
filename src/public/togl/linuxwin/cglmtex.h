@@ -32,9 +32,6 @@
 
 #pragma once
 
-#ifdef OSX
-#include "glmgrbasics.h"
-#endif
 #include "tier1/utlhash.h"
 #include "tier1/utlmap.h"
 
@@ -291,7 +288,6 @@ struct GLMTexSamplingParams
 		m_packed.m_isValid = true;
 	}
 
-#ifndef OSX
 	FORCEINLINE void SetToSamplerObject( GLuint nSamplerObject ) const
 	{
 		static const GLenum dxtogl_addressMode[] = { GL_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, (GLenum)-1 };
@@ -331,7 +327,6 @@ struct GLMTexSamplingParams
 			gGL->glSamplerParameteri( nSamplerObject, GL_TEXTURE_SRGB_DECODE_EXT, m_packed.m_srgb ? GL_DECODE_EXT : GL_SKIP_DECODE_EXT );
 		}
 	}
-#endif // !OSX
 
 	inline void DeltaSetToTarget( GLenum target, const GLMTexSamplingParams &curState )
 	{
@@ -478,14 +473,7 @@ protected:
 	void					WriteTexels( GLMTexLockDesc *desc, bool writeWholeSlice=true, bool noDataWrite=false );
 		// last param lets us send NULL data ptr (only legal with uncompressed formats, beware)
 		// this helps out ResetSRGB.
-
-#if defined( OSX )
-	void					HandleSRGBMismatch( bool srgb, int &srgbFlipCount );
-	void					ResetSRGB( bool srgb, bool noDataWrite );
-	// re-specify texture format to match desired sRGB form
-	// noWrite means send NULL for texel source addresses instead of actual data - ideal for RT's
-#endif
-				
+	        
 	bool					IsRBODirty() const;
 	void					ForceRBONonDirty();
 	void					ForceRBODirty();

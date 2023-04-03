@@ -50,11 +50,7 @@
 #include <time.h>
 #endif
 
-#ifdef OSX
-#include <malloc/malloc.h>
-#else
 #include <malloc.h>
-#endif
 #include <new>
 
 // need this for memset
@@ -90,7 +86,6 @@
 #define IsX360() false
 #define IsGameConsole()	false
 #define IsPS3() false
-// TODO: Remove OSX support too
 #define IsOSX() false
 
 #ifdef _WIN32
@@ -317,11 +312,7 @@ FIXME: Enable this when we no longer fear change =)
 #endif
 
 #elif POSIX
-#if defined( OSX ) && defined( CARBON_WORKAROUND )
-#define DWORD unsigned int
-#else
 typedef unsigned int DWORD;
-#endif
 typedef unsigned short WORD;
 typedef void * HINSTANCE;
 #define _MAX_PATH PATH_MAX
@@ -448,8 +439,6 @@ typedef void * HINSTANCE;
 	#define stackalloc( _size )		alloca( ALIGN_VALUE( _size, 16 ) )
 #ifdef _LINUX
 	#define mallocsize( _p )	( malloc_usable_size( _p ) )
-#elif defined(OSX)
-	#define mallocsize( _p )	( malloc_size( _p ) )
 #else
 #error
 #endif
@@ -615,13 +604,6 @@ typedef void * HINSTANCE;
 #pragma GCC diagnostic ignored "-Wconversion-null"	// passing NULL to non-pointer argument 1
 #pragma GCC diagnostic ignored "-Wpointer-arith"	// NULL used in arithmetic. Ie, vpanel == NULL where VPANEL is uint.
 #pragma GCC diagnostic ignored "-Wswitch"				// enumeration values not handled in switch
-#endif
-
-#ifdef OSX
-#pragma GCC diagnostic ignored "-Wconversion-null"			// passing NULL to non-pointer argument 1
-#pragma GCC diagnostic ignored "-Wnull-arithmetic"			// NULL used in arithmetic. Ie, vpanel == NULL where VPANEL is uint.
-#pragma GCC diagnostic ignored "-Wswitch-enum"				// enumeration values not handled in switch
-#pragma GCC diagnostic ignored "-Wswitch"					// enumeration values not handled in switch
 #endif
 
 
@@ -1120,7 +1102,7 @@ PLATFORM_INTERFACE void* Plat_SimpleLog( const tchar* file, int line );
 //-----------------------------------------------------------------------------
 // Returns true if debugger attached, false otherwise
 //-----------------------------------------------------------------------------
-#if defined(_WIN32) || defined(LINUX) || defined(OSX)
+#if defined(_WIN32) || defined(LINUX)
 PLATFORM_INTERFACE bool Plat_IsInDebugSession();
 PLATFORM_INTERFACE void Plat_DebugString( const char * );
 #else

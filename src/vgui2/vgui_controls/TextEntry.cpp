@@ -1661,7 +1661,7 @@ void TextEntry::OnKeyCodeTyped(KeyCode code)
 	bool winkey = (input()->IsKeyDown(KEY_LWIN) || input()->IsKeyDown(KEY_RWIN));
 	bool fallThrough = false;
 	
-	if ( ( ctrl || ( winkey && IsOSX() ) ) && !alt)
+	if ( ctrl && !alt)
 	{
 		switch(code)
 		{

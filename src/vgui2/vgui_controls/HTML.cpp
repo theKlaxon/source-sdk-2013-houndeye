@@ -662,12 +662,6 @@ int GetKeyModifiers()
 	if (vgui::input()->IsKeyDown( KEY_LSHIFT ) || vgui::input()->IsKeyDown( KEY_RSHIFT ))
 		nModifierCodes |= ISteamHTMLSurface::k_eHTMLKeyModifier_ShiftDown;
 
-#ifdef OSX
-	// for now pipe through the cmd-key to be like the control key so we get copy/paste
-	if (vgui::input()->IsKeyDown( KEY_LWIN ) || vgui::input()->IsKeyDown( KEY_RWIN ))
-		nModifierCodes |= ISteamHTMLSurface::k_eHTMLKeyModifier_CtrlDown;
-#endif
-
 	return nModifierCodes;
 }
 
@@ -777,8 +771,7 @@ void HTML::OnKeyCodeTyped(KeyCode code)
 		}
 	case KEY_F:
 		{
-			if ( (input()->IsKeyDown(KEY_LCONTROL) || input()->IsKeyDown(KEY_RCONTROL) )
-				|| ( IsOSX() && ( input()->IsKeyDown(KEY_LWIN) || input()->IsKeyDown(KEY_RWIN) ) ) )
+			if ( input()->IsKeyDown(KEY_LCONTROL) || input()->IsKeyDown(KEY_RCONTROL) )
 			{
 				if ( !FindDialogVisible() )
 				{
