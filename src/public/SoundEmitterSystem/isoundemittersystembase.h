@@ -62,7 +62,7 @@ struct CSoundParameters
 	int				delay_msec;
 };
 
-// A bit of a hack, but these are just utility function which are implemented in the SouneParametersInternal.cpp file which all users of this lib also compile
+// A bit of a hack, but these are just utility function which are implemented in the SoundParametersInternal.cpp file which all users of this lib also compile
 const char *SoundLevelToString( soundlevel_t level );
 const char *ChannelToString( int channel );
 const char *VolumeToString( float volume );

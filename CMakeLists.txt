@@ -3,11 +3,7 @@ cmake_minimum_required(VERSION 3.18 FATAL_ERROR)
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 
 if (APPLE)
-	# NOTE: You will need to pass this as a command line parameter for the Xcode generator -DCMAKE_OSX_ARCHITECTURES=i386
-	# Also note only Xcode 9.4.1 and earlier support i386
-	set(CMAKE_OSX_ARCHITECTURES i386)
-	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.9)
-	set(CMAKE_XCODE_ATTRIBUTE_DEBUG_INFORMATION_FORMAT "dwarf-with-dsym")
+	message( FATAL_ERROR "Mac is not supported anymore: please use a windows emulator or linux" )
 endif()
 
 project(AuroraSource)
@@ -97,7 +93,7 @@ add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 
 if (${IS_WINDOWS})
 	include("_cmake_scripts/windows_base.cmake")
-elseif (${IS_LINUX} OR ${IS_OSX})
+elseif (${IS_LINUX})
 	include("_cmake_scripts/posix_base.cmake")
 endif()
 
@@ -226,7 +222,7 @@ foreach(target ${ALL_TARGETS})
 		target_compile_definitions(${target} PRIVATE MEMOVERRIDE_MODULE=$<TARGET_NAME_IF_EXISTS:${target}>)
 		add_compile_definitions_filtered(${target} ADDITIONAL_COMPILE_DEFINITIONS_EXE)
 
-		# Only applies to Linux and OSX
+		# Only applies to Linux
 		target_strip_symbols(${target})
 	elseif((${target_type} STREQUAL "SHARED_LIBRARY") OR (${target_type} STREQUAL "MODULE_LIBRARY"))
 		add_compile_options_filtered(${target} ADDITIONAL_COMPILE_OPTIONS_DLL)
@@ -236,7 +232,7 @@ foreach(target ${ALL_TARGETS})
 		target_compile_definitions(${target} PRIVATE MEMOVERRIDE_MODULE=$<TARGET_NAME_IF_EXISTS:${target}> DLLNAME=$<TARGET_NAME_IF_EXISTS:${target}>)
 		add_compile_definitions_filtered(${target} ADDITIONAL_COMPILE_DEFINITIONS_DLL)
 
-		# Only applies to Linux and OSX
+		# Only applies to Linux
 		target_strip_symbols(${target})
 	elseif(${target_type} STREQUAL "STATIC_LIBRARY")
 		add_compile_options_filtered(${target} ADDITIONAL_COMPILE_OPTIONS_LIB)

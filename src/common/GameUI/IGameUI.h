@@ -39,7 +39,7 @@ enum ESystemNotify
 //-----------------------------------------------------------------------------
 // Purpose: contains all the functions that the GameUI dll exports
 //-----------------------------------------------------------------------------
-abstract_class IGameUI 
+abstract_class IGameUI
 {
 public:
 	// initialization/shutdown
@@ -56,10 +56,10 @@ public:
 	// notifications
 	virtual void OnGameUIActivated() = 0;
 	virtual void OnGameUIHidden() = 0;
-	
+
 	// OLD: Use OnConnectToServer2
-	virtual void OLD_OnConnectToServer(const char *game, int IP, int port) = 0; 
-	
+	virtual void OLD_OnConnectToServer(const char *game, int IP, int port) = 0;
+
 	virtual void OnDisconnectFromServer_OLD( uint8 eSteamLoginFailure, const char *username ) = 0;
 	virtual void OnLevelLoadingStarted(bool bShowProgressDialog) = 0;
 	virtual void OnLevelLoadingFinished(bool bError, const char *failureReason, const char *extendedReason) = 0;
@@ -71,8 +71,7 @@ public:
 
 	// !!!!!!!!!members added after "GameUI011" initial release!!!!!!!!!!!!!!!!!!!
 	virtual void ShowNewGameDialog( int chapter ) = 0;
-
-	// Xbox 360
+        // Xbox 360
 	virtual void SessionNotification( const int notification, const int param = 0 ) = 0;
 	virtual void SystemNotification( const int notification ) = 0;
 	virtual void ShowMessageDialog( const uint nType, vgui::Panel *pOwner ) = 0;

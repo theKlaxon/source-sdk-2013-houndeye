@@ -95,6 +95,4 @@ enum VertexTextureSampler_t
 	SHADER_VERTEXTEXTURE_SAMPLER3,
 };
 
-#define ReverseDepthOnX360() false
-
 #endif // SHADERAPI_SHAREDDEFS_H

@@ -22,7 +22,7 @@
 #define BF_ANTIALIASED	0x0040
 #define BF_CUSTOM		0x0080
 
-#pragma pack(1) //X360TBD
+#pragma pack(1)
 typedef struct BitmapGlyph_s
 {
 	DECLARE_BYTESWAP_DATADESC();

@@ -53,9 +53,8 @@ BEGIN_VS_SHADER_FLAGS( BlurFilterY, "Help for BlurFilterY", SHADER_NOT_EDITABLE 
 			pShaderShadow->VertexShaderVertexFormat( VERTEX_POSITION, 1, 0, 0 );
 
 			// Render targets are pegged as sRGB on POSIX, so just force these reads and writes
-			bool bForceSRGBReadAndWrite = false; // IsOSX() && g_pHardwareConfig->CanDoSRGBReadFromRTs();
-			pShaderShadow->EnableSRGBRead( SHADER_SAMPLER0, bForceSRGBReadAndWrite );
-			pShaderShadow->EnableSRGBWrite( bForceSRGBReadAndWrite );
+			pShaderShadow->EnableSRGBRead( SHADER_SAMPLER0, false );
+			pShaderShadow->EnableSRGBWrite( false );
 
 			// Pre-cache shaders
 			DECLARE_STATIC_VERTEX_SHADER( blurfilter_vs20 );
@@ -64,7 +63,7 @@ BEGIN_VS_SHADER_FLAGS( BlurFilterY, "Help for BlurFilterY", SHADER_NOT_EDITABLE 
 			if( g_pHardwareConfig->SupportsPixelShaders_2_b() || g_pHardwareConfig->ShouldAlwaysUseShaderModel2bShaders() )
 			{
 				DECLARE_STATIC_PIXEL_SHADER( blurfilter_ps20b );
-				SET_STATIC_PIXEL_SHADER_COMBO( APPROX_SRGB_ADAPTER, bForceSRGBReadAndWrite );
+				SET_STATIC_PIXEL_SHADER_COMBO( APPROX_SRGB_ADAPTER, false );
 				SET_STATIC_PIXEL_SHADER( blurfilter_ps20b );
 			}
 			else

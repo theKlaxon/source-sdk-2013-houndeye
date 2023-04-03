@@ -451,14 +451,14 @@ void CAchievementMgr::LevelInitPreEntity()
 {
 	m_bCheatsEverOn = false;
 
-	// load global state if we haven't already; X360 users may not have had a storage device available or selected at boot time
+	// load global state if we haven't already
 	EnsureGlobalStateLoaded();
 
 #ifdef GAME_DLL
 	// For single-player games, achievement mgr must live on the server.  (Only the server has detailed knowledge of game state.)
 	Assert( !GameRules()->IsMultiplayer() );	
 #else
-	// For multiplayer games, achievement mgr must live on the client.  (Only the client can read/write player state from Steam/XBox Live.)
+	// For multiplayer games, achievement mgr must live on the client.  (Only the client can read/write player state from Steam.)
 	Assert( GameRules()->IsMultiplayer() );
 #endif 
 
@@ -884,7 +884,7 @@ void CAchievementMgr::UpdateAchievement( int iAchievementID, int nData )
 //-----------------------------------------------------------------------------
 void CAchievementMgr::PreRestoreSavedGame()
 {
-	// load global state if we haven't already; X360 users may not have had a storage device available or selected at boot time
+	// load global state if we haven't already
 	EnsureGlobalStateLoaded();
 
 	FOR_EACH_MAP( m_mapAchievement, i )

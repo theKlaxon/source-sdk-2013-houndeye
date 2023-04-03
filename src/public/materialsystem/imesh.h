@@ -1757,7 +1757,7 @@ inline void	CVertexBuilder::Color4fv( const float *rgba )
 // Faster versions of color
 //-----------------------------------------------------------------------------
 
-// note that on the OSX target (OpenGL) whenever there is vertex data being written as bytes - they need to be written in R,G,B,A memory order
+// NOTE: that on the OpenGL target whenever there is vertex data being written as bytes - they need to be written in R,G,B,A memory order
 
 inline void CVertexBuilder::Color3ub( unsigned char r, unsigned char g, unsigned char b )
 {

@@ -807,14 +807,6 @@ sub SkinPositionNormalAndTangentSpace
 		die "using \$SKINNING without defining.\n";
 	}
 
-# X360TBD: needed for compressed vertex format
-#	if ( $g_x360 )
-#	{
-#		&AllocateRegister( \$userData );
-#		; remap compressed range [0..1] to [-1..1]
-#		mad $userData, $vUserData, $cTwo, -$cOne
-#	}
-
 	if( $SKINNING == 0 )
 	{
 		;
@@ -831,29 +823,14 @@ sub SkinPositionNormalAndTangentSpace
 		dp3 $worldNormal.y, $vNormal, $cModel1
 		dp3 $worldNormal.z, $vNormal, $cModel2
 
-# X360TBD: needed for compressed vertex format
-#		if ( $g_x360 )
-#		{
-#			; tangents
-#			dp3 $worldTangentS.x, $userData, $cModel0
-#			dp3 $worldTangentS.y, $userData, $cModel1
-#			dp3 $worldTangentS.z, $userData, $cModel2
-#
-#			; calculate tangent t via cross( N, S ) * S[3]
-#			&Cross( $worldTangentT, $worldNormal, $worldTangentS );
-#			mul $worldTangentT.xyz, $userData.w, $worldTangentT.xyz
-#		}
-#		else
-		{
-			; tangents
-			dp3 $worldTangentS.x, $vUserData, $cModel0
-			dp3 $worldTangentS.y, $vUserData, $cModel1
-			dp3 $worldTangentS.z, $vUserData, $cModel2
+		; tangents
+		dp3 $worldTangentS.x, $vUserData, $cModel0
+		dp3 $worldTangentS.y, $vUserData, $cModel1
+		dp3 $worldTangentS.z, $vUserData, $cModel2
 
-			; calculate tangent t via cross( N, S ) * S[3]
-			&Cross( $worldTangentT, $worldNormal, $worldTangentS );
-			mul $worldTangentT.xyz, $vUserData.w, $worldTangentT.xyz
-		}
+		; calculate tangent t via cross( N, S ) * S[3]
+		&Cross( $worldTangentT, $worldNormal, $worldTangentS );
+		mul $worldTangentT.xyz, $vUserData.w, $worldTangentT.xyz
 	}
 	else
 	{
@@ -869,10 +846,6 @@ sub SkinPositionNormalAndTangentSpace
 		; Transform position into world space using all bones
 		; denormalize d3dcolor to matrix index
 		mad $boneIndices, $vBoneIndices, $cColorToIntScale, $cModel0Index
-		if ( $g_x360 )
-		{
-			mov $boneIndices, $boneIndices.zyxw
-		}
 
 		; r11 = boneindices at this point
 		; first matrix
@@ -909,41 +882,20 @@ sub SkinPositionNormalAndTangentSpace
 		dp3 $worldNormal.y, $vNormal, $blendedMatrix1
 		dp3 $worldNormal.z, $vNormal, $blendedMatrix2
 
-# X360TBD: needed for compressed vertex format
-#		if ( $g_x360 )
-#		{
-#			; tangents
-#			dp3 $worldTangentS.x, $userData, $blendedMatrix0
-#			dp3 $worldTangentS.y, $userData, $blendedMatrix1
-#			dp3 $worldTangentS.z, $userData, $blendedMatrix2
-#
-#			; calculate tangent t via cross( N, S ) * S[3]
-#			&Cross( $worldTangentT, $worldNormal, $worldTangentS );
-#			mul $worldTangentT.xyz, $userData.w, $worldTangentT.xyz
-#		}
-#		else
-		{
-			; tangents
-			dp3 $worldTangentS.x, $vUserData, $blendedMatrix0
-			dp3 $worldTangentS.y, $vUserData, $blendedMatrix1
-			dp3 $worldTangentS.z, $vUserData, $blendedMatrix2
+		; tangents
+		dp3 $worldTangentS.x, $vUserData, $blendedMatrix0
+		dp3 $worldTangentS.y, $vUserData, $blendedMatrix1
+		dp3 $worldTangentS.z, $vUserData, $blendedMatrix2
 
-			; calculate tangent t via cross( N, S ) * S[3]
-			&Cross( $worldTangentT, $worldNormal, $worldTangentS );
-			mul $worldTangentT.xyz, $vUserData.w, $worldTangentT.xyz
-		}
+		; calculate tangent t via cross( N, S ) * S[3]
+		&Cross( $worldTangentT, $worldNormal, $worldTangentS );
+		mul $worldTangentT.xyz, $vUserData.w, $worldTangentT.xyz
 
 		&FreeRegister( \$boneIndices );
 		&FreeRegister( \$blendedMatrix0 );
 		&FreeRegister( \$blendedMatrix1 );
 		&FreeRegister( \$blendedMatrix2 );
 	}
-
-# X360TBD: needed for compressed vertex format
-#	if ( $g_x360 )
-#	{
-#		&FreeRegister( \$userData );
-#	}
 }
 
 sub ColorClamp
@@ -1024,8 +976,8 @@ sub DirectionalLight
   
 	if( $add )
 	{
-		mad $linearColor.xyz, c[a0.x], $nDotL.x, $linearColor
 	}
+		mad $linearColor.xyz, c[a0.x], $nDotL.x, $linearColor
 	else
 	{
 		mul $linearColor.xyz, c[a0.x], $nDotL.x

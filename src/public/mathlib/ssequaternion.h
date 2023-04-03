@@ -98,7 +98,7 @@ FORCEINLINE fltx4 QuaternionNormalizeSIMD( const fltx4 &q )
 
 #else
 
-// SSE + X360 implementation
+// SSE implementation
 FORCEINLINE fltx4 QuaternionNormalizeSIMD( const fltx4 &q )
 {
 	fltx4 radius, result, mask;

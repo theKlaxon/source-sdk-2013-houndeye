@@ -492,8 +492,8 @@ enum ResourceEntryTypeFlag
 // Header details constants
 enum HeaderDetails
 {
-	MAX_RSRC_DICTIONARY_ENTRIES = 32,		// Max number of resources in dictionary
-	MAX_X360_RSRC_DICTIONARY_ENTRIES = 4,	// 360 needs this to be slim, otherwise preload size suffers
+	MAX_RSRC_DICTIONARY_ENTRIES = 32,                    // Max number of resources in dictionary
+	MAX_X360_RSRC_DICTIONARY_ENTRIES [[deprecated]] = 4,
 };
 
 struct ResourceEntryInfo
@@ -526,28 +526,6 @@ struct VTFFileHeaderV7_3_t : public VTFFileHeaderV7_2_t
 struct VTFFileHeader_t : public VTFFileHeaderV7_3_t
 {
 	DECLARE_BYTESWAP_DATADESC();
-};
-
-#define VTF_X360_MAJOR_VERSION	0x0360
-#define VTF_X360_MINOR_VERSION	8
-struct VTFFileHeaderX360_t : public VTFFileBaseHeader_t
-{
-	DECLARE_BYTESWAP_DATADESC();
-	unsigned int	flags;
-	unsigned short	width;					// actual width of data in file
-	unsigned short	height;					// actual height of data in file
-	unsigned short	depth;					// actual depth of data in file
-	unsigned short	numFrames;
-	unsigned short	preloadDataSize;		// exact size of preload data (may extend into image!)
-	unsigned char	mipSkipCount;			// used to resconstruct mapping dimensions
-	unsigned char	numResources;
-	Vector			reflectivity;			// Resides on 16 byte boundary!
-	float			bumpScale;
-	ImageFormat		imageFormat;
-	unsigned char	lowResImageSample[4];
-	unsigned int	compressedSize;
-
-	// *** followed by *** ResourceEntryInfo resources[0];
 };
 
 ///////////////////////////
