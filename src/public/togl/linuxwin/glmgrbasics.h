@@ -311,10 +311,8 @@ public:
 	CUtlVector< GLMTextSection >	m_sectionTable;
 };
 
-#ifndef OSX
 void GLMGPUTimestampManagerInit();
 void GLMGPUTimestampManagerDeinit();
 void GLMGPUTimestampManagerTick();
-#endif
 
 #endif // GLMBASICS_H
