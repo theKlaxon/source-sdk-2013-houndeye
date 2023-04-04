@@ -29,6 +29,9 @@ set(
 	"${SRCDIR}/game/client/youtubeapi.h"
 	"${SRCDIR}/game/client/youtubeapi.cpp"
 
+	# MaterialSystem hack
+	"${CLIENT_BASE_DIR}/shaderapihack.hpp"
+
 	# Folder UI
 	"${CLIENT_BASE_DIR}/replay/vgui/replaybrowserbasepage.cpp"
 	"${CLIENT_BASE_DIR}/replay/vgui/replaybrowserbasepage.h"

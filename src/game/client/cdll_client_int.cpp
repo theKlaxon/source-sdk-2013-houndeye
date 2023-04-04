@@ -64,7 +64,7 @@
 #include "vgui_controls/AnimationController.h"
 #include "bitmap/tgawriter.h"
 #include "c_world.h"
-#include "perfvisualbenchmark.h"	
+#include "perfvisualbenchmark.h"
 #include "SoundEmitterSystem/isoundemittersystembase.h"
 #include "hud_closecaption.h"
 #include "colorcorrectionmgr.h"
@@ -170,6 +170,7 @@ extern vgui::IInputInternal *g_InputInternal;
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
+#include "shaderapihack.hpp"
 #include "tier0/memdbgon.h"
 
 extern IClientMode *GetClientModeNormal();
@@ -518,7 +519,7 @@ void TrackBoneSetupEnt( C_BaseAnimating *pEnt )
 #ifdef _DEBUG
 	if ( IsRetail() )
 		return;
-		
+
 	if ( !cl_ShowBoneSetupEnts.GetInt() )
 		return;
 
@@ -543,7 +544,7 @@ void DisplayBoneSetupEnts()
 #ifdef _DEBUG
 	if ( IsRetail() )
 		return;
-	
+
 	if ( !cl_ShowBoneSetupEnts.GetInt() )
 		return;
 
@@ -551,19 +552,19 @@ void DisplayBoneSetupEnts()
 	int nElements = 0;
 	for ( i=g_BoneSetupEnts.FirstInorder(); i != g_BoneSetupEnts.LastInorder(); i=g_BoneSetupEnts.NextInorder( i ) )
 		++nElements;
-		
+
 	engine->Con_NPrintf( 0, "%d bone setup ents (name/count/entindex) ------------", nElements );
 
 	con_nprint_s printInfo;
 	printInfo.time_to_live = -1;
 	printInfo.fixed_width_font = true;
 	printInfo.color[0] = printInfo.color[1] = printInfo.color[2] = 1;
-	
+
 	printInfo.index = 2;
 	for ( i=g_BoneSetupEnts.FirstInorder(); i != g_BoneSetupEnts.LastInorder(); i=g_BoneSetupEnts.NextInorder( i ) )
 	{
 		CBoneSetupEnt *pEnt = &g_BoneSetupEnts[i];
-		
+
 		if ( pEnt->m_Count >= 3 )
 		{
 			printInfo.color[0] = 1;
@@ -631,7 +632,7 @@ public:
 	// Create movement command
 	virtual void					CreateMove ( int sequence_number, float input_sample_frametime, bool active );
 	virtual void					ExtraMouseSample( float frametime, bool active );
-	virtual bool					WriteUsercmdDeltaToBuffer( bf_write *buf, int from, int to, bool isnewcommand );	
+	virtual bool					WriteUsercmdDeltaToBuffer( bf_write *buf, int from, int to, bool isnewcommand );
 	virtual void					EncodeUserCmdToBuffer( bf_write& buf, int slot );
 	virtual void					DecodeUserCmdFromBuffer( bf_read& buf, int slot );
 
@@ -639,7 +640,7 @@ public:
 	virtual void					View_Render( vrect_t *rect );
 	virtual void					RenderView( const CViewSetup &view, int nClearFlags, int whatToDraw );
 	virtual void					View_Fade( ScreenFade_t *pSF );
-	
+
 	virtual void					SetCrosshairAngle( const QAngle& angle );
 
 	virtual void					InitSprite( CEngineSprite *pSprite, const char *loadname );
@@ -720,9 +721,9 @@ public:
 	virtual void			FileReceived( const char * fileName, unsigned int transferID );
 
 	virtual const char* TranslateEffectForVisionFilter( const char *pchEffectType, const char *pchEffectName );
-	
+
 	virtual void			ClientAdjustStartSoundParams( struct StartSoundParams_t& params );
-	
+
 	// Returns true if the disconnect command has been handled by the client
 	virtual bool DisconnectAttempt( void );
 public:
@@ -838,7 +839,7 @@ bool IsEngineThreaded()
 // Constructor
 //-----------------------------------------------------------------------------
 
-CHLClient::CHLClient() 
+CHLClient::CHLClient()
 {
 	// Kinda bogus, but the logic in the engine is too convoluted to put it there
 	g_bLevelInitialized = false;
@@ -852,7 +853,7 @@ extern IGameSystem *ViewportClientSystem();
 ISourceVirtualReality *g_pSourceVR = NULL;
 
 // Purpose: Called when the DLL is first loaded.
-// Input  : engineFactory - 
+// Input  : engineFactory -
 // Output : int
 //-----------------------------------------------------------------------------
 int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physicsFactory, CGlobalVarsBase *pGlobals )
@@ -989,8 +990,8 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 
 	vgui::VGui_InitMatSysInterfacesList( "ClientDLL", &appSystemFactory, 1 );
 
-	// Add the client systems.	
-	
+	// Add the client systems.
+
 	// Client Leaf System has to be initialized first, since DetailObjectSystem uses it
 	IGameSystem::Add( GameStringSystem() );
 	IGameSystem::Add( SoundEmitterSystem() );
@@ -1005,7 +1006,21 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	IGameSystem::Add( ClientSoundscapeSystem() );
 	IGameSystem::Add( PerfVisualBenchmark() );
 	IGameSystem::Add( MumbleSystem() );
-	
+
+        {
+            // MaterialSystem hack
+            CMaterialConfigWrapper wrapper;
+
+            Msg( "Applying shader-api hack!\n" );
+            Msg( "Before hack:\n" );
+            wrapper.PrintPixelConstants();
+            wrapper.SetNumPixelConstants(225);
+            wrapper.SetNumBooleanPixelConstants(225);
+            wrapper.SetNumIntegerPixelConstants(225);
+            Msg( "After hack:\n" );
+            wrapper.PrintPixelConstants();
+        }
+
 	#if defined( TF_CLIENT_DLL )
 	IGameSystem::Add( CustomTextureToolCacheGameSystem() );
 	IGameSystem::Add( TFSharedContentManager() );
