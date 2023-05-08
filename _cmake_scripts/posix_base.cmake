@@ -40,11 +40,6 @@ add_compile_definitions(
 	NO_MALLOC_OVERRIDE
 	$<${IS_LINUX}:_LINUX>
 	$<${IS_LINUX}:LINUX>
-	$<${IS_OSX}:_OSX>
-	$<${IS_OSX}:OSX>
-	$<${IS_OSX}:_DARWIN_UNLIMITED_SELECT>
-	$<${IS_OSX}:FD_SETSIZE=10240>
-	$<${IS_OSX}:OVERRIDE_V_DEFINES>
 )
 
 if (${IS_LINUX})
@@ -86,7 +81,3 @@ list(
 	tier1
 	vstdlib
 )
-
-if (${IS_OSX})
-	set(CMAKE_SHARED_MODULE_SUFFIX ".dylib")
-endif()
