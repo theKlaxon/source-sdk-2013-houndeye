@@ -18,6 +18,13 @@
 #include "mathlib/bumpvects.h"
 #include "bsplib.h"
 
+// HACK: Temporarily added to allow compilation
+#include "mathlib/ssemath.h"
+#include "vrad.h"
+// END
+
+
+
 typedef struct
 {
 	dface_t		*faces[2];
