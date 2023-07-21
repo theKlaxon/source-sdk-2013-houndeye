@@ -1,0 +1,13 @@
+- Portals & related
+- VTF 7.6 support
+- Ship Strata Source's VTex2 instead of vtex
+- Lux shaders ( PBR!! )
+- UScript scripting layer
+- Mapbase's improvements
+- DOOMgeneric
+- Replace vgui with RmlUI and ImGUI
+- Reimplement most DLLs
+  - launcher
+  - tier0
+  - vstdlib
+  - FileSystem_Stdio
