@@ -1,6 +1,6 @@
 # vvis_dll.cmake
 
-set(VVIS_DLL_DIR ${CMAKE_CURRENT_LIST_DIR})
+set( VVIS_DLL_DIR ${CMAKE_CURRENT_LIST_DIR} )
 set(
 	VVIS_DLL_SOURCE_FILES
 
@@ -67,37 +67,37 @@ set(
 
 set(
 	vvis_dll_exclude_source
-	"${SRCDIR}/public/tier0/memoverride.cpp"
+		"${SRCDIR}/public/tier0/memoverride.cpp"
 )
 
-add_library(vvis_dll MODULE ${VVIS_DLL_SOURCE_FILES})
+add_library( vvis_dll MODULE ${VVIS_DLL_SOURCE_FILES} )
 
 set_target_properties(
 	vvis_dll PROPERTIES
-	LIBRARY_OUTPUT_DIRECTORY "${GAMEDIR}/bin"
+		LIBRARY_OUTPUT_DIRECTORY "${GAMEDIR}/bin"
 )
 
 target_include_directories(
 	vvis_dll PRIVATE
-	"${SRCDIR}/utils/common"
-	"${SRCDIR}/utils/vmpi"
-	"${SRCDIR}/utils/vmpi/mysql/include"
+		"${SRCDIR}/utils/common"
+		"${SRCDIR}/utils/vmpi"
+		"${SRCDIR}/utils/vmpi/mysql/include"
 )
 
 target_compile_definitions(
 	vvis_dll PRIVATE
-	MPI
-	PROTECTED_THINGS_DISABLE
+		MPI
+		PROTECTED_THINGS_DISABLE
 )
 
 target_link_libraries(
 	vvis_dll PRIVATE
-	odbc32
-	odbccp32
-	ws2_32
+		odbc32
+		odbccp32
+		ws2_32
 
-	mathlib
-	"${LIBPUBLIC}/tier2${STATIC_LIB_EXT}"
-	"${LIBPUBLIC}/vmpi${STATIC_LIB_EXT}"
-	"${LIBCOMMON}/lzma${STATIC_LIB_EXT}"
+		mathlib
+		"${LIBPUBLIC}/tier2${STATIC_LIB_EXT}"
+		"${LIBPUBLIC}/vmpi${STATIC_LIB_EXT}"
+		"${LIBCOMMON}/lzma${STATIC_LIB_EXT}"
 )
