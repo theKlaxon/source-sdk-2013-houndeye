@@ -1,7 +1,6 @@
 # groups.cmake
 
 if (${BUILD_GROUP} STREQUAL "game")
-
 	if (${BUILD_GAME} STREQUAL "hl2mp")
 		include("${SRCDIR}/game/client/client_hl2mp.cmake")
 		include("${SRCDIR}/game/server/server_hl2mp.cmake")
@@ -11,8 +10,8 @@ if (${BUILD_GROUP} STREQUAL "game")
 	include("${SRCDIR}/raytrace/raytrace.cmake")
 	include("${SRCDIR}/tier1/tier1.cmake")
 	include("${SRCDIR}/vgui2/vgui_controls/vgui_controls.cmake")
-elseif (${BUILD_GROUP} STREQUAL "everything")
 
+elseif (${BUILD_GROUP} STREQUAL "everything")
 	if (${BUILD_GAME} STREQUAL "hl2mp")
 		include("${SRCDIR}/game/client/client_hl2mp.cmake")
 		include("${SRCDIR}/game/server/server_hl2mp.cmake")
@@ -36,6 +35,8 @@ elseif (${BUILD_GROUP} STREQUAL "everything")
 		include("${SRCDIR}/utils/vvis_launcher/vvis_launcher.cmake")
 	endif()
 
+	include("${SRCDIR}/bootstrap/bootstrap.cmake")
+	include("${SRCDIR}/launcher/launcher.cmake")
 	include("${SRCDIR}/mathlib/mathlib.cmake")
 	include("${SRCDIR}/raytrace/raytrace.cmake")
 	include("${SRCDIR}/utils/serverplugin_sample/serverplugin_empty.cmake")
@@ -43,7 +44,6 @@ elseif (${BUILD_GROUP} STREQUAL "everything")
 	include("${SRCDIR}/vgui2/vgui_controls/vgui_controls.cmake")
 
 elseif (${BUILD_GROUP} STREQUAL "shaders")
-
 	if (${BUILD_GAME} STREQUAL "hl2mp")
 		include("${SRCDIR}/materialsystem/stdshaders/game_shader_dx9_hl2mp.cmake")
 	endif()
