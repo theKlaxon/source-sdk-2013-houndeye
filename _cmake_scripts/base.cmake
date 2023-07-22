@@ -1,6 +1,5 @@
 # base.cmake
 
-# NOTE: We use 0 or 1 so we can use these more easily in generator expressions
 # Initialize them with default values that we then set later
 
 set(IS_WINDOWS 0)
@@ -13,11 +12,8 @@ if (WIN32)
 	set(IS_WINDOWS 1)
 endif()
 
-if (UNIX AND NOT APPLE)
-	set(IS_LINUX 1)
-endif()
-
 if (UNIX)
+	set(IS_LINUX 1)
 	set(IS_POSIX 1)
 endif()
 

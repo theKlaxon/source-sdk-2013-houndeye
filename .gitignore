@@ -44,6 +44,7 @@ server_srv.so
 server_srv.so.dbg
 
 game/mod_hl2mp/bin/
+game/mod_hl2mp/user_custom/
 game/**/screenshots/
 game/bin/
 

@@ -33,6 +33,8 @@
 
 // Boundary each lump should be aligned to
 #define LUMP_ALIGNMENT	4
+// HACK: This is here just to satisfy the compilation process, remove later to destroy all XBOX-related stuff
+#define XBOX_DVD_SECTORSIZE 2048
 
 // Data descriptions for byte swapping - only needed
 // for structures that are written to file for use by the game.
