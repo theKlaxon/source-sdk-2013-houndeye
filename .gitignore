@@ -2,6 +2,8 @@
 # CMake build directory
 build/
 cmake-*/
+.dub
+
 
 # CLion
 .idea

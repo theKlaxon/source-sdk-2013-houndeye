@@ -1,0 +1,16 @@
+{
+	"name": "bootstrap",
+    "description": "Executable for Aurora Source ( Bootstrap )",
+    "authors": [ "ENDERZOMBI102" ],
+    "copyright": "Copyright © 2023, ENDERZOMBI102",
+    "license": "MPL2",
+
+    "dependencies": {
+        "dlibloader": "~>0.0.4"
+    },
+
+    "targetType": "executable",
+	"targetName": "aurosrc",
+    "targetPath": "../../game",
+    "workingDirectory": "../../game"
+}
