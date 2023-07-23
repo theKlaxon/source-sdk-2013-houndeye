@@ -16,7 +16,7 @@ endif()
 
 # Modern VS versions default to C++14 anyway, so make it consistent
 # But in the future we may want so support C++20
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -90,6 +90,9 @@ include_directories(
 
 add_compile_definitions($<$<CONFIG:Debug>:DEBUG> $<$<CONFIG:Debug>:_DEBUG>)
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
+
+# SETUP THIRD PARTY
+include( thirdparty/init.cmake )
 
 if (${IS_WINDOWS})
 	include("_cmake_scripts/windows_base.cmake")
