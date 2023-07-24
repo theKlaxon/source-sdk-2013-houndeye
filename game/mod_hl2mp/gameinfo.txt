@@ -1,5 +1,4 @@
-"GameInfo"
-{
+"GameInfo" {
 	game	"AuroraSource mod"
 	title	"AuroraSource"
 	title2	"AuroraSource mod"
@@ -7,16 +6,14 @@
 	nomodels 0
 	nohimodel 1
 	nocrosshair 1
-	hidden_maps
-	{
+	hidden_maps {
 		"test_speakers"		1
 		"test_hardware"		1
 	}
 	supportsvr	1
 
 
-	FileSystem
-	{
+	FileSystem {
 		SteamAppId				243750
 		
 		//
@@ -37,8 +34,7 @@
 		// people can mount stuff in c:\mymod, and the main game resources are in
 		// someplace like c:\program files\valve\steam\steamapps\half-life 2.
 		//
-		SearchPaths
-		{
+		SearchPaths {
 			// First, mount all user customizations.  This will search for VPKs and subfolders
 			// and mount them in alphabetical order.  The easiest way to distribute a mod is to
 			// pack up the custom content into a VPK.  To "install" a mod, just drop it in this
