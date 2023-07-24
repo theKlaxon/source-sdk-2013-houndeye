@@ -43,6 +43,10 @@ elseif (${BUILD_GROUP} STREQUAL "everything")
 	include("${SRCDIR}/tier1/tier1.cmake")
 	include("${SRCDIR}/vgui2/vgui_controls/vgui_controls.cmake")
 
+	# Declare additional dependencies
+    add_dependencies( "client_${BUILD_GAME}" bootstrap launcher )
+    add_dependencies( "server_${BUILD_GAME}" bootstrap )
+
 elseif (${BUILD_GROUP} STREQUAL "shaders")
 	if (${BUILD_GAME} STREQUAL "hl2mp")
 		include("${SRCDIR}/materialsystem/stdshaders/game_shader_dx9_hl2mp.cmake")
