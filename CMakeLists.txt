@@ -1,12 +1,18 @@
 cmake_minimum_required(VERSION 3.18 FATAL_ERROR)
 
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
+set( CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE )
 
 if (APPLE)
 	message( FATAL_ERROR "Aurora Source has discontinued OSX support, please use either Windows or Linux." )
 endif()
 
-project(AuroraSource)
+project(
+	AuroraSource
+		VERSION 0.1.0
+		DESCRIPTION "A fork of the Source SDK 2013 with many things"
+		HOMEPAGE_URL "https://github.com/ENDERZOMBI102/Aurora-Source"
+		LANGUAGES CXX C
+)
 
 # For some reason, checking if CMAKE_BUILD_TYPE is defined is unreliable
 # So simply check if it's empty instead
