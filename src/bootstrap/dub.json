@@ -10,7 +10,7 @@
     },
 
     "targetType": "executable",
-	"targetName": "aurosrc",
+    "targetName": "aurosrc",
     "targetPath": "../../game",
     "workingDirectory": "../../game"
 }
