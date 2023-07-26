@@ -1,0 +1,2 @@
+- The `srcds.exe` loads `dedicated.dll` instead of `launcher.dll` and calls `DedicatedMain($platformArgs)`
+- 

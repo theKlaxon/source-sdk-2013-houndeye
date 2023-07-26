@@ -7,6 +7,7 @@ set(
 	"${LAUNCHER_DIR}/launcher_ds.cpp"
 	"${LAUNCHER_DIR}/launcher.cpp"
 	"${LAUNCHER_DIR}/launcher.hpp"
+	"${LAUNCHER_DIR}/main.cpp"
 )
 
 add_library( launcher MODULE ${LAUNCHER_SOURCE_FILES} )

@@ -6,11 +6,15 @@
     "license": "MPL2",
 
     "dependencies": {
-        "dlibloader": "~>0.0.4"
+        "dlibloader": "~>0.0.6"
     },
 
     "targetType": "executable",
     "targetName": "aurosrc",
     "targetPath": "../../game",
-    "workingDirectory": "../../game"
+    "workingDirectory": "../../game",
+
+    "__comment": {
+       "dflags": [ "--link-defaultlib-shared" ]
+    }
 }

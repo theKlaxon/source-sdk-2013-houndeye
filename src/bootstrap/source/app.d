@@ -5,6 +5,7 @@ import core.runtime;
 import std.path;
 import std.conv;
 import std.typecons;
+import std.algorithm : canFind;
 
 string lastError() {
 	version ( Windows ) {
@@ -25,12 +26,19 @@ int main( string[] argv ) {
 	writeln( "bin directory is at " ~ binDir );
 
 	// Temporarily hardcode SDK2013MP path
-	environment["PATH"] =  binDir ~ pathSeparator ~ "D:\\SteamLibrary\\steamapps\\common\\Source SDK Base 2013 Multiplayer\\bin;" ~ environment[ "PATH" ];
+	environment["PATH"] = binDir ~ pathSeparator ~ environment["SOURCE_SDK_2013_MP"] ~ pathSeparator ~ environment[ "PATH" ];
 
-	auto lib = library( "launcher" );
+	immutable auto dedicated = argv.canFind( "--dedicated" );
+	if ( dedicated )
+		writeln( "starting Aurora Source dedicated server..." );
+
+	immutable auto libname = dedicated ? "dedicated" : "launcher";
+	immutable auto funcname = dedicated ? "DedicatedMain" : "LauncherMain";
+
+	auto lib = library( libname );
 
 	if (! lib.isLoaded() ) {
-		writeln( "Failed to load `launcher` dll, look above for errors" ~ lastError() );
+		writeln( "Failed to load `" ~ libname ~ "` dll:" ~ lib.getLastError() );
 		return 1;
 	}
 
@@ -38,14 +46,14 @@ int main( string[] argv ) {
 	version ( Windows ) {
 		import core.sys.windows.windef;
 		import core.sys.windows.winbase;
-		res = lib.callC!( int, HINSTANCE, HINSTANCE, LPSTR, int )( "LauncherMain", GetModuleHandle( null ), null, GetCommandLineA(), 0 );
+		res = lib.callC!( int, HINSTANCE, HINSTANCE, LPSTR, int )( funcname, GetModuleHandle( null ), null, GetCommandLineA(), 0 );
 	} else {
 		char*[] args = new char*[ argv.length ];
-		res = lib.callC!( int, int, char** )( "LauncherMain", argv.sizeof, args.ptr );
+		res = lib.callC!( int, int, char** )( funcname, argv.sizeof, args.ptr );
 	}
 
 	if ( res.isNull() ) {
-		writeln( "Failed to load `LauncherMain`: " ~ lastError() );
+		writeln( "Failed to load `" ~ funcname ~ "`: " ~ lib.getLastError() );
 		return -1;
 	}
 
