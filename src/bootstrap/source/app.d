@@ -7,19 +7,6 @@ import std.conv;
 import std.typecons;
 import std.algorithm : canFind;
 
-string lastError() {
-	version ( Windows ) {
-		import std.windows.syserror;
-		import core.sys.windows.winbase;
-
-		return sysErrorString( GetLastError() );
-	} else {
-		import core.sys.posix.dlfcn;
-
-		return to!string( dlerror() );
-	}
-}
-
 
 int main( string[] argv ) {
 	immutable auto binDir = argv[0].absolutePath.dirName ~ dirSeparator ~ "bin";
