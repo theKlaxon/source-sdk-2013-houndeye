@@ -853,7 +853,7 @@ void CBaseHudChat::MsgFunc_TextMsg( bf_read &msg )
 	for ( int i=0; i<5; ++i )
 	{
 		msg.ReadString( szString, sizeof(szString) );
-		char *tmpStr = hudtextmessage->LookupString( szString, &msg_dest );
+		const char *tmpStr = hudtextmessage->LookupString( szString, &msg_dest );
 		const wchar_t *pBuf = g_pVGuiLocalize->Find( tmpStr );
 		if ( pBuf )
 		{
@@ -866,7 +866,7 @@ void CBaseHudChat::MsgFunc_TextMsg( bf_read &msg )
 		{
 			if ( i )
 			{
-				StripEndNewlineFromString( tmpStr );  // these strings are meant for subsitution into the main strings, so cull the automatic end newlines
+				StripEndNewlineFromString( (char*) tmpStr );  // these strings are meant for subsitution into the main strings, so cull the automatic end newlines
 			}
 			g_pVGuiLocalize->ConvertANSIToUnicode( tmpStr, szBuf[i], sizeof(szBuf[i]) );
 		}

@@ -265,7 +265,7 @@ void CHudHintDisplay::MsgFunc_HintText( bf_read &msg )
 	char szString[255];
 	msg.ReadString( szString, sizeof(szString) );
 
-	char *tmpStr = hudtextmessage->LookupString( szString, NULL );
+	const char *tmpStr = hudtextmessage->LookupString( szString, NULL );
 	LocalizeAndDisplay( tmpStr, szString );
 }
 
@@ -275,7 +275,7 @@ void CHudHintDisplay::MsgFunc_HintText( bf_read &msg )
 void CHudHintDisplay::FireGameEvent( IGameEvent * event)
 {
 	const char *hintmessage = event->GetString( "hintmessage" );
-	char *tmpStr = hudtextmessage->LookupString( hintmessage, NULL );
+	const char *tmpStr = hudtextmessage->LookupString( hintmessage, NULL );
 	LocalizeAndDisplay( tmpStr, hintmessage );
 }
 

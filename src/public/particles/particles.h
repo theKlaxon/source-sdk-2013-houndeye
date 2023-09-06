@@ -2253,7 +2253,7 @@ FORCEINLINE int CParticleCollection::GetControlPointParent( int nControlPoint ) 
 
 FORCEINLINE bool CParticleCollection::IsValid( void ) const 
 { 
-	return ( m_pDef != NULL && m_pDef->GetMaterial() );  
+	return ( m_pDef != static_cast<CUtlReference<CParticleSystemDefinition>>( nullptr ) && m_pDef->GetMaterial() );
 }
 
 

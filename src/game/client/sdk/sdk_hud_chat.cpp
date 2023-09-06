@@ -287,7 +287,7 @@ void CHudChat::MsgFunc_TextMsg( bf_read &msg )
 	for ( int i=0; i<5; ++i )
 	{
 		msg.ReadString( szString, sizeof(szString) );
-		char *tmpStr = hudtextmessage->LookupString( szString, &msg_dest );
+		const char *tmpStr = hudtextmessage->LookupString( szString, &msg_dest );
 		const wchar_t *pBuf = g_pVGuiLocalize->Find( tmpStr );
 		if ( pBuf )
 		{

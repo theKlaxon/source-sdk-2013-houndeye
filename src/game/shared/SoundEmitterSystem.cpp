@@ -63,7 +63,7 @@ void WaveTrace( char const *wavname, char const *funcname )
 	static CUtlSymbolTable s_WaveTrace;
 
 	// Make sure we only show the message once
-	if ( UTL_INVAL_SYMBOL == s_WaveTrace.Find( wavname ) )
+	if ( UTL_INVAL_SYMBOL == static_cast<UtlSymId_t>( s_WaveTrace.Find( wavname ) ) )
 	{
 		DevMsg( "%s directly referenced wave %s (should use game_sounds.txt system instead)\n", 
 			funcname, wavname );

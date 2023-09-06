@@ -110,31 +110,31 @@ void CHudChat::MsgFunc_TextMsg( bf_read &msg )
 	static char szBuf[6][256];
 
 	msg.ReadString( szString, sizeof(szString) );
-	char *msg_text = hudtextmessage->LookupString( szString, &msg_dest );
+	const char *msg_text = hudtextmessage->LookupString( szString, &msg_dest );
 	Q_strncpy( szBuf[0], msg_text, sizeof( szBuf[0] ) );
 	msg_text = szBuf[0];
 
 	// keep reading strings and using C format strings for subsituting the strings into the localised text string
 	msg.ReadString( szString, sizeof(szString) );
-	char *sstr1 = hudtextmessage->LookupString( szString );
+	const char *sstr1 = hudtextmessage->LookupString( szString );
 	Q_strncpy( szBuf[1], sstr1, sizeof( szBuf[1] ) );
 	sstr1 = szBuf[1];
 
 	StripEndNewlineFromString( sstr1 );  // these strings are meant for subsitution into the main strings, so cull the automatic end newlines
 	msg.ReadString( szString, sizeof(szString) );
-	char *sstr2 = hudtextmessage->LookupString( szString );
+	const char *sstr2 = hudtextmessage->LookupString( szString );
 	Q_strncpy( szBuf[2], sstr2, sizeof( szBuf[2] ) );
 	sstr2 = szBuf[2];
 	
 	StripEndNewlineFromString( sstr2 );
 	msg.ReadString( szString, sizeof(szString) );
-	char *sstr3 = hudtextmessage->LookupString( szString );
+	const char *sstr3 = hudtextmessage->LookupString( szString );
 	Q_strncpy( szBuf[3], sstr3, sizeof( szBuf[3] ) );
 	sstr3 = szBuf[3];
 
 	StripEndNewlineFromString( sstr3 );
 	msg.ReadString( szString, sizeof(szString) );
-	char *sstr4 = hudtextmessage->LookupString( szString );
+	const char *sstr4 = hudtextmessage->LookupString( szString );
 	Q_strncpy( szBuf[4], sstr4, sizeof( szBuf[4] ) );
 	sstr4 = szBuf[4];
 	
