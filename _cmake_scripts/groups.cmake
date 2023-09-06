@@ -37,6 +37,7 @@ elseif (${BUILD_GROUP} STREQUAL "everything")
 
 	include("${SRCDIR}/bootstrap/bootstrap.cmake")
 	include("${SRCDIR}/launcher/launcher.cmake")
+	include("${SRCDIR}/inputsystem/inputsystem.cmake")
 	include("${SRCDIR}/mathlib/mathlib.cmake")
 	include("${SRCDIR}/raytrace/raytrace.cmake")
 	include("${SRCDIR}/utils/serverplugin_sample/serverplugin_empty.cmake")
@@ -44,8 +45,8 @@ elseif (${BUILD_GROUP} STREQUAL "everything")
 	include("${SRCDIR}/vgui2/vgui_controls/vgui_controls.cmake")
 
 	# Declare additional dependencies
-    add_dependencies( "client_${BUILD_GAME}" bootstrap launcher )
-    add_dependencies( "server_${BUILD_GAME}" bootstrap )
+    add_dependencies( "client_${BUILD_GAME}" bootstrap inputsystem launcher )
+    add_dependencies( "server_${BUILD_GAME}" bootstrap inputsystem )
 
 elseif (${BUILD_GROUP} STREQUAL "shaders")
 	if (${BUILD_GAME} STREQUAL "hl2mp")
