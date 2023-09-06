@@ -27,4 +27,7 @@ target_link_libraries(
 		vstdlib
 )
 
-target_vcpkg_dependency( TARGET inputsystem VISIBILITY PRIVATE DEPENDENCY SDL2 )
+target_vcpkg_dependency(
+	inputsystem PRIVATE
+		SDL2
+)

@@ -7,7 +7,7 @@
 //
 //=====================================//
 
-#include "launcher.hpp"
+#include "launcher_ds.hpp"
 #include <appframework/AppFramework.h>
 #include <appframework/IAppSystemGroup.h>
 #include <datacache/idatacache.h>
@@ -58,7 +58,7 @@ SpewRetval_t LauncherDSSpewFunc( SpewType_t spewType, char const* pMsg ) {
 bool CLauncherDS::Create() {
 	SpewOutputFunc( LauncherDSSpewFunc );
 
-	AppSystemInfo_t appSystems[] = {
+	AppSystemInfo_t appSystems[] {
 		{ "materialsystem.dll", MATERIAL_SYSTEM_INTERFACE_VERSION },
 		{ "studiorender.dll", STUDIO_RENDER_INTERFACE_VERSION },
 		{ "vphysics.dll", VPHYSICS_INTERFACE_VERSION },
@@ -68,13 +68,13 @@ bool CLauncherDS::Create() {
 		{ "engine.dll", VENGINE_HLDS_API_VERSION },
 		{ "FileSystem_Stdio.dll", QUEUEDLOADER_INTERFACE_VERSION },
 		{ "inputsystem.dll", INPUTSYSTEM_INTERFACE_VERSION },
-		{ "", "" } // Required to terminate the list
+		{ nullptr, nullptr } // Required to terminate the list
 	};
 
-	if ( !AddSystems( appSystems ) )
+	if (! this->AddSystems( appSystems ) )
 		return false;
 
-	AddSystem( &g_DedicatedExports, VENGINE_DEDICATEDEXPORTS_API_VERSION );
+	this->AddSystem( &g_DedicatedExports, VENGINE_DEDICATEDEXPORTS_API_VERSION );
 
 	static auto g_Factory = GetFactory();
 
@@ -83,19 +83,19 @@ bool CLauncherDS::Create() {
 
 
 	// Add in the cvar factory
-	AppModule_t cvarModule = LoadModule( VStdLib_GetICVarFactory() );
-	AddSystem( cvarModule, CVAR_INTERFACE_VERSION );
+	AppModule_t cvarModule = this->LoadModule( VStdLib_GetICVarFactory() );
+	this->AddSystem( cvarModule, CVAR_INTERFACE_VERSION );
 
 
-	g_pFileSystem = (IFileSystem*) FindSystem( FILESYSTEM_INTERFACE_VERSION );
-	g_pDedicatedServerApi = (IDedicatedServerAPI*) FindSystem( VENGINE_HLDS_API_VERSION );
+	g_pFileSystem = (IFileSystem*) this->FindSystem( FILESYSTEM_INTERFACE_VERSION );
+	g_pDedicatedServerApi = (IDedicatedServerAPI*) this->FindSystem( VENGINE_HLDS_API_VERSION );
 
-	g_pDataCache = (IDataCache*) FindSystem( DATACACHE_INTERFACE_VERSION );
-	g_pStudioDataCache = (IStudioDataCache*) FindSystem( STUDIO_DATA_CACHE_INTERFACE_VERSION );
+	g_pDataCache = (IDataCache*) this->FindSystem( DATACACHE_INTERFACE_VERSION );
+	g_pStudioDataCache = (IStudioDataCache*) this->FindSystem( STUDIO_DATA_CACHE_INTERFACE_VERSION );
 
-	g_pMaterialSystem = (IMaterialSystem*) FindSystem( MATERIAL_SYSTEM_INTERFACE_VERSION );
+	g_pMaterialSystem = (IMaterialSystem*) this->FindSystem( MATERIAL_SYSTEM_INTERFACE_VERSION );
 
-	IInputSystem* inputsystem = (IInputSystem*) FindSystem( INPUTSYSTEM_INTERFACE_VERSION );
+	IInputSystem* inputsystem = (IInputSystem*) this->FindSystem( INPUTSYSTEM_INTERFACE_VERSION );
 
 
 	if ( !g_pFileSystem || !g_pDedicatedServerApi || !g_pDataCache || !g_pStudioDataCache || !g_pMaterialSystem || !inputsystem ) {

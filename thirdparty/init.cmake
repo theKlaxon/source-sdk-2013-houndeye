@@ -30,7 +30,7 @@ endif()
 message( NOTICE "vcpkg dynamic library output path is: `${VCPKG_OUTPUT_DIR}`" )
 
 # Function used to depend on a vcpkg library
-function ( target_vcpkg_dependency TARGET target VISIBILITY visibility DEPENDENCY dependency )
+function ( target_vcpkg_dependency target visibility dependency )
 	find_package( ${dependency} CONFIG REQUIRED )
 	add_custom_command(
 		TARGET
