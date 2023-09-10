@@ -4,6 +4,7 @@ set( INPUTSYSTEM_DIR ${CMAKE_CURRENT_LIST_DIR} )
 set(
 	INPUTSYSTEM_SOURCE_FILES
 		"${INPUTSYSTEM_DIR}/inputsystem.cpp"
+		"${INPUTSYSTEM_DIR}/inputsystem.hpp"
 )
 
 add_library( inputsystem MODULE ${INPUTSYSTEM_SOURCE_FILES} )
