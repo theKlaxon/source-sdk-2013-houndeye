@@ -1,5 +1,6 @@
 # init.cmake
 
+# Function to add a git module as project
 function( included name path )
 	# check for existance
 	if ( NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/${path}" )
@@ -27,7 +28,7 @@ endforeach()
 if ( NOT DEFINED VCPKG_OUTPUT_DIR )
 	message( FATAL_ERROR "No vcpkg dynamic library output path was found" )
 endif()
-message( NOTICE "vcpkg dynamic library output path is: `${VCPKG_OUTPUT_DIR}`" )
+message( STATUS "vcpkg dynamic library output path is: `${VCPKG_OUTPUT_DIR}`" )
 
 # Function used to depend on a vcpkg library
 function ( target_vcpkg_dependency target visibility dependency )
@@ -40,3 +41,6 @@ function ( target_vcpkg_dependency target visibility dependency )
 	)
 	target_link_libraries( ${target} ${visibility} "${dependency}::${dependency}" )
 endfunction()
+
+
+# For gmodules, declare them here, for vcpkg deps, declare them directly in the dependant project

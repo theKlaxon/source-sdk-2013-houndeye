@@ -4,10 +4,19 @@
 
 #include <SDL.h>
 
-#include "strtools.h"
+#include "icommandline.h"
 #include "inputsystem.hpp"
+#include "strtools.h"
 
 InitReturnVal_t CInputSystem::Init() {
+	if ( CommandLine()->CheckParm( "-nojoy" ) );
+
+	auto res = SDL_InitSubSystem( SDL_INIT_EVENTS | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC );
+
+	if ( res < 0 ) {
+
+	}
+
 	return BaseClass::Init();
 }
 
@@ -104,16 +113,15 @@ void CInputSystem::EnableJoystickDiagonalPOV( int nJoystick, bool bEnable ) {
 }
 
 void CInputSystem::SampleDevices() {
+	SDL_
 	AssertMsg( false, "TODO: `CInputSystem::SampleDevices` not implemented" );
 }
 
 void CInputSystem::SetRumble( float fLeftMotor, float fRightMotor, int userId ) {
-	SDL_JoystickRumble( this->m_pSdlWindow )
 	AssertMsg( false, "TODO: `CInputSystem::SetRumble` not implemented" );
 }
 
 void CInputSystem::StopRumble() {
-	SDL_HapticRumbleStop( this->something );
 	AssertMsg( false, "TODO: `CInputSystem::StopRumble` not implemented" );
 }
 
@@ -170,7 +178,7 @@ int CInputSystem::GetPollCount() const {
 }
 
 void CInputSystem::SetCursorPosition( int x, int y ) {
-	AssertMsg( false, "TODO: `CInputSystem::SetCursorPosition` not implemented" );
+	SDL_WarpMouseGlobal( x, y );
 }
 
 void* CInputSystem::GetHapticsInterfaceAddress() const {
@@ -188,7 +196,7 @@ bool CInputSystem::GetRawMouseAccumulators( int& accumX, int& accumY ) {
 }
 
 void CInputSystem::SetConsoleTextMode( bool bConsoleTextMode ) {
-	AssertMsg( false, "TODO: `CInputSystem::SetConsoleTextMode` not implemented" );
+	this->m_bConsoleTextMode = bConsoleTextMode;
 }
 
 

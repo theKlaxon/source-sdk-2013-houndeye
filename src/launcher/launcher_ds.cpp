@@ -95,7 +95,7 @@ bool CLauncherDS::Create() {
 
 	g_pMaterialSystem = (IMaterialSystem*) this->FindSystem( MATERIAL_SYSTEM_INTERFACE_VERSION );
 
-	IInputSystem* inputsystem = (IInputSystem*) this->FindSystem( INPUTSYSTEM_INTERFACE_VERSION );
+	auto* inputsystem = (IInputSystem*) this->FindSystem( INPUTSYSTEM_INTERFACE_VERSION );
 
 
 	if ( !g_pFileSystem || !g_pDedicatedServerApi || !g_pDataCache || !g_pStudioDataCache || !g_pMaterialSystem || !inputsystem ) {
@@ -115,10 +115,10 @@ void CLauncherDS::Destroy() {
 	DisconnectTier1Libraries();
 	DisconnectTier2Libraries();
 
-	g_pFileSystem = NULL;
-	g_pMaterialSystem = NULL;
-	g_pDataCache = NULL;
-	g_pStudioDataCache = NULL;
+	g_pFileSystem = nullptr;
+	g_pMaterialSystem = nullptr;
+	g_pDataCache = nullptr;
+	g_pStudioDataCache = nullptr;
 	g_pFileSystem = nullptr;
 	g_pDedicatedServerApi = nullptr;
 }
@@ -129,7 +129,7 @@ void CLauncherDS::Destroy() {
 //-----------------------------------------------------------------------------
 bool CLauncherDS::SetupSearchPaths() {
 	CFSSteamSetupInfo steamInfo;
-	steamInfo.m_pDirectoryName = NULL;
+	steamInfo.m_pDirectoryName = nullptr;
 	steamInfo.m_bOnlyUseDirectoryName = false;
 	steamInfo.m_bToolsMode = true;
 	steamInfo.m_bSetSteamDLLPath = true;

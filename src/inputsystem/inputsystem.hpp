@@ -119,6 +119,7 @@ private:
 	SDL_Window* m_pSdlWindow{nullptr};
 
 	bool m_bEnabled{false};
+	bool m_bConsoleTextMode{false};
 };
 
 extern CInputSystem gInputSystem;
