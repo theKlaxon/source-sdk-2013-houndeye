@@ -6,7 +6,6 @@
 
 #include "icommandline.h"
 #include "inputsystem.hpp"
-#include "strtools.h"
 
 InitReturnVal_t CInputSystem::Init() {
 	if ( CommandLine()->CheckParm( "-nojoy" ) );
@@ -14,13 +13,14 @@ InitReturnVal_t CInputSystem::Init() {
 	auto res = SDL_InitSubSystem( SDL_INIT_EVENTS | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC );
 
 	if ( res < 0 ) {
-
+		// TODO: Finish this
 	}
 
 	return BaseClass::Init();
 }
 
 void CInputSystem::Shutdown() {
+	// TODO: Finish this
 	BaseClass::Shutdown();
 }
 
@@ -36,7 +36,7 @@ void CInputSystem::AttachToWindow( void* hWnd ) {
 
 void CInputSystem::DetachFromWindow() {
 	if ( this->m_pSdlWindow == nullptr ) {
-		Warning( "Called `CInputSystem::DetachFromWindow` when not attached to a window!" );
+		DevWarning( "Called `CInputSystem::DetachFromWindow` when not attached to a window!" );
 		return;
 	}
 
@@ -48,7 +48,24 @@ void CInputSystem::EnableInput( bool bEnable ) {
 }
 
 void CInputSystem::EnableMessagePump( bool bEnable ) {
-	AssertMsg( false, "TODO: `CInputSystem::EnableMessagePump` not implemented" );
+	// asked to disable
+	if ( bEnable ) {
+		// if are we already disabled skip
+		if (! this->m_bRunning )
+			return;
+
+		// disable the pump
+		this->m_bRunning = false;
+		this->m_pEventPump.Join();
+	} else {
+		// if are we already enabled skip
+		if ( this->m_bRunning )
+			return;
+
+		// enable the pump
+		this->m_bRunning = true;
+		this->m_pEventPump.Start();
+	}
 }
 
 void CInputSystem::PollInputState() {
@@ -57,12 +74,17 @@ void CInputSystem::PollInputState() {
 
 int CInputSystem::GetPollTick() const {
 	AssertMsg( false, "TODO: `CInputSystem::GetPollTick` not implemented" );
+	SDL_GetTicks();
 	return 0;
 }
 
 bool CInputSystem::IsButtonDown( ButtonCode_t code ) const {
-	AssertMsg( false, "TODO: `CInputSystem::IsButtonDown` not implemented" );
-	return false;
+	if ( code >= ButtonCode_t::BUTTON_CODE_LAST ) {
+		AssertMsg( false, "Given ButtonCode_t is too high! (%d > %d)", code, ButtonCode_t::BUTTON_CODE_LAST );
+		return false;
+	}
+
+	return this->m_cState.m_bButtons[code];
 }
 
 int CInputSystem::GetButtonPressedTick( ButtonCode_t code ) const {
@@ -100,8 +122,14 @@ void CInputSystem::PostUserEvent( const InputEvent_t& event ) {
 }
 
 int CInputSystem::GetJoystickCount() const {
-	AssertMsg( false, "TODO: `CInputSystem::GetJoystickCount` not implemented" );
-	return 0;
+	auto count = SDL_NumJoysticks();
+
+	if ( count < 0 ) {
+		DevWarning( "[AuroraSource | InputSystem] Failed to enumerate joysticks: %s", SDL_GetError() );
+		return 0;
+	}
+
+	return count;
 }
 
 void CInputSystem::EnableJoystickInput( int nJoystick, bool bEnable ) {
@@ -113,7 +141,6 @@ void CInputSystem::EnableJoystickDiagonalPOV( int nJoystick, bool bEnable ) {
 }
 
 void CInputSystem::SampleDevices() {
-	SDL_
 	AssertMsg( false, "TODO: `CInputSystem::SampleDevices` not implemented" );
 }
 
@@ -127,6 +154,11 @@ void CInputSystem::StopRumble() {
 
 void CInputSystem::ResetInputState() {
 	AssertMsg( false, "TODO: `CInputSystem::ResetInputState` not implemented" );
+	// reset button states
+	V_memset( &this->m_cState.m_bButtons, 0, ButtonCode_t::BUTTON_CODE_COUNT );
+	// reset mouse motion accumulators
+	this->m_cState.m_nMouseAccX = 0;
+	this->m_cState.m_nMouseAccY = 0;
 }
 
 void CInputSystem::SetPrimaryUserId( int userId ) {
@@ -178,7 +210,8 @@ int CInputSystem::GetPollCount() const {
 }
 
 void CInputSystem::SetCursorPosition( int x, int y ) {
-	SDL_WarpMouseGlobal( x, y );
+	if ( SDL_WarpMouseGlobal( x, y ) < 0 )
+		DevWarning( "[AuroraSource | InputSystem] Failed to warp mouse pointer: %s", SDL_GetError() );
 }
 
 void* CInputSystem::GetHapticsInterfaceAddress() const {
@@ -191,8 +224,13 @@ void CInputSystem::SetNovintPure( bool bPure ) {
 }
 
 bool CInputSystem::GetRawMouseAccumulators( int& accumX, int& accumY ) {
-	AssertMsg( false, "TODO: `CInputSystem::GetRawMouseAccumulators` not implemented" );
-	return false;
+	accumX = this->m_cState.m_nMouseAccX;
+	this->m_cState.m_nMouseAccX = 0;
+
+	accumY = this->m_cState.m_nMouseAccY;
+	this->m_cState.m_nMouseAccY = 0;
+
+	return true;
 }
 
 void CInputSystem::SetConsoleTextMode( bool bConsoleTextMode ) {
@@ -204,3 +242,20 @@ CInputSystem gInputSystem{};
 
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CInputSystem, IInputSystem, INPUTSYSTEM_INTERFACE_VERSION, gInputSystem )
 
+int CInputSystem::CMessagePumpThread::Run() {
+	SDL_Event sdlEvent;
+	while ( gInputSystem.m_bRunning ) {
+
+		while( SDL_PollEvent( &sdlEvent ) ) {
+			InputEvent_t inputEvent{ };
+			switch ( sdlEvent.type ) {
+				case SDL_EventType::SDL_QUIT:
+					inputEvent.m_nType = InputEventType_t::IE_Quit;
+					break;
+			}
+
+			gInputSystem.m_cEventQueue.QueueMessage( inputEvent );
+		}
+	}
+	return 0;
+}

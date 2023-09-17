@@ -6,6 +6,7 @@
 
 #include "inputsystem/iinputsystem.h"
 #include "tier1/tier1.h"
+#include <memory>
 
 
 class CInputSystem : public CTier1AppSystem<IInputSystem> {
@@ -81,8 +82,8 @@ public:
 	void SetPrimaryUserId( int userId ) override;
 
 	// Convert back + forth between ButtonCode/AnalogCode + strings
-	const char *ButtonCodeToString( ButtonCode_t code ) const override;
-	const char *AnalogCodeToString( AnalogCode_t code ) const override;
+	const char* ButtonCodeToString( ButtonCode_t code ) const override;
+	const char* AnalogCodeToString( AnalogCode_t code ) const override;
 	ButtonCode_t StringToButtonCode( const char *pString ) const override;
 	AnalogCode_t StringToAnalogCode( const char *pString ) const override;
 
@@ -102,7 +103,7 @@ public:
 	void SetCursorPosition( int x, int y ) override;
 
 	// NVNT get address to haptics interface
-	void *GetHapticsInterfaceAddress() const override;
+	void* GetHapticsInterfaceAddress() const override;
 
 	void SetNovintPure( bool bPure ) override;
 
@@ -116,10 +117,28 @@ public:
 	// being initialized.
 	void SetConsoleTextMode( bool bConsoleTextMode ) override;
 private:
+	class CMessagePumpThread : public CThread {
+		int Run() override;
+	};
+	struct JoystickState_t {
+
+	};
+	struct State_t {
+		bool m_bButtons[ButtonCode_t::BUTTON_CODE_COUNT] { false };
+		int m_nMouseAccX{};
+		int m_nMouseAccY{};
+		JoystickState_t m_cJoysticks[4] {};
+	};
 	SDL_Window* m_pSdlWindow{nullptr};
 
 	bool m_bEnabled{false};
+	bool m_bRunning{false};
 	bool m_bConsoleTextMode{false};
+
+	State_t m_cState{};
+
+	CMessageQueue<InputEvent_t> m_cEventQueue{};
+	CMessagePumpThread m_pEventPump{};
 };
 
 extern CInputSystem gInputSystem;
