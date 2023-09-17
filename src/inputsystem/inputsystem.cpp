@@ -30,6 +30,9 @@ void CInputSystem::AttachToWindow( void* hWnd ) {
 	if ( hWnd == nullptr )
 		Error( "Called `CInputSystem::AttachToWindow` with a `nullptr`!" );
 
+	if ( this->m_pSdlWindow )
+		Error( "`CInputSystem::AttachToWindow`: Cannot attach to two windows at once!" );
+
 	this->m_pSdlWindow = SDL_CreateWindowFrom( hWnd );
 	AssertMsg( this->m_pSdlWindow != nullptr, SDL_GetError() );
 }
