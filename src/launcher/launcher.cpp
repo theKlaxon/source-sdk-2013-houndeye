@@ -14,7 +14,7 @@ DLL_EXPORT int LauncherMain( int argc, char* argv[] ) {
 	CommandLine()->CreateCmdLine( argc, argv );
 
 	if ( Plat_IsInDebugSession() )
-		printf( "[I] running with debugger attached!" );
+		printf( "[I] running with debugger attached!\n" );
 
 	if ( CommandLine()->FindParm( "-dedicated" ) != 0 ) {
 		CLauncherDS launcherds{};
@@ -22,5 +22,6 @@ DLL_EXPORT int LauncherMain( int argc, char* argv[] ) {
 		return steamApplication.Run();
 	}
 
-
+	// TODO: Add logic to boot game based on above by OzxyBox
+	return 1;
 }
