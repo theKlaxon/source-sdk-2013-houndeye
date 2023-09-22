@@ -11,7 +11,7 @@
 
     "targetType": "executable",
     "targetName": "aurosrc",
-    "targetPath": "../../game",
+    "targetPath": "../../game/bin",
     "workingDirectory": "../../game",
 
     "__comment": {
