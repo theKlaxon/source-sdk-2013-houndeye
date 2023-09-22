@@ -5,6 +5,7 @@ import core.runtime;
 import std.path;
 import std.conv;
 import std.typecons;
+import std.string : toStringz;
 import std.algorithm : canFind;
 
 
@@ -29,15 +30,12 @@ int main( string[] argv ) {
 		return 1;
 	}
 
-	Nullable!int res;
-	version ( Windows ) {
-		import core.sys.windows.windef;
-		import core.sys.windows.winbase;
-		res = lib.callC!( int, HINSTANCE, HINSTANCE, LPSTR, int )( funcname, GetModuleHandle( null ), null, GetCommandLineA(), 0 );
-	} else {
-		char*[] args = new char*[ argv.length ];
-		res = lib.callC!( int, int, char** )( funcname, argv.sizeof, args.ptr );
-	}
+	auto args = new char*[ argv.length ];
+
+	for ( auto i = 0; i < argv.length; i++ )
+		args[i] = ( argv[i] ~ "\0" ).dup().ptr;
+
+	Nullable!int res = lib.callC!( int, int, char** )( funcname, args.length, args.ptr );
 
 	if ( res.isNull() ) {
 		writeln( "Failed to load `" ~ funcname ~ "`: " ~ lib.getLastError() );
