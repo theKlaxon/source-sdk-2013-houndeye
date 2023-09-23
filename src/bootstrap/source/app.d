@@ -5,6 +5,7 @@ import core.runtime;
 import std.path;
 import std.conv;
 import std.typecons;
+import std.string : toStringz;
 import std.algorithm : canFind;
 
 
@@ -19,7 +20,7 @@ int main( string[] argv ) {
 	auto args = new char*[ argv.length ];
 
 	for ( auto i = 0; i < argv.length; i++ )
-		args[i] = ( argv[i] ~ "\0" ).dup().ptr;
+		args[i] = cast(char*) argv[i].toStringz();
 
 	Nullable!int res = lib.callC!( int, int, char** )( "LauncherMain", args.length, args.ptr );
 
