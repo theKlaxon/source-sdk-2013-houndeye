@@ -6,7 +6,10 @@
     "license": "MPL2",
 
     "dependencies": {
-        "dlibloader": "~>0.0.6"
+        "dlibloader": {
+            "version": "~>0.0.6",
+            "dflags": [ "--link-defaultlib-shared" ]
+        }
     },
 
     "targetType": "executable",
@@ -14,7 +17,11 @@
     "targetPath": "../../game/bin",
     "workingDirectory": "../../game",
 
-    "__comment": {
-       "dflags": [ "--link-defaultlib-shared" ]
+    "dflags": [ "--link-defaultlib-shared" ],
+
+    "toolchainRequirements": {
+        "dmd": "no",
+        "gdc": "no",
+        "ldc": "~>1.30"
     }
 }
