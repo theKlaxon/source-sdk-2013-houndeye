@@ -29,7 +29,7 @@ IDedicatedServerAPI* g_pDedicatedServerApi;
 IStudioDataCache* g_pStudioDataCache;
 IDataCache* g_pDataCache;
 
-ModInfo_t s_modInfo{ 0, 0, 0, 0, 0, 0 };
+ModInfo_t s_modInfo{ nullptr, nullptr, nullptr, nullptr, nullptr, false };
 char g_szBaseDir[ MAX_PATH ];
 char g_szGameInfoDir[ MAX_PATH ];
 
@@ -38,9 +38,10 @@ class CDedicatedExports : public CBaseAppSystem<IDedicatedExports> {
 public:
 	void Sys_Printf( char* text ) override {
 		// Maybe add logging?
+		puts( text );
 	}
 
-	void RunServer() override {
+	[[noreturn]] void RunServer() override {
 		// Main Server loop
 		for ( ;; )
 			g_pDedicatedServerApi->RunFrame();
@@ -51,7 +52,25 @@ CDedicatedExports g_DedicatedExports;
 
 
 SpewRetval_t LauncherDSSpewFunc( SpewType_t spewType, char const* pMsg ) {
-	printf( pMsg );
+	switch ( spewType ) {
+		case SPEW_MESSAGE:
+			printf( "[I] %s", pMsg );
+			break;
+		case SPEW_WARNING:
+			printf( "[W] %s", pMsg );
+			break;
+		case SPEW_ASSERT:
+			printf( "[assert] %s", pMsg );
+			break;
+		case SPEW_ERROR:
+			printf( "[E] %s", pMsg );
+			break;
+		case SPEW_LOG:
+			printf( "[D] %s", pMsg );
+			break;
+		case SPEW_TYPE_COUNT:
+			break;
+	}
 	return SpewRetval_t::SPEW_CONTINUE;
 }
 
@@ -76,7 +95,7 @@ bool CLauncherDS::Create() {
 
 	this->AddSystem( &g_DedicatedExports, VENGINE_DEDICATEDEXPORTS_API_VERSION );
 
-	static auto g_Factory = GetFactory();
+	static auto g_Factory = CLauncherDS::GetFactory();
 
 	ConnectTier1Libraries( &g_Factory, 1 );
 	ConnectTier2Libraries( &g_Factory, 1 );
@@ -100,11 +119,11 @@ bool CLauncherDS::Create() {
 
 	if ( !g_pFileSystem || !g_pDedicatedServerApi || !g_pDataCache || !g_pStudioDataCache || !g_pMaterialSystem || !inputsystem ) {
 		Error( "Unable to load required library interface!\n" );
-		return false;
+//		return false;
 	}
 
 	g_pMaterialSystem->SetShaderAPI( "shaderapiempty.dll" );
-	g_pMaterialSystem->Connect( GetFactory() );
+	g_pMaterialSystem->Connect( CLauncherDS::GetFactory() );
 	inputsystem->SetConsoleTextMode( true );
 
 	return true;
@@ -171,7 +190,7 @@ bool CLauncherDS::SetupSearchPaths() {
 //-----------------------------------------------------------------------------
 bool CLauncherDS::PreInit() {
 	// Add paths...
-	if ( !SetupSearchPaths() )
+	if (! this->SetupSearchPaths() )
 		return false;
 
 

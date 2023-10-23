@@ -23,5 +23,7 @@ DLL_EXPORT int LauncherMain( int argc, char* argv[] ) {
 	}
 
 	// TODO: Add logic to boot game based on above by OzxyBox
-	return 1;
+	CLauncherDS launcher{};
+	CSteamApplication steamApplication( &launcher );
+	return steamApplication.Run();
 }

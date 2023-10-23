@@ -17,5 +17,5 @@ public:
 	void Destroy() override;
 private:
 	// Sets up the search paths
-	bool SetupSearchPaths();
+	static bool SetupSearchPaths();
 };
