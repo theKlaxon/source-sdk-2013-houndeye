@@ -97,6 +97,9 @@ include_directories(
 add_compile_definitions($<$<CONFIG:Debug>:DEBUG> $<$<CONFIG:Debug>:_DEBUG>)
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 
+# SETUP D LANG
+include( _cmake_scripts/dlang.cmake )
+
 # SETUP THIRD PARTY
 include( thirdparty/init.cmake )
 

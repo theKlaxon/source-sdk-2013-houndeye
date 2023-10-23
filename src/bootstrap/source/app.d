@@ -22,7 +22,7 @@ int main( string[] argv ) {
 	for ( auto i = 0; i < argv.length; i++ )
 		args[i] = cast(char*) argv[i].toStringz();
 
-	Nullable!int res = lib.callC!( int, int, char** )( "LauncherMain", args.length, args.ptr );
+	Nullable!int res = lib.callC!( int, int, char** )( "LauncherMain", cast(int)( args.length ), args.ptr );
 
 	if ( res.isNull() ) {
 		writeln( "Failed to load `LauncherMain`: " ~ lib.getLastError() );
