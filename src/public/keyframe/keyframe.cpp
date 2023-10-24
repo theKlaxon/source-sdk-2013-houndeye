@@ -173,7 +173,7 @@ void CPositionInterpolator_Linear::Release()
 
 void CPositionInterpolator_Linear::GetDetails( char **outName, int *outMinKeyReq, int *outMaxKeyReq )
 {
-	*outName = "Linear";
+	*outName = (char*) "Linear";  // HACK: This shouldn't be like this...
 	*outMinKeyReq = 0;
 	*outMaxKeyReq = 1;
 }
@@ -220,7 +220,7 @@ void CPositionInterpolator_CatmullRom::Release()
 
 void CPositionInterpolator_CatmullRom::GetDetails( char **outName, int *outMinKeyReq, int *outMaxKeyReq )
 {
-	*outName = "Catmull-Rom Spline";
+	*outName = (char*) "Catmull-Rom Spline";  // HACK: This shouldn't be like this...
 	*outMinKeyReq = -1;
 	*outMaxKeyReq = 2;
 }
@@ -321,7 +321,7 @@ void CPositionInterpolator_Rope::Release()
 
 void CPositionInterpolator_Rope::GetDetails( char **outName, int *outMinKeyReq, int *outMaxKeyReq )
 {
-	*outName = "Rope";
+	*outName = (char*) "Rope";  // HACK: This shouldn't be like this...
 	*outMinKeyReq = 0;
 	*outMinKeyReq = 1;
 }
@@ -433,7 +433,7 @@ typedef void (*RotationInterpolatorFunc_t)(float time, Quaternion &outRot);
 
 typedef struct 
 {
-	char *szName;
+	const char *szName;
 	RotationInterpolatorFunc_t pFunc;
 
 	// defines the range of keys this interpolator needs to function
@@ -471,7 +471,7 @@ bool Motion_GetRotationInterpolatorDetails( int rotInterpNum, char **outName, in
 	}
 
 	if ( outName )
-		*outName = g_RotationInterpolators[rotInterpNum].szName;
+		*outName = (char*) g_RotationInterpolators[rotInterpNum].szName;  // HACK: This shouldn't be like this...
 
 	if ( outMinKeyReq )
 		*outMinKeyReq = g_RotationInterpolators[rotInterpNum].iMinReqKeyFrame;

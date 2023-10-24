@@ -90,7 +90,7 @@ void CNPC_Crow::Spawn( void )
 {
 	BaseClass::Spawn();
 
-	char *szModel = (char *)STRING( GetModelName() );
+	const char *szModel = (char *)STRING( GetModelName() );
 	if (!szModel || !*szModel)
 	{
 		szModel = "models/crow.mdl";
