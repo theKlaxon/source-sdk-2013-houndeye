@@ -4,7 +4,6 @@ build/
 cmake-*/
 .dub/
 
-
 # CLion
 .idea
 
