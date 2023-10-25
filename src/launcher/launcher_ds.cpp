@@ -87,7 +87,7 @@ bool CLauncherDS::Create() {
 		{ "engine.dll", VENGINE_HLDS_API_VERSION },
 		{ "FileSystem_Stdio.dll", QUEUEDLOADER_INTERFACE_VERSION },
 		{ "inputsystem.dll", INPUTSYSTEM_INTERFACE_VERSION },
-		{ nullptr, nullptr } // Required to terminate the list
+		{ "", nullptr } // Required to terminate the list
 	};
 
 	if (! this->AddSystems( appSystems ) )
