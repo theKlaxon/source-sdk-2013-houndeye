@@ -151,7 +151,7 @@ public:
 			return;
 
 		// Make sure we only show the message once
-		if ( UTL_INVAL_SYMBOL != m_PrecachedScriptSounds.Find( soundname ) )
+		if (! m_PrecachedScriptSounds.Find( soundname ).operator==( UTL_INVAL_SYMBOL ) )
 			return;
 
 		if (m_hPrecacheLogFile == FILESYSTEM_INVALID_HANDLE)
@@ -410,7 +410,7 @@ public:
 				static CUtlSymbolTable s_PrecacheScriptSoundFailures;
 
 				// Make sure we only show the message once
-				if ( UTL_INVAL_SYMBOL == s_PrecacheScriptSoundFailures.Find( soundname ) )
+				if ( s_PrecacheScriptSoundFailures.Find( soundname ).operator==( UTL_INVAL_SYMBOL ) )
 				{
 					DevMsg( "PrecacheScriptSound '%s' failed, no such sound script entry\n", soundname );
 					s_PrecacheScriptSoundFailures.AddString( soundname );

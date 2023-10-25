@@ -107,7 +107,7 @@ class AI_Response;
 //-----------------------------------------------------------------------------
 // CAI_Expresser
 //
-// Purpose: Provides the functionality of going from abstract _concept ("hello")
+// Purpose: Provides the functionality of going from abstract concept ("hello")
 //			to specific sentence/scene/wave
 //
 
@@ -220,7 +220,7 @@ private:
 	
 	// --------------------------------
 	//
-	// Speech _concept data structures
+	// Speech concept data structures
 	//
 
 	CUtlDict< ConceptHistory_t, int > m_ConceptHistories;

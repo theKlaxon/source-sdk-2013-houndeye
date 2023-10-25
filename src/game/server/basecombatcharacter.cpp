@@ -1710,7 +1710,7 @@ bool CBaseCombatCharacter::Weapon_Detach( CBaseCombatWeapon *pWeapon )
 			m_hMyWeapons.Set( i, NULL );
 			pWeapon->SetOwner( NULL );
 
-			if ( pWeapon == m_hActiveWeapon )
+			if ( m_hActiveWeapon.operator==( pWeapon ) )
 				ClearActiveWeapon();
 			return true;
 		}
