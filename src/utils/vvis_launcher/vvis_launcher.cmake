@@ -5,11 +5,11 @@ set(
 	VVIS_LAUNCHER_SOURCE_FILES
 
 	"${VVIS_LAUNCHER_DIR}/vvis_launcher.cpp"
-	"${VVIS_LAUNCHER_DIR}/StdAfx.cpp"
+	"${VVIS_LAUNCHER_DIR}/stdafx.cpp"
 
 	# Header Files
 	"${SRCDIR}/public/tier1/interface.h"
-	"${VVIS_LAUNCHER_DIR}/StdAfx.h"
+	"${VVIS_LAUNCHER_DIR}/stdafx.h"
 )
 
 add_executable(vvis_launcher ${VVIS_LAUNCHER_SOURCE_FILES})
@@ -21,7 +21,7 @@ set_target_properties(
 
 target_precompile_headers(
 	vvis_launcher PRIVATE
-	"${VVIS_LAUNCHER_DIR}/StdAfx.h"
+	"${VVIS_LAUNCHER_DIR}/stdafx.h"
 )
 
 target_include_directories(

@@ -4,9 +4,7 @@
     "description": "A modern Source SDK 2013 branch",
     "builtin-baseline": "1384becefca5c1511f0e070c43f66ad6a3783c8e",
     "dependencies": [
-        "sdl2"
-    ],
-    "$overrides": [
-        { "name": "sdl2", "version": "2.0.4" }
+        "sdl2",
+        "magic-enum"
     ]
 }

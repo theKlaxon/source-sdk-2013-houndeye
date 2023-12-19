@@ -98,7 +98,9 @@ add_compile_definitions($<$<CONFIG:Debug>:DEBUG> $<$<CONFIG:Debug>:_DEBUG>)
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 
 # SETUP D LANG
-include( _cmake_scripts/dlang.cmake )
+if (${BUILD_GROUP} STREQUAL "everything")
+	include( _cmake_scripts/dlang.cmake )
+endif ()
 
 # SETUP THIRD PARTY
 include( thirdparty/init.cmake )
