@@ -5,6 +5,8 @@ set(
 	INPUTSYSTEM_SOURCE_FILES
 		"${INPUTSYSTEM_DIR}/inputsystem.cpp"
 		"${INPUTSYSTEM_DIR}/inputsystem.hpp"
+		"${INPUTSYSTEM_DIR}/ButtonEntry.cpp"
+		"${INPUTSYSTEM_DIR}/ButtonEntry.hpp"
 )
 
 add_library( inputsystem MODULE ${INPUTSYSTEM_SOURCE_FILES} )
@@ -31,4 +33,5 @@ target_link_libraries(
 target_vcpkg_dependency(
 	inputsystem PRIVATE
 		SDL2
+		magic-enum
 )

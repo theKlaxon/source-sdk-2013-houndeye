@@ -129,10 +129,6 @@ private:
 		int m_nMouseAccY{};
 		JoystickState_t m_cJoysticks[4] {};
 	};
-	struct ButtonEntry_t {
-		const char* name;
-		const ButtonCode_t code;
-	};
 	SDL_Window* m_pSdlWindow{nullptr};
 
 
@@ -141,7 +137,6 @@ private:
 	bool m_bConsoleTextMode{false};
 
 	State_t m_cState{};
-	static std::array<ButtonEntry_t, 107> BUTTON_MAP;
 
 	CMessageQueue<InputEvent_t> m_cEventQueue{};
 	CMessagePumpThread m_pEventPump{};
