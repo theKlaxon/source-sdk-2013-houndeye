@@ -22,7 +22,9 @@
 #include "vmpi_tools_shared.h"
 #include "vstdlib/random.h"
 #include <conio.h>
-#include <windows.h>
+#ifdef _WIN32
+	#include <windows.h>
+#endif
 
 #define VMPI_VVIS_PACKET_ID						1
 	// Sub packet IDs.

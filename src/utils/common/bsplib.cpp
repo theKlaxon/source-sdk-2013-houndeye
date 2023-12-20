@@ -1039,6 +1039,10 @@ void CGameLump::ComputeGameLumpSizeAndCount( int& size, int& clumpCount )
 	size += sizeof( dgamelumpheader_t ) + clumpCount * sizeof( dgamelump_t );
 }
 
+// TODO: Remove this line
+static bool g_bSwapOnLoad{false};
+static bool g_bSwapOnWrite{false};
+
 
 void CGameLump::SwapGameLump( GameLumpId_t id, int version, byte *dest, byte *src, int length )
 {

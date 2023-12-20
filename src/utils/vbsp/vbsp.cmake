@@ -171,5 +171,7 @@ target_link_libraries(
 	mathlib
 	"${LIBPUBLIC}/tier2${STATIC_LIB_EXT}"
 	"${LIBPUBLIC}/vtf${STATIC_LIB_EXT}"
-	"${LIBCOMMON}/lzma${STATIC_LIB_EXT}"
+	$<$<BOOL:${WIN32}>:"${LIBCOMMON}/lzma${STATIC_LIB_EXT}">
 )
+
+target_vcpkg_dependency( vbsp PRIVATE liblzma )

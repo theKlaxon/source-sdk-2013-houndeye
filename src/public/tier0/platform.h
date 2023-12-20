@@ -48,6 +48,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <time.h>
+#include <csignal>
 #endif
 
 #include <malloc.h>
@@ -346,7 +347,9 @@ typedef void * HINSTANCE;
 
 // Used to step into the debugger
 #if defined( _WIN32 )
-#define DebuggerBreak()  __debugbreak()
+	#define DebuggerBreak()  __debugbreak()
+#elif defined( GNUC )
+	#define DebuggerBreak()  std::raise(SIGINT);
 #endif
 #define	DebuggerBreakIfDebugging() if ( !Plat_IsInDebugSession() ) ; else DebuggerBreak()
 
@@ -477,7 +480,6 @@ typedef void * HINSTANCE;
 #endif
 
 #if defined( _WIN32 )
-
 	// Used for dll exporting and importing
 	#define DLL_EXPORT				extern "C" __declspec( dllexport )
 	#define DLL_IMPORT				extern "C" __declspec( dllimport )
@@ -491,24 +493,22 @@ typedef void * HINSTANCE;
 	#define DLL_GLOBAL_IMPORT		extern __declspec( dllimport )
 
 	#define DLL_LOCAL
-
 #elif defined GNUC
-// Used for dll exporting and importing
-#define  DLL_EXPORT   extern "C" __attribute__ ((visibility("default")))
-#define  DLL_IMPORT   extern "C"
+	// Used for dll exporting and importing
+	#define  DLL_EXPORT   extern "C" __attribute__ ((visibility("default")))
+	#define  DLL_IMPORT   extern "C"
 
-// Can't use extern "C" when DLL exporting a class
-#define  DLL_CLASS_EXPORT __attribute__ ((visibility("default")))
-#define  DLL_CLASS_IMPORT
+	// Can't use extern "C" when DLL exporting a class
+	#define  DLL_CLASS_EXPORT __attribute__ ((visibility("default")))
+	#define  DLL_CLASS_IMPORT
 
-// Can't use extern "C" when DLL exporting a global
-#define  DLL_GLOBAL_EXPORT   extern __attribute ((visibility("default")))
-#define  DLL_GLOBAL_IMPORT   extern
+	// Can't use extern "C" when DLL exporting a global
+	#define  DLL_GLOBAL_EXPORT   extern __attribute ((visibility("default")))
+	#define  DLL_GLOBAL_IMPORT   extern
 
-#define  DLL_LOCAL __attribute__ ((visibility("hidden")))
-
+	#define  DLL_LOCAL __attribute__ ((visibility("hidden")))
 #else
-#error "Unsupported Platform."
+	#error "Unsupported Platform."
 #endif
 
 // Used for standard calling conventions
@@ -519,6 +519,13 @@ typedef void * HINSTANCE;
 	// GCC 3.4.1 has a bug in supporting forced inline of templated functions
 	// this macro lets us not force inlining in that case
 	#define  FORCEINLINE_TEMPLATE		__forceinline
+#elif defined( GNUC )
+	#define  STDCALL
+	#define  FASTCALL				__attribute__((fastcall))
+	#define  FORCEINLINE
+	// GCC 3.4.1 has a bug in supporting forced inline of templated functions
+	// this macro lets us not force inlining in that case
+	#define  FORCEINLINE_TEMPLATE
 #endif
 
 // Force a function call site -not- to inlined. (useful for profiling)

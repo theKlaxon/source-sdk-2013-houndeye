@@ -7,7 +7,9 @@
 //=============================================================================//
 // vis.c
 
-#include <windows.h>
+#ifdef _WIN32
+	#include <windows.h>
+#endif
 #include "vis.h"
 #include "threads.h"
 #include "stdlib.h"

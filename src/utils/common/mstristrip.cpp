@@ -14,6 +14,7 @@
 //-----------------------------------------------------------------------------
 
 // identifier was truncated to '255' characters in the debug information
+#include <climits>
 #pragma warning(disable: 4786)
 // conversion from 'double' to 'float'
 #pragma warning(disable: 4244)
@@ -27,7 +28,11 @@
 
 #include <assert.h>
 #ifdef _DEBUG
-#include <crtdbg.h>
+	#if defined( _WIN32 )
+		#include <crtdbg.h>
+	#else
+		#include <cstring>
+	#endif
 #endif
 
 #include "mstristrip.h"
@@ -761,32 +766,35 @@ bool CVertCache::Add(int strip, int vertindex)
 //=========================================================================
 void EnableLeakChecking()
 {
-    int flCrtDbgFlags = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+	// FIXME: This shouldn't be commented out...
+	#if defined( _WIN32 )
+		int flCrtDbgFlags = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
 
-    flCrtDbgFlags &=
-        ~(_CRTDBG_LEAK_CHECK_DF |
-        _CRTDBG_CHECK_ALWAYS_DF |
-        _CRTDBG_DELAY_FREE_MEM_DF);
+		flCrtDbgFlags &=
+			~(_CRTDBG_LEAK_CHECK_DF |
+			_CRTDBG_CHECK_ALWAYS_DF |
+			_CRTDBG_DELAY_FREE_MEM_DF);
 
-    // always check for memory leaks
-    flCrtDbgFlags |= _CRTDBG_LEAK_CHECK_DF;
+		// always check for memory leaks
+		flCrtDbgFlags |= _CRTDBG_LEAK_CHECK_DF;
 
-    // others you may / may not want to set
-    flCrtDbgFlags |= _CRTDBG_CHECK_ALWAYS_DF;
-    flCrtDbgFlags |= _CRTDBG_DELAY_FREE_MEM_DF;
+		// others you may / may not want to set
+		flCrtDbgFlags |= _CRTDBG_CHECK_ALWAYS_DF;
+		flCrtDbgFlags |= _CRTDBG_DELAY_FREE_MEM_DF;
 
-    _CrtSetDbgFlag(flCrtDbgFlags);
+		_CrtSetDbgFlag(flCrtDbgFlags);
 
-    // all types of reports go via OutputDebugString
-    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
-    _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
-    _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_DEBUG);
+		// all types of reports go via OutputDebugString
+		_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
+		_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
+		_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_DEBUG);
 
-    // big errors and asserts get their own assert window
-    _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_WNDW);
-    _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_WNDW);
+		// big errors and asserts get their own assert window
+		_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_WNDW);
+		_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_WNDW);
 
-    // _CrtSetBreakAlloc(0);
+		// _CrtSetBreakAlloc(0);
+	#endif
 }
 #endif
 

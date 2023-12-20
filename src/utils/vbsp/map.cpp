@@ -15,6 +15,8 @@
 #include "materialsub.h"
 #include "fgdlib/fgdlib.h"
 #include "manifest.h"
+#include <cstdio>
+#include <cstdlib>
 
 #ifdef VSVMFIO
 #include "VmfImport.h"
@@ -1271,7 +1273,7 @@ void ConvertSideList( entity_t *mapent, char *key )
 					}
 
 					char szIndex[15];
-					itoa( nIndex, szIndex, 10 );
+					std::snprintf( szIndex, 10, "%d", nIndex );
 					strcat( szNewValue, szIndex );
 				}
 			}

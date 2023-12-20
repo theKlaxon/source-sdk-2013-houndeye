@@ -3,8 +3,13 @@
 #include "map_shared.h"
 #include "fgdlib/fgdlib.h"
 #include "manifest.h"
-#include "windows.h"
-
+#ifdef _WIN32
+	#include <windows.h>
+#else
+	#include <unistd.h>
+	#include <sys/types.h>
+	#include <pwd.h>
+#endif
 //-----------------------------------------------------------------------------
 // Purpose: default constructor
 //-----------------------------------------------------------------------------
@@ -12,6 +17,7 @@ CManifestMap::CManifestMap( void )
 {
 	m_RelativeMapFileName[ 0 ] = 0;
 	m_bTopLevelMap = false;
+
 }
 
 
@@ -359,7 +365,14 @@ bool CManifest::LoadVMFManifestUserPrefs( const char *pszFileName )
 	DWORD		UserNameSize;
 
 	UserNameSize = sizeof( UserName );
-	if ( GetUserName( UserName, &UserNameSize ) == 0 )
+	#if defined( _WIN32 )
+		if ( GetUserName( UserName, &UserNameSize ) == 0 )
+	#else
+		struct passwd *pw = getpwuid(getuid());
+
+		strcpy( pw->pw_dir, UserName );
+		if ( pw->pw_dir )
+	#endif
 	{
 		strcpy( UserPrefsFileName, "default" );
 	}

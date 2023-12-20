@@ -669,7 +669,7 @@ private:
 			return false;
 
 		ThreadMemoryBarrier();
-		++m_depth;
+		m_depth += 1;
 		return true;
 	}
 
@@ -730,7 +730,7 @@ public:
 			DebuggerBreak();
 #endif
 
-		--m_depth;
+		m_depth -= 1;
 		if ( !m_depth )
 		{
 			ThreadMemoryBarrier();
@@ -858,8 +858,8 @@ private:
 	MUTEX_TYPE &m_lock;
 
 	// Disallow copying
-	CAutoLockT<MUTEX_TYPE>( const CAutoLockT<MUTEX_TYPE> & );
-	CAutoLockT<MUTEX_TYPE> &operator=( const CAutoLockT<MUTEX_TYPE> & );
+	CAutoLockT( const CAutoLockT<MUTEX_TYPE> & );
+	CAutoLockT &operator=( const CAutoLockT<MUTEX_TYPE> & );
 };
 
 typedef CAutoLockT<CThreadMutex> CAutoLock;

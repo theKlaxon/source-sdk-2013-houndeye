@@ -56,6 +56,7 @@ elseif (${BUILD_GROUP} STREQUAL "compilers")
 	include("${SRCDIR}/utils/vvis_launcher/vvis_launcher.cmake")
 	include("${SRCDIR}/mathlib/mathlib.cmake")
 	include("${SRCDIR}/raytrace/raytrace.cmake")
+	include("${SRCDIR}/tier1/tier1.cmake")
 
 elseif (${BUILD_GROUP} STREQUAL "shaders")
 	if (${BUILD_GAME} STREQUAL "hl2mp")

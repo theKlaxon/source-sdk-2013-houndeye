@@ -29,7 +29,9 @@
 #include "vmpi_tools_shared.h"
 #include "vrad.h"
 #include <conio.h>
-#include <windows.h>
+#ifdef _WIN32
+	#include <windows.h>
+#endif
 
 CUtlVector<char> g_LightResultsFilename;
 

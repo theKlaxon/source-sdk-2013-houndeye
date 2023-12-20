@@ -13,8 +13,8 @@
 #include "cmdlib.h"
 #include "scriplib.h"
 #if defined(POSIX)
-#include "../../filesystem/linux_support.h"
-#include <sys/stat.h>
+	#include "../../filesystem/linux_support.h"
+	#include <sys/stat.h>
 #endif
 /*
 =============================================================================
@@ -1253,7 +1253,7 @@ int CScriptLib::GetFileList( const char* pDirPath, const char* pPattern, CUtlVec
 	FindClose( h );
 
 #else
-#error
+	#error
 #endif
 	
 
