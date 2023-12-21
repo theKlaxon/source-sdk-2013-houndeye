@@ -11,7 +11,7 @@
 #include "mpi_stats.h"
 #include "pacifier.h"
 #include "scratchpad_helpers.h"
-#include "stdlib.h"
+#include <cstdlib>
 #include "threadhelpers.h"
 #include "threads.h"
 #include "vis.h"
@@ -21,8 +21,8 @@
 #include "vmpi_filesystem.h"
 #include "vmpi_tools_shared.h"
 #include "vstdlib/random.h"
-#include <conio.h>
 #ifdef _WIN32
+	#include <conio.h>
 	#include <windows.h>
 #endif
 
@@ -37,7 +37,6 @@
 	#define VMPI_SUBPACKETID_BASEPORTALVIS_SYNC	11
 	#define VMPI_SUBPACKETID_PORTALFLOW_SYNC	12
 	#define VMPI_SUBPACKETID_MC_ADDR			13
-
 // DistributeWork owns this packet ID.
 #define VMPI_DISTRIBUTEWORK_PACKETID			2
 

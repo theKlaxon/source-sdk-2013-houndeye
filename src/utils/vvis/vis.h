@@ -4,7 +4,7 @@
 //
 // $NoKeywords: $
 //
-//=============================================================================//
+//========================================================================//
 // vis.h
 
 #include "cmdlib.h"
@@ -19,8 +19,7 @@
 extern bool g_bUseRadius;			// prototyping TF2, "radius vis" solution
 extern double g_VisRadius;			// the radius for the TF2 "radius vis"
 
-struct plane_t
-{
+struct plane_t {
 	Vector		normal;
 	float		dist;
 };
@@ -28,21 +27,23 @@ struct plane_t
 #define MAX_POINTS_ON_WINDING	64
 #define	MAX_POINTS_ON_FIXED_WINDING	12
 
-struct winding_t
-{
+struct winding_t {
 	qboolean	original;			// don't free, it's part of the portal
 	int		numpoints;
 	Vector	points[MAX_POINTS_ON_FIXED_WINDING];			// variable sized
 };
 
-winding_t	*NewWinding (int points);
-void		FreeWinding (winding_t *w);
-winding_t	*CopyWinding (winding_t *w);
+winding_t*  NewWinding( int points );
+void		FreeWinding( winding_t* w );
+winding_t*  CopyWinding( winding_t* w );
 
 
-typedef enum {stat_none, stat_working, stat_done} vstatus_t;
-struct portal_t
-{
+enum class vstatus_t {
+	stat_none = 0,
+	stat_working,
+	stat_done
+};
+struct portal_t {
 	plane_t		plane;	// normal pointing into neighbor
 	int			leaf;	// neighbor
 	
@@ -58,14 +59,12 @@ struct portal_t
 	int			nummightsee;	// bit count on portalflood for sort
 };
 
-struct leaf_t
-{
+struct leaf_t {
 	CUtlVector<portal_t *> portals;
 };
 
 	
-struct pstack_t
-{
+struct pstack_t {
 	byte		mightsee[MAX_PORTALS/8];		// bit string
 	pstack_t	*next;
 	leaf_t		*leaf;
@@ -79,8 +78,7 @@ struct pstack_t
 	plane_t		portalplane;
 };
 
-struct threaddata_t
-{
+struct threaddata_t {
 	portal_t	*base;
 	int			c_chains;
 	pstack_t	pstack_head;

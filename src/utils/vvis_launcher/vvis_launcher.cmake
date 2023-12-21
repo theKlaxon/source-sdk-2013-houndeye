@@ -29,10 +29,12 @@ target_include_directories(
 	"${SRCDIR}/utils/common"
 )
 
-target_link_options(
-	vvis_launcher PRIVATE
-	/LARGEADDRESSAWARE
-)
+if (WIN32)
+	target_link_options(
+		vvis_launcher PRIVATE
+		/LARGEADDRESSAWARE
+	)
+endif ()
 
 target_link_libraries(
 	vvis_launcher PRIVATE

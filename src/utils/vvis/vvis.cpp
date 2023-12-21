@@ -12,7 +12,7 @@
 #endif
 #include "vis.h"
 #include "threads.h"
-#include "stdlib.h"
+#include <cstdlib>
 #include "pacifier.h"
 #include "vmpi.h"
 #include "mpivis.h"
@@ -1208,13 +1208,8 @@ int RunVVis( int argc, char **argv )
 }
 
 
-/*
-===========
-main
-===========
-*/
-int main (int argc, char **argv)
-{
+/* =========== main =========== */
+int main (int argc, char **argv) {
 	CommandLine()->CreateCmdLine( argc, argv );
 
 	MathLib_Init( 2.2f, 2.2f, 0.0f, 1.0f, false, false, false, false );
@@ -1235,11 +1230,9 @@ int main (int argc, char **argv)
 
 // When VVIS is used as a DLL (makes debugging vmpi vvis a lot easier), this is used to
 // get it going.
-class CVVisDLL : public ILaunchableDLL
-{
+class CVVisDLL : public ILaunchableDLL {
 public:
-	virtual int main( int argc, char **argv )
-	{
+	int main( int argc, char **argv ) override {
 		return ::main( argc, argv );
 	}
 };
