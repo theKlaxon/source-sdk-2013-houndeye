@@ -10,15 +10,13 @@
 #define PLATFORM_H
 
 #if defined(__x86_64__) || defined(_WIN64)
-#define PLATFORM_64BITS 1
-#endif
-
-#if defined(__GCC__) || defined(__GNUC__)
-#define COMPILER_GCC 1
+	#define PLATFORM_64BITS 1
 #endif
 
 #ifdef __clang__
-#define COMPILER_CLANG 1
+	#define COMPILER_CLANG 1
+#elif defined( GNUC )
+	#define COMPILER_GCC 1
 #endif
 
 #include "wchartypes.h"
@@ -26,29 +24,23 @@
 #include "tier0/valve_off.h"
 
 #ifdef _DEBUG
-#if !defined( PLAT_COMPILE_TIME_ASSERT )
-#define PLAT_COMPILE_TIME_ASSERT( pred )	switch(0){case 0:case pred:;}
-#endif
+	#if !defined( PLAT_COMPILE_TIME_ASSERT )
+		#define PLAT_COMPILE_TIME_ASSERT( pred )	switch(0){case 0:case pred:;}
+	#endif
 #else
-#if !defined( PLAT_COMPILE_TIME_ASSERT )
-#define PLAT_COMPILE_TIME_ASSERT( pred )
-#endif
-#endif
-
-#ifdef _WIN32
-#pragma once
+	#if !defined( PLAT_COMPILE_TIME_ASSERT )
+		#define PLAT_COMPILE_TIME_ASSERT( pred )
+	#endif
 #endif
 
 // feature enables
 #define NEW_SOFTWARE_LIGHTING
 
 #ifdef POSIX
-// need this for _alloca
-#include <alloca.h>
-#include <unistd.h>
-#include <signal.h>
-#include <time.h>
-#include <csignal>
+	// need this for _alloca
+	#include <alloca.h>
+	#include <unistd.h>
+	#include <ctime>
 #endif
 
 #include <malloc.h>
@@ -60,26 +52,26 @@
 #include "tier0/valve_minmax_on.h"	// GCC 4.2.2 headers screw up our min/max defs.
 
 #ifdef _RETAIL
-#define IsRetail() true
+	#define IsRetail() true
 #else
-#define IsRetail() false
+	#define IsRetail() false
 #endif
 
 #ifdef _DEBUG
-#define IsRelease() false
-#define IsDebug() true
+	#define IsRelease() false
+	#define IsDebug() true
 #else
-#define IsRelease() true
-#define IsDebug() false
+	#define IsRelease() true
+	#define IsDebug() false
 #endif
 
 //-----------------------------------------------------------------------------
 // Set up platform type defines.
 //-----------------------------------------------------------------------------
 #ifdef PLATFORM_64BITS
-#define IsPlatform64Bits()	true
+	#define IsPlatform64Bits()	true
 #else
-#define IsPlatform64Bits()	false
+	#define IsPlatform64Bits()	false
 #endif
 
 #define IsPC() true
@@ -119,14 +111,13 @@
 	#define IsPosix() true
 	#define IsPlatformOpenGL() true
 #else
-	#error
+	#error "Unsupported platform, please implement!"
 #endif
 
 typedef unsigned char uint8;
 typedef signed char int8;
 
 #if defined( _WIN32 )
-
 	typedef __int16					int16;
 	typedef unsigned __int16		uint16;
 	typedef __int32					int32;
@@ -148,9 +139,7 @@ typedef signed char int8;
 	// an overloaded function. Usage in function declarations is like this:
 	// int GetData() const OVERRIDE;
 	#define OVERRIDE override
-
-#else // _WIN32
-
+#elif defined( POSIX )
 	typedef short					int16;
 	typedef unsigned short			uint16;
 	typedef int						int32;
@@ -164,7 +153,7 @@ typedef signed char int8;
 		typedef int					intp;
 		typedef unsigned int		uintp;
 	#endif
-	typedef void *HWND;
+	typedef void* HWND;
 
 	// Avoid redefinition warnings if a previous header defines this.
 	#undef OVERRIDE
@@ -178,8 +167,7 @@ typedef signed char int8;
 	#else
 		#define OVERRIDE
 	#endif
-
-#endif // else _WIN32
+#endif
 
 // From steam/steamtypes.h
 // RTime32
@@ -193,40 +181,41 @@ typedef double				float64;
 // for when we don't care about how many bits we use
 typedef unsigned int		uint;
 
+// TODO: Verify if this is still needed, with most probability not.
 #ifdef _MSC_VER
-#pragma once
-// Ensure that everybody has the right compiler version installed. The version
-// number can be obtained by looking at the compiler output when you type 'cl'
-// and removing the last two digits and the periods: 16.00.40219.01 becomes 160040219
-#if _MSC_FULL_VER > 180000000
-	#if _MSC_FULL_VER < 180030723
-		#error You must install VS 2013 Update 3
+	#pragma once
+	// Ensure that everybody has the right compiler version installed. The version
+	// number can be obtained by looking at the compiler output when you type 'cl'
+	// and removing the last two digits and the periods: 16.00.40219.01 becomes 160040219
+	#if _MSC_FULL_VER > 180000000
+		#if _MSC_FULL_VER < 180030723
+			#error You must install VS 2013 Update 3
+		#endif
+	#elif _MSC_FULL_VER > 160000000
+		#if _MSC_FULL_VER < 160040219
+			#error You must install VS 2010 SP1
+		#endif
+	#else
+		#if _MSC_FULL_VER < 140050727
+			#error You must install VS 2005 SP1
+		#endif
 	#endif
-#elif _MSC_FULL_VER > 160000000
-	#if _MSC_FULL_VER < 160040219
-		#error You must install VS 2010 SP1
-	#endif
-#else
-	#if _MSC_FULL_VER < 140050727
-		#error You must install VS 2005 SP1
-	#endif
-#endif
 #endif
 
 // This can be used to ensure the size of pointers to members when declaring
 // a pointer type for a class that has only been forward declared
 #ifdef _MSC_VER
-#define SINGLE_INHERITANCE __single_inheritance
-#define MULTIPLE_INHERITANCE __multiple_inheritance
+	#define SINGLE_INHERITANCE __single_inheritance
+	#define MULTIPLE_INHERITANCE __multiple_inheritance
 #else
-#define SINGLE_INHERITANCE
-#define MULTIPLE_INHERITANCE
+	#define SINGLE_INHERITANCE
+	#define MULTIPLE_INHERITANCE
 #endif
 
 #ifdef _MSC_VER
-#define NO_VTABLE __declspec( novtable )
+	#define NO_VTABLE __declspec( novtable )
 #else
-#define NO_VTABLE
+	#define NO_VTABLE
 #endif
 
 #ifdef _MSC_VER
@@ -303,43 +292,40 @@ FIXME: Enable this when we no longer fear change =)
 
 // portability / compiler settings
 #if defined(_WIN32) && !defined(WINDED)
-
-#if defined(_M_IX86)
-#define __i386__	1
-#endif
-
+	#if defined(_M_IX86)
+		#define __i386__	1
+	#endif
 #elif POSIX
-typedef unsigned int DWORD;
-typedef unsigned short WORD;
-typedef void * HINSTANCE;
-#define _MAX_PATH PATH_MAX
-#define __cdecl
-#define __stdcall
-#define __declspec
-
+	typedef unsigned int DWORD;
+	typedef unsigned short WORD;
+	typedef void* HINSTANCE;
+	#define _MAX_PATH PATH_MAX
+	#define __cdecl
+	#define __stdcall
+	#define __declspec
 #endif // defined(_WIN32) && !defined(WINDED)
 
 
 // Defines MAX_PATH
 #ifndef MAX_PATH
-#define MAX_PATH  260
+	#define MAX_PATH  260
 #endif
 
 #ifdef _WIN32
-#define MAX_UNICODE_PATH 32767
+	#define MAX_UNICODE_PATH 32767
 #else
-#define MAX_UNICODE_PATH MAX_PATH
+	#define MAX_UNICODE_PATH MAX_PATH
 #endif
 
 #define MAX_UNICODE_PATH_IN_UTF8 MAX_UNICODE_PATH*4
 
 #ifdef GNUC
-#undef offsetof
-//#define offsetof( type, var ) __builtin_offsetof( type, var ) 
-#define offsetof(s,m)	(size_t)&(((s *)0)->m)
+	#undef offsetof
+	//#define offsetof( type, var ) __builtin_offsetof( type, var )
+	#define offsetof(s,m)	(size_t)&(((s *)0)->m)
 #else
-#undef offsetof
-#define offsetof(s,m)	(size_t)&(((s *)0)->m)
+	#undef offsetof
+	#define offsetof(s,m)	(size_t)&(((s *)0)->m)
 #endif
 
 
@@ -348,22 +334,24 @@ typedef void * HINSTANCE;
 // Used to step into the debugger
 #if defined( _WIN32 )
 	#define DebuggerBreak()  __debugbreak()
-#elif defined( GNUC )
-	#define DebuggerBreak()  std::raise(SIGINT);
+#elif defined( COMPILER_GCC )
+	#define DebuggerBreak() __asm__ volatile("int $0x03")
+#elif defined( COMPILER_CLANG )
+	#define DebuggerBreak()  __builtin_debugtrap()
 #endif
 #define	DebuggerBreakIfDebugging() if ( !Plat_IsInDebugSession() ) ; else DebuggerBreak()
 
 #ifdef STAGING_ONLY
-#define	DebuggerBreakIfDebugging_StagingOnly() if ( !Plat_IsInDebugSession() ) ; else DebuggerBreak()
+	#define	DebuggerBreakIfDebugging_StagingOnly() if ( !Plat_IsInDebugSession() ) ; else DebuggerBreak()
 #else
-#define	DebuggerBreakIfDebugging_StagingOnly()
+	#define	DebuggerBreakIfDebugging_StagingOnly()
 #endif
 
 // Allows you to specify code that should only execute if we are in a staging build. Otherwise the code noops.
 #ifdef STAGING_ONLY
-#define STAGING_ONLY_EXEC( _exec ) do { _exec; } while (0)
+	#define STAGING_ONLY_EXEC( _exec ) do { _exec; } while (0)
 #else
-#define STAGING_ONLY_EXEC( _exec ) do { } while (0)
+	#define STAGING_ONLY_EXEC( _exec ) do { } while (0)
 #endif
 
 // C functions for external declarations that call the appropriate C++ methods
@@ -383,42 +371,41 @@ typedef void * HINSTANCE;
 
 // decls for aligning data
 #ifdef _WIN32
-        #define DECL_ALIGN(x) __declspec(align(x))
-
+	#define DECL_ALIGN(x) __declspec(align(x))
 #elif GNUC
 	#define DECL_ALIGN(x) __attribute__((aligned(x)))
 #else
-        #define DECL_ALIGN(x) /* */
+	#define DECL_ALIGN(x) /* */
 #endif
 
 #ifdef _MSC_VER
-// MSVC has the align at the start of the struct
-#define ALIGN4 DECL_ALIGN(4)
-#define ALIGN8 DECL_ALIGN(8)
-#define ALIGN16 DECL_ALIGN(16)
-#define ALIGN32 DECL_ALIGN(32)
-#define ALIGN128 DECL_ALIGN(128)
+	// MSVC has the align at the start of the struct
+	#define ALIGN4 DECL_ALIGN(4)
+	#define ALIGN8 DECL_ALIGN(8)
+	#define ALIGN16 DECL_ALIGN(16)
+	#define ALIGN32 DECL_ALIGN(32)
+	#define ALIGN128 DECL_ALIGN(128)
 
-#define ALIGN4_POST
-#define ALIGN8_POST
-#define ALIGN16_POST
-#define ALIGN32_POST
-#define ALIGN128_POST
+	#define ALIGN4_POST
+	#define ALIGN8_POST
+	#define ALIGN16_POST
+	#define ALIGN32_POST
+	#define ALIGN128_POST
 #elif defined( GNUC )
-// gnuc has the align decoration at the end
-#define ALIGN4
-#define ALIGN8 
-#define ALIGN16
-#define ALIGN32
-#define ALIGN128
+	// gnuc has the align decoration at the end
+	#define ALIGN4
+	#define ALIGN8
+	#define ALIGN16
+	#define ALIGN32
+	#define ALIGN128
 
-#define ALIGN4_POST DECL_ALIGN(4)
-#define ALIGN8_POST DECL_ALIGN(8)
-#define ALIGN16_POST DECL_ALIGN(16)
-#define ALIGN32_POST DECL_ALIGN(32)
-#define ALIGN128_POST DECL_ALIGN(128)
+	#define ALIGN4_POST DECL_ALIGN(4)
+	#define ALIGN8_POST DECL_ALIGN(8)
+	#define ALIGN16_POST DECL_ALIGN(16)
+	#define ALIGN32_POST DECL_ALIGN(32)
+	#define ALIGN128_POST DECL_ALIGN(128)
 #else
-#error
+	#error "ALIGN*: Unsupported platform, please implement!"
 #endif
 
 // Pull in the /analyze code annotations.
@@ -436,11 +423,11 @@ typedef void * HINSTANCE;
 //-----------------------------------------------------------------------------
 #if defined( GNUC )
 	#define stackalloc( _size )		alloca( ALIGN_VALUE( _size, 16 ) )
-#ifdef _LINUX
-	#define mallocsize( _p )	( malloc_usable_size( _p ) )
-#else
-#error
-#endif
+	#ifdef _LINUX
+		#define mallocsize( _p )	( malloc_usable_size( _p ) )
+	#else
+		#error "mallocsize: Unsupported platform, please implement!"
+	#endif
 #elif defined ( _WIN32 )
 	#define stackalloc( _size )		_alloca( ALIGN_VALUE( _size, 16 ) )
 	#define mallocsize( _p )		( _msize( _p ) )
@@ -454,7 +441,7 @@ typedef void * HINSTANCE;
 	#define CONSTRUCT_EARLY __attribute__((init_priority(101)))
 #else
 	#define CONSTRUCT_EARLY
-	#endif
+#endif
 
 #if defined(_MSC_VER)
 	#define SELECTANY __declspec(selectany)
@@ -983,7 +970,7 @@ inline uint64 Plat_Rdtsc()
 	__asm__ __volatile__ ( "rdtsc" : "=a" (lo), "=d" (hi));
 	return ( ( ( uint64 )hi ) << 32 ) | lo;
 #else
-	#error
+	#error "Plat_Rdtsc: Unsupported platorm, please implement"
 #endif
 }
 
@@ -1099,18 +1086,15 @@ PLATFORM_INTERFACE bool Plat_FastVerifyHardwareKey();
 //-----------------------------------------------------------------------------
 PLATFORM_INTERFACE void* Plat_SimpleLog( const tchar* file, int line );
 
-#define Plat_FastMemset memset
-#define Plat_FastMemcpy memcpy
-
 //-----------------------------------------------------------------------------
 // Returns true if debugger attached, false otherwise
 //-----------------------------------------------------------------------------
 #if defined(_WIN32) || defined(LINUX)
-PLATFORM_INTERFACE bool Plat_IsInDebugSession();
-PLATFORM_INTERFACE void Plat_DebugString( const char * );
+	PLATFORM_INTERFACE bool Plat_IsInDebugSession();
+	PLATFORM_INTERFACE void Plat_DebugString( const char * );
 #else
-inline bool Plat_IsInDebugSession( bool bForceRecheck = false ) { return false; }
-#define Plat_DebugString(s) ((void)0)
+	inline bool Plat_IsInDebugSession( bool bForceRecheck = false ) { return false; }
+	#define Plat_DebugString(s) ((void)0)
 #endif
 
 //-----------------------------------------------------------------------------
@@ -1279,90 +1263,88 @@ inline void Destruct( T* pMemory )
 PLATFORM_INTERFACE bool vtune( bool resume );
 
 
-#define TEMPLATE_FUNCTION_TABLE(RETURN_TYPE, NAME, ARGS, COUNT)			\
-																		\
-typedef RETURN_TYPE (FASTCALL *__Type_##NAME) ARGS;						\
-																		\
-template<const int nArgument>											\
-struct __Function_##NAME												\
-{																		\
-	static RETURN_TYPE FASTCALL Run ARGS;								\
-};																		\
-																		\
-template <const int i>														\
-struct __MetaLooper_##NAME : __MetaLooper_##NAME<i-1>					\
-{																		\
-	__Type_##NAME func;													\
-	inline __MetaLooper_##NAME() { func = __Function_##NAME<i>::Run; }	\
-};																		\
-																		\
-template<>																\
-struct __MetaLooper_##NAME<0>											\
-{																		\
-	__Type_##NAME func;													\
-	inline __MetaLooper_##NAME() { func = __Function_##NAME<0>::Run; }	\
-};																		\
-																		\
-class NAME																\
-{																		\
-private:																\
-    static const __MetaLooper_##NAME<COUNT> m;							\
-public:																	\
-	enum { count = COUNT };												\
-	static const __Type_##NAME* functions;								\
-};																		\
-const __MetaLooper_##NAME<COUNT> NAME::m;								\
-const __Type_##NAME* NAME::functions = (__Type_##NAME*)&m;				\
-template<const int nArgument>													\
-RETURN_TYPE FASTCALL __Function_##NAME<nArgument>::Run ARGS
+#define TEMPLATE_FUNCTION_TABLE(RETURN_TYPE, NAME, ARGS, COUNT)				\
+	typedef RETURN_TYPE (FASTCALL *__Type_##NAME) ARGS;						\
+																			\
+	template<const int nArgument>											\
+	struct __Function_##NAME												\
+	{																		\
+		static RETURN_TYPE FASTCALL Run ARGS;								\
+	};																		\
+																			\
+	template <const int i>													\
+	struct __MetaLooper_##NAME : __MetaLooper_##NAME<i-1>					\
+	{																		\
+		__Type_##NAME func;													\
+		inline __MetaLooper_##NAME() { func = __Function_##NAME<i>::Run; }	\
+	};																		\
+																			\
+	template<>																\
+	struct __MetaLooper_##NAME<0>											\
+	{																		\
+		__Type_##NAME func;													\
+		inline __MetaLooper_##NAME() { func = __Function_##NAME<0>::Run; }	\
+	};																		\
+																			\
+	class NAME																\
+	{																		\
+	private:																\
+		static const __MetaLooper_##NAME<COUNT> m;							\
+	public:																	\
+		enum { count = COUNT };												\
+		static const __Type_##NAME* functions;								\
+	};																		\
+	const __MetaLooper_##NAME<COUNT> NAME::m;								\
+	const __Type_##NAME* NAME::functions = (__Type_##NAME*)&m;				\
+	template<const int nArgument>											\
+	RETURN_TYPE FASTCALL __Function_##NAME<nArgument>::Run ARGS
 
 
-#define LOOP_INTERCHANGE(BOOLEAN, CODE)\
-	if( (BOOLEAN) )\
-	{\
-		CODE;\
-	} else\
-	{\
-		CODE;\
+#define LOOP_INTERCHANGE(BOOLEAN, CODE)	\
+	if( (BOOLEAN) )						\
+	{									\
+		CODE;							\
+	} else								\
+	{									\
+		CODE;							\
 	}
 
 //-----------------------------------------------------------------------------
 // Dynamic libs support
 //-----------------------------------------------------------------------------
 #if 0 // defined( PLATFORM_WINDOWS_PC )
+	PLATFORM_INTERFACE void *Plat_GetProcAddress( const char *pszModule, const char *pszName );
 
-PLATFORM_INTERFACE void *Plat_GetProcAddress( const char *pszModule, const char *pszName );
-
-template <typename FUNCPTR_TYPE>
-class CDynamicFunction
-{
-public:
-	CDynamicFunction( const char *pszModule, const char *pszName, FUNCPTR_TYPE pfnFallback = NULL )
+	template <typename FUNCPTR_TYPE>
+	class CDynamicFunction
 	{
-		m_pfn = pfnFallback;
-		void *pAddr = Plat_GetProcAddress( pszModule, pszName );
-		if ( pAddr )
+	public:
+		CDynamicFunction( const char *pszModule, const char *pszName, FUNCPTR_TYPE pfnFallback = NULL )
 		{
-			m_pfn = (FUNCPTR_TYPE)pAddr;
+			m_pfn = pfnFallback;
+			void *pAddr = Plat_GetProcAddress( pszModule, pszName );
+			if ( pAddr )
+			{
+				m_pfn = (FUNCPTR_TYPE)pAddr;
+			}
 		}
-	}
 
-	operator bool()			{ return m_pfn != NULL;	}
-	bool operator !()		{ return !m_pfn;	}
-	operator FUNCPTR_TYPE()	{ return m_pfn; }
+		operator bool()			{ return m_pfn != NULL;	}
+		bool operator !()		{ return !m_pfn;	}
+		operator FUNCPTR_TYPE()	{ return m_pfn; }
 
-private:
-	FUNCPTR_TYPE m_pfn;
-};
+	private:
+		FUNCPTR_TYPE m_pfn;
+	};
 #endif
 
 
-// Watchdog timer support. Call Plat_BeginWatchdogTimer( nn ) to kick the timer off.  if you don't call
-// Plat_EndWatchdogTimer within nn seconds, the program will kick off an exception.  This is for making
-// sure that hung dedicated servers abort (and restart) instead of staying hung. Calling
-// Plat_EndWatchdogTimer more than once or when there is no active watchdog is fine. Only does anything
-// under linux right now. It should be possible to implement this functionality in windows via a
-// thread, if desired.
+// Watchdog timer support. Call Plat_BeginWatchdogTimer( nn ) to kick the timer off.
+// If you don't call Plat_EndWatchdogTimer within nn seconds, the program will kick off an exception.
+// This is for making sure that hung dedicated servers abort (and restart) instead of staying hung.
+// Calling Plat_EndWatchdogTimer more than once or when there is no active watchdog is fine.
+// Only does anything under linux right now.
+// It should be possible to implement this functionality in windows via a thread, if desired.
 PLATFORM_INTERFACE void Plat_BeginWatchdogTimer( int nSecs );
 PLATFORM_INTERFACE void Plat_EndWatchdogTimer( void );
 PLATFORM_INTERFACE int Plat_GetWatchdogTime( void );
@@ -1376,11 +1358,11 @@ PLATFORM_INTERFACE void Plat_SetWatchdogHandlerFunction( Plat_WatchDogHandlerFun
 #include "tier0/valve_on.h"
 
 #if defined(TIER0_DLL_EXPORT)
-extern "C" int V_tier0_stricmp(const char *s1, const char *s2 );
-#undef stricmp
-#undef strcmpi
-#define stricmp(s1,s2) V_tier0_stricmp( s1, s2 )
-#define strcmpi(s1,s2) V_tier0_stricmp( s1, s2 )
+	extern "C" int V_tier0_stricmp(const char *s1, const char *s2 );
+	#undef stricmp
+	#undef strcmpi
+	#define stricmp(s1,s2) V_tier0_stricmp( s1, s2 )
+	#define strcmpi(s1,s2) V_tier0_stricmp( s1, s2 )
 #endif
 
 

@@ -350,7 +350,7 @@ class CFixedBitVecBase
 public:
 	bool	IsFixedSize() const								{ return true; }
 	int		GetNumBits(void) const							{ return NUM_BITS; }
-	void	Resize( int numBits, bool bClearAll = false )	{ Assert(numBits == NUM_BITS); if ( bClearAll ) Plat_FastMemset( m_Ints, 0, NUM_INTS * sizeof(uint32) ); }// for syntatic consistency (for when using templates)
+	void	Resize( int numBits, bool bClearAll = false )	{ Assert(numBits == NUM_BITS); if ( bClearAll ) memset( m_Ints, 0, NUM_INTS * sizeof(uint32) ); }// for syntatic consistency (for when using templates)
 	
 	int 			GetNumDWords() const					{ return NUM_INTS; }
 	uint32 *		Base()									{ return m_Ints;	}
@@ -434,7 +434,7 @@ typedef CBitVec<32> CDWordBitVec;
 template <typename BITCOUNTTYPE>
 inline CVarBitVecBase<BITCOUNTTYPE>::CVarBitVecBase()
 {
-	Plat_FastMemset( this, 0, sizeof( *this ) );
+	memset( this, 0, sizeof( *this ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -581,7 +581,7 @@ template <class BASE_OPS>
 inline void CBitVecT<BASE_OPS>::Init( int val )
 {
 	if ( this->Base() )
-		Plat_FastMemset( this->Base(), ( val ) ? 0xff : 0, this->GetNumDWords() * sizeof(int) );
+		memset( this->Base(), ( val ) ? 0xff : 0, this->GetNumDWords() * sizeof(int) );
 }
 
 //-----------------------------------------------------------------------------
@@ -831,7 +831,7 @@ template <class BASE_OPS>
 inline void CBitVecT<BASE_OPS>::SetAll(void)		
 {
 	if ( this->Base() )
-		Plat_FastMemset( this->Base(), 0xff, this->GetNumDWords() * sizeof(int) );
+		memset( this->Base(), 0xff, this->GetNumDWords() * sizeof(int) );
 }
 
 //-----------------------------------------------------------------------------
@@ -843,7 +843,7 @@ template <class BASE_OPS>
 inline void CBitVecT<BASE_OPS>::ClearAll(void)		
 {
 	if ( this->Base() )
-		Plat_FastMemset( this->Base(), 0, this->GetNumDWords() * sizeof(int) );
+		memset( this->Base(), 0, this->GetNumDWords() * sizeof(int) );
 }
 
 //-----------------------------------------------------------------------------
@@ -1297,7 +1297,7 @@ inline void CVarBitVecBase<BITCOUNTTYPE>::Resize( int resizeNumBits, bool bClear
 			if ( !bClearAll && resizeNumBits >= GetNumBits() )
 			{
 				Base()[GetNumDWords() - 1] &= GetEndMask();
-				Plat_FastMemset( Base() + GetNumDWords(), 0, (newIntCount - GetNumDWords()) * sizeof(int) );
+				memset( Base() + GetNumDWords(), 0, (newIntCount - GetNumDWords()) * sizeof(int) );
 			}
 		}
 		else
@@ -1317,7 +1317,7 @@ inline void CVarBitVecBase<BITCOUNTTYPE>::Resize( int resizeNumBits, bool bClear
 
 	if ( bClearAll && Base() )
 	{
-		Plat_FastMemset( Base(), 0, newIntCount * sizeof(int) );
+		memset( Base(), 0, newIntCount * sizeof(int) );
 	}
 
 	// store the new size and end mask

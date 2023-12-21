@@ -9,17 +9,17 @@
 #ifndef FMTSTR_H
 #define FMTSTR_H
 
+#include "tier0/dbg.h"
+#include "tier0/platform.h"
+#include "tier1/strtools.h"
 #include <stdarg.h>
 #include <stdio.h>
-#include "tier0/platform.h"
-#include "tier0/dbg.h"
-#include "tier1/strtools.h"
 
 #if defined( _WIN32 )
-#pragma once
+	#pragma once
 #endif
 #if defined(POSIX)
-#pragma GCC visibility push(hidden)
+	#pragma GCC visibility push(hidden)
 #endif
 
 //=============================================================================
@@ -264,7 +264,7 @@ void CFmtStrN< SIZE_BUF, QUIET_TRUNCATION >::AppendFormatV( const char *pchForma
 
 
 #if defined(POSIX)
-#pragma GCC visibility pop
+	#pragma GCC visibility pop
 #endif
 
 //-----------------------------------------------------------------------------
@@ -303,35 +303,35 @@ public:
 	explicit CNumStr( int64 n64 )	{ SetInt64( n64 ); }
 	explicit CNumStr( uint64 un64 )	{ SetUint64( un64 ); }
 
-#if defined(COMPILER_GCC) && defined(PLATFORM_64BITS)
-	explicit CNumStr( lint64 n64 )		{ SetInt64( (int64)n64 ); }
-	explicit CNumStr( ulint64 un64 )	{ SetUint64( (uint64)un64 ); }
-#endif
+	#if defined(COMPILER_GCC) && defined(PLATFORM_64BITS)
+		explicit CNumStr( lint64 n64 )		{ SetInt64( (int64)n64 ); }
+		explicit CNumStr( ulint64 un64 )	{ SetUint64( (uint64)un64 ); }
+	#endif
 
 	explicit CNumStr( double f )	{ SetDouble( f ); }
 	explicit CNumStr( float f )		{ SetFloat( f ); }
 
 	inline void SetBool( bool b )			{ Q_memcpy( m_szBuf, b ? "1" : "0", 2 ); } 
 
-#ifdef _WIN32
-	inline void SetInt8( int8 n8 )			{ _itoa( (int32)n8, m_szBuf, 10 ); }
-	inline void SetUint8( uint8 un8 )		{ _itoa( (int32)un8, m_szBuf, 10 ); }
-	inline void SetInt16( int16 n16 )		{ _itoa( (int32)n16, m_szBuf, 10 ); }
-	inline void SetUint16( uint16 un16 )	{ _itoa( (int32)un16, m_szBuf, 10 ); }
-	inline void SetInt32( int32 n32 )		{ _itoa( n32, m_szBuf, 10 ); }
-	inline void SetUint32( uint32 un32 )	{ _i64toa( (int64)un32, m_szBuf, 10 ); }
-	inline void SetInt64( int64 n64 )		{ _i64toa( n64, m_szBuf, 10 ); }
-	inline void SetUint64( uint64 un64 )	{ _ui64toa( un64, m_szBuf, 10 ); }
-#else
-	inline void SetInt8( int8 n8 )			{ Q_snprintf( m_szBuf, sizeof(m_szBuf), "%d", (int32)n8 ); }
-	inline void SetUint8( uint8 un8 )		{ Q_snprintf( m_szBuf, sizeof(m_szBuf), "%d", (int32)un8 ); }
-	inline void SetInt16( int16 n16 )		{ Q_snprintf( m_szBuf, sizeof(m_szBuf), "%d", (int32)n16 ); }
-	inline void SetUint16( uint16 un16 )	{ Q_snprintf( m_szBuf, sizeof(m_szBuf), "%d", (int32)un16 ); }
-	inline void SetInt32( int32 n32 )		{ Q_snprintf( m_szBuf, sizeof(m_szBuf), "%d", n32 ); }
-	inline void SetUint32( uint32 un32 )	{ Q_snprintf( m_szBuf, sizeof(m_szBuf), "%u", un32 ); }
-	inline void SetInt64( int64 n64 )		{ Q_snprintf( m_szBuf, sizeof(m_szBuf), "%lld", n64 ); }
-	inline void SetUint64( uint64 un64 )	{ Q_snprintf( m_szBuf, sizeof(m_szBuf), "%llu", un64 ); }
-#endif
+	#ifdef _WIN32
+		inline void SetInt8( int8 n8 )			{ _itoa( (int32)n8, m_szBuf, 10 ); }
+		inline void SetUint8( uint8 un8 )		{ _itoa( (int32)un8, m_szBuf, 10 ); }
+		inline void SetInt16( int16 n16 )		{ _itoa( (int32)n16, m_szBuf, 10 ); }
+		inline void SetUint16( uint16 un16 )	{ _itoa( (int32)un16, m_szBuf, 10 ); }
+		inline void SetInt32( int32 n32 )		{ _itoa( n32, m_szBuf, 10 ); }
+		inline void SetUint32( uint32 un32 )	{ _i64toa( (int64)un32, m_szBuf, 10 ); }
+		inline void SetInt64( int64 n64 )		{ _i64toa( n64, m_szBuf, 10 ); }
+		inline void SetUint64( uint64 un64 )	{ _ui64toa( un64, m_szBuf, 10 ); }
+	#else
+		inline void SetInt8( int8 n8 )			{ Q_snprintf( m_szBuf, sizeof(m_szBuf), "%d", (int32)n8 ); }
+		inline void SetUint8( uint8 un8 )		{ Q_snprintf( m_szBuf, sizeof(m_szBuf), "%d", (int32)un8 ); }
+		inline void SetInt16( int16 n16 )		{ Q_snprintf( m_szBuf, sizeof(m_szBuf), "%d", (int32)n16 ); }
+		inline void SetUint16( uint16 un16 )	{ Q_snprintf( m_szBuf, sizeof(m_szBuf), "%d", (int32)un16 ); }
+		inline void SetInt32( int32 n32 )		{ Q_snprintf( m_szBuf, sizeof(m_szBuf), "%d", n32 ); }
+		inline void SetUint32( uint32 un32 )	{ Q_snprintf( m_szBuf, sizeof(m_szBuf), "%u", un32 ); }
+		inline void SetInt64( int64 n64 )		{ Q_snprintf( m_szBuf, sizeof(m_szBuf), "%lld", n64 ); }
+		inline void SetUint64( uint64 un64 )	{ Q_snprintf( m_szBuf, sizeof(m_szBuf), "%llu", un64 ); }
+	#endif
 
 	inline void SetDouble( double f )		{ Q_snprintf( m_szBuf, sizeof(m_szBuf), "%.18g", f ); }
 	inline void SetFloat( float f )			{ Q_snprintf( m_szBuf, sizeof(m_szBuf), "%.18g", f ); }
