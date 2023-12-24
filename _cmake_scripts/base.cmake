@@ -32,3 +32,6 @@ add_compile_definitions(
 	_DLL_EXT=${CMAKE_SHARED_LIBRARY_SUFFIX}
 	FRAME_POINTER_OMISSION_DISABLED
 )
+
+include_directories( "${CMAKE_CURRENT_BINARY_DIR}/vcpkg_installed/x86-linux/include" )
+link_directories( "${CMAKE_CURRENT_BINARY_DIR}/vcpkg_installed/x86-linux/lib" )

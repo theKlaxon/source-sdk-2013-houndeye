@@ -38,5 +38,6 @@ endif ()
 
 target_link_libraries( vvis_launcher
 	PRIVATE
-
+		"${LIBPUBLIC}/libtier0.so"
+		"${LIBPUBLIC}/libvstdlib.so"
 )

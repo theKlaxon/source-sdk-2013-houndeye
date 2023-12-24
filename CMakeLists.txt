@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.27 FATAL_ERROR)
 
-if (APPLE)
+if ( APPLE )
 	message( FATAL_ERROR "Aurora Source has discontinued OSX support, please use either Windows or Linux." )
+endif()
+
+if ( NOT DEFINED CMAKE_TOOLCHAIN_FILE )
+	message( FATAL_ERROR "vcpkg was not configured on this system, please configure it and come back" )
 endif()
 
 set( CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE )
@@ -37,6 +41,7 @@ set_property(CACHE BUILD_GROUP PROPERTY STRINGS
 	"everything"
 	"game"
 	"shaders"
+	"compilers"
 )
 
 # Which game are we building?
@@ -100,12 +105,10 @@ add_compile_definitions($<$<CONFIG:Debug>:DEBUG> $<$<CONFIG:Debug>:_DEBUG>)
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 
 # SETUP D LANG
-#if (${BUILD_GROUP} STREQUAL "everything")
-	include( _cmake_scripts/dlang.cmake )
-#endif ()
+include( _cmake_scripts/dlang.cmake )
 
 # SETUP THIRD PARTY
-include( thirdparty/init.cmake )
+include( "thirdparty/init.cmake" )
 
 if (${IS_WINDOWS})
 	include("_cmake_scripts/windows_base.cmake")

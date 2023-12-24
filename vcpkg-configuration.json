@@ -1,0 +1,3 @@
+{
+    "overlay-triplets": [ "./_cmake_scripts/triplets" ]
+}

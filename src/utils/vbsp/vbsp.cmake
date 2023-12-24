@@ -173,5 +173,3 @@ target_link_libraries(
 	"${LIBPUBLIC}/vtf${CMAKE_STATIC_LIBRARY_SUFFIX}"
 	$<$<BOOL:${WIN32}>:"${LIBCOMMON}/lzma${CMAKE_STATIC_LIBRARY_SUFFIX}">
 )
-
-target_vcpkg_dependency( vbsp PRIVATE liblzma )
