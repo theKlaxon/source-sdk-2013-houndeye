@@ -2619,7 +2619,7 @@ Swaps the bsp file in place, so it should not be referenced again
 =============
 */
 void WriteBSPFile( const char *filename, char *pUnused )
-{		
+{
 	if ( texinfo.Count() > MAX_MAP_TEXINFO )
 	{
 		Error( "Map has too many texinfos (has %d, can have at most %d)\n", texinfo.Count(), MAX_MAP_TEXINFO );

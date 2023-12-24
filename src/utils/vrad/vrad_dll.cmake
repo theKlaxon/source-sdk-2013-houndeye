@@ -180,35 +180,35 @@ set(
 
 add_library(vrad_dll MODULE ${VRAD_DLL_SOURCE_FILES})
 
-set_target_properties(
-	vrad_dll PROPERTIES
-	LIBRARY_OUTPUT_DIRECTORY "${GAMEDIR}/bin"
+set_target_properties( vrad_dll
+	PROPERTIES
+		LIBRARY_OUTPUT_DIRECTORY "${GAMEDIR}/bin"
 )
 
-target_include_directories(
-	vrad_dll PRIVATE
-	"${SRCDIR}/utils/common"
-	"${SRCDIR}/utils/vmpi"
-	"${SRCDIR}/utils/vmpi/mysql/mysqlpp/include"
-	"${SRCDIR}/utils/vmpi/mysql/include"
+target_include_directories( vrad_dll
+	PRIVATE
+		"${SRCDIR}/utils/common"
+		"${SRCDIR}/utils/vmpi"
+		"${SRCDIR}/utils/vmpi/mysql/mysqlpp/include"
+		"${SRCDIR}/utils/vmpi/mysql/include"
 )
 
-target_compile_definitions(
-	vrad_dll PRIVATE
-	MPI
-	PROTECTED_THINGS_DISABLE
-	VRAD
+target_compile_definitions( vrad_dll
+	PRIVATE
+		MPI
+		PROTECTED_THINGS_DISABLE
+		VRAD
 )
 
-target_link_libraries(
-	vrad_dll PRIVATE
-	ws2_32
+target_link_libraries( vrad_dll
+	PRIVATE
+		ws2_32
 
-	"${LIBPUBLIC}/bitmap${CMAKE_STATIC_LIBRARY_SUFFIX}"
-	mathlib
-	raytrace
-	"${LIBPUBLIC}/tier2${CMAKE_STATIC_LIBRARY_SUFFIX}"
-	"${LIBPUBLIC}/vmpi${CMAKE_STATIC_LIBRARY_SUFFIX}"
-	"${LIBPUBLIC}/vtf${CMAKE_STATIC_LIBRARY_SUFFIX}"
-	"${LIBCOMMON}/lzma${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		"${LIBPUBLIC}/bitmap${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		mathlib
+		raytrace
+		"${LIBPUBLIC}/tier2${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		"${LIBPUBLIC}/vmpi${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		"${LIBPUBLIC}/vtf${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		"${LIBCOMMON}/lzma${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )

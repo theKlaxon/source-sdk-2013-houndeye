@@ -72,26 +72,26 @@ set(
 
 add_library( vvis_dll MODULE ${VVIS_DLL_SOURCE_FILES} )
 
-set_target_properties(
-	vvis_dll PROPERTIES
+set_target_properties( vvis_dll
+	PROPERTIES
 		LIBRARY_OUTPUT_DIRECTORY "${GAMEDIR}/bin"
 )
 
-target_include_directories(
-	vvis_dll PRIVATE
+target_include_directories( vvis_dll
+	PRIVATE
 		"${SRCDIR}/utils/common"
 		"${SRCDIR}/utils/vmpi"
 		"${SRCDIR}/utils/vmpi/mysql/include"
 )
 
-target_compile_definitions(
-	vvis_dll PRIVATE
+target_compile_definitions( vvis_dll
+	PRIVATE
 		MPI
 		PROTECTED_THINGS_DISABLE
 )
 
-target_link_libraries(
-	vvis_dll PRIVATE
+target_link_libraries( vvis_dll
+	PRIVATE
 		odbc32
 		odbccp32
 		ws2_32

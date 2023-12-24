@@ -35,7 +35,7 @@ if (${IS_LINUX})
 	if (NOT ${DEDICATED})
 		list(
 			APPEND ADDITIONAL_LINK_OPTIONS_EXE
-			-Wl,--no-as-needed -ltcmalloc_minimal -Wl,--as-needed
+			-Wl,--no-as-needed -ljemalloc -Wl,--as-needed  # was tcmalloc_minimal
 		)
 	endif()
 

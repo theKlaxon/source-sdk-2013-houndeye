@@ -20,17 +20,19 @@ set(
 
 add_executable(vrad_launcher ${VRAD_LAUNCHER_SOURCE_FILES})
 
-set_target_properties(
-	vrad_launcher PROPERTIES
-	RUNTIME_OUTPUT_DIRECTORY "${GAMEDIR}/bin"
+set_target_properties( vrad_launcher
+	PROPERTIES
+		RUNTIME_OUTPUT_DIRECTORY "${GAMEDIR}/bin"
 )
 
-target_precompile_headers(
-	vrad_launcher PRIVATE
-	"${VRAD_LAUNCHER_DIR}/stdafx.h"
+target_precompile_headers( vrad_launcher
+	PRIVATE
+		"${VRAD_LAUNCHER_DIR}/stdafx.h"
 )
 
-target_link_options(
-	vrad_launcher PRIVATE
-	/LARGEADDRESSAWARE
-)
+if (WIN32)
+	target_link_options( vrad_launcher
+		PRIVATE
+			/LARGEADDRESSAWARE
+	)
+endif ()
