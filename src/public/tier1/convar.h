@@ -565,7 +565,9 @@ void ConVar_PrintDescription( const ConCommandBase *pVar );
 //-----------------------------------------------------------------------------
 // Purpose: Utility class to quickly allow ConCommands to call member methods
 //-----------------------------------------------------------------------------
-#pragma warning (disable : 4355 )
+#if defined( _MSC_VER )
+	#pragma warning (disable : 4355 )
+#endif
 
 template< class T >
 class CConCommandMemberAccessor : public ConCommand, public ICommandCallback, public ICommandCompletionCallback
@@ -611,8 +613,9 @@ private:
 	FnMemberCommandCallback_t m_Func;
 	FnMemberCommandCompletionCallback_t m_CompletionFunc;
 };
-
-#pragma warning ( default : 4355 )
+#if defined( _MSC_VER )
+	#pragma warning ( default : 4355 )
+#endif
 
 
 //-----------------------------------------------------------------------------

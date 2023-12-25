@@ -7,13 +7,17 @@
 #ifndef GAMEDATA_H
 #define GAMEDATA_H
 #ifdef _WIN32
-#pragma once
+	#pragma once
 #endif
 
-#pragma warning(push, 1)
-#pragma warning(disable:4701 4702 4530)
+#if _MSC_VER
+	#pragma warning(push, 1)
+	#pragma warning(disable:4701 4702 4530)
+#endif
 #include <fstream>
-#pragma warning(pop)
+#if _MSC_VER
+	#pragma warning(pop)
+#endif
 #include "tokenreader.h"
 #include "gdclass.h"
 #include "inputoutput.h"

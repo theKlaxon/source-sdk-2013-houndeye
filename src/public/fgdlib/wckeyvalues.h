@@ -12,10 +12,14 @@
 #include <tier0/dbg.h>
 #include <utlvector.h>
 #include <utldict.h>
-#pragma warning(push, 1)
-#pragma warning(disable:4701 4702 4530)
+#if _MSC_VER
+	#pragma warning(push, 1)
+	#pragma warning(disable:4701 4702 4530)
+#endif
 #include <fstream>
-#pragma warning(pop)
+#if _MSC_VER
+	#pragma warning(pop)
+#endif
 
 
 #define KEYVALUE_MAX_KEY_LENGTH			80
@@ -123,11 +127,11 @@ public:
 	// Special function used for non-unique keyvalue lists.
 	void AddKeyValue(const char *pszKey, const char *pszValue);
 
-protected:
+public /*really protected*/:
 
 	void InsertKeyValue( const MDkeyvalue &kv );
 
-protected:
+public /*really protected*/:
 	CUtlVector<MDkeyvalue> m_KeyValues;
 };
 
@@ -145,10 +149,10 @@ public:
 	int FindByKeyName( const char *pKeyName ) const; // Returns the same value as GetInvalidIndex if not found.
 	void RemoveKeyAt(int nIndex);
 
-protected:
+public /*really protected*/:
 	void InsertKeyValue( const MDkeyvalue &kv );
 
-protected:
+public /*really protected*/:
 	CUtlDict<MDkeyvalue,unsigned short> m_KeyValues;
 };
 
@@ -188,7 +192,7 @@ typedef WCKeyValuesT<WCKVBase_Vector> WCKeyValuesVector;
 template<class Base>
 inline const char *WCKeyValuesT<Base>::GetKey(int nIndex) const
 {
-	return(m_KeyValues.Element(nIndex).szKey);
+	return(static_cast<Base*>(this)->m_KeyValues.Element(nIndex).szKey);
 }
 
 
@@ -200,7 +204,7 @@ inline const char *WCKeyValuesT<Base>::GetKey(int nIndex) const
 template<class Base>
 inline MDkeyvalue &WCKeyValuesT<Base>::GetKeyValue(int nIndex)
 {
-	return(m_KeyValues.Element(nIndex));
+	return(static_cast<Base*>(this)->m_KeyValues.Element(nIndex));
 }
 
 
@@ -212,7 +216,7 @@ inline MDkeyvalue &WCKeyValuesT<Base>::GetKeyValue(int nIndex)
 template<class Base>
 inline const MDkeyvalue& WCKeyValuesT<Base>::GetKeyValue(int nIndex) const
 {
-	return(m_KeyValues.Element(nIndex));
+	return(static_cast<Base*>(this)->m_KeyValues.Element(nIndex));
 }
 
 
@@ -223,7 +227,7 @@ inline const MDkeyvalue& WCKeyValuesT<Base>::GetKeyValue(int nIndex) const
 template<class Base>
 inline const char *WCKeyValuesT<Base>::GetValue(int nIndex) const
 {
-	return(m_KeyValues.Element(nIndex).szValue);
+	return(static_cast<Base*>(this)->m_KeyValues.Element(nIndex).szValue);
 }
 
 

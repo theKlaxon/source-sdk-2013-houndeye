@@ -791,7 +791,9 @@ struct dfaceid_t
 #define LEAF_FLAGS_RADIAL		0x02		// This leaf culled away some portals due to radial vis
 #define LEAF_FLAGS_SKY2D		0x04		// This leaf has 2D sky in its PVS
 
-#pragma warning( disable:4201 )	// C4201: nonstandard extension used: nameless struct/union
+#if defined( _MSC_VER )
+	#pragma warning( disable:4201 )	// C4201: nonstandard extension used: nameless struct/union
+#endif
 struct dleaf_version_0_t
 {
 	DECLARE_BYTESWAP_DATADESC();
@@ -845,7 +847,9 @@ struct dleaf_t
 	// Precaculated light info for entities.
 //	CompressedLightCube m_AmbientLighting;
 };
-#pragma warning( default:4201 )	// C4201: nonstandard extension used: nameless struct/union
+#if defined( _MSC_VER )
+	#pragma warning( default:4201 )	// C4201: nonstandard extension used: nameless struct/union
+#endif
 
 // each leaf contains N samples of the ambient lighting
 // each sample contains a cube of ambient light projected on to each axis

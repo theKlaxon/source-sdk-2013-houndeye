@@ -333,7 +333,8 @@ protected:
 	union float32bits
 	{
 		float rawFloat;
-		struct 
+		unsigned int rawInteger;
+		struct
 		{
 			unsigned int mantissa : 23;
 			unsigned int biased_exponent : 8;
@@ -485,7 +486,7 @@ protected:
 			biased_exponent = ( (biased_exponent - float16bias + float32bias) * (biased_exponent != 0) ) << 23;
 			mantissa <<= (23-10);
 
-			*((unsigned *)&output) = ( mantissa | biased_exponent | sign );
+			output.rawInteger = ( mantissa | biased_exponent | sign );
 		}
 		
 		return output.rawFloat;

@@ -2199,7 +2199,7 @@ void CNPC_Hunter::PrescheduleThink()
 		if ( m_flPupilDilateTime < gpGlobals->curtime )
 		{
  			CBasePlayer *pPlayer = UTIL_PlayerByIndex( 1 );
- 			if ( ( pPlayer && !pPlayer->IsIlluminatedByFlashlight( this, NULL ) ) || !PlayerFlashlightOnMyEyes( pPlayer ) )
+			if ( ( pPlayer && !pPlayer->IsIlluminatedByFlashlight( this, NULL ) ) || !PlayerFlashlightOnMyEyes( pPlayer ) )
 			{
 				//Msg( "NOT SHINING FLASHLIGHT ON ME\n" );
 			

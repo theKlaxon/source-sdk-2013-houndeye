@@ -10,7 +10,7 @@
 #define PLATFORM_H
 
 #if defined(__x86_64__) || defined(_WIN64)
-	#define PLATFORM_64BITS 1
+	#define PLATFORM_64BITS 1  // this should technically go away as for merge, but it used so nop out
 #endif
 
 #ifdef __clang__
@@ -591,17 +591,17 @@ FIXME: Enable this when we no longer fear change =)
 #endif
 
 #ifdef LINUX
-#pragma GCC diagnostic ignored "-Wconversion-null"	// passing NULL to non-pointer argument 1
-#pragma GCC diagnostic ignored "-Wpointer-arith"	// NULL used in arithmetic. Ie, vpanel == NULL where VPANEL is uint.
-#pragma GCC diagnostic ignored "-Wswitch"				// enumeration values not handled in switch
+	#pragma GCC diagnostic ignored "-Wconversion-null"	// passing NULL to non-pointer argument 1
+	#pragma GCC diagnostic ignored "-Wpointer-arith"	// NULL used in arithmetic. Ie, vpanel == NULL where VPANEL is uint.
+	#pragma GCC diagnostic ignored "-Wswitch"			// enumeration values not handled in switch
 #endif
 
 
 // When we port to 64 bit, we'll have to resolve the int, ptr vs size_t 32/64 bit problems...
-#if !defined( _WIN64 )
-#pragma warning( disable : 4267 )	// conversion from 'size_t' to 'int', possible loss of data
-#pragma warning( disable : 4311 )	// pointer truncation from 'char *' to 'int'
-#pragma warning( disable : 4312 )	// conversion from 'unsigned int' to 'memhandle_t' of greater size
+#if defined( _MSC_VER ) && !defined( _WIN64 )
+	#pragma warning( disable : 4267 )	// conversion from 'size_t' to 'int', possible loss of data
+	#pragma warning( disable : 4311 )	// pointer truncation from 'char *' to 'int'
+	#pragma warning( disable : 4312 )	// conversion from 'unsigned int' to 'memhandle_t' of greater size
 #endif
 
 

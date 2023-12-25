@@ -11,7 +11,7 @@
 #define UTLMEMORY_H
 
 #ifdef _WIN32
-#pragma once
+	#pragma once
 #endif
 
 #include "tier0/dbg.h"
@@ -22,19 +22,21 @@
 #include "tier0/memalloc.h"
 #include "tier0/memdbgon.h"
 
-#pragma warning (disable:4100)
-#pragma warning (disable:4514)
+#if defined( _MSC_VER )
+	#pragma warning (disable:4100)
+	#pragma warning (disable:4514)
+#endif
 
 
 //-----------------------------------------------------------------------------
 
 
 #ifdef UTLMEMORY_TRACK
-#define UTLMEMORY_TRACK_ALLOC()		MemAlloc_RegisterAllocation( "Sum of all UtlMemory", 0, m_nAllocationCount * sizeof(T), m_nAllocationCount * sizeof(T), 0 )
-#define UTLMEMORY_TRACK_FREE()		if ( !m_pMemory ) ; else MemAlloc_RegisterDeallocation( "Sum of all UtlMemory", 0, m_nAllocationCount * sizeof(T), m_nAllocationCount * sizeof(T), 0 )
+	#define UTLMEMORY_TRACK_ALLOC()		MemAlloc_RegisterAllocation( "Sum of all UtlMemory", 0, m_nAllocationCount * sizeof(T), m_nAllocationCount * sizeof(T), 0 )
+	#define UTLMEMORY_TRACK_FREE()		if ( !m_pMemory ) ; else MemAlloc_RegisterDeallocation( "Sum of all UtlMemory", 0, m_nAllocationCount * sizeof(T), m_nAllocationCount * sizeof(T), 0 )
 #else
-#define UTLMEMORY_TRACK_ALLOC()		((void)0)
-#define UTLMEMORY_TRACK_FREE()		((void)0)
+	#define UTLMEMORY_TRACK_ALLOC()		((void)0)
+	#define UTLMEMORY_TRACK_FREE()		((void)0)
 #endif
 
 

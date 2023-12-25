@@ -2466,38 +2466,29 @@ void C_BaseEntity::UnlinkFromHierarchy()
 void C_BaseEntity::ValidateModelIndex( void )
 {
 #ifdef TF_CLIENT_DLL
-	if ( IsLocalPlayerUsingVisionFilterFlags( TF_VISION_FILTER_HALLOWEEN ) )
-	{
-		if ( m_nModelIndexOverrides[VISION_MODE_HALLOWEEN] > 0 )
-		{
-			SetModelByIndex( m_nModelIndexOverrides[VISION_MODE_HALLOWEEN] );
-			return;
+	if ( m_nModelIndexOverrides[VISION_MODE_NONE] > 0 )  {
+		if ( IsLocalPlayerUsingVisionFilterFlags( TF_VISION_FILTER_HALLOWEEN ) ) {
+			if ( m_nModelIndexOverrides[VISION_MODE_HALLOWEEN] > 0 ) {
+				SetModelByIndex( m_nModelIndexOverrides[VISION_MODE_HALLOWEEN] );
+				return;
+			}
 		}
-	}
-		
-	if ( IsLocalPlayerUsingVisionFilterFlags( TF_VISION_FILTER_PYRO ) )
-	{
-		if ( m_nModelIndexOverrides[VISION_MODE_PYRO] > 0 )
-		{
-			SetModelByIndex( m_nModelIndexOverrides[VISION_MODE_PYRO] );
-			return;
-		}
-	}
 
-	if ( IsLocalPlayerUsingVisionFilterFlags( TF_VISION_FILTER_ROME ) )
-	{
-		if ( m_nModelIndexOverrides[VISION_MODE_ROME] > 0 )
-		{
-			SetModelByIndex( m_nModelIndexOverrides[VISION_MODE_ROME] );
-			return;
+		if ( IsLocalPlayerUsingVisionFilterFlags( TF_VISION_FILTER_PYRO ) ) {
+			if ( m_nModelIndexOverrides[VISION_MODE_PYRO] > 0 ) {
+				SetModelByIndex( m_nModelIndexOverrides[VISION_MODE_PYRO] );
+				return;
+			}
 		}
-	}
 
-	if ( m_nModelIndexOverrides[VISION_MODE_NONE] > 0 ) 
-	{
-		SetModelByIndex( m_nModelIndexOverrides[VISION_MODE_NONE] );		
-		return;
-	}
+		if ( IsLocalPlayerUsingVisionFilterFlags( TF_VISION_FILTER_ROME ) ) {
+			if ( m_nModelIndexOverrides[VISION_MODE_ROME] > 0 ) {
+				SetModelByIndex( m_nModelIndexOverrides[VISION_MODE_ROME] );
+				return;
+			}
+		}
+
+		SetModelByIndex( m_nModelIndexOverrides[VISION_MODE_NONE] );
 #endif
 
 	SetModelByIndex( m_nModelIndex );

@@ -32,3 +32,5 @@ The modified particles.lib that allows modern VS to build came from Source-PlusP
 JJL772 has a repo which helped me with the ABI difference issues on newer GCC versions: https://github.com/JJL772/source-sdk-2013
 
 OzxyBox has a Source SDK repo which supports VS2022 which I referenced for help a few times. This CMake port is not NEARLY as extensive as the changes here: https://github.com/ozxybox/source-mp13-vs2022
+
+The compiler can now compile on linux thanks to the patches made by Sortie: https://github.com/sortie/source-sdk-2013/tree/for-valve-posix-port-vbsp-vvis-vrad-v2-part1

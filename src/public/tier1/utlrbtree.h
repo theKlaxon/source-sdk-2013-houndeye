@@ -376,8 +376,8 @@ protected:
 
 template < class T, class I, typename L, class M >
 inline CUtlRBTree<T, I, L, M>::CUtlRBTree( int growSize, int initSize, const LessFunc_t &lessfunc ) : 
-m_Elements( growSize, initSize ),
 m_LessFunc( lessfunc ),
+m_Elements( growSize, initSize ),
 m_Root( InvalidIndex() ),
 m_NumElements( 0 ),
 m_FirstFree( InvalidIndex() ),
@@ -388,8 +388,8 @@ m_LastAlloc( m_Elements.InvalidIterator() )
 
 template < class T, class I, typename L, class M >
 inline CUtlRBTree<T, I, L, M>::CUtlRBTree( const LessFunc_t &lessfunc ) : 
-m_Elements( 0, 0 ),
 m_LessFunc( lessfunc ),
+m_Elements( 0, 0 ),
 m_Root( InvalidIndex() ),
 m_NumElements( 0 ),
 m_FirstFree( InvalidIndex() ),
@@ -664,8 +664,10 @@ inline void CUtlRBTree<T, I, L, M>::SetColor( I i, typename CUtlRBTree<T, I, L, 
 //-----------------------------------------------------------------------------
 // Allocates/ deallocates nodes
 //-----------------------------------------------------------------------------
-#pragma warning(push)
-#pragma warning(disable:4389) // '==' : signed/unsigned mismatch
+#if defined( _MSC_VER )
+	#pragma warning(push)
+	#pragma warning(disable:4389) // '==' : signed/unsigned mismatch
+#endif
 template < class T, class I, typename L, class M >
 I  CUtlRBTree<T, I, L, M>::NewNode()
 {
@@ -710,7 +712,9 @@ I  CUtlRBTree<T, I, L, M>::NewNode()
 
 	return elem;
 }
-#pragma warning(pop)
+#if defined( _MSC_VER )
+	#pragma warning(pop)
+#endif
 
 template < class T, class I, typename L, class M >
 void  CUtlRBTree<T, I, L, M>::FreeNode( I i )

@@ -255,12 +255,10 @@ DBG_INTERFACE struct SDL_Window * GetAssertDialogParent();
 				_executeExp; 												\
 				if ( ret == SPEW_DEBUGGER)									\
 				{															\
-					if ( !ShouldUseNewAssertDialog() || DoNewAssertDialog( __TFILE__, __LINE__, _msg ) ) \
-					{														\
+					if ( !ShouldUseNewAssertDialog() || DoNewAssertDialog( __TFILE__, __LINE__, _msg ) ) { \
 						DebuggerBreak();									\
 					}														\
-					if ( _bFatal )											\
-					{														\
+					if ( _bFatal ) { \
 						_ExitOnFatalAssert( __TFILE__, __LINE__ );			\
 					}														\
 				}															\

@@ -31,12 +31,12 @@
 		int     result; \
 		va_list arg_ptr; \
 		bool bTruncated = false; \
-		static int scAsserted = 0; \
-	\
+		static unsigned int scAsserted = 0; \
+	    \
 		va_start(arg_ptr, lastArg); \
 		result = V_vsnprintfRet( (szBuf), (nBufSize)-1, (*(ppszFormat)), arg_ptr, &bTruncated ); \
 		va_end(arg_ptr); \
-	\
+	    \
 		(szBuf)[(nBufSize)-1] = 0; \
 		if ( bTruncated && !(bQuietTruncation) && scAsserted < 5 ) \
 		{ \
