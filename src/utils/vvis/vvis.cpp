@@ -389,23 +389,14 @@ void LoadPortals( char* name ) {
 		// from the MPI master, then we get to use nice functions like fscanf on it.
 		char tempFile[ MAX_PATH ];
 
-		// TODO: Verify linux variant works on windows too, if so, remove windows-specific code
-		#if IsLinux()
-			std::error_code error;
-			auto path = std::filesystem::temp_directory_path( error );
+		std::error_code error;
+		auto tempDir = std::filesystem::temp_directory_path();
+		if ( error.value() != 0 ) {
+			Error( "LoadPortals: Failed to get temp directory path.\n" );
+		}
 
-			auto time = std::time( nullptr );
-			std::sprintf( tempFile, "%svvis_portal_%ld", path.c_str(), time );
-		#elif IsWindows()
-			char tempPath[ MAX_PATH ];
-			if ( GetTempPath( sizeof( tempPath ), tempPath ) == 0 ) {
-				Error( "LoadPortals: GetTempPath failed.\n" );
-			}
-
-			if ( GetTempFileName( tempPath, "", 0, tempFile ) == 0 ) {
-				Error( "LoadPortals: GetTempFileName failed.\n" );
-			}
-		#endif
+		auto id = std::time( nullptr ) & 0x0000FFFF;
+		std::sprintf( tempFile, "%svvis_portal_%ld", tempDir.c_str(), id );
 
 		// Read all the data from the network file into memory.
 		FileHandle_t hFile = g_pFileSystem->Open( name, "r" );

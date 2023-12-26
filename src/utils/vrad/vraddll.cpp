@@ -8,10 +8,11 @@
 //#include <strstrea.h>
 #include "vraddll.h"
 #include "bsplib.h"
-#include "vrad.h"
-#include "map_shared.h"
 #include "lightmap.h"
+#include "map_shared.h"
 #include "threads.h"
+#include "vrad.h"
+#include <filesystem>
 
 
 static CUtlVector<unsigned char> g_LastGoodLightData;
@@ -169,9 +170,16 @@ void CVRadDLL::GetBSPInfo( CBSPInfo *pInfo )
 
 bool CVRadDLL::DoIncrementalLight( char const *pVMFFile )
 {
-	char tempPath[MAX_PATH], tempFilename[MAX_PATH];
-	GetTempPath( sizeof( tempPath ), tempPath );
-	GetTempFileName( tempPath, "vmf_entities_", 0, tempFilename );
+	char tempFilename[MAX_PATH];
+
+	std::error_code error;
+	auto tempDir = std::filesystem::temp_directory_path();
+	if ( error.value() != 0 ) {
+		Error( "DoIncrementalLight: Failed to get temp directory path.\n" );
+	}
+
+	auto id = std::time( nullptr ) & 0x0000FFFF;
+	std::sprintf( tempFilename, "%svmf_entities_%ld", tempDir.c_str(), id );
 
 	FileHandle_t fp = g_pFileSystem->Open( tempFilename, "wb" );
 	if( !fp )
