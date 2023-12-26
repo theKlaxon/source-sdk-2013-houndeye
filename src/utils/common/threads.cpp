@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Workfile:     $
 // $Date:         $
@@ -10,63 +10,64 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#define	USED
-
-#include <windows.h>
+#if defined( WIN32 )
+	#include <windows.h>
+#elif defined( POSIX )
+	#include <pthread.h>
+#else
+	#error "threads.h: Don't know how to handle threads here!"
+#endif
 #include "cmdlib.h"
 #define NO_THREAD_NAMES
-#include "threads.h"
 #include "pacifier.h"
+#include "threads.h"
 
-#define	MAX_THREADS	16
+#define MAX_THREADS 16
 
 
-class CRunThreadsData
-{
+class CRunThreadsData {
 public:
 	int m_iThread;
-	void *m_pUserData;
+	void* m_pUserData;
 	RunThreadsFn m_Fn;
 };
 
-CRunThreadsData g_RunThreadsData[MAX_THREADS];
+CRunThreadsData g_RunThreadsData[ MAX_THREADS ];
 
 
-int		dispatch;
-int		workcount;
-qboolean		pacifier;
+int dispatch;
+int workcount;
+bool pacifier;
 
-qboolean	threaded;
+bool threaded;
 bool g_bLowPriorityThreads = false;
 
-HANDLE g_ThreadHandles[MAX_THREADS];
-
-
+#if IsWindows()
+	HANDLE g_ThreadHandles[ MAX_THREADS ];
+#elif IsPosix()
+	pthread_t g_ThreadHandles[ MAX_THREADS ];
+#endif
 
 /*
 =============
 GetThreadWork
-
 =============
 */
-int	GetThreadWork (void)
-{
-	int	r;
+int GetThreadWork() {
+	int r;
 
-	ThreadLock ();
+	ThreadLock();
 
-	if (dispatch == workcount)
-	{
-		ThreadUnlock ();
+	if ( dispatch == workcount ) {
+		ThreadUnlock();
 		return -1;
 	}
 
-	UpdatePacifier( (float)dispatch / workcount );
+	UpdatePacifier( static_cast<float>( dispatch ) / static_cast<float>( workcount ) );
 
 	r = dispatch;
 	dispatch++;
-	ThreadUnlock ();
+	ThreadUnlock();
 
 	return r;
 }
@@ -74,184 +75,190 @@ int	GetThreadWork (void)
 
 ThreadWorkerFn workfunction;
 
-void ThreadWorkerFunction( int iThread, void *pUserData )
-{
-	int		work;
+void ThreadWorkerFunction( int iThread, void* ) {
+	int work;
 
-	while (1)
-	{
-		work = GetThreadWork ();
-		if (work == -1)
+	while ( true ) {
+		work = GetThreadWork();
+		if ( work == -1 )
 			break;
-		 
+
 		workfunction( iThread, work );
 	}
 }
 
-void RunThreadsOnIndividual (int workcnt, qboolean showpacifier, ThreadWorkerFn func)
-{
-	if (numthreads == -1)
-		ThreadSetDefault ();
-	
+void RunThreadsOnIndividual( int workcnt, bool showpacifier, ThreadWorkerFn func ) {
+	if ( numthreads == -1 )
+		ThreadSetDefault();
+
 	workfunction = func;
-	RunThreadsOn (workcnt, showpacifier, ThreadWorkerFunction);
+	RunThreadsOn( workcnt, showpacifier, ThreadWorkerFunction );
 }
 
-
-/*
-===================================================================
-
-WIN32
-
-===================================================================
-*/
-
-int		numthreads = -1;
-CRITICAL_SECTION		crit;
+int numthreads = -1;
+#if IsWindows()
+	CRITICAL_SECTION crit;
+#else
+	pthread_mutex_t mutex;
+#endif
 static int enter;
 
 
-class CCritInit
-{
+class CCritInit {
 public:
-	CCritInit()
-	{
-		InitializeCriticalSection (&crit);
+	CCritInit() {
+		#if IsWindows()
+			InitializeCriticalSection( &crit );
+		#elif IsPosix()
+			pthread_mutex_init( &mutex, nullptr );
+		#endif
 	}
 } g_CritInit;
 
 
-
-void SetLowPriority()
-{
-	SetPriorityClass( GetCurrentProcess(), IDLE_PRIORITY_CLASS );
+void SetLowPriority() {
+	#if IsWindows()
+		SetPriorityClass( GetCurrentProcess(), IDLE_PRIORITY_CLASS );
+	#elif IsPosix()
+		nice(19);
+	#endif
 }
 
 
-void ThreadSetDefault (void)
-{
-	SYSTEM_INFO info;
-
-	if (numthreads == -1)	// not set manually
-	{
-		GetSystemInfo (&info);
-		numthreads = info.dwNumberOfProcessors;
-		if (numthreads < 1 || numthreads > 32)
+void ThreadSetDefault() {
+	if ( numthreads == -1 ) { // not set manually
+		#if IsWindows()
+			SYSTEM_INFO info;
+			GetSystemInfo( &info );
+			numthreads = info.dwNumberOfProcessors;
+		#elif IsLinux()
+			numthreads = sysconf( _SC_NPROCESSORS_ONLN );
+		#endif
+		if ( numthreads < 1 || numthreads > 32 )
 			numthreads = 1;
 	}
 
-	Msg ("%i threads\n", numthreads);
+	Msg( "%i threads\n", numthreads );
 }
 
 
-void ThreadLock (void)
-{
-	if (!threaded)
+void ThreadLock() {
+	if (! threaded ) {
 		return;
-	EnterCriticalSection (&crit);
-	if (enter)
-		Error ("Recursive ThreadLock\n");
+	}
+	#if IsWindows()
+		EnterCriticalSection( &crit );
+	#elif IsPosix()
+		pthread_mutex_lock( &mutex );
+	#endif
+	if ( enter )
+		Error( "Recursive ThreadLock\n" );
 	enter = 1;
 }
 
-void ThreadUnlock (void)
-{
-	if (!threaded)
+void ThreadUnlock() {
+	if (! threaded )
 		return;
-	if (!enter)
-		Error ("ThreadUnlock without lock\n");
+	if (! enter )
+		Error( "ThreadUnlock without lock\n" );
 	enter = 0;
-	LeaveCriticalSection (&crit);
+	#if IsWindows()
+		LeaveCriticalSection( &crit );
+	#elif IsPosix()
+		pthread_mutex_unlock( &mutex );
+	#endif
 }
-
 
 // This runs in the thread and dispatches a RunThreadsFn call.
-DWORD WINAPI InternalRunThreadsFn( LPVOID pParameter )
-{
-	CRunThreadsData *pData = (CRunThreadsData*)pParameter;
+#if IsWindows()
+DWORD WINAPI InternalRunThreadsFn( LPVOID pParameter ) {
+#elif IsPosix()
+void* InternalRunThreadsFn( void* pParameter ) {
+#endif
+	auto pData = static_cast<CRunThreadsData*>( pParameter );
 	pData->m_Fn( pData->m_iThread, pData->m_pUserData );
-	return 0;
+	return nullptr;
 }
 
 
-void RunThreads_Start( RunThreadsFn fn, void *pUserData, ERunThreadsPriority ePriority )
-{
+void RunThreads_Start( RunThreadsFn fn, void* pUserData, ERunThreadsPriority ePriority ) {
 	Assert( numthreads > 0 );
 	threaded = true;
 
 	if ( numthreads > MAX_TOOL_THREADS )
 		numthreads = MAX_TOOL_THREADS;
 
-	for ( int i=0; i < numthreads ;i++ )
-	{
-		g_RunThreadsData[i].m_iThread = i;
-		g_RunThreadsData[i].m_pUserData = pUserData;
-		g_RunThreadsData[i].m_Fn = fn;
+	for ( int i = 0; i < numthreads; i++ ) {
+		g_RunThreadsData[ i ].m_iThread = i;
+		g_RunThreadsData[ i ].m_pUserData = pUserData;
+		g_RunThreadsData[ i ].m_Fn = fn;
+		#if IsWindows()
+			g_ThreadHandles[ i ] = CreateThread(
+				nullptr,                 // [inp]  LPSECURITY_ATTRIBUTES lpThreadAttributes,
+				0,                       // [inp]                  DWORD dwStackSize,
+				InternalRunThreadsFn,    // [inp] LPTHREAD_START_ROUTINE lpStartAddress,
+				&g_RunThreadsData[ i ],  // [inp]                 LPVOID lpParameter,
+				0,                       // [inp]                  DWORD dwCreationFlags,
+				nullptr                  // [out]                LPDWORD lpThreadId
+			);
+		#elif IsPosix()
+			pthread_create( &g_ThreadHandles[ i ], nullptr, InternalRunThreadsFn, nullptr );
+			#define SetThreadPriority      pthread_setschedprio
+			#define THREAD_PRIORITY_LOWEST 19
+			#define THREAD_PRIORITY_IDLE   0
+		#endif
 
-		DWORD dwDummy;
-		g_ThreadHandles[i] = CreateThread(
-		   NULL,	// LPSECURITY_ATTRIBUTES lpsa,
-		   0,		// DWORD cbStack,
-		   InternalRunThreadsFn,	// LPTHREAD_START_ROUTINE lpStartAddr,
-		   &g_RunThreadsData[i],	// LPVOID lpvThreadParm,
-		   0,			// DWORD fdwCreate,
-		   &dwDummy );
-
-		if ( ePriority == k_eRunThreadsPriority_UseGlobalState )
-		{
-			if( g_bLowPriorityThreads )
-				SetThreadPriority( g_ThreadHandles[i], THREAD_PRIORITY_LOWEST );
-		}
-		else if ( ePriority == k_eRunThreadsPriority_Idle )
-		{
-			SetThreadPriority( g_ThreadHandles[i], THREAD_PRIORITY_IDLE );
+		if ( ePriority == k_eRunThreadsPriority_UseGlobalState ) {
+			if ( g_bLowPriorityThreads )
+				SetThreadPriority( g_ThreadHandles[ i ], THREAD_PRIORITY_LOWEST );
+		} else if ( ePriority == k_eRunThreadsPriority_Idle ) {
+			SetThreadPriority( g_ThreadHandles[ i ], THREAD_PRIORITY_IDLE );
 		}
 	}
 }
 
 
-void RunThreads_End()
-{
-	WaitForMultipleObjects( numthreads, g_ThreadHandles, TRUE, INFINITE );
-	for ( int i=0; i < numthreads; i++ )
-		CloseHandle( g_ThreadHandles[i] );
+void RunThreads_End() {
+	#if IsWindows()
+		WaitForMultipleObjects( numthreads, g_ThreadHandles, TRUE, INFINITE );
+	#endif
+	for ( int i = 0; i < numthreads; i++ ) {
+		#if IsWindows()
+			CloseHandle( g_ThreadHandles[ i ] );
+		#elif IsPosix()
+			pthread_join( g_ThreadHandles[ i ], nullptr );
+			pthread_cancel( g_ThreadHandles[ i ] );
+		#endif
+	}
 
 	threaded = false;
 }
-	
+
 
 /*
 =============
 RunThreadsOn
 =============
 */
-void RunThreadsOn( int workcnt, qboolean showpacifier, RunThreadsFn fn, void *pUserData )
-{
-	int		start, end;
-
-	start = Plat_FloatTime();
+void RunThreadsOn( int workcnt, bool showpacifier, RunThreadsFn fn, void* pUserData ) {
+	auto start = static_cast<int>( Plat_FloatTime() );
 	dispatch = 0;
 	workcount = workcnt;
-	StartPacifier("");
+	StartPacifier( "" );
 	pacifier = showpacifier;
 
 #ifdef _PROFILE
 	threaded = false;
-	(*func)( 0 );
+	( *func )( 0 );
 	return;
 #endif
 
-	
 	RunThreads_Start( fn, pUserData );
 	RunThreads_End();
 
-
-	end = Plat_FloatTime();
-	if (pacifier)
-	{
-		EndPacifier(false);
-		printf (" (%i)\n", end-start);
+	auto end = static_cast<int>( Plat_FloatTime() );
+	if ( pacifier ) {
+		EndPacifier( false );
+		printf( " (%i)\n", end - start );
 	}
 }
-
-
