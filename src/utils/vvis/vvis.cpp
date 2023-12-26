@@ -213,7 +213,7 @@ void ClusterMerge (int clusternum)
 	for (i=0 ; i < leaf->portals.Count(); i++)
 	{
 		p = leaf->portals[i];
-		if (p->status != stat_done)
+		if (p->status != vstatus_t::stat_done)
 			Error ("portal not done %d %p %p\n", i, p, portals);
 		for (j=0 ; j<portallongs ; j++)
 			((long *)portalvector)[j] |= ((long *)p->portalvis)[j];
@@ -298,7 +298,7 @@ void CalcPortalVis (void)
 		for (i=0 ; i<g_numportals*2 ; i++)
 		{
 			portals[i].portalvis = portals[i].portalflood;
-			portals[i].status = stat_done;
+			portals[i].status = vstatus_t::stat_done;
 		}
 		return;
 	}

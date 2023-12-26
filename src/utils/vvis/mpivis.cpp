@@ -334,10 +334,10 @@ void ReceivePortalFlow( uint64 iWorkUnit, MessageBuffer *pBuf, int iWorker )
 {
 	portal_t *p = sorted_portals[iWorkUnit];
 
-	if ( p->status != stat_done )
+	if ( p->status != vstatus_t::stat_done )
 	{
 		pBuf->read( p->portalvis, portalbytes );
-		p->status = stat_done;
+		p->status = vstatus_t::stat_done;
 
 		
 		// Multicast the status of this portal out.
@@ -421,9 +421,9 @@ public:
 	
 	virtual bool Update()
 	{
-		if ( kbhit() )
+		if ( kbhit() ) // https://learn.microsoft.com/cpp/c-runtime-library/reference/kbhit
 		{
-			int key = toupper( getch() );
+			int key = toupper( getch() ); // https://learn.microsoft.com/cpp/c-runtime-library/reference/getch-getwch
 			if ( m_iState == STATE_NONE )
 			{
 				if ( key == 'M' )
@@ -509,10 +509,10 @@ void CheckExitedEarly()
 		// Use the fastvis results for portals that we didn't get results for.
 		for ( int i=0; i < g_numportals*2; i++ )
 		{
-			if ( sorted_portals[i]->status != stat_done )
+			if ( sorted_portals[i]->status != vstatus_t::stat_done )
 			{
 				sorted_portals[i]->portalvis = sorted_portals[i]->portalflood;
-				sorted_portals[i]->status = stat_done;
+				sorted_portals[i]->status = vstatus_t::stat_done;
 			}
 		}
 	}
