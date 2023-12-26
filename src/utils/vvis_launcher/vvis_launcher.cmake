@@ -36,8 +36,15 @@ if (WIN32)
 	)
 endif ()
 
-target_link_libraries( vvis_launcher
-	PRIVATE
-		"${LIBPUBLIC}/libtier0.so"
-		"${LIBPUBLIC}/libvstdlib.so"
-)
+add_library( tier0 IMPORTED SHARED )
+set_property( TARGET tier0 PROPERTY IMPORTED_IMPLIB "${LIBPUBLIC}/${CMAKE_SHARED_LIBRARY_PREFIX}tier0${CMAKE_SHARED_LIBRARY_SUFFIX}" )
+add_library( vstdlib IMPORTED SHARED )
+set_property( TARGET vstdlib PROPERTY IMPORTED_IMPLIB "${LIBPUBLIC}/${CMAKE_SHARED_LIBRARY_PREFIX}vstdlib${CMAKE_SHARED_LIBRARY_SUFFIX}" )
+
+#target_link_libraries( vvis_launcher
+#	PRIVATE
+#		tier0
+#		tier1
+#		vstdlib
+#)
+add_dependencies( vvis_launcher vvis_dll )

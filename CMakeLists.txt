@@ -8,6 +8,10 @@ if ( NOT DEFINED CMAKE_TOOLCHAIN_FILE )
 	message( FATAL_ERROR "vcpkg was not configured on this system, please configure it and come back" )
 endif()
 
+if ("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+	message( FATAL_ERROR "Aurora Source only supports 32-bit generation for now" )
+endif()
+
 set( CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE )
 
 message( NOTICE "Running CMake v${CMAKE_VERSION}" )
@@ -31,6 +35,7 @@ endif()
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # This is a way to emulate groups.vgc

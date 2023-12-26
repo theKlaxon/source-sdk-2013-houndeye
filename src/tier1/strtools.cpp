@@ -1522,12 +1522,29 @@ int _V_UTF8ToUCS2( const char *pUTF8, int cubSrcInBytes, ucs2 *pUCS2, int cubDes
 	AssertValidReadPtr(pUCS2);
 
 	pUCS2[0] = 0;
-#ifdef _WIN32
+#if IsWindows()
 	// under win32 wchar_t == ucs2, sigh
 	int cchResult = MultiByteToWideChar( CP_UTF8, 0, pUTF8, -1, pUCS2, cubDestSizeInBytes / sizeof(wchar_t) );
+#elif IsPosix()
+	// FIXME: Temporary solution taken from goldeneye-source
+	iconv_t conv_t = iconv_open( "UCS-2LE", "UTF-8" );
+	int cchResult = -1;
+	size_t nLenUnicde = cubSrcInBytes;
+	size_t nMaxUTF8 = cubDestSizeInBytes;
+	char* pIn = const_cast<char*>( pUTF8 );
+	char* pOut = reinterpret_cast<char*>( pUCS2 );
+	if ( conv_t != reinterpret_cast<void*>( -1 ) )
+	{
+		cchResult = static_cast<int>( iconv( conv_t, &pIn, &nLenUnicde, &pOut, &nMaxUTF8 ) );
+		iconv_close( conv_t );
+		if ( cchResult == -1 )
+			cchResult = 0;
+		else
+			cchResult = cubSrcInBytes;
+	}
 #endif
 	pUCS2[ (cubDestSizeInBytes/sizeof(ucs2)) - 1] = 0;
-	return cchResult;	
+	return cchResult;
 }
 
 

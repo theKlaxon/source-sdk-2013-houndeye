@@ -15,6 +15,7 @@
 #endif
 #include "tier0/icommandline.h"
 #include "ilaunchabledll.h"
+#include "platform.h"
 
 
 
@@ -48,7 +49,7 @@ char* GetLastErrorString() {
 
 int main( int argc, char* argv[] ) {
 	CommandLine()->CreateCmdLine( argc, argv );
-	const char* pDLLName = "vvis_dll.dll";
+	const char* pDLLName = "vvis_dll" DLL_EXT_STRING;
 	
 	CSysModule* pModule = Sys_LoadModule( pDLLName );
 	if (! pModule ) {

@@ -509,7 +509,7 @@ FIXME: Enable this when we no longer fear change =)
 #elif defined( GNUC )
 	#define  STDCALL
 	#define  FASTCALL				__attribute__((fastcall))
-	#define  FORCEINLINE
+	#define  FORCEINLINE            inline
 	// GCC 3.4.1 has a bug in supporting forced inline of templated functions
 	// this macro lets us not force inlining in that case
 	#define  FORCEINLINE_TEMPLATE

@@ -40,7 +40,6 @@ set(
 	"${TIER1_DIR}/tier1.cpp"
 	"${TIER1_DIR}/tokenreader.cpp"
 	"${TIER1_DIR}/sparsematrix.cpp"
-	"${TIER1_DIR}/uniqueid.cpp"
 	"${TIER1_DIR}/utlbuffer.cpp"
 	"${TIER1_DIR}/utlbufferutil.cpp"
 	"${TIER1_DIR}/utlstring.cpp"
@@ -100,7 +99,6 @@ set(
 	"${SRCDIR}/public/tier1/strtools.h"
 	"${SRCDIR}/public/tier1/tier1.h"
 	"${SRCDIR}/public/tier1/tokenreader.h"
-	"$<${IS_WINDOWS}:${SRCDIR}/public/tier1/uniqueid.h>"
 	"${SRCDIR}/public/tier1/utlbidirectionalset.h"
 	"${SRCDIR}/public/tier1/utlblockmemory.h"
 	"${SRCDIR}/public/tier1/utlbuffer.h"
@@ -149,9 +147,4 @@ add_library(
 target_compile_definitions(
 	tier1 PRIVATE
 	TIER1_STATIC_LIB
-)
-
-target_link_libraries(
-	tier1 INTERFACE
-	$<${IS_WINDOWS}:Rpcrt4>
 )

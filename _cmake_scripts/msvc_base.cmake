@@ -5,10 +5,6 @@ if (MSVC_TOOLSET_VERSION LESS 140)
 	message(FATAL_ERROR "MSVC must use toolset 140 (2015) or greater")
 endif()
 
-if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
-	message( FATAL_ERROR "Aurora Source only supports 32-bit generation for now" )
-endif()
-
 # No frame pointer optimization
 set(NOFPO 1)
 
