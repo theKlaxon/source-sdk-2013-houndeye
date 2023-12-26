@@ -21,12 +21,9 @@ cmake-*/
 obj*/
 
 # Game stuff
-game/mod_hl2mp/user_custom/
+game/**/user_custom/
 game/**/screenshots/
-game/**/*.dll
-game/**/*.so
-game/**/*.exe
-game/**/aurosrc
+game/**/bin/
 game/hl2
 game/platform
 
