@@ -7,12 +7,8 @@
 //=============================================================================//
 // vis.c
 
-#include "platform.h"
-#if IsWindows()
-	#include <fileapi.h>
-#elif IsLinux()
-	#include <filesystem>
-#endif
+
+#include <filesystem>
 #include "byteswap.h"
 #include "collisionutils.h"
 #include "ilaunchabledll.h"
