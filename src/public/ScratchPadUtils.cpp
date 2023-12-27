@@ -8,11 +8,11 @@
 
 #if !defined(_STATIC_LINKED) || defined(_SHARED_LIB)
 
-#include "iscratchpad3d.h"
-#include "mathlib/mathlib.h"
-#include "ScratchPadUtils.h"
+	#include "scratchpadutils.h"
+	#include "iscratchpad3d.h"
+	#include "mathlib/mathlib.h"
 
-// memdbgon must be the last include file in a .cpp file!!!
+	// memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
 
