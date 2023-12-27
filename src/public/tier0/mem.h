@@ -8,7 +8,7 @@
 
 #include <stddef.h>
 
-#if IsLinux()
+#if defined( LINUX )
 	#undef offsetof
 	#define offsetof(s,m)	(size_t)&(((s*)0)->m)
 #endif
