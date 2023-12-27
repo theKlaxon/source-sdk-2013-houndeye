@@ -36,3 +36,11 @@ if (WIN32)
 			/LARGEADDRESSAWARE
 	)
 endif ()
+
+target_link_libraries( vrad_launcher
+	PRIVATE
+		tier0
+		tier1
+		vstdlib
+)
+add_dependencies( vrad_launcher vrad_dll )
