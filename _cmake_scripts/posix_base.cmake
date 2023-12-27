@@ -11,6 +11,7 @@ add_compile_options(
 	$<$<COMPILE_LANGUAGE:CXX>:-fpermissive>
 	-fdiagnostics-color
 	-Wno-narrowing
+	-Winvalid-offsetof
 	$<${IS_LINUX}:-U_FORTIFY_SOURCE>
 	-Usprintf
 	-Ustrncpy
