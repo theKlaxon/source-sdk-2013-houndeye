@@ -9,10 +9,11 @@
 
 //=============================================================================
 
-#include "vrad.h"
 #include "trace.h"
-#include "Cmodel.h"
+#include "cmodel.h"
 #include "mathlib/vmatrix.h"
+#include "vrad.h"
+#include <smmintrin.h>
 
 
 //=============================================================================
@@ -133,7 +134,7 @@ public:
 			addedCoverage[s] = 0.0f;
 			if ( ( sign >> s) & 0x1 )
 			{
-				addedCoverage[s] = ComputeCoverageFromTexture( b0->m128_f32[s], b1->m128_f32[s], b2->m128_f32[s], hitID );
+				addedCoverage[s] = ComputeCoverageFromTexture( FLTX4_ELEMENT( b0, s ), FLTX4_ELEMENT( b1, s ), FLTX4_ELEMENT( b2, s ), hitID );
 			}
 		}
 		m_coverage = AddSIMD( m_coverage, LoadUnalignedSIMD( addedCoverage ) );
@@ -165,12 +166,9 @@ void TestLine( const FourVectors& start, const FourVectors& stop,
 
 	// Assume we can see the targets unless we get hits
 	float visibility[4];
-	for ( int i = 0; i < 4; i++ )
-	{
+	for ( int i = 0; i < 4; i++ ) {
 		visibility[i] = 1.0f;
-		if ( ( rt_result.HitIds[i] != -1 ) &&
-		     ( rt_result.HitDistance.m128_f32[i] < len.m128_f32[i] ) )
-		{
+		if ( ( rt_result.HitIds[i] != -1 ) && ( FLTX4_ELEMENT( rt_result.HitDistance, i ) < FLTX4_ELEMENT( len, i ) ) ) {
 			visibility[i] = 0.0f;
 		}
 	}
@@ -372,9 +370,7 @@ void TestLine_DoesHitSky( FourVectors const& start, FourVectors const& stop,
 	for ( int i = 0; i < 4; i++ )
 	{
 		aOcclusion[i] = 0.0f;
-		if ( ( rt_result.HitIds[i] != -1 ) &&
-		     ( rt_result.HitDistance.m128_f32[i] < len.m128_f32[i] ) )
-		{
+		if ( ( rt_result.HitIds[i] != -1 ) && ( FLTX4_ELEMENT( rt_result.HitDistance, i ) < FLTX4_ELEMENT( len, i ) ) ) {
 			int id = g_RtEnv.OptimizedTriangleList[rt_result.HitIds[i]].m_Data.m_IntersectData.m_nTriangleID;
 			if ( !( id & TRACE_ID_SKY ) )
 				aOcclusion[i] = 1.0f;
