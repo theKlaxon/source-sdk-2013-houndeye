@@ -826,7 +826,7 @@ static void CalcZeroframeData( const CStudioHdr *pStudioHdr, const studiohdr_t *
 		}
 		int i0 = max( index - 1, 0 );
 		int i1 = index;
-		int i2 = min( index + 1, animdesc.zeroframecount - 1 );
+		int i2 = std::min( index + 1, animdesc.zeroframecount - 1 );
 		for (j = 0; j < pAnimStudioHdr->numbones; j++)
 		{
 			if (pAnimGroup)
@@ -2760,7 +2760,7 @@ bool Studio_SolveIK( int iThigh, int iKnee, int iFoot, Vector &targetFoot, Vecto
 
 	// exaggerate knee targets for legs that are nearly straight
 	// FIXME: should be configurable, and the ikKnee should be from the original animation, not modifed
-	float d = (targetFoot-worldThigh).Length() - min( l1, l2 );
+	float d = (targetFoot-worldThigh).Length() - std::min( l1, l2 );
 	d = max( l1 + l2, d );
 	// FIXME: too short knee directions cause trouble
 	d = d * 100;
@@ -2781,7 +2781,7 @@ bool Studio_SolveIK( int iThigh, int iKnee, int iFoot, Vector &targetFoot, Vecto
 
 	// too close?
 	// limit distance to about an 80 degree knee bend
-	float minDist = max( fabs(l1 - l2) * 1.15, min( l1, l2 ) * 0.15 );
+	float minDist = max( fabs(l1 - l2) * 1.15, std::min( l1, l2 ) * 0.15 );
 	if (ikFoot.Length() < minDist)
 	{
 		// too close to get an accurate vector, just use original vector
@@ -3245,7 +3245,7 @@ void CIKContext::AddDependencies( mstudioseqdesc_t &seqdesc, int iSequence, floa
 		}
 		else
 		{
-			flCycle = max( 0.0, min( flCycle, 0.9999 ) );
+			flCycle = max( 0.0, std::min( flCycle, 0.9999 ) );
 		}
 	}
 
@@ -3739,7 +3739,7 @@ void CIKContext::UpdateTargets( Vector pos[], Quaternion q[], matrix3x4_t boneTo
 						pTarget->est.floor = Lerp( pRule->flRuleWeight, pTarget->est.floor, pRule->floor );
 						pTarget->est.radius = Lerp( pRule->flRuleWeight, pTarget->est.radius, pRule->radius );
 						//pTarget->est.latched = Lerp( pRule->flRuleWeight, pTarget->est.latched, pRule->latched );
-						pTarget->est.latched = min( pTarget->est.latched, pRule->latched );
+						pTarget->est.latched = std::min( pTarget->est.latched, pRule->latched );
 						pTarget->est.release = Lerp( pRule->flRuleWeight, pTarget->est.release, pRule->release );
 						pTarget->est.flWeight = Lerp( pRule->flRuleWeight, pTarget->est.flWeight, pRule->flWeight );
 					}
@@ -3757,7 +3757,7 @@ void CIKContext::UpdateTargets( Vector pos[], Quaternion q[], matrix3x4_t boneTo
 					if (pRule->latched > 0.0)
 						pTarget->est.latched = 0.0;
 					else
-						pTarget->est.latched = min( pTarget->est.latched, 1.0f - pRule->flWeight );
+						pTarget->est.latched = std::min( pTarget->est.latched, 1.0f - pRule->flWeight );
 				}
 				break;
 			case IK_RELEASE:
@@ -3766,7 +3766,7 @@ void CIKContext::UpdateTargets( Vector pos[], Quaternion q[], matrix3x4_t boneTo
 					if (pRule->latched > 0.0)
 						pTarget->est.latched = 0.0;
 					else
-						pTarget->est.latched = min( pTarget->est.latched, 1.0f - pRule->flWeight );
+						pTarget->est.latched = std::min( pTarget->est.latched, 1.0f - pRule->flWeight );
 
 					pTarget->est.flWeight = (pTarget->est.flWeight) * (1 - pRule->flWeight * pRule->flRuleWeight);
 				}
@@ -3932,7 +3932,7 @@ void CIKContext::AutoIKRelease( void )
 			float ft = m_flTime - pTarget->error.flErrorTime;
 			if (dt < 0.25)
 			{
-				pTarget->error.ramp = min( pTarget->error.ramp + ft * 4.0, 1.0 );
+				pTarget->error.ramp = std::min( pTarget->error.ramp + ft * 4.0, 1.0 );
 			}
 			else
 			{

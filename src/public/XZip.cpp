@@ -694,9 +694,6 @@ void copy_block     (TState &state,char *buf, unsigned len, int header);
 // Mapping from a distance to a distance code. dist is the distance - 1 and
 // must not have side effects. dist_code[256] and dist_code[257] are never used.
 
-#define Max(a,b) (a >= b ? a : b)
-/* the arguments must not have side effects */
-
 /* ===========================================================================
  * Allocate the match buffer, initialize the various tables and save the
  * location of the internal file attribute (ascii/binary) and method

@@ -4,18 +4,12 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef BASETYPES_H
-#define BASETYPES_H
+#pragma once
 
 #include "commonmacros.h"
 #include "wchartypes.h"
 
 #include "tier0/valve_off.h"
-
-#ifdef _WIN32
-#pragma once
-#endif
 
 
 // This is a trick to get the DLL extension off the -D option on the command line.
@@ -29,12 +23,12 @@
 
 // stdio.h
 #ifndef NULL
-#define NULL 0
+	#define NULL 0
 #endif
 
 
 #ifdef POSIX
-#include <stdint.h>
+	#include <stdint.h>
 #endif
 
 #define ExecuteNTimes( nTimes, x )	\
@@ -48,12 +42,11 @@
 	}
 
 
-#define ExecuteOnce( x )			ExecuteNTimes( 1, x )
+#define ExecuteOnce( x ) ExecuteNTimes( 1, x )
 
 
 template <typename T>
-inline T AlignValue( T val, uintptr_t alignment )
-{
+inline T AlignValue( T val, uintptr_t alignment ) {
 	return (T)( ( (uintptr_t)val + alignment - 1 ) & ~( alignment - 1 ) );
 }
 
@@ -65,65 +58,58 @@ inline T AlignValue( T val, uintptr_t alignment )
 
 // In case this ever changes
 #if !defined(M_PI) && !defined(HAVE_M_PI)
-#define M_PI			3.14159265358979323846
+	#define M_PI			3.14159265358979323846
 #endif
-
-#include "valve_minmax_on.h"
 
 // #define COMPILETIME_MAX and COMPILETIME_MIN for max/min in constant expressions
 #define COMPILETIME_MIN( a, b ) ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 #define COMPILETIME_MAX( a, b ) ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
 #ifndef MIN
-#define MIN( a, b ) ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
+	#define MIN( a, b ) ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 #endif
 
 #ifndef MAX
-#define MAX( a, b ) ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
+	#define MAX( a, b ) ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
 #endif
 
 #ifdef __cplusplus
+	// This is the preferred clamp operator. Using the clamp macro can lead to
+	// unexpected side-effects or more expensive code. Even the clamp (all
+	// lower-case) function can generate more expensive code because of the
+	// mixed types involved.
+	template< class T >
+	T Clamp( T const &val, T const &minVal, T const &maxVal ) {
+		if( val < minVal )
+			return minVal;
+		else if( val > maxVal )
+			return maxVal;
+		else
+			return val;
+	}
 
-// This is the preferred clamp operator. Using the clamp macro can lead to
-// unexpected side-effects or more expensive code. Even the clamp (all
-// lower-case) function can generate more expensive code because of the
-// mixed types involved.
-template< class T >
-T Clamp( T const &val, T const &minVal, T const &maxVal )
-{
-	if( val < minVal )
-		return minVal;
-	else if( val > maxVal )
-		return maxVal;
-	else
-		return val;
-}
+	// This is the preferred Min operator. Using the MIN macro can lead to unexpected
+	// side-effects or more expensive code.
+	template< class T >
+	T Min( T const &val1, T const &val2 ) {
+		return val1 < val2 ? val1 : val2;
+	}
 
-// This is the preferred Min operator. Using the MIN macro can lead to unexpected
-// side-effects or more expensive code.
-template< class T >
-T Min( T const &val1, T const &val2 )
-{
-	return val1 < val2 ? val1 : val2;
-}
-
-// This is the preferred Max operator. Using the MAX macro can lead to unexpected
-// side-effects or more expensive code.
-template< class T >
-T Max( T const &val1, T const &val2 )
-{
-	return val1 > val2 ? val1 : val2;
-}
-
+	// This is the preferred Max operator. Using the MAX macro can lead to unexpected
+	// side-effects or more expensive code.
+	template< class T >
+	T Max( T const &val1, T const &val2 ) {
+		return val1 > val2 ? val1 : val2;
+	}
 #endif
 
 #ifndef FALSE
-#define FALSE 0
-#define TRUE (!FALSE)
+	#define FALSE 0
+	#define TRUE (!FALSE)
 #endif
 
 
 #ifndef DONT_DEFINE_BOOL // Needed for Cocoa stuff to compile.
-typedef int BOOL;
+	typedef int BOOL;
 #endif
 
 typedef int qboolean;
@@ -132,13 +118,12 @@ typedef unsigned char BYTE;
 typedef unsigned char byte;
 typedef unsigned short word;
 #ifdef _WIN32
-typedef wchar_t ucs2; // under windows wchar_t is ucs2
+	typedef wchar_t ucs2; // under windows wchar_t is ucs2
 #else
-typedef unsigned short ucs2;
+	typedef unsigned short ucs2;
 #endif
 
-enum ThreeState_t
-{
+enum ThreeState_t {
 	TRS_FALSE,
 	TRS_TRUE,
 	TRS_NONE,
@@ -147,10 +132,10 @@ enum ThreeState_t
 typedef float vec_t;
 
 #if defined(__GNUC__)
-#define fpmin __builtin_fminf
-#define fpmax __builtin_fmaxf
+	#define fpmin __builtin_fminf
+	#define fpmax __builtin_fmaxf
 #else
-#define fpmin min
+	#define fpmin min
 #define fpmax max
 #endif
 
@@ -160,57 +145,49 @@ typedef float vec_t;
 // This assumes the ANSI/IEEE 754-1985 standard
 //-----------------------------------------------------------------------------
 
-inline unsigned long& FloatBits( vec_t& f )
-{
+inline unsigned long& FloatBits( vec_t& f ) {
 	// TODO: Does this violate strict aliasing? GCC doesn't warn.
 	return *reinterpret_cast<unsigned long*>(&f);
 }
 
-inline unsigned long const& FloatBits( vec_t const& f )
-{
+inline unsigned long const& FloatBits( vec_t const& f ) {
 	// TODO: Does this violate strict aliasing? GCC doesn't warn.
 	return *reinterpret_cast<unsigned long const*>(&f);
 }
 
-inline vec_t BitsToFloat( unsigned long i )
-{
+inline vec_t BitsToFloat( unsigned long i ) {
 	union { unsigned long i; vec_t v; } u{ .i = i };
 	return u.v;
 }
 
-inline bool IsFinite( vec_t f )
-{
+inline bool IsFinite( vec_t f ) {
 	return ((FloatBits(f) & 0x7F800000) != 0x7F800000);
 }
 
-inline unsigned long FloatAbsBits( vec_t f )
-{
+inline unsigned long FloatAbsBits( vec_t f ) {
 	return FloatBits(f) & 0x7FFFFFFF;
 }
 
 // Given today's processors, I cannot think of any circumstance
 // where bit tricks would be faster than fabs. henryg 8/16/2011
 #ifdef _MSC_VER
-#ifndef _In_
-#define _In_
-#endif
-extern "C" float fabsf(_In_ float);
+	#ifndef _In_
+		#define _In_
+	#endif
+	extern "C" float fabsf(_In_ float);
 #else
-#include <math.h>
+	#include <math.h>
 #endif
 
-inline float FloatMakeNegative( vec_t f )
-{
+inline float FloatMakeNegative( vec_t f ) {
 	return -fabsf(f);
 }
 
-inline float FloatMakePositive( vec_t f )
-{
+inline float FloatMakePositive( vec_t f ) {
 	return fabsf(f);
 }
 
-inline float FloatNegate( vec_t f )
-{
+inline float FloatNegate( vec_t f ) {
 	return -f;
 }
 
@@ -223,35 +200,30 @@ inline float FloatNegate( vec_t f )
 
 
 // FIXME: why are these here?  Hardly anyone actually needs them.
-struct color24
-{
+struct color24 {
 	byte r, g, b;
 };
 
-typedef struct color32_s
-{
-	bool operator!=( const struct color32_s &other ) const;
+struct color32 {
+	bool operator!=( const color32 &other ) const;
 
 	byte r, g, b, a;
-} color32;
+};
 
-inline bool color32::operator!=( const color32 &other ) const
-{
+inline bool color32::operator!=( const color32 &other ) const {
 	return r != other.r || g != other.g || b != other.b || a != other.a;
 }
 
-struct colorVec
-{
+struct colorVec {
 	unsigned r, g, b, a;
 };
 
 
 #ifndef NOTE_UNUSED
-#define NOTE_UNUSED(x)	(void)(x)	// for pesky compiler / lint warnings
+	#define NOTE_UNUSED(x)	(void)(x)	// for pesky compiler / lint warnings
 #endif
 
-struct vrect_t
-{
+struct vrect_t {
 	int				x,y,width,height;
 	vrect_t			*pnext;
 };
@@ -260,8 +232,7 @@ struct vrect_t
 //-----------------------------------------------------------------------------
 // MaterialRect_t struct - used for DrawDebugText
 //-----------------------------------------------------------------------------
-struct Rect_t
-{
+struct Rect_t {
     int x, y;
 	int width, height;
 };
@@ -270,8 +241,7 @@ struct Rect_t
 //-----------------------------------------------------------------------------
 // Interval, used by soundemittersystem + the game
 //-----------------------------------------------------------------------------
-struct interval_t
-{
+struct interval_t {
 	float start;
 	float range;
 };
@@ -285,8 +255,7 @@ struct interval_t
 
 // Typesafe 8-bit and 16-bit handles.
 template< class HandleType >
-class CBaseIntHandle
-{
+class CBaseIntHandle {
 public:
 	
 	inline bool			operator==( const CBaseIntHandle &other )	{ return m_Handle == other.m_Handle; }
@@ -300,43 +269,36 @@ public:
 	typedef HandleType	HANDLE_TYPE;
 
 protected:
-
 	HandleType	m_Handle;
 };
 
 template< class DummyType >
-class CIntHandle16 : public CBaseIntHandle< unsigned short >
-{
+class CIntHandle16 : public CBaseIntHandle< unsigned short > {
 public:
 	inline			CIntHandle16() {}
 
-	static inline	CIntHandle16<DummyType> MakeHandle( HANDLE_TYPE val )
-	{
+	static inline	CIntHandle16<DummyType> MakeHandle( HANDLE_TYPE val ) {
 		return CIntHandle16<DummyType>( val );
 	}
 
 protected:
-	inline			CIntHandle16( HANDLE_TYPE val )
-	{
+	inline			CIntHandle16( HANDLE_TYPE val ) {
 		m_Handle = val;
 	}
 };
 
 
 template< class DummyType >
-class CIntHandle32 : public CBaseIntHandle< unsigned long >
-{
+class CIntHandle32 : public CBaseIntHandle< unsigned long > {
 public:
 	inline			CIntHandle32() {}
 
-	static inline	CIntHandle32<DummyType> MakeHandle( HANDLE_TYPE val )
-	{
+	static inline	CIntHandle32<DummyType> MakeHandle( HANDLE_TYPE val ) {
 		return CIntHandle32<DummyType>( val );
 	}
 
 protected:
-	inline			CIntHandle32( HANDLE_TYPE val )
-	{
+	inline			CIntHandle32( HANDLE_TYPE val ) {
 		m_Handle = val;
 	}
 };
@@ -351,8 +313,8 @@ protected:
 
 // @TODO: Find a better home for this
 #if !defined(_STATIC_LINKED) && !defined(PUBLISH_DLL_SUBSYSTEM)
-// for platforms built with dynamic linking, the dll interface does not need spoofing
-#define PUBLISH_DLL_SUBSYSTEM()
+	// for platforms built with dynamic linking, the dll interface does not need spoofing
+	#define PUBLISH_DLL_SUBSYSTEM()
 #endif
 
 #define UID_PREFIX generated_id_
@@ -360,9 +322,9 @@ protected:
 #define UID_CAT2(a,c) UID_CAT1(a,c)
 #define EXPAND_CONCAT(a,c) UID_CAT1(a,c)
 #ifdef _MSC_VER
-#define UNIQUE_ID UID_CAT2(UID_PREFIX,__COUNTER__)
+	#define UNIQUE_ID UID_CAT2(UID_PREFIX,__COUNTER__)
 #else
-#define UNIQUE_ID UID_CAT2(UID_PREFIX,__LINE__)
+	#define UNIQUE_ID UID_CAT2(UID_PREFIX,__LINE__)
 #endif
 
 // this allows enumerations to be used as flags, and still remain type-safe!
@@ -387,5 +349,3 @@ protected:
 	inline Type  operator--( Type &a, int ) { Type t = a; --a; return t; }
 
 #include "tier0/valve_on.h"
-
-#endif // BASETYPES_H

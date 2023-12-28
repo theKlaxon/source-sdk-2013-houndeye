@@ -42,8 +42,8 @@ script_t* script = NULL;
 int scriptline;
 
 char token[ MAXTOKEN ];
-qboolean endofscript;
-qboolean tokenready;// only true if UnGetToken was just called
+bool endofscript;
+bool tokenready;// only true if UnGetToken was just called
 
 struct variable_t {
 	char* param;
@@ -444,7 +444,7 @@ void UnGetToken() {
 }
 
 
-qboolean EndOfScript( qboolean crossline ) {
+bool EndOfScript( bool crossline ) {
 	if ( !crossline )
 		Error( "Line %i is incomplete\n", scriptline );
 
@@ -528,7 +528,7 @@ CUtlString SetSingleCharTokenList( const char* pszSingleCharTokenList ) {
 GetToken
 ==============
 */
-qboolean GetToken( qboolean crossline ) {
+bool GetToken( bool crossline ) {
 	char* token_p;
 
 	if ( tokenready )// is a token allready waiting?
@@ -678,7 +678,7 @@ skipspace:
 GetExprToken - use C mathematical operator parsing rules to split tokens instead of whitespace
 ==============
 */
-qboolean GetExprToken( qboolean crossline ) {
+bool GetExprToken( bool crossline ) {
 	char* token_p;
 
 	if ( tokenready )// is a token allready waiting?
@@ -780,7 +780,7 @@ TokenAvailable
 Returns true if there is another token on the line
 ==============
 */
-qboolean TokenAvailable() {
+bool TokenAvailable() {
 	char* search_p;
 
 	if ( tokenready ) { // is a token already waiting?
@@ -807,7 +807,7 @@ qboolean TokenAvailable() {
 	return true;
 }
 
-qboolean GetTokenizerStatus( char** pFilename, int* pLine ) {
+bool GetTokenizerStatus( char** pFilename, int* pLine ) {
 	// is this the default state?
 	if ( !script )
 		return false;

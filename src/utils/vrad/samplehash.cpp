@@ -185,9 +185,9 @@ void PatchSampleData_AddSample( CPatch *pPatch, int ndxPatch )
 	
 	// Make sure mins are smaller than maxs so we don't iterate for 4 bil.
 	Assert( patchSampleMins[0] <= patchSampleMaxs[0] && patchSampleMins[1] <= patchSampleMaxs[1] && patchSampleMins[2] <= patchSampleMaxs[2] );
-	patchSampleMins[0] = min( patchSampleMins[0], patchSampleMaxs[0] );
-	patchSampleMins[1] = min( patchSampleMins[1], patchSampleMaxs[1] );
-	patchSampleMins[2] = min( patchSampleMins[2], patchSampleMaxs[2] );
+	patchSampleMins[0] = std::min( patchSampleMins[0], patchSampleMaxs[0] );
+	patchSampleMins[1] = std::min( patchSampleMins[1], patchSampleMaxs[1] );
+	patchSampleMins[2] = std::min( patchSampleMins[2], patchSampleMaxs[2] );
 	
 	int iterateCoords[3];
 	for ( iterateCoords[0]=patchSampleMins[0]; iterateCoords[0] <= patchSampleMaxs[0]; iterateCoords[0]++ )

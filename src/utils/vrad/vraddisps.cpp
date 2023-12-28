@@ -1135,7 +1135,7 @@ void AddPatchLightToRadial( Vector const &patchOrigin, Vector const &patchNormal
 		if( bNeighborBump )
 		{
 			float flScale = patchNormal.Dot( normals[0] );
-			flScale = max( 0.0f, flScale );
+			flScale = std::max( 0.0f, flScale );
 			float flBumpInfluence = influence * flScale;
 
 			for( int ndxBump = 0; ndxBump < ( NUM_BUMP_VECTS+1 ); ndxBump++ )
@@ -1148,7 +1148,7 @@ void AddPatchLightToRadial( Vector const &patchOrigin, Vector const &patchNormal
 		else
 		{
 			float flScale = patchNormal.Dot( normals[0] );
-			flScale = max( 0.0f, flScale );
+			flScale = std::max( 0.0f, flScale );
 			float flBumpInfluence = influence * flScale * 0.05f;
 
 			for( int ndxBump = 0; ndxBump < ( NUM_BUMP_VECTS+1 ); ndxBump++ )
@@ -1162,7 +1162,7 @@ void AddPatchLightToRadial( Vector const &patchOrigin, Vector const &patchNormal
 	else
 	{
 		float flScale = patchNormal.Dot( luxelNormal );
-		flScale = max( 0.0f, flScale );
+		flScale = std::max( 0.0f, flScale );
 		influence *= flScale;
 		pRadial->light[0][ndxRadial].AddWeighted( pPatchLight[0], influence );
 

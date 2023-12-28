@@ -348,10 +348,10 @@ FORCEINLINE fltx4 MaxSIMD( const fltx4& a, const fltx4& b )// max(a,b)
 FORCEINLINE fltx4 MinSIMD( const fltx4& a, const fltx4& b )// min(a,b)
 {
 	fltx4 retVal;
-	SubFloat( retVal, 0 ) = min( SubFloat( a, 0 ), SubFloat( b, 0 ) );
-	SubFloat( retVal, 1 ) = min( SubFloat( a, 1 ), SubFloat( b, 1 ) );
-	SubFloat( retVal, 2 ) = min( SubFloat( a, 2 ), SubFloat( b, 2 ) );
-	SubFloat( retVal, 3 ) = min( SubFloat( a, 3 ), SubFloat( b, 3 ) );
+	SubFloat( retVal, 0 ) = std::min( SubFloat( a, 0 ), SubFloat( b, 0 ) );
+	SubFloat( retVal, 1 ) = std::min( SubFloat( a, 1 ), SubFloat( b, 1 ) );
+	SubFloat( retVal, 2 ) = std::min( SubFloat( a, 2 ), SubFloat( b, 2 ) );
+	SubFloat( retVal, 3 ) = std::min( SubFloat( a, 3 ), SubFloat( b, 3 ) );
 	return retVal;
 }
 
@@ -734,7 +734,7 @@ FORCEINLINE void TransposeSIMD( fltx4& x, fltx4& y, fltx4& z, fltx4& w ) {
 // find the lowest component of a.x, a.y, a.z,
 // and replicate it to the whole return value.
 FORCEINLINE fltx4 FindLowestSIMD3( const fltx4& a ) {
-	float lowest = min( min( SubFloat( a, 0 ), SubFloat( a, 1 ) ), SubFloat( a, 2 ) );
+	float lowest = std::min( std::min( SubFloat( a, 0 ), SubFloat( a, 1 ) ), SubFloat( a, 2 ) );
 	return ReplicateX4( lowest );
 }
 

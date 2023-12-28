@@ -1733,24 +1733,24 @@ void QuaternionScale( const Quaternion &p, float t, Quaternion &q )
 {
 	Assert( s_bMathlibInitialized );
 
-#if 0
-	Quaternion p0;
-	Quaternion q;
-	p0.Init( 0.0, 0.0, 0.0, 1.0 );
+	#if 0
+		Quaternion p0;
+		Quaternion q;
+		p0.Init( 0.0, 0.0, 0.0, 1.0 );
 
-	// slerp in "reverse order" so that p doesn't get realigned
-	QuaternionSlerp( p, p0, 1.0 - fabs( t ), q );
-	if (t < 0.0)
-	{
-		q.w = -q.w;
-	}
-#else
+		// slerp in "reverse order" so that p doesn't get realigned
+		QuaternionSlerp( p, p0, 1.0 - fabs( t ), q );
+		if (t < 0.0)
+		{
+			q.w = -q.w;
+		}
+	#else
 	float r;
 
 	// FIXME: nick, this isn't overly sensitive to accuracy, and it may be faster to 
 	// use the cos part (w) of the quaternion (sin(omega)*N,cos(omega)) to figure the new scale.
 	float sinom = sqrt( DotProduct( &p.x, &p.x ) );
-	sinom = min( sinom, 1.f );
+	sinom = std::min( sinom, 1.f );
 
 	float sinsom = sin( asin( sinom ) * t );
 
@@ -3996,10 +3996,10 @@ void CalcTriangleTangentSpace( const Vector &p0, const Vector &p1, const Vector 
 //-----------------------------------------------------------------------------
 void RGBtoHSV( const Vector &rgb, Vector &hsv )
 {
-	float flMax = max( rgb.x, rgb.y );
-	flMax = max( flMax, rgb.z );
-	float flMin = min( rgb.x, rgb.y );
-	flMin = min( flMin, rgb.z );
+	float flMax = std::max( rgb.x, rgb.y );
+	flMax = std::max( flMax, rgb.z );
+	float flMin = std::min( rgb.x, rgb.y );
+	flMin = std::min( flMin, rgb.z );
 
 	// hsv.z is the value
 	hsv.z = flMax;
@@ -4188,63 +4188,63 @@ float RandomVectorInUnitCircle( Vector2D *pVector )
 	return flRadius;
 }
 #ifdef FP_EXCEPTIONS_ENABLED
-#include <float.h> // For _clearfp and _controlfp_s
+	#include <float.h> // For _clearfp and _controlfp_s
 #endif
 
 // FPExceptionDisable and FPExceptionEnabler taken from my blog post
 // at http://www.altdevblogaday.com/2012/04/20/exceptional-floating-point/
 
 #ifdef FP_EXCEPTIONS_ENABLED
-// These functions are all inlined NOPs if FP_EXCEPTIONS_ENABLED is not defined.
-FPExceptionDisabler::FPExceptionDisabler()
-{
-	// Retrieve the current state of the exception flags. This
-	// must be done before changing them. _MCW_EM is a bit
-	// mask representing all available exception masks.
-	_controlfp_s(&mOldValues, 0, 0);
-	// Set all of the exception flags, which suppresses FP
-	// exceptions on the x87 and SSE units.
-	_controlfp_s(0, _MCW_EM, _MCW_EM);
-}
+	// These functions are all inlined NOPs if FP_EXCEPTIONS_ENABLED is not defined.
+	FPExceptionDisabler::FPExceptionDisabler()
+	{
+		// Retrieve the current state of the exception flags. This
+		// must be done before changing them. _MCW_EM is a bit
+		// mask representing all available exception masks.
+		_controlfp_s(&mOldValues, 0, 0);
+		// Set all of the exception flags, which suppresses FP
+		// exceptions on the x87 and SSE units.
+		_controlfp_s(0, _MCW_EM, _MCW_EM);
+	}
 
-FPExceptionDisabler::~FPExceptionDisabler()
-{
-	// Clear any pending FP exceptions. This must be done
-	// prior to enabling FP exceptions since otherwise there
-	// may be a 'deferred crash' as soon the exceptions are
-	// enabled.
-	_clearfp();
+	FPExceptionDisabler::~FPExceptionDisabler()
+	{
+		// Clear any pending FP exceptions. This must be done
+		// prior to enabling FP exceptions since otherwise there
+		// may be a 'deferred crash' as soon the exceptions are
+		// enabled.
+		_clearfp();
 
-	// Reset (possibly enabling) the exception status.
-	_controlfp_s(0, mOldValues, _MCW_EM);
-}
+		// Reset (possibly enabling) the exception status.
+		_controlfp_s(0, mOldValues, _MCW_EM);
+	}
 
-// Overflow, divide-by-zero, and invalid-operation are the FP
-// exceptions most frequently associated with bugs.
-FPExceptionEnabler::FPExceptionEnabler(unsigned int enableBits /*= _EM_OVERFLOW | _EM_ZERODIVIDE | _EM_INVALID*/)
-{
-	// Retrieve the current state of the exception flags. This
-	// must be done before changing them. _MCW_EM is a bit
-	// mask representing all available exception masks.
-	_controlfp_s(&mOldValues, 0, 0);
+	// Overflow, divide-by-zero, and invalid-operation are the FP
+	// exceptions most frequently associated with bugs.
+	FPExceptionEnabler::FPExceptionEnabler(unsigned int enableBits /*= _EM_OVERFLOW | _EM_ZERODIVIDE | _EM_INVALID*/)
+	{
+		// Retrieve the current state of the exception flags. This
+		// must be done before changing them. _MCW_EM is a bit
+		// mask representing all available exception masks.
+		_controlfp_s(&mOldValues, 0, 0);
 
-	// Make sure no non-exception flags have been specified,
-	// to avoid accidental changing of rounding modes, etc.
-	enableBits &= _MCW_EM;
+		// Make sure no non-exception flags have been specified,
+		// to avoid accidental changing of rounding modes, etc.
+		enableBits &= _MCW_EM;
 
-	// Clear any pending FP exceptions. This must be done
-	// prior to enabling FP exceptions since otherwise there
-	// may be a 'deferred crash' as soon the exceptions are
-	// enabled.
-	_clearfp();
+		// Clear any pending FP exceptions. This must be done
+		// prior to enabling FP exceptions since otherwise there
+		// may be a 'deferred crash' as soon the exceptions are
+		// enabled.
+		_clearfp();
 
-	// Zero out the specified bits, leaving other bits alone.
-	_controlfp_s(0, ~enableBits, enableBits);
-}
+		// Zero out the specified bits, leaving other bits alone.
+		_controlfp_s(0, ~enableBits, enableBits);
+	}
 
-FPExceptionEnabler::~FPExceptionEnabler()
-{
-	// Reset the exception state.
-	_controlfp_s(0, mOldValues, _MCW_EM);
-}
+	FPExceptionEnabler::~FPExceptionEnabler()
+	{
+		// Reset the exception state.
+		_controlfp_s(0, mOldValues, _MCW_EM);
+	}
 #endif

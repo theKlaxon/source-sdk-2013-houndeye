@@ -124,11 +124,11 @@ inline CTimingInfo< T > CalcSmoothAverage_Struct( const T &value, int nTimes, co
 		if ( i != newValueIndex )
 		{
 			info.m_HighAverage = max( pInfo->m_Values[i].m_Average, info.m_HighAverage );
-			info.m_LowAverage = min( pInfo->m_Values[i].m_Average, info.m_LowAverage );
+			info.m_LowAverage = std::min( pInfo->m_Values[i].m_Average, info.m_LowAverage );
 		}
 
 		info.m_HighValue = max( pInfo->m_Values[i].m_Value, info.m_HighValue );
-		info.m_LowValue = min( pInfo->m_Values[i].m_Value, info.m_LowValue );
+		info.m_LowValue = std::min( pInfo->m_Values[i].m_Value, info.m_LowValue );
 
 		info.m_AverageValue += pInfo->m_Values[i].m_Value;
 	}

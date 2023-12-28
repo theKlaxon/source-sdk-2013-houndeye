@@ -1482,8 +1482,8 @@ float CSentence::GetIntensity( float time, float endtime )
 
 	prev = max( -1, prev );
 	start = max( -1, start );
-	end = min( end, GetNumSamples() );
-	next = min( next, GetNumSamples() );
+	end = std::min( end, GetNumSamples() );
+	next = std::min( next, GetNumSamples() );
 
 	CEmphasisSample *esPre = GetBoundedSample( prev, endtime );
 	CEmphasisSample *esStart = GetBoundedSample( start, endtime );
