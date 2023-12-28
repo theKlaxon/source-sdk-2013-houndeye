@@ -52,7 +52,7 @@ set(
 	"${SRCDIR}/public/collisionutils.cpp"
 	"${SRCDIR}/public/filesystem_helpers.cpp"
 	"${SRCDIR}/public/scratchpad3d.cpp"
-	"${SRCDIR}/public/ScratchPadUtils.cpp"
+	"${SRCDIR}/public/scratchpadutils.cpp"
 
 	# Header Files
 	"${VRAD_DLL_DIR}/disp_vrad.h"
@@ -149,7 +149,7 @@ set(
 	"${SRCDIR}/public/tier0/protected_things.h"
 	"${SRCDIR}/public/vstdlib/random.h"
 	"${SRCDIR}/public/scratchpad3d.h"
-	"${SRCDIR}/public/ScratchPadUtils.h"
+	"${SRCDIR}/public/scratchpadutils.h"
 	"${SRCDIR}/public/string_t.h"
 	"${SRCDIR}/public/tier1/strtools.h"
 	"${SRCDIR}/public/studio.h"
