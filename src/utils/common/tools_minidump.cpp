@@ -5,6 +5,7 @@
 // $NoKeywords: $
 //=============================================================================//
 
+/*
 #if defined( _WIN32 )
 	#include <windows.h>
 	#include <dbghelp.h>
@@ -61,3 +62,4 @@ void SetupToolsMinidumpHandler( ToolsExceptionHandler fn )
 	g_pCustomExceptionHandler = fn;
 	SetUnhandledExceptionFilter( ToolsExceptionFilter_Custom );
 }
+*/
