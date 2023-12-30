@@ -1,0 +1,28 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 23,
+        "patch": 0
+    },
+    "include": [ ],
+    "configurePresets": [
+        {
+            "name": "linux",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x86-linux",
+                "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/_cmake_scripts/triplets",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            }
+        },
+        {
+            "name": "windows",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x86-windows-gnu",
+                "VCPKG_OVERLAY_PORTS": "${sourceDir}/_cmake_scripts/ports",
+                "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/_cmake_scripts/triplets",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            }
+        }
+    ]
+}

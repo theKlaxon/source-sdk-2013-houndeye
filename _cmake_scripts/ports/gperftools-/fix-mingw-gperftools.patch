@@ -1,0 +1,13 @@
+diff --git a/src/windows/config.h b/src/windows/config.h
+index 813e24f..1198e6c 100644
+--- a/src/windows/config.h
++++ b/src/windows/config.h
+@@ -10,7 +10,7 @@
+    unix config.h but also runs code in the windows directory.
+    */
+ #ifdef __MINGW32__
+-#include "../config.h"
++#include <config.h>
+ #define GOOGLE_PERFTOOLS_WINDOWS_CONFIG_H_
+ #endif
+ 
