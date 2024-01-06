@@ -6,14 +6,16 @@
 
 // If we are going to include windows.h then we need to disable protected_things.h
 // or else we get many warnings.
+#include <cstdio>
 #undef PROTECTED_THINGS_ENABLE
-#include <tier0/platform.h>
-#ifdef IS_WINDOWS_PC
-#include <windows.h>
+#include "tier0/platform.h"
+#include <system_error>
+#if IsWindows() && IsPC()
+	#include <windows.h>
 #else
-#define INVALID_HANDLE_VALUE (void *)0
-#define FILE_BEGIN SEEK_SET
-#define FILE_END SEEK_END
+	#define INVALID_HANDLE_VALUE ( (void*) 0 )
+	#define FILE_BEGIN SEEK_SET
+	#define FILE_END SEEK_END
 #endif
 #include "utlbuffer.h"
 #include "utllinkedlist.h"
@@ -27,7 +29,7 @@
 
 // Not every user of zip utils wants to link LZMA encoder
 #ifdef ZIP_SUPPORT_LZMA_ENCODE
-#include "lzma/lzma.h"
+	#include "lzma/lzma.h"
 #endif
 
 // Data descriptions for byte swapping - only needed
@@ -89,84 +91,85 @@ BEGIN_BYTESWAP_DATADESC( ZIP_PreloadDirectoryEntry )
 	DEFINE_FIELD( DataOffset, FIELD_INTEGER ),
 END_BYTESWAP_DATADESC()
 
-#ifdef WIN32
-//-----------------------------------------------------------------------------
-// For >2 GB File Support
-//-----------------------------------------------------------------------------
-class CWin32File
-{
-public:
-	static HANDLE CreateTempFile( CUtlString &WritePath, CUtlString &FileName )
+#if IsWindows()
+	//-----------------------------------------------------------------------------
+	// For >2 GB File Support
+	//-----------------------------------------------------------------------------
+	class CWin32File
 	{
-		char tempFileName[MAX_PATH];
-		if ( WritePath.IsEmpty() )
+	public:
+		static HANDLE CreateTempFile( CUtlString &WritePath, CUtlString &FileName )
 		{
-			// use a safe name in the cwd
-			char *pBuffer = tmpnam( NULL );
-			if ( !pBuffer )
+			char tempFileName[MAX_PATH];
+			if ( WritePath.IsEmpty() )
 			{
-				return INVALID_HANDLE_VALUE;
+				// use a safe name in the cwd
+				char *pBuffer = tmpnam( NULL );
+				if ( !pBuffer )
+				{
+					return INVALID_HANDLE_VALUE;
+				}
+				if ( pBuffer[0] == '\\' )
+				{
+					pBuffer++;
+				}
+				if ( pBuffer[strlen( pBuffer )-1] == '.' )
+				{
+					pBuffer[strlen( pBuffer )-1] = '\0';
+				}
+				V_snprintf( tempFileName, sizeof( tempFileName ), "_%s.tmp", pBuffer );
 			}
-			if ( pBuffer[0] == '\\' )
+			else
 			{
-				pBuffer++;
+				// generate safe name at the desired prefix
+				char uniqueFilename[MAX_PATH];
+				SYSTEMTIME sysTime;                                                       \
+				GetLocalTime( &sysTime );
+				sprintf( uniqueFilename, "%d_%d_%d_%d_%d.tmp", sysTime.wDay, sysTime.wHour, sysTime.wMinute, sysTime.wSecond, sysTime.wMilliseconds );                                                \
+				V_ComposeFileName( WritePath.String(), uniqueFilename, tempFileName, sizeof( tempFileName ) );
 			}
-			if ( pBuffer[strlen( pBuffer )-1] == '.' )
-			{
-				pBuffer[strlen( pBuffer )-1] = '\0';
-			}
-			V_snprintf( tempFileName, sizeof( tempFileName ), "_%s.tmp", pBuffer );
-		}
-		else
-		{
-			// generate safe name at the desired prefix
-			char uniqueFilename[MAX_PATH];
-			SYSTEMTIME sysTime;                                                       \
-			GetLocalTime( &sysTime );   
-			sprintf( uniqueFilename, "%d_%d_%d_%d_%d.tmp", sysTime.wDay, sysTime.wHour, sysTime.wMinute, sysTime.wSecond, sysTime.wMilliseconds );                                                \
-			V_ComposeFileName( WritePath.String(), uniqueFilename, tempFileName, sizeof( tempFileName ) );
-		}
 
-		FileName = tempFileName;
-		HANDLE hFile = CreateFile( tempFileName, GENERIC_READ|GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
-		
-		return hFile;
-	}
+			FileName = tempFileName;
+			HANDLE hFile = CreateFile( tempFileName, GENERIC_READ|GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
 
-	static unsigned int FileSeek( HANDLE hFile, unsigned int distance, DWORD MoveMethod )
-	{
-		LARGE_INTEGER li;
-
-		li.QuadPart = distance;
-		li.LowPart = SetFilePointer( hFile, li.LowPart, &li.HighPart, MoveMethod);
-		if ( li.LowPart == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR )
-		{
-			li.QuadPart = -1;
+			return hFile;
 		}
 
-		return ( unsigned int )li.QuadPart;
-	}
+		static unsigned int FileSeek( HANDLE hFile, unsigned int distance, DWORD MoveMethod )
+		{
+			LARGE_INTEGER li;
 
-	static unsigned int FileTell( HANDLE hFile )
-	{
-		return FileSeek( hFile, 0, FILE_CURRENT );
-	}
+			li.QuadPart = distance;
+			li.LowPart = SetFilePointer( hFile, li.LowPart, &li.HighPart, MoveMethod);
+			if ( li.LowPart == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR )
+			{
+				li.QuadPart = -1;
+			}
 
-	static bool FileRead( HANDLE hFile, void *pBuffer, unsigned int size )
-	{
-		DWORD numBytesRead;
-		BOOL bSuccess = ::ReadFile( hFile, pBuffer, size, &numBytesRead, NULL );
-		return bSuccess && ( numBytesRead == size );
-	}
+			return ( unsigned int )li.QuadPart;
+		}
 
-	static bool FileWrite( HANDLE hFile, void *pBuffer, unsigned int size )
-	{
-		DWORD numBytesWritten;
-		BOOL bSuccess = WriteFile( hFile, pBuffer, size, &numBytesWritten, NULL );
-		return bSuccess && ( numBytesWritten == size );
-	}
-};
+		static unsigned int FileTell( HANDLE hFile )
+		{
+			return FileSeek( hFile, 0, FILE_CURRENT );
+		}
+
+		static bool FileRead( HANDLE hFile, void *pBuffer, unsigned int size )
+		{
+			DWORD numBytesRead;
+			BOOL bSuccess = ::ReadFile( hFile, pBuffer, size, &numBytesRead, NULL );
+			return bSuccess && ( numBytesRead == size );
+		}
+
+		static bool FileWrite( HANDLE hFile, void *pBuffer, unsigned int size )
+		{
+			DWORD numBytesWritten;
+			BOOL bSuccess = WriteFile( hFile, pBuffer, size, &numBytesWritten, NULL );
+			return bSuccess && ( numBytesWritten == size );
+		}
+	};
 #else
+
 class CWin32File
 {
 public:
@@ -190,6 +193,7 @@ public:
 				pBuffer[strlen( pBuffer )-1] = '\0';
 			}
 			V_snprintf( tempFileName, sizeof( tempFileName ), "_%s.tmp", pBuffer );
+
 		}
 		else
 		{

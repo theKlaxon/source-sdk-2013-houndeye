@@ -5,29 +5,25 @@
 // $NoKeywords: $
 //
 //===========================================================================//
-
-#ifndef TIER1_STRTOOLS_H
-#define TIER1_STRTOOLS_H
+#pragma once
 
 #include "tier0/platform.h"
 
-#include <ctype.h>
-#include <stdarg.h>
-#ifdef _WIN32
-#pragma once
-#elif POSIX
-#include <wchar.h>
-#include <math.h>
-#include <wctype.h>
+#include <cctype>
+#include <cstdarg>
+#if IsPosix()
+	#include <cwchar>
+	#include <cmath>
+	#include <cwctype>
 #endif
 
-#include <string.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cstdlib>
 
 #ifdef _WIN64
-#define str_size unsigned int
+	#define str_size unsigned int
 #else
-#define str_size size_t
+	#define str_size size_t
 #endif
 
 template< class T, class I > class CUtlMemory;
@@ -1007,85 +1003,88 @@ size_t Q_URLDecode( OUT_CAP(nDecodeDestLen) char *pchDecodeDest, int nDecodeDest
 // NOTE: This is for backward compatability!
 // We need to DLL-export the Q methods in vstdlib but not link to them in other projects
 #if !defined( VSTDLIB_BACKWARD_COMPAT )
-
-#define Q_memset				V_memset
-#define Q_memcpy				V_memcpy
-#define Q_memmove				V_memmove
-#define Q_memcmp				V_memcmp
-#define Q_strlen				V_strlen
-#define Q_strcpy				V_strcpy
-#define Q_strrchr				V_strrchr
-#define Q_strcmp				V_strcmp
-#define Q_wcscmp				V_wcscmp
-#define Q_stricmp				V_stricmp
-#define Q_strstr				V_strstr
-#define Q_strupr				V_strupr
-#define Q_strlower				V_strlower
-#define Q_wcslen				V_wcslen
-#define	Q_strncmp				V_strncmp 
-#define	Q_strcasecmp			V_strcasecmp
-#define	Q_strncasecmp			V_strncasecmp
-#define	Q_strnicmp				V_strnicmp
-#define	Q_atoi					V_atoi
-#define	Q_atoi64				V_atoi64
-#define Q_atoui64				V_atoui64
-#define	Q_atof					V_atof
-#define	Q_stristr				V_stristr
-#define	Q_strnistr				V_strnistr
-#define	Q_strnchr				V_strnchr
-#define Q_normalizeFloatString	V_normalizeFloatString
-#define Q_strncpy				V_strncpy
-#define Q_snprintf				V_snprintf
-#define Q_wcsncpy				V_wcsncpy
-#define Q_strncat				V_strncat
-#define Q_strnlwr				V_strnlwr
-#define Q_vsnprintf				V_vsnprintf
-#define Q_vsnprintfRet			V_vsnprintfRet
-#define Q_pretifymem			V_pretifymem
-#define Q_pretifynum			V_pretifynum
-#define Q_UTF8ToUnicode			V_UTF8ToUnicode
-#define Q_UnicodeToUTF8			V_UnicodeToUTF8
-#define Q_hextobinary			V_hextobinary
-#define Q_binarytohex			V_binarytohex
-#define Q_FileBase				V_FileBase
-#define Q_StripTrailingSlash	V_StripTrailingSlash
-#define Q_StripExtension		V_StripExtension
-#define	Q_DefaultExtension		V_DefaultExtension
-#define Q_SetExtension			V_SetExtension
-#define Q_StripFilename			V_StripFilename
-#define Q_StripLastDir			V_StripLastDir
-#define Q_UnqualifiedFileName	V_UnqualifiedFileName
-#define Q_ComposeFileName		V_ComposeFileName
-#define Q_ExtractFilePath		V_ExtractFilePath
-#define Q_ExtractFileExtension	V_ExtractFileExtension
-#define Q_GetFileExtension		V_GetFileExtension
-#define Q_RemoveDotSlashes		V_RemoveDotSlashes
-#define Q_MakeAbsolutePath		V_MakeAbsolutePath
-#define Q_AppendSlash			V_AppendSlash
-#define Q_IsAbsolutePath		V_IsAbsolutePath
-#define Q_StrSubst				V_StrSubst
-#define Q_SplitString			V_SplitString
-#define Q_SplitString2			V_SplitString2
-#define Q_StrSlice				V_StrSlice
-#define Q_StrLeft				V_StrLeft
-#define Q_StrRight				V_StrRight
-#define Q_FixSlashes			V_FixSlashes
-#define Q_strtowcs				V_strtowcs
-#define Q_wcstostr				V_wcstostr
-#define Q_strcat				V_strcat
-#define Q_GenerateUniqueNameIndex	V_GenerateUniqueNameIndex
-#define Q_GenerateUniqueName		V_GenerateUniqueName
-#define Q_MakeRelativePath		V_MakeRelativePath
-#define Q_qsort_s				V_qsort_s
-
+	#define Q_memset				V_memset
+	#define Q_memcpy				V_memcpy
+	#define Q_memmove				V_memmove
+	#define Q_memcmp				V_memcmp
+	#define Q_strlen				V_strlen
+	#define Q_strcpy				V_strcpy
+	#define Q_strrchr				V_strrchr
+	#define Q_strcmp				V_strcmp
+	#define Q_wcscmp				V_wcscmp
+	#define Q_stricmp				V_stricmp
+	#define Q_strstr				V_strstr
+	#define Q_strupr				V_strupr
+	#define Q_strlower				V_strlower
+	#define Q_wcslen				V_wcslen
+	#define	Q_strncmp				V_strncmp
+	#define	Q_strcasecmp			V_strcasecmp
+	#define	Q_strncasecmp			V_strncasecmp
+	#define	Q_strnicmp				V_strnicmp
+	#define	Q_atoi					V_atoi
+	#define	Q_atoi64				V_atoi64
+	#define Q_atoui64				V_atoui64
+	#define	Q_atof					V_atof
+	#define	Q_stristr				V_stristr
+	#define	Q_strnistr				V_strnistr
+	#define	Q_strnchr				V_strnchr
+	#define Q_normalizeFloatString	V_normalizeFloatString
+	#define Q_strncpy				V_strncpy
+	#define Q_snprintf				V_snprintf
+	#define Q_wcsncpy				V_wcsncpy
+	#define Q_strncat				V_strncat
+	#define Q_strnlwr				V_strnlwr
+	#define Q_vsnprintf				V_vsnprintf
+	#define Q_vsnprintfRet			V_vsnprintfRet
+	#define Q_pretifymem			V_pretifymem
+	#define Q_pretifynum			V_pretifynum
+	#define Q_UTF8ToUnicode			V_UTF8ToUnicode
+	#define Q_UnicodeToUTF8			V_UnicodeToUTF8
+	#define Q_hextobinary			V_hextobinary
+	#define Q_binarytohex			V_binarytohex
+	#define Q_FileBase				V_FileBase
+	#define Q_StripTrailingSlash	V_StripTrailingSlash
+	#define Q_StripExtension		V_StripExtension
+	#define	Q_DefaultExtension		V_DefaultExtension
+	#define Q_SetExtension			V_SetExtension
+	#define Q_StripFilename			V_StripFilename
+	#define Q_StripLastDir			V_StripLastDir
+	#define Q_UnqualifiedFileName	V_UnqualifiedFileName
+	#define Q_ComposeFileName		V_ComposeFileName
+	#define Q_ExtractFilePath		V_ExtractFilePath
+	#define Q_ExtractFileExtension	V_ExtractFileExtension
+	#define Q_GetFileExtension		V_GetFileExtension
+	#define Q_RemoveDotSlashes		V_RemoveDotSlashes
+	#define Q_MakeAbsolutePath		V_MakeAbsolutePath
+	#define Q_AppendSlash			V_AppendSlash
+	#define Q_IsAbsolutePath		V_IsAbsolutePath
+	#define Q_StrSubst				V_StrSubst
+	#define Q_SplitString			V_SplitString
+	#define Q_SplitString2			V_SplitString2
+	#define Q_StrSlice				V_StrSlice
+	#define Q_StrLeft				V_StrLeft
+	#define Q_StrRight				V_StrRight
+	#define Q_FixSlashes			V_FixSlashes
+	#define Q_strtowcs				V_strtowcs
+	#define Q_wcstostr				V_wcstostr
+	#define Q_strcat				V_strcat
+	#define Q_GenerateUniqueNameIndex	V_GenerateUniqueNameIndex
+	#define Q_GenerateUniqueName		V_GenerateUniqueName
+	#define Q_MakeRelativePath		V_MakeRelativePath
+	#define Q_qsort_s				V_qsort_s
 #endif // !defined( VSTDLIB_DLL_EXPORT )
 
 
-#ifdef POSIX
-#define FMT_WS L"%ls"
+#if IsPosix()
+	#define FMT_WS L"%ls"
 #else
-#define FMT_WS L"%s"
+	#define FMT_WS L"%s"
 #endif
 
-
-#endif	// TIER1_STRTOOLS_H
+/**
+ * Generate a filename from the given parameters.
+ * @param dstBuffer a char buffer where the filename will end in.
+ * @param bufSize the size of the buffer that was given.
+ * @param prefix the prefix that will be applied to the file's name.
+ */
+auto TemporaryFileName( char *dstBuffer, size_t bufSize, const char* prefix = "asrc_tmp_" ) -> void;

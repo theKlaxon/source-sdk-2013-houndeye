@@ -623,7 +623,6 @@ FIXME: Enable this when we no longer fear change =)
 #define wcsicmp _wcsicmp
 #define _wcsicmp wcscmp
 #define _finite finite
-#define _tempnam tempnam
 #define _unlink unlink
 #define _access access
 #define _mkdir(dir) mkdir( dir, S_IRWXU | S_IRWXG | S_IRWXO )

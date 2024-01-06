@@ -238,11 +238,11 @@ void *CUtlMemoryPool::Alloc( size_t amount )
 		if( !m_pHeadOfFreeList )
 		{
 			Assert( !"CUtlMemoryPool::Alloc: ran out of memory" );
-			return NULL;
+			return nullptr;
 		}
 	}
 	m_BlocksAllocated++;
-	m_PeakAlloc = max(m_PeakAlloc, m_BlocksAllocated);
+	m_PeakAlloc = std::max(m_PeakAlloc, m_BlocksAllocated);
 
 	returnBlock = m_pHeadOfFreeList;
 

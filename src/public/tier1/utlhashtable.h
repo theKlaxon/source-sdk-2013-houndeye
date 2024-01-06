@@ -336,7 +336,10 @@ void CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT>::BumpEntry( uns
 
 	entry_t* table = m_table.Base();
 	unsigned int slotmask = m_table.Count()-1;
-	unsigned int new_flags_and_hash = table[idx].flags_and_hash & (FLAG_LAST | MASK_HASH);
+
+	// warning: bitwise operation between different enumeration types ‘CUtlHashtable<...>::<unnamed enum>’ and ‘CUtlHashtable<...>::<unnamed enum>’ is deprecated [-Wdeprecated-enum-enum-conversion]
+	#pragma GCC diagnostic ignored "-Wdeprecated-enum-enum-conversion"
+	unsigned int new_flags_and_hash = table[idx].flags_and_hash & (FLAG_LAST | MASK_HASH); // NOLINT(*-suspicious-enum-usage)
 
 	unsigned int chainid = entry_t::IdealIndex( new_flags_and_hash, slotmask );
 

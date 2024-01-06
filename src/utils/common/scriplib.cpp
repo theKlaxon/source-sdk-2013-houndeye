@@ -15,6 +15,7 @@
 #if defined( POSIX )
 	#include <dirent.h>
 	#include <sys/stat.h>
+	#include <filesystem>
 #endif
 /*
 =============================================================================
@@ -954,7 +955,17 @@ int CScriptLib::CompareFileTime( const char* pFilenameA, const char* pFilenameB 
 // Make a temporary filename
 //-----------------------------------------------------------------------------
 char* CScriptLib::MakeTemporaryFilename( char const* pchModPath, char* pPath, int pathSize ) {
-	char* pBuffer = _tempnam( pchModPath, "mgd_" );
+	auto pBuffer = new char[MAXNAMLEN];
+
+	std::error_code error;
+	auto tempDir = std::filesystem::temp_directory_path(error);
+	if ( error.value() != 0 ) {
+		Error( "MakeTemporaryFilename: Failed to get temp directory path.\n" );
+	}
+
+	auto id = std::time( nullptr ) & 0x0000FFFF;
+	std::sprintf( pBuffer, "%smgd_%ld", tempDir.c_str(), id );
+
 	if ( pBuffer[ 0 ] == '\\' ) {
 		pBuffer++;
 	}
@@ -963,7 +974,7 @@ char* CScriptLib::MakeTemporaryFilename( char const* pchModPath, char* pPath, in
 	}
 	V_snprintf( pPath, pathSize, "%s.tmp", pBuffer );
 
-	free( pBuffer );
+	delete[] pBuffer;
 
 	return pPath;
 }

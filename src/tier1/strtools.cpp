@@ -7,13 +7,13 @@
 // These are redefined in the project settings to prevent anyone from using them.
 // We in this module are of a higher caste and thus are privileged in their use.
 // NOTE: I have to include stdio + stdarg first so vsnprintf gets compiled in
-#include <stdarg.h>
-#include <stdio.h>
+#include <cstdarg>
+#include <cstdio>
 
 #if defined( POSIX )
-	#include <ctype.h>
+	#include <cctype>
 	#include <iconv.h>
-	#include <stdlib.h>
+	#include <cstdlib>
 	#include <unistd.h>
 	#define _getcwd getcwd
 #elif defined( _WIN32 )
@@ -32,8 +32,10 @@
 #include "tier0/memdbgon.h"
 #include "tier1/strtools.h"
 #include "tier1/utldict.h"
-#include <string.h>
-#include <time.h>
+#include <cstring>
+#include <ctime>
+#include <filesystem>
+#include <system_error>
 
 static int FastToLower( char c ) {
 	int i = static_cast<unsigned char>( c );
@@ -2555,3 +2557,22 @@ bool BGetLocalFormattedDate( time_t timeVal, char* pchDate, int cubDate ) {
 bool BGetLocalFormattedTime( time_t timeVal, char* pchTime, int cubTime ) {
 	return BGetLocalFormattedDateAndTime( timeVal, nullptr, 0, pchTime, cubTime );
 }
+
+/**
+ * Generate a filename from the given parameters.
+ * @param dstBuffer a char buffer where the filename will end in.
+ * @param bufSize the size of the buffer that was given.
+ * @param prefix the prefix that will be applied to the file's name.
+ */
+auto TemporaryFileName( char *dstBuffer, size_t bufSize, const char* prefix ) -> void {
+	// use a safe name in the cwd
+	std::error_code error;
+	auto tempDir = std::filesystem::temp_directory_path( error );
+	if ( error.value() != 0 ) {
+		Error( "TemporaryFileName: Failed to get temp directory path. (%s)\n", error.message().c_str() );
+	}
+
+	auto id = std::time( nullptr ) & 0x0000FFFF;
+	std::snprintf( dstBuffer, bufSize, "%s%s%ld", tempDir.c_str(), prefix, id );
+}
+

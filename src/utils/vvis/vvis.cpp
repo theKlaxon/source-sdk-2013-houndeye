@@ -386,7 +386,7 @@ void LoadPortals( char* name ) {
 		char tempFile[ MAX_PATH ];
 
 		std::error_code error;
-		auto tempDir = std::filesystem::temp_directory_path();
+		auto tempDir = std::filesystem::temp_directory_path(error);
 		if ( error.value() != 0 ) {
 			Error( "LoadPortals: Failed to get temp directory path.\n" );
 		}

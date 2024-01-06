@@ -173,7 +173,7 @@ bool CVRadDLL::DoIncrementalLight( char const *pVMFFile )
 	char tempFilename[MAX_PATH];
 
 	std::error_code error;
-	auto tempDir = std::filesystem::temp_directory_path();
+	auto tempDir = std::filesystem::temp_directory_path(error);
 	if ( error.value() != 0 ) {
 		Error( "DoIncrementalLight: Failed to get temp directory path.\n" );
 	}

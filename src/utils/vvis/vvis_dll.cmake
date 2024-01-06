@@ -93,9 +93,9 @@ target_compile_definitions( vvis_dll
 #find_package( liblzma CONFIG REQUIRED )
 target_link_libraries( vvis_dll
 	PRIVATE
-		odbc32
-		odbccp32
-		ws2_32
+#		odbc32
+#		odbccp32
+#		ws2_32
 
 		mathlib
 		"${LIBPUBLIC}/tier2${CMAKE_STATIC_LIBRARY_SUFFIX}"
