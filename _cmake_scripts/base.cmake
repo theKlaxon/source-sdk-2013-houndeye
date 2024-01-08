@@ -35,3 +35,4 @@ add_compile_definitions(
 
 include_directories( "${CMAKE_CURRENT_BINARY_DIR}/vcpkg_installed/x86-linux/include" )
 link_directories( "${CMAKE_CURRENT_BINARY_DIR}/vcpkg_installed/x86-linux/lib" )
+add_link_options( "LINKER:-rpath,." )  # FIXME: Dynamic Linker runtime on linux is fucked and doesn't load `.so`s from the exe's folder...
