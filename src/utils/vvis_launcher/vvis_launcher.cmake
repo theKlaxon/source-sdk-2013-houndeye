@@ -36,15 +36,6 @@ if (WIN32)
 	)
 endif ()
 
-add_library( tier0 IMPORTED SHARED )
-set( TIER0_NAME ${CMAKE_SHARED_LIBRARY_PREFIX}tier0${CMAKE_SHARED_LIBRARY_SUFFIX} )
-set_property( TARGET tier0 PROPERTY IMPORTED_IMPLIB "${LIBPUBLIC}/${TIER0_NAME}" )
-configure_file( "${LIBPUBLIC}/${TIER0_NAME}" "${GAMEDIR}/bin/${TIER0_NAME}" COPYONLY )
-add_library( vstdlib IMPORTED SHARED )
-set( VSTDLIB_NAME ${CMAKE_SHARED_LIBRARY_PREFIX}vstdlib${CMAKE_SHARED_LIBRARY_SUFFIX} )
-set_property( TARGET vstdlib PROPERTY IMPORTED_IMPLIB "${LIBPUBLIC}/${VSTDLIB_NAME}" )
-configure_file( "${LIBPUBLIC}/${VSTDLIB_NAME}" "${GAMEDIR}/bin/${VSTDLIB_NAME}" COPYONLY )
-
 target_link_libraries( vvis_launcher
 	PRIVATE
 		tier0
