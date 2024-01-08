@@ -179,6 +179,7 @@ public:
 		if ( WritePath.IsEmpty() )
 		{
 			// use a safe name in the cwd
+			// FIXME: Don't use tmpnam
 			char *pBuffer = tmpnam( NULL );
 			if ( !pBuffer )
 			{
