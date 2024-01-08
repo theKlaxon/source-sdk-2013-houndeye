@@ -5,11 +5,10 @@
 //===========================================================================//
 
 // light structure definitions.
-#ifndef LIGHTDESC_H
-#define LIGHTDESC_H
+#pragma once
 
-#include <mathlib/ssemath.h>
-#include <mathlib/vector.h>
+#include "mathlib/ssemath.h"
+#include "mathlib/vector.h"
 
 //-----------------------------------------------------------------------------
 // Light structure
@@ -42,7 +41,7 @@ struct LightDesc_t
     float m_Attenuation0;									//< constant distance falloff term
     float m_Attenuation1;									//< linear term of falloff
     float m_Attenuation2;									//< quadatic term of falloff
-    float m_Theta;											//< inner cone angle. no angular falloff 
+    float m_Theta;											//< inner cone angle. no angular falloff
 															//< within this cone
     float m_Phi;											//< outer cone angle
 
@@ -56,7 +55,7 @@ protected:
 	float m_RangeSquared;
 public:
 
-	void RecalculateDerivedValues(void);			 // calculate m_xxDot, m_Type for changed parms
+	void RecalculateDerivedValues();			 // calculate m_xxDot, m_Type for changed parms
 
 	LightDesc_t(void)
 	{
@@ -167,7 +166,3 @@ inline void LightDesc_t::InitSpot(const Vector &pos, const Vector &color, const 
 	m_Attenuation2=0;
 	RecalculateDerivedValues();
 }
-
-
-#endif
-

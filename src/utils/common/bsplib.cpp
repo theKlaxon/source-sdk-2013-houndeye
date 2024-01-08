@@ -2910,7 +2910,7 @@ vec_t FloatForKey( entity_t* ent, const char* key ) {
 	return atof( k );
 }
 
-vec_t FloatForKeyWithDefault( entity_t* ent, char* key, float default_value ) {
+vec_t FloatForKeyWithDefault( entity_t* ent, const char* key, float default_value ) {
 	for ( epair_t* ep = ent->epairs; ep; ep = ep->next )
 		if ( !Q_stricmp( ep->key, key ) )
 			return atof( ep->value );
@@ -2918,19 +2918,19 @@ vec_t FloatForKeyWithDefault( entity_t* ent, char* key, float default_value ) {
 }
 
 
-int IntForKey( entity_t* ent, char* key ) {
+int IntForKey( entity_t* ent, const char* key ) {
 	const char* k = ValueForKey( ent, key );
 	return atol( k );
 }
 
-int IntForKeyWithDefault( entity_t* ent, char* key, int nDefault ) {
+int IntForKeyWithDefault( entity_t* ent, const char* key, int nDefault ) {
 	const char* k = ValueForKey( ent, key );
 	if ( !k[ 0 ] )
 		return nDefault;
 	return atol( k );
 }
 
-void GetVectorForKey( entity_t* ent, char* key, Vector& vec ) {
+void GetVectorForKey( entity_t* ent, const char* key, Vector& vec ) {
 
 	const char* k = ValueForKey( ent, key );
 	// scanf into doubles, then assign, so it is vec_t size independent
@@ -2942,7 +2942,7 @@ void GetVectorForKey( entity_t* ent, char* key, Vector& vec ) {
 	vec[ 2 ] = v3;
 }
 
-void GetVector2DForKey( entity_t* ent, char* key, Vector2D& vec ) {
+void GetVector2DForKey( entity_t* ent, const char* key, Vector2D& vec ) {
 	double v1, v2;
 
 	const char* k = ValueForKey( ent, key );
@@ -2953,7 +2953,7 @@ void GetVector2DForKey( entity_t* ent, char* key, Vector2D& vec ) {
 	vec[ 1 ] = v2;
 }
 
-void GetAnglesForKey( entity_t* ent, char* key, QAngle& angle ) {
+void GetAnglesForKey( entity_t* ent, const char* key, QAngle& angle ) {
 	double v1, v2, v3;
 
 	const char* k = ValueForKey( ent, key );
@@ -4094,8 +4094,7 @@ bool RepackBSPCallback_LZMA( CUtlBuffer& inputBuffer, CUtlBuffer& outputBuffer )
 
 	unsigned int originalSize = inputBuffer.TellPut() - inputBuffer.TellGet();
 	unsigned int compressedSize = 0;
-	unsigned char* pCompressedOutput = LZMA_Compress( (unsigned char*) inputBuffer.Base() + inputBuffer.TellGet(),
-													  originalSize, &compressedSize );
+	unsigned char* pCompressedOutput = LZMA_Compress( (unsigned char*) inputBuffer.Base() + inputBuffer.TellGet(), originalSize, &compressedSize );
 	if ( pCompressedOutput ) {
 		outputBuffer.Put( pCompressedOutput, compressedSize );
 		DevMsg( "Compressed bsp lump %u -> %u bytes\n", originalSize, compressedSize );

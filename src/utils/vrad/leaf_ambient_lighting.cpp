@@ -509,6 +509,7 @@ static void ThreadComputeLeafAmbient( int iThread, void* pUserData ) {
 	}
 }
 
+#if defined( MPI )
 void VMPI_ProcessLeafAmbient( int iThread, uint64 iLeaf, MessageBuffer* pBuf ) {
 	CUtlVector<ambientsample_t> list;
 	ComputeAmbientForLeaf( iThread, (int) iLeaf, list );
@@ -536,7 +537,7 @@ void VMPI_ReceiveLeafAmbientResults( uint64 leafID, MessageBuffer* pBuf, int iWo
 		pBuf->read( g_LeafAmbientSamples[ leafID ].Base(), nSamples * sizeof( ambientsample_t ) );
 	}
 }
-
+#endif
 
 void ComputePerLeafAmbientLighting() {
 	// Figure out which lights should go in the per-leaf ambient cubes.
@@ -562,9 +563,11 @@ void ComputePerLeafAmbientLighting() {
 	g_LeafAmbientSamples.SetCount( numleafs );
 
 	if ( g_bUseMPI ) {
+#if defined( MPI )
 		// Distribute the work among the workers.
 		VMPI_SetCurrentStage( "ComputeLeafAmbientLighting" );
 		DistributeWork( numleafs, VMPI_DISTRIBUTEWORK_PACKETID, VMPI_ProcessLeafAmbient, VMPI_ReceiveLeafAmbientResults );
+#endif
 	} else {
 		RunThreadsOn( numleafs, true, ThreadComputeLeafAmbient );
 	}

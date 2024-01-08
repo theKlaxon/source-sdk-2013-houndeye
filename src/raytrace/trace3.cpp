@@ -1,8 +1,8 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 
-#include "raytrace.h"
-#include <bspfile.h>
+#include "bspfile.h"
 #include "bsplib.h"
+#include "raytrace.h"
 
 static Vector VertCoord(dface_t const &f, int vnum)
 {

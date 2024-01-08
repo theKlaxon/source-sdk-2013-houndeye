@@ -469,7 +469,9 @@ void BuildVisMatrix (void)
 {
 	if ( g_bUseMPI )
 	{
-		RunMPIBuildVisLeafs();
+#if defined( MPI )
+	RunMPIBuildVisLeafs();
+#endif
 	}
 	else 
 	{

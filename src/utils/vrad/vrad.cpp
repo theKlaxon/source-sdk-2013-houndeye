@@ -607,7 +607,7 @@ void MakePatchForFace( int fn, winding_t* w ) {
 
 entity_t* EntityForModel( int modnum ) {
 	int i;
-	char* s;
+	const char* s;
 	char name[ 16 ];
 
 	sprintf( name, "*%i", modnum );
@@ -1821,8 +1821,10 @@ bool RadWorld_Go() {
 
 	// build initial facelights
 	if ( g_bUseMPI ) {
+		#if defined( MPI )
 		// RunThreadsOnIndividual (numfaces, true, BuildFacelights);
 		RunMPIBuildFacelights();
+		#endif
 	} else {
 		RunThreadsOnIndividual( numfaces, true, BuildFacelights );
 	}
@@ -1871,13 +1873,16 @@ bool RadWorld_Go() {
 		StaticDispMgr()->EndTimer();
 
 		// blend bounced light into direct light and save
+#if defined( MPI )
 		VMPI_SetCurrentStage( "FinalLightFace" );
+#endif
 		if ( !g_bUseMPI || g_bMPIMaster )
 			RunThreadsOnIndividual( numfaces, true, FinalLightFace );
 
 		// Distribute the lighting data to workers.
+#if defined( MPI )
 		VMPI_DistributeLightData();
-
+#endif
 		Msg( "FinalLightFace Done\n" );
 		fflush( stdout );
 	}
@@ -1973,14 +1978,18 @@ void VRAD_LoadBSP( char const* pFilename ) {
 	Q_DefaultExtension( source, ".bsp", sizeof( source ) );
 
 	Msg( "Loading %s\n", source );
+#if defined( MPI )
 	VMPI_SetCurrentStage( "LoadBSPFile" );
+#endif
 	LoadBSPFile( source );
 
 	// Add this bsp to our search path so embedded resources can be found
 	if ( g_bUseMPI && g_bMPIMaster ) {
+#if defined( MPI )
 		// MPI Master, MPI workers don't need to do anything
 		g_pOriginalPassThruFileSystem->AddSearchPath( source, "GAME", PATH_ADD_TO_HEAD );
 		g_pOriginalPassThruFileSystem->AddSearchPath( source, "MOD", PATH_ADD_TO_HEAD );
+#endif
 	} else if ( !g_bUseMPI ) {
 		// Non-MPI
 		g_pFullFileSystem->AddSearchPath( source, "GAME", PATH_ADD_TO_HEAD );
@@ -2532,6 +2541,7 @@ int VRAD_Main( int argc, char** argv ) {
 	VRAD_Init();
 
 	// This must come first.
+#if defined( MPI )
 	VRAD_SetupMPI( argc, argv );
 
 	#if !defined( _DEBUG )
@@ -2539,6 +2549,7 @@ int VRAD_Main( int argc, char** argv ) {
 			SetupToolsMinidumpHandler( VMPI_ExceptionFilter );
 		} else
 	#endif
+#endif
 	{
 		LoadCmdLineFromFile( argc, argv, source, "vrad" );// Don't do this if we're a VMPI worker..
 		SetupDefaultToolsMinidumpHandler();

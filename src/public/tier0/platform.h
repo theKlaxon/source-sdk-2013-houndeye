@@ -510,7 +510,7 @@ FIXME: Enable this when we no longer fear change =)
 	#define  FORCEINLINE            inline
 	// GCC 3.4.1 has a bug in supporting forced inline of templated functions
 	// this macro lets us not force inlining in that case
-	#define  FORCEINLINE_TEMPLATE
+	#define  FORCEINLINE_TEMPLATE inline
 #endif
 
 // Force a function call site -not- to inlined. (useful for profiling)
@@ -947,17 +947,16 @@ PLATFORM_INTERFACE struct tm *		Plat_localtime( const time_t *timep, struct tm *
 	#pragma intrinsic(__rdtsc)
 #endif
 
-inline uint64 Plat_Rdtsc()
-{
+inline uint64 Plat_Rdtsc() {
 #if defined( _WIN64 )
 	return ( uint64 )__rdtsc();
 #elif defined( _WIN32 )
-  #if defined( _MSC_VER ) && ( _MSC_VER >= 1400 )
-	return ( uint64 )__rdtsc();
-  #else
-    __asm rdtsc;
-	__asm ret;
-  #endif
+	#if defined( _MSC_VER ) && ( _MSC_VER >= 1400 )
+		return static_cast<uint64>( __rdtsc() );
+	#else
+		__asm rdtsc;
+		__asm ret;
+	#endif
 #elif defined( __i386__ )
 	uint64 val;
 	__asm__ __volatile__ ( "rdtsc" : "=A" (val) );
@@ -965,7 +964,7 @@ inline uint64 Plat_Rdtsc()
 #elif defined( __x86_64__ )
 	uint32 lo, hi;
 	__asm__ __volatile__ ( "rdtsc" : "=a" (lo), "=d" (hi));
-	return ( ( ( uint64 )hi ) << 32 ) | lo;
+	return ( ( static_cast<uint64>( hi ) ) << 32 ) | lo;
 #else
 	#error "Plat_Rdtsc: Unsupported platorm, please implement"
 #endif

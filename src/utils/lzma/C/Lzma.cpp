@@ -29,15 +29,13 @@ struct LzmaHeader {
 // Encoding glue. Returns non-null Compressed buffer if successful.
 // Caller must free.
 //-----------------------------------------------------------------------------
-unsigned char* LZMA_Compress( unsigned char* pInput, unsigned int inputSize, unsigned int* pOutputSize, unsigned int dictionarySize ) {
+unsigned char* LZMA_Compress( unsigned char* pInput, unsigned int inputSize, unsigned int* pOutputSize ) {
 	*pOutputSize = 0;
 
 	if ( inputSize <= sizeof( LzmaHeader ) ) {
 		// pointless
 		return nullptr;
 	}
-
-	dictionarySize = ( 1 << dictionarySize );
 
 	// using same work buffer calcs as the SDK 105% + 64K
 	unsigned outSize = inputSize / 20 * 21 + ( 1 << 16 );
@@ -55,7 +53,6 @@ unsigned char* LZMA_Compress( unsigned char* pInput, unsigned int inputSize, uns
 	size_t propsSize = LZMA_PROPS_SIZE;
 	CLzmaEncProps props;
 	LzmaEncProps_Init( &props );
-	props.dictSize = dictionarySize;
 	props.numThreads = 4;
 	auto outBufferSize = static_cast<size_t>( outSize - sizeof( LzmaHeader ) );
 	int result = LzmaEncode(
@@ -105,16 +102,17 @@ bool LZMA_Uncompress( unsigned char* pInput, unsigned char** ppOutput, unsigned 
 	auto* output = reinterpret_cast<unsigned char*>( malloc( header->actualSize ) );
 	auto outSize = header->actualSize;
 
-	unsigned srcLen = inBuf.size() - LZMA_PROPS_SIZE;
-	auto res = LzmaUncompress(
-		output, &outSize,
-		&inBuf[LZMA_PROPS_SIZE], &srcLen,
-		&inBuf[0], LZMA_PROPS_SIZE);
+	// TODO: Finish this impl
+//	unsigned srcLen = inBuf.size() - LZMA_PROPS_SIZE;
+//	auto res = LzmaUncompress(
+//		output, &outSize,
+//		&inBuf[LZMA_PROPS_SIZE], &srcLen,
+//		&inBuf[0], LZMA_PROPS_SIZE);
 
-	if ( res != SZ_OK ) {
-		free( output );
-		return false;
-	}
+//	if ( res != SZ_OK ) {
+//		free( output );
+//		return false;
+//	}
 
 	*ppOutput = output;
 	*pOutputSize = header->actualSize;

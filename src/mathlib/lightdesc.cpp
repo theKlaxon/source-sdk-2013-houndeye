@@ -4,11 +4,11 @@
 //
 //=====================================================================================//
 
-#include <ssemath.h>
-#include <lightdesc.h>
+#include "lightdesc.h"
 #include "mathlib.h"
+#include "ssemath.h"
 
-void LightDesc_t::RecalculateDerivedValues(void)
+void LightDesc_t::RecalculateDerivedValues()
 {
 	m_Flags = LIGHTTYPE_OPTIMIZATIONFLAGS_DERIVED_VALUES_CALCED;
 	if (m_Attenuation0)

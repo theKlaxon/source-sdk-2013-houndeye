@@ -238,12 +238,13 @@ public:
 	void ComputeLighting( int iThread );
 
 private:
+#if defined( MPI )
 	// VMPI stuff.
 	static void VMPI_ProcessStaticProp_Static( int iThread, uint64 iStaticProp, MessageBuffer* pBuf );
 	static void VMPI_ReceiveStaticPropResults_Static( uint64 iStaticProp, MessageBuffer* pBuf, int iWorker );
 	void VMPI_ProcessStaticProp( int iThread, int iStaticProp, MessageBuffer* pBuf );
 	void VMPI_ReceiveStaticPropResults( int iStaticProp, MessageBuffer* pBuf, int iWorker );
-
+#endif
 	// local thread version
 	static void ThreadComputeStaticPropLighting( int iThread, void* pUserData );
 	void ComputeLightingForProp( int iThread, int iStaticProp );
@@ -1480,7 +1481,7 @@ void CVradStaticPropMgr::SerializeLighting() {
 		AddBufferToPak( GetPakFile(), filename, (void*) pVhtHdr, pTexelData - (unsigned char*) pVhtHdr, false );
 	}
 }
-
+#if defined( MPI )
 void CVradStaticPropMgr::VMPI_ProcessStaticProp_Static( int iThread, uint64 iStaticProp, MessageBuffer* pBuf ) {
 	g_StaticPropMgr.VMPI_ProcessStaticProp( iThread, iStaticProp, pBuf );
 }
@@ -1557,7 +1558,7 @@ void CVradStaticPropMgr::VMPI_ReceiveStaticPropResults( int iStaticProp, Message
 	// Apply the results.
 	ApplyLightingToStaticProp( iStaticProp, m_StaticProps[ iStaticProp ], &results );
 }
-
+#endif
 
 void CVradStaticPropMgr::ComputeLightingForProp( int iThread, int iStaticProp ) {
 	// Compute the lighting.
@@ -1594,6 +1595,7 @@ void CVradStaticPropMgr::ComputeLighting( int iThread ) {
 	m_bIgnoreStaticPropTrace = true;
 
 	if ( g_bUseMPI ) {
+#if defined( MPI )
 		// Distribute the work among the workers.
 		VMPI_SetCurrentStage( "CVradStaticPropMgr::ComputeLighting" );
 
@@ -1602,6 +1604,7 @@ void CVradStaticPropMgr::ComputeLighting( int iThread ) {
 			VMPI_DISTRIBUTEWORK_PACKETID,
 			&CVradStaticPropMgr::VMPI_ProcessStaticProp_Static,
 			&CVradStaticPropMgr::VMPI_ReceiveStaticPropResults_Static );
+#endif
 	} else {
 		RunThreadsOn( count, true, ThreadComputeStaticPropLighting );
 	}

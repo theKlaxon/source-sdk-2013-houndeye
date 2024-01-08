@@ -16,7 +16,8 @@ void RunMPIPortalFlow() {}
 void RunMPIBasePortalVis() {}
 void VVIS_SetupMPI( int&, char**& ) {}
 void EnableFullMinidumps( bool ) {}
-unsigned char* LZMA_Compress( unsigned char*, unsigned int, unsigned int* ) { return nullptr; }
-bool LZMA_Uncompress( unsigned char* pInput, unsigned char** ppOutput, unsigned int* pOutputSize ) { return false; }
-bool LZMA_IsCompressed( unsigned char* pInput ) { return false; }
-unsigned int LZMA_GetActualSize( unsigned char* pInput ) { return 0; }
+
+// vrad-specific
+class MessageBuffer;
+void VMPI_SetCurrentStage( char const* ) {}
+void DistributeWork(unsigned long long, char, void (*)(int, unsigned long long, MessageBuffer*), void (*)(unsigned long long, MessageBuffer*, int)) { }

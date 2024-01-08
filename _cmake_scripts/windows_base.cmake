@@ -1,4 +1,5 @@
 # windows_base.cmake
+message( NOTICE "Platform: Windows" )
 
 add_compile_definitions(
 	WIN32

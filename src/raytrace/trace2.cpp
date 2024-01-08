@@ -138,8 +138,7 @@ void RayTracingEnvironment::RenderScene(
 						// light all points
 						for(int l=0;l<LightList.Count();l++)
 						{
-							LightList[l].ComputeLightAtPoints(surface_pos,rslt.surface_normal,
-															  intens);
+							LightList[l].ComputeLightAtPoints(surface_pos,rslt.surface_normal, intens);
 						}
 					}
 					break;
@@ -168,8 +167,7 @@ void RayTracingEnvironment::RenderScene(
 							{
 								FourVectors tmp;
 								tmp.DuplicateVector(Vector(0,0,0));
-								LightList[l].ComputeLightAtPoints(surface_pos,rslt.surface_normal,
-																  tmp);
+								LightList[l].ComputeLightAtPoints(surface_pos,rslt.surface_normal, tmp);
 								intens.x=AddSIMD(intens.x,AndSIMD(tmp.x,unshadowed));
 								intens.y=AddSIMD(intens.y,AndSIMD(tmp.y,unshadowed));
 								intens.z=AddSIMD(intens.z,AndSIMD(tmp.z,unshadowed));
@@ -256,8 +254,7 @@ void RayTracingEnvironment::ComputeVirtualLightSources(void)
 						FourVectors delta=rslt.surface_normal;
 						delta*=0.1;
 						surface_pos+=delta;
-						LightList[l].ComputeLightAtPoints(surface_pos,rslt.surface_normal,
-														  intens);
+						LightList[l].ComputeLightAtPoints(surface_pos,rslt.surface_normal, intens);
 						FourVectors surf_colors;
 						surf_colors.DuplicateVector(TriangleColors[rslt.HitIds[0]]);
 						intens*=surf_colors;

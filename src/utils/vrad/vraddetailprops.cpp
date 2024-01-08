@@ -961,6 +961,7 @@ void UnserializeDetailPropLighting( int lumpID, int lumpVersion, CUtlVector<Deta
 
 DetailObjectLump_t *g_pMPIDetailProps = NULL;
 
+#if defined( MPI )
 void VMPI_ProcessDetailPropWU( int iThread, int iWorkUnit, MessageBuffer *pBuf )
 {
 	CUtlVector<DetailPropLightstylesLump_t> *pDetailPropLump = s_pDetailPropLightStyleLump;
@@ -1001,6 +1002,7 @@ void VMPI_ReceiveDetailPropWU( int iWorkUnit, MessageBuffer *pBuf, int iWorker )
 		pBuf->read( &l->m_Style, sizeof( l->m_Style ) );
 	}
 }
+#endif
 	
 //-----------------------------------------------------------------------------
 // Computes lighting for the detail props

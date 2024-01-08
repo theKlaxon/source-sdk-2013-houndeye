@@ -63,8 +63,8 @@ int vertexref[ MAX_MAP_VERTS ];
 int* vertexface[ MAX_MAP_VERTS ];
 faceneighbor_t faceneighbor[ MAX_MAP_FACES ];
 
-static directlight_t* gSkyLight = NULL;
-static directlight_t* gAmbient = NULL;
+static directlight_t* gSkyLight = nullptr;
+static directlight_t* gAmbient = nullptr;
 
 //==========================================================================//
 // CNormalList implementation.
@@ -340,7 +340,7 @@ void ErrorLightInfo( const char* s, lightinfo_t* l ) {
 	//
 	// Show the face center and material name if possible.
 	//
-	if ( w != NULL ) {
+	if ( w != nullptr ) {
 		// Don't exit, we'll try to recover...
 		Vector vecCenter;
 		WindingCenter( w, vecCenter );
@@ -658,7 +658,7 @@ bool BuildFacesamples( lightinfo_t* pLightInfo, facelight_t* pFaceLight ) {
 					pSamples->w = pWindingS2;
 				} else {
 					// winding isn't needed, free it.
-					pSamples->w = NULL;
+					pSamples->w = nullptr;
 					FreeWinding( pWindingS2 );
 				}
 
@@ -723,7 +723,7 @@ void FreeSampleWindings( facelight_t* fl ) {
 	for ( i = 0; i < fl->numsamples; i++ ) {
 		if ( fl->sample[ i ].w ) {
 			FreeWinding( fl->sample[ i ].w );
-			fl->sample[ i ].w = NULL;
+			fl->sample[ i ].w = nullptr;
 		}
 	}
 }
@@ -828,9 +828,9 @@ int numdlights;
   FindTargetEntity
   ==================
 */
-entity_t* FindTargetEntity( char* target ) {
+entity_t* FindTargetEntity( const char* target ) {
 	int i;
-	char* n;
+	const char* n;
 
 	for ( i = 0; i < num_entities; i++ ) {
 		n = ValueForKey( &entities[ i ], "targetname" );
@@ -838,7 +838,7 @@ entity_t* FindTargetEntity( char* target ) {
 			return &entities[ i ];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -879,8 +879,8 @@ void AddDLightToActiveList( directlight_t* dl ) {
 }
 
 void FreeDLights() {
-	gSkyLight = NULL;
-	gAmbient = NULL;
+	gSkyLight = nullptr;
+	gAmbient = nullptr;
 
 	directlight_t* pNext;
 	for ( directlight_t* pCur = activelights; pCur; pCur = pNext ) {
@@ -892,7 +892,7 @@ void FreeDLights() {
 
 
 void SetDLightVis( directlight_t* dl, int cluster ) {
-	if ( dl->pvs == NULL ) {
+	if ( dl->pvs == nullptr ) {
 		dl->pvs = (byte*) calloc( 1, ( dvis->numclusters / 8 ) + 1 );
 	}
 
@@ -900,7 +900,7 @@ void SetDLightVis( directlight_t* dl, int cluster ) {
 }
 
 void MergeDLightVis( directlight_t* dl, int cluster ) {
-	if ( dl->pvs == NULL ) {
+	if ( dl->pvs == nullptr ) {
 		SetDLightVis( dl, cluster );
 	} else {
 		byte pvs[ MAX_MAP_CLUSTERS / 8 ];
@@ -920,14 +920,14 @@ void MergeDLightVis( directlight_t* dl, int cluster ) {
   =============
 */
 int LightForKey( entity_t* ent, const char* key, Vector& intensity ) {
-	char* pLight;
+	const char* pLight;
 
 	pLight = ValueForKey( ent, key );
 
 	return LightForString( pLight, intensity );
 }
 
-int LightForString( char* pLight, Vector& intensity ) {
+int LightForString( const char* pLight, Vector& intensity ) {
 	double r, g, b, scaler;
 	int argCnt;
 
@@ -992,7 +992,7 @@ int LightForString( char* pLight, Vector& intensity ) {
 
 static void ParseLightGeneric( entity_t* e, directlight_t* dl ) {
 	entity_t* e2;
-	char* target;
+	const char* target;
 	Vector dest;
 
 	dl->light.style = (int) FloatForKey( e, "style" );
@@ -1352,10 +1352,10 @@ static void ParseLightPoint( entity_t* e, directlight_t* dl ) {
 #define DIRECT_SCALE ( 100.0 * 100.0 )
 void CreateDirectLights( void ) {
 	unsigned i;
-	CPatch* p = NULL;
-	directlight_t* dl = NULL;
-	entity_t* e = NULL;
-	char* name;
+	CPatch* p = nullptr;
+	directlight_t* dl = nullptr;
+	entity_t* e = nullptr;
+	const char* name;
 	Vector dest;
 
 	numdlights = 0;
@@ -1430,7 +1430,7 @@ void ExportDirectLightsToWorldLights() {
 	// In case the level has already been VRADed.
 	*pNumworldlights = 0;
 
-	for ( dl = activelights; dl != NULL; dl = dl->next ) {
+	for ( dl = activelights; dl != nullptr; dl = dl->next ) {
 		dworldlight_t* wl = &dworldlights[ ( *pNumworldlights )++ ];
 
 		if ( *pNumworldlights > MAX_MAP_WORLDLIGHTS ) {
@@ -1848,10 +1848,10 @@ void AddSampleToPatch( sample_t* s, LightingValue_t& light, int facenum ) {
 
 	float radius = sqrt( s->area ) / 2.0;
 
-	CPatch* pNextPatch = NULL;
+	CPatch* pNextPatch = nullptr;
 	for ( patch = &g_Patches.Element( g_FacePatches.Element( facenum ) ); patch; patch = pNextPatch ) {
 		// next patch
-		pNextPatch = NULL;
+		pNextPatch = nullptr;
 		if ( patch->ndxNext != g_Patches.InvalidIndex() ) {
 			pNextPatch = &g_Patches.Element( patch->ndxNext );
 		}
@@ -2221,7 +2221,7 @@ static void GatherSampleLightAt4Points( SSE_SampleInfo_t& info, int sampleIdx, i
 	SSE_sampleLightOutput_t out;
 
 	// Iterate over all direct lights and add them to the particular sample
-	for ( directlight_t* dl = activelights; dl != NULL; dl = dl->next ) {
+	for ( directlight_t* dl = activelights; dl != nullptr; dl = dl->next ) {
 		// is this lights cluster visible?
 		fltx4 dotMask = Four_Zeros;
 		bool skipLight = true;
@@ -2296,7 +2296,7 @@ static void ResampleLightAt4Points( SSE_SampleInfo_t& info, int lightStyleIndex,
 	}
 
 	// Iterate over all direct lights and add them to the particular sample
-	for ( directlight_t* dl = activelights; dl != NULL; dl = dl->next ) {
+	for ( directlight_t* dl = activelights; dl != nullptr; dl = dl->next ) {
 		if ( ( flags & AMBIENT_ONLY ) && ( dl->light.type != emit_skyambient ) )
 			continue;
 
@@ -2569,7 +2569,7 @@ static void BuildSupersampleFaceLights( lightinfo_t& l, SSE_SampleInfo_t& info, 
 	LightingValue_t** ppLightSamples = info.m_pFaceLight->light[ lightstyleIndex ];
 	ComputeSampleIntensities( info, ppLightSamples, pSampleIntensity );
 
-	Vector* pVisualizePass = NULL;
+	Vector* pVisualizePass = nullptr;
 	if ( debug_extra ) {
 		int visualizationSize = info.m_pFaceLight->numsamples * sizeof( Vector );
 		pVisualizePass = (Vector*) stackalloc( visualizationSize );
@@ -2873,7 +2873,7 @@ void BuildPatchLights( int facenum ) {
 	CPatch* pNextPatch;
 	for ( patch = &g_Patches.Element( g_FacePatches.Element( facenum ) ); patch; patch = pNextPatch ) {
 		// next patch
-		pNextPatch = NULL;
+		pNextPatch = nullptr;
 		if ( patch->ndxNext != g_Patches.InvalidIndex() ) {
 			pNextPatch = &g_Patches.Element( patch->ndxNext );
 		}
@@ -2893,7 +2893,7 @@ void BuildPatchLights( int facenum ) {
 	if ( numbounce > 0 ) {
 		for ( patch = &g_Patches.Element( g_FacePatches.Element( facenum ) ); patch; patch = pNextPatch ) {
 			// next patch
-			pNextPatch = NULL;
+			pNextPatch = nullptr;
 			if ( patch->ndxNext != g_Patches.InvalidIndex() ) {
 				pNextPatch = &g_Patches.Element( patch->ndxNext );
 			}
@@ -2913,7 +2913,7 @@ void BuildPatchLights( int facenum ) {
 	// pull totallight from children (children always exist first in the list)
 	for ( patch = &g_Patches.Element( g_FacePatches.Element( facenum ) ); patch; patch = pNextPatch ) {
 		// next patch
-		pNextPatch = NULL;
+		pNextPatch = nullptr;
 		if ( patch->ndxNext != g_Patches.InvalidIndex() ) {
 			pNextPatch = &g_Patches.Element( patch->ndxNext );
 		}

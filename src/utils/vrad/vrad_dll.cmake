@@ -34,6 +34,7 @@ set(
 	"${VRAD_DLL_DIR}/vraddll.cpp"
 	"${VRAD_DLL_DIR}/vradstaticprops.cpp"
 	"${SRCDIR}/public/zip_utils.cpp"
+	"${SRCDIR}/utils/vvis/stub.cpp"
 
 	# Common Files
 	"${SRCDIR}/utils/common/bsplib.cpp"
@@ -51,6 +52,8 @@ set(
 	# Public Files
 	"${SRCDIR}/public/collisionutils.cpp"
 	"${SRCDIR}/public/filesystem_helpers.cpp"
+	"${SRCDIR}/utils/common/filesystem_tools.cpp"
+	"${SRCDIR}/public/filesystem_init.cpp"
 	"${SRCDIR}/public/scratchpad3d.cpp"
 	"${SRCDIR}/public/scratchpadutils.cpp"
 
@@ -203,13 +206,16 @@ target_compile_definitions( vrad_dll
 
 target_link_libraries( vrad_dll
 	PRIVATE
-		ws2_32
+#		ws2_32
 
-		"${LIBPUBLIC}/bitmap${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		lzma
+		tier0
+		tier1
 		mathlib
+		vstdlib
 		raytrace
+		"${LIBPUBLIC}/bitmap${CMAKE_STATIC_LIBRARY_SUFFIX}"
 		"${LIBPUBLIC}/tier2${CMAKE_STATIC_LIBRARY_SUFFIX}"
 #		"${LIBPUBLIC}/vmpi${CMAKE_STATIC_LIBRARY_SUFFIX}"
-#		"${LIBPUBLIC}/vtf${CMAKE_STATIC_LIBRARY_SUFFIX}"
-#		"${LIBCOMMON}/lzma${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		"${LIBPUBLIC}/vtf${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
