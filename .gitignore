@@ -24,6 +24,7 @@ obj*/
 game/**/user_custom/
 game/**/screenshots/
 game/**/bin/
+game/test/
 game/hl2
 game/platform
 
