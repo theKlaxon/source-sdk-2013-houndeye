@@ -613,7 +613,7 @@ FIXME: Enable this when we no longer fear change =)
 #undef _snprintf
 #endif
 #define _snprintf snprintf
-#define GetProcAddress dlsym
+#define GetProcAddress( ptr, name ) dlsym( reinterpret_cast<void*>( ptr ), name )
 #define _chdir chdir
 #define _strnicmp strnicmp
 #define strnicmp strncasecmp

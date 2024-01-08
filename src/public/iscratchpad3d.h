@@ -233,7 +233,7 @@ public:
 
 
 
-IScratchPad3D* ScratchPad3D_Create( char const *pFilename = "scratch.pad" );
+IScratchPad3D* ScratchPad3D_Create( const char* pFilename = "scratch.pad" );
 
 
 

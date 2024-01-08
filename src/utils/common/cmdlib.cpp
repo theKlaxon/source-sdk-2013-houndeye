@@ -9,15 +9,15 @@
 // cmdlib.c
 // -----------------------
 #include "tier0/platform.h"
-#ifdef IS_WINDOWS_PC
-#include <windows.h>
+#if IsWindows() && IsPC()
+	#include <processthreadsapi.h>
 #endif
 #include "cmdlib.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "tier1/strtools.h"
-#ifdef _WIN32
-#include <conio.h>
+#if IsWindows()
+	#include <conio.h>
 #endif
 #include "utlvector.h"
 #include "filesystem_helpers.h"
@@ -27,15 +27,13 @@
 #include "filesystem_tools.h"
 
 #if defined( MPI )
-
 	#include "vmpi.h"
 	#include "vmpi_tools_shared.h"
-
 #endif
 
 
-#if defined( _WIN32 ) || defined( WIN32 )
-#include <direct.h>
+#if IsWindows()
+	#include <direct.h>
 #endif
 
 // set these before calling CheckParm
@@ -53,9 +51,7 @@ CUtlLinkedList<CleanupFn, unsigned short> g_CleanupFunctions;
 CUtlLinkedList<SpewHookFn, unsigned short> g_ExtraSpewHooks;
 
 bool g_bStopOnExit = false;
-void (*g_ExtraSpewHook)(const char*) = NULL;
-
-#if defined( _WIN32 ) || defined( WIN32 )
+void (*g_ExtraSpewHook)(const char*) = nullptr;
 
 void CmdLib_FPrintf( FileHandle_t hFile, const char *pFormat, ... )
 {
@@ -66,7 +62,7 @@ void CmdLib_FPrintf( FileHandle_t hFile, const char *pFormat, ... )
 	va_list marker;
 	va_start( marker, pFormat );
 	
-	while ( 1 )
+	while ( true )
 	{
 		int ret = Q_vsnprintf( buf.Base(), buf.Count(), pFormat, marker );
 		if ( ret >= 0 )
@@ -100,7 +96,7 @@ char* CmdLib_FGets( char *pOut, int outSize, FileHandle_t hFile )
 		if ( !g_pFileSystem->Read( &c, 1, hFile ) )
 		{
 			if ( iCur == 0 )
-				return NULL;
+				return nullptr;
 			else
 				break;
 		}
@@ -112,7 +108,7 @@ char* CmdLib_FGets( char *pOut, int outSize, FileHandle_t hFile )
 		if ( c == EOF )
 		{
 			if ( iCur == 0 )
-				return NULL;
+				return nullptr;
 			else
 				break;
 		}
@@ -122,7 +118,8 @@ char* CmdLib_FGets( char *pOut, int outSize, FileHandle_t hFile )
 	return pOut;
 }
 
-#include <wincon.h>
+#include <csignal>
+
 
 // This pauses before exiting if they use -StopOnExit. Useful for debugging.
 class CExitStopper
@@ -133,148 +130,143 @@ public:
 		if ( g_bStopOnExit )
 		{
 			Warning( "\nPress any key to quit.\n" );
-			getch();
+			getchar();
 		}
 	}
 } g_ExitStopper;
 
 
-static unsigned short g_InitialColor = 0xFFFF;
-static unsigned short g_LastColor = 0xFFFF;
-static unsigned short g_BadColor = 0xFFFF;
+// FIXME: This is dumbly fixed
+static unsigned char g_InitialColor = 0xFF;
+static unsigned char g_LastColor = 0xFF;
+static unsigned char g_BadColor = 0xFF;
 static WORD g_BackgroundFlags = 0xFFFF;
-static void GetInitialColors( )
-{
+static void GetInitialColors() {
 	// Get the old background attributes.
-	CONSOLE_SCREEN_BUFFER_INFO oldInfo;
-	GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &oldInfo );
-	g_InitialColor = g_LastColor = oldInfo.wAttributes & (FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE|FOREGROUND_INTENSITY);
-	g_BackgroundFlags = oldInfo.wAttributes & (BACKGROUND_RED|BACKGROUND_GREEN|BACKGROUND_BLUE|BACKGROUND_INTENSITY);
+//	CONSOLE_SCREEN_BUFFER_INFO oldInfo;
+//	GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &oldInfo );
+//	g_InitialColor = g_LastColor = oldInfo.wAttributes & (FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE|FOREGROUND_INTENSITY);
+//	g_BackgroundFlags = oldInfo.wAttributes & (BACKGROUND_RED|BACKGROUND_GREEN|BACKGROUND_BLUE|BACKGROUND_INTENSITY);
+//
+//	g_BadColor = 0;
+//	if (g_BackgroundFlags & BACKGROUND_RED)
+//		g_BadColor |= FOREGROUND_RED;
+//	if (g_BackgroundFlags & BACKGROUND_GREEN)
+//		g_BadColor |= FOREGROUND_GREEN;
+//	if (g_BackgroundFlags & BACKGROUND_BLUE)
+//		g_BadColor |= FOREGROUND_BLUE;
+//	if (g_BackgroundFlags & BACKGROUND_INTENSITY)
+//		g_BadColor |= FOREGROUND_INTENSITY;
 
-	g_BadColor = 0;
-	if (g_BackgroundFlags & BACKGROUND_RED)
-		g_BadColor |= FOREGROUND_RED;
-	if (g_BackgroundFlags & BACKGROUND_GREEN)
-		g_BadColor |= FOREGROUND_GREEN;
-	if (g_BackgroundFlags & BACKGROUND_BLUE)
-		g_BadColor |= FOREGROUND_BLUE;
-	if (g_BackgroundFlags & BACKGROUND_INTENSITY)
-		g_BadColor |= FOREGROUND_INTENSITY;
 }
 
-WORD SetConsoleTextColor( int red, int green, int blue, int intensity )
-{
+WORD SetConsoleTextColor( int red, int green, int blue, int intensity ) {
 	WORD ret = g_LastColor;
-	g_LastColor = 0;
-	if( red )	g_LastColor |= FOREGROUND_RED;
-	if( green ) g_LastColor |= FOREGROUND_GREEN;
-	if( blue )  g_LastColor |= FOREGROUND_BLUE;
-	if( intensity ) g_LastColor |= FOREGROUND_INTENSITY;
+
+	if ( !red && !green && !blue ) {       // 000
+		g_LastColor = intensity ? 90 : 30;
+	} else if ( !red && !green && blue ) { // 001
+		g_LastColor = intensity ? 94 : 34;
+	} else if ( !red && green && !blue ) { // 010
+		g_LastColor = intensity ? 92 : 32;
+	} else if ( !red && green && blue ) {  // 011
+		g_LastColor = intensity ? 96 : 36;
+	} else if ( red && !green && !blue ) { // 100
+		g_LastColor = intensity ? 91 : 31;
+	} else if ( red && !green && blue ) {  // 101
+		g_LastColor = intensity ? 95 : 35;
+	} else if ( red && green && !blue ) {  // 110
+		g_LastColor = intensity ? 93 : 33;
+	} else if ( red && green && blue ) {   // 111
+		g_LastColor = intensity ? 97 : 37;
+	}
 
 	// Just use the initial color if there's a match...
 	if (g_LastColor == g_BadColor)
 		g_LastColor = g_InitialColor;
 
-	SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), g_LastColor | g_BackgroundFlags );
+	printf( "\x1b[2;%im", g_LastColor );
 	return ret;
 }
 
-void RestoreConsoleTextColor( WORD color )
-{
-	SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), color | g_BackgroundFlags );
+void RestoreConsoleTextColor( WORD color ) {
+	// SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), color | g_BackgroundFlags );
+	printf( "\x1b[2;39m" ); // reset text color to default
 	g_LastColor = color;
 }
 
 
 #if defined( CMDLIB_NODBGLIB )
+	// This can go away when everything is in bin.
+	void Error( char const *pMsg, ... ) {
+		va_list marker;
+		va_start( marker, pMsg );
+		vprintf( pMsg, marker );
+		va_end( marker );
 
-// This can go away when everything is in bin.
-void Error( char const *pMsg, ... )
-{
-	va_list marker;
-	va_start( marker, pMsg );
-	vprintf( pMsg, marker );
-	va_end( marker );
-
-	exit( -1 );
-}
-
+		exit( -1 );
+	}
 #else
 
-CRITICAL_SECTION g_SpewCS;
+//CRITICAL_SECTION g_SpewCS;
 bool g_bSpewCSInitted = false;
 bool g_bSuppressPrintfOutput = false;
 
-SpewRetval_t CmdLib_SpewOutputFunc( SpewType_t type, char const *pMsg )
-{
+SpewRetval_t CmdLib_SpewOutputFunc( SpewType_t type, char const *pMsg ) {
 	// Hopefully two threads won't call this simultaneously right at the start!
-	if ( !g_bSpewCSInitted )
-	{
-		InitializeCriticalSection( &g_SpewCS );
+	if ( !g_bSpewCSInitted ) {
+//		InitializeCriticalSection( &g_SpewCS );
 		g_bSpewCSInitted = true;
 	}
 
 	WORD old;
 	SpewRetval_t retVal;
 	
-	EnterCriticalSection( &g_SpewCS );
+//	EnterCriticalSection( &g_SpewCS );
 	{
-		if (( type == SPEW_MESSAGE ) || (type == SPEW_LOG ))
-		{
+		if (( type == SPEW_MESSAGE ) || (type == SPEW_LOG )) {
 			Color c = *GetSpewOutputColor();
-			if ( c.r() != 255 || c.g() != 255 || c.b() != 255 )
-			{
+			if ( c.r() != 255 || c.g() != 255 || c.b() != 255 ) {
 				// custom color
 				old = SetConsoleTextColor( c.r(), c.g(), c.b(), c.a() );
-			}
-			else
-			{
+			} else {
 				old = SetConsoleTextColor( 1, 1, 1, 0 );
 			}
 			retVal = SPEW_CONTINUE;
-		}
-		else if( type == SPEW_WARNING )
-		{
+		} else if( type == SPEW_WARNING ) {
 			old = SetConsoleTextColor( 1, 1, 0, 1 );
 			retVal = SPEW_CONTINUE;
-		}
-		else if( type == SPEW_ASSERT )
-		{
+		} else if( type == SPEW_ASSERT ) {
 			old = SetConsoleTextColor( 1, 0, 0, 1 );
 			retVal = SPEW_DEBUGGER;
+			#ifdef MPI
+				// VMPI workers don't want to bring up dialogs and suchlike.
+				// They need to have a special function installed to handle
+				// the exceptions and write the minidumps.
+				// Install the function after VMPI_Init with a call:
+				// SetupToolsMinidumpHandler( VMPI_ExceptionFilter );
+				if ( g_bUseMPI && !g_bMPIMaster && !Plat_IsInDebugSession() )
+				{
+					// Generating an exception and letting the
+					// installed handler handle it
+					::RaiseException
+						(
+						0,							// dwExceptionCode
+						EXCEPTION_NONCONTINUABLE,	// dwExceptionFlags
+						0,							// nNumberOfArguments,
+						NULL						// const ULONG_PTR* lpArguments
+						);
 
-#ifdef MPI
-			// VMPI workers don't want to bring up dialogs and suchlike.
-			// They need to have a special function installed to handle
-			// the exceptions and write the minidumps.
-			// Install the function after VMPI_Init with a call:
-			// SetupToolsMinidumpHandler( VMPI_ExceptionFilter );
-			if ( g_bUseMPI && !g_bMPIMaster && !Plat_IsInDebugSession() )
-			{
-				// Generating an exception and letting the
-				// installed handler handle it
-				::RaiseException
-					(
-					0,							// dwExceptionCode
-					EXCEPTION_NONCONTINUABLE,	// dwExceptionFlags
-					0,							// nNumberOfArguments,
-					NULL						// const ULONG_PTR* lpArguments
-					);
+						// Never get here (non-continuable exception)
 
-					// Never get here (non-continuable exception)
-				
-				VMPI_HandleCrash( pMsg, NULL, true );
-				exit( 0 );
-			}
-#endif
-		}
-		else if( type == SPEW_ERROR )
-		{
+					VMPI_HandleCrash( pMsg, NULL, true );
+					exit( 0 );
+				}
+			#endif
+		} else if( type == SPEW_ERROR ) {
 			old = SetConsoleTextColor( 1, 0, 0, 1 );
 			retVal = SPEW_ABORT; // doesn't matter.. we exit below so we can return an errorlevel (which dbg.dll doesn't do).
-		}
-		else
-		{
+		} else {
 			old = SetConsoleTextColor( 1, 1, 1, 1 );
 			retVal = SPEW_CONTINUE;
 		}
@@ -282,30 +274,28 @@ SpewRetval_t CmdLib_SpewOutputFunc( SpewType_t type, char const *pMsg )
 		if ( !g_bSuppressPrintfOutput || type == SPEW_ERROR )
 			printf( "%s", pMsg );
 
-		OutputDebugString( pMsg );
+//		OutputDebugString( pMsg );
 		
-		if ( type == SPEW_ERROR )
-		{
+		if ( type == SPEW_ERROR ) {
 			printf( "\n" );
-			OutputDebugString( "\n" );
+//			OutputDebugString( "\n" );
 		}
 
-		if( g_pLogFile )
-		{
+		if( g_pLogFile ) {
 			CmdLib_FPrintf( g_pLogFile, "%s", pMsg );
 			g_pFileSystem->Flush( g_pLogFile );
 		}
 
 		// Dispatch to other spew hooks.
-		FOR_EACH_LL( g_ExtraSpewHooks, i )
-			g_ExtraSpewHooks[i]( pMsg );
+		FOR_EACH_LL( g_ExtraSpewHooks, i ) {
+			g_ExtraSpewHooks[ i ]( pMsg );
+		}
 
 		RestoreConsoleTextColor( old );
 	}
-	LeaveCriticalSection( &g_SpewCS );
+//	LeaveCriticalSection( &g_SpewCS );
 
-	if ( type == SPEW_ERROR )
-	{
+	if ( type == SPEW_ERROR ) {
 		CmdLib_Exit( 1 );
 	}
 
@@ -315,8 +305,8 @@ SpewRetval_t CmdLib_SpewOutputFunc( SpewType_t type, char const *pMsg )
 
 void InstallSpewFunction()
 {
-	setvbuf( stdout, NULL, _IONBF, 0 );
-	setvbuf( stderr, NULL, _IONBF, 0 );
+	setvbuf( stdout, nullptr, _IONBF, 0 );
+	setvbuf( stderr, nullptr, _IONBF, 0 );
 
 	SpewOutputFunc( CmdLib_SpewOutputFunc );
 	GetInitialColors();
@@ -398,12 +388,12 @@ void CmdLib_Cleanup()
 
 void CmdLib_Exit( int exitCode )
 {
-	TerminateProcess( GetCurrentProcess(), 1 );
-}	
-
-
-
-#endif
+	#if IsWindows()
+		TerminateProcess( GetCurrentProcess(), 1 );
+	#elif IsPosix()
+		kill( getpid(), SIGKILL );
+	#endif
+}
 
 #endif
 

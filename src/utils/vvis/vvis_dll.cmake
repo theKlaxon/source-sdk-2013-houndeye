@@ -8,11 +8,13 @@ set(
 	"${SRCDIR}/utils/common/cmdlib.cpp"
 	"${SRCDIR}/public/collisionutils.cpp"
 	"${SRCDIR}/public/filesystem_helpers.cpp"
+	"${SRCDIR}/utils/common/filesystem_tools.cpp"
+	"${SRCDIR}/public/filesystem_init.cpp"
 	"${VVIS_DLL_DIR}/flow.cpp"
 	"${SRCDIR}/public/loadcmdline.cpp"
 	"${SRCDIR}/public/lumpfiles.cpp"
 #	"${SRCDIR}/utils/common/mpi_stats.cpp"
-	"${VVIS_DLL_DIR}/mpivis.cpp"
+#	"${VVIS_DLL_DIR}/mpivis.cpp"
 #	"${SRCDIR}/utils/common/MySqlDatabase.cpp"
 	"${SRCDIR}/utils/common/pacifier.cpp"
 	"${SRCDIR}/public/scratchpad3d.cpp"
@@ -63,6 +65,7 @@ set(
 #	"${SRCDIR}/utils/common/vmpi_tools_shared.h"
 	"${SRCDIR}/public/vstdlib/vstdlib.h"
 	"${SRCDIR}/public/wadtypes.h"
+	"${VVIS_DLL_DIR}/stub.cpp"
 )
 
 set(
@@ -75,7 +78,9 @@ add_library( vvis_dll MODULE ${VVIS_DLL_SOURCE_FILES} )
 set_target_properties( vvis_dll
 	PROPERTIES
 		LIBRARY_OUTPUT_DIRECTORY "${GAMEDIR}/bin"
+		PREFIX ""
 )
+
 
 target_include_directories( vvis_dll
 	PRIVATE
@@ -97,9 +102,11 @@ target_link_libraries( vvis_dll
 #		odbccp32
 #		ws2_32
 
+#		lzma
+		tier0
+		tier1
 		mathlib
+		vstdlib
 		"${LIBPUBLIC}/tier2${CMAKE_STATIC_LIBRARY_SUFFIX}"
 #		"${LIBPUBLIC}/vmpi${CMAKE_STATIC_LIBRARY_SUFFIX}"
-#		liblzma::liblzma
-#		"${LIBCOMMON}/lzma${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )

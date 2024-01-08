@@ -50,7 +50,7 @@ char* GetLastErrorString() {
 int main( int argc, char* argv[] ) {
 	CommandLine()->CreateCmdLine( argc, argv );
 	const char* pDLLName = "vvis_dll" DLL_EXT_STRING;
-	
+
 	CSysModule* pModule = Sys_LoadModule( pDLLName );
 	if (! pModule ) {
 		printf( "vvis launcher error: can't load %s\n%s", pDLLName, GetLastErrorString() );
@@ -65,7 +65,7 @@ int main( int argc, char* argv[] ) {
 	}
 
 	int retCode = 0;
-	auto *pDLL = static_cast<ILaunchableDLL*>( fn( LAUNCHABLE_DLL_INTERFACE_VERSION, &retCode ) );
+	auto* pDLL = static_cast<ILaunchableDLL*>( fn( LAUNCHABLE_DLL_INTERFACE_VERSION, &retCode ) );
 	if (! pDLL ) {
 		printf( "vvis launcher error: can't get IVVisDLL interface from %s\n", pDLLName );
 		Sys_UnloadModule( pModule );

@@ -4,15 +4,15 @@
 //
 //===========================================================================//
 #if defined( _WIN32 )
-#include <windows.h>
+	#include <libloaderapi.h>
 #endif
 
 #if !defined( DONT_PROTECT_FILEIO_FUNCTIONS )
-#define DONT_PROTECT_FILEIO_FUNCTIONS // for protected_things.h
+	#define DONT_PROTECT_FILEIO_FUNCTIONS // for protected_things.h
 #endif
 
 #if defined( PROTECTED_THINGS_ENABLE )
-#undef PROTECTED_THINGS_ENABLE // from protected_things.h
+	#undef PROTECTED_THINGS_ENABLE // from protected_things.h
 #endif
 
 #include <stdio.h>
@@ -26,11 +26,11 @@
 #include "tier0/dbg.h"
 #include "tier0/threadtools.h"
 #ifdef _WIN32
-#include <direct.h> // getcwd
+	#include <direct.h> // getcwd
 #elif POSIX
-#include <dlfcn.h>
-#include <unistd.h>
-#define _getcwd getcwd
+	#include <dlfcn.h>
+	#include <unistd.h>
+	#define _getcwd getcwd
 #endif
 
 
@@ -40,7 +40,7 @@
 // ------------------------------------------------------------------------------------ //
 // InterfaceReg.
 // ------------------------------------------------------------------------------------ //
-InterfaceReg *InterfaceReg::s_pInterfaceRegs = NULL;
+InterfaceReg *InterfaceReg::s_pInterfaceRegs = nullptr;
 
 InterfaceReg::InterfaceReg( InstantiateInterfaceFn fn, const char *pName ) :
 	m_pName(pName)
@@ -82,7 +82,7 @@ void* CreateInterfaceInternal( const char *pName, int *pReturnCode )
 	{
 		*pReturnCode = IFACE_FAILED;
 	}
-	return NULL;	
+	return nullptr;
 }
 
 void* CreateInterface( const char *pName, int *pReturnCode )
@@ -93,36 +93,28 @@ void* CreateInterface( const char *pName, int *pReturnCode )
 
 
 #ifdef POSIX
-// Linux doesn't have this function so this emulates its functionality
-void *GetModuleHandle(const char *name)
-{
-	void *handle;
+	// Linux doesn't have this function so this emulates its functionality
+	void *GetModuleHandle( const char *name ) {
+		void *handle;
 
-	if( name == NULL )
-	{
-		// hmm, how can this be handled under linux....
-		// is it even needed?
-		return NULL;
+		if ( name == nullptr ) {
+			// hmm, how can this be handled under linux....
+			// is it even needed?
+			return nullptr;
+		}
+
+		if ( (handle=dlopen(name, RTLD_NOW)) == nullptr ) {
+			printf( "DLOPEN Error:%s\n", dlerror() );
+			// couldn't open this file
+			return nullptr;
+		}
+
+		// read "man dlopen" for details
+		// in short dlopen() inc a ref count
+		// so dec the ref count by performing the close
+		dlclose( handle );
+		return handle;
 	}
-
-    if( (handle=dlopen(name, RTLD_NOW))==NULL)
-    {
-            printf("DLOPEN Error:%s\n",dlerror());
-            // couldn't open this file
-            return NULL;
-    }
-
-	// read "man dlopen" for details
-	// in short dlopen() inc a ref count
-	// so dec the ref count by performing the close
-	dlclose(handle);
-	return handle;
-}
-#endif
-
-#if defined( _WIN32 )
-#define WIN32_LEAN_AND_MEAN
-#include "windows.h"
 #endif
 
 //-----------------------------------------------------------------------------
@@ -130,25 +122,15 @@ void *GetModuleHandle(const char *name)
 // Input  : pModuleName - module name
 //			*pName - proc name
 //-----------------------------------------------------------------------------
-static void *Sys_GetProcAddress( const char *pModuleName, const char *pName )
-{
-	HMODULE hModule = (HMODULE)GetModuleHandle( pModuleName );
-#ifdef WIN32
-	return (void *)GetProcAddress( hModule, pName );
-#else
-	return (void *)dlsym( (void *)hModule, pName );
-#endif
+static void* Sys_GetProcAddress( const char* pModuleName, const char* pName ) {
+	auto hModule = reinterpret_cast<HMODULE>( GetModuleHandle( pModuleName ) );
+	return reinterpret_cast<void*>( GetProcAddress( hModule, pName ) );
 }
 
 #if !defined(LINUX)
-static void *Sys_GetProcAddress( HMODULE hModule, const char *pName )
-{
-#ifdef WIN32
-	return (void *)GetProcAddress( hModule, pName );
-#else
-	return (void *)dlsym( (void *)hModule, pName );
-#endif
-}
+	static void* Sys_GetProcAddress( HMODULE hModule, const char* pName ) {
+		return reinterpret_cast<void*>( GetProcAddress( hModule, pName ) );
+	}
 #endif
 
 bool Sys_IsDebuggerPresent()
@@ -163,80 +145,72 @@ struct ThreadedLoadLibaryContext_t
 };
 
 #ifdef _WIN32
+	// wraps LoadLibraryEx() since 360 doesn't support that
+	static HMODULE InternalLoadLibrary( const char *pName, Sys_Flags flags ) {
+		if ( flags & SYS_NOLOAD )
+			return GetModuleHandle( pName );
 
-// wraps LoadLibraryEx() since 360 doesn't support that
-static HMODULE InternalLoadLibrary( const char *pName, Sys_Flags flags )
-{
-	if ( flags & SYS_NOLOAD )
-		return GetModuleHandle( pName );
-	else
 		return LoadLibraryEx( pName, NULL, LOAD_WITH_ALTERED_SEARCH_PATH );
-}
-unsigned ThreadedLoadLibraryFunc( void *pParam )
-{
-	ThreadedLoadLibaryContext_t *pContext = (ThreadedLoadLibaryContext_t*)pParam;
-	pContext->m_hLibrary = InternalLoadLibrary( pContext->m_pLibraryName, SYS_NOFLAGS );
-	return 0;
-}
+	}
+	unsigned ThreadedLoadLibraryFunc( void *pParam ) {
+		auto* pContext = reinterpret_cast<ThreadedLoadLibaryContext_t*>( pParam );
+		pContext->m_hLibrary = InternalLoadLibrary( pContext->m_pLibraryName, SYS_NOFLAGS );
+		return 0;
+	}
+#endif
 
-#endif // _WIN32
-
-HMODULE Sys_LoadLibrary( const char *pLibraryName, Sys_Flags flags )
-{
+HMODULE Sys_LoadLibrary( const char *pLibraryName, Sys_Flags flags ) {
 	char str[ 1024 ];
-	// Note: DLL_EXT_STRING can be "_srv.so" or "_360.dll". So be careful
-	//	when using the V_*Extension* routines...
-	const char *pDllStringExtension = V_GetFileExtension( DLL_EXT_STRING );
-	const char *pModuleExtension = pDllStringExtension ? ( pDllStringExtension - 1 ) : DLL_EXT_STRING;
+	// Note: DLL_EXT_STRING can be "_srv.so" or "_360.dll".
+	//  So be careful when using the V_*Extension* routines...
+	const char* pDllStringExtension = V_GetFileExtension( DLL_EXT_STRING );
+	const char* pModuleExtension = pDllStringExtension ? ( pDllStringExtension - 1 ) : DLL_EXT_STRING;
 
 	Q_strncpy( str, pLibraryName, sizeof(str) );
 
-        // always force the final extension to be .dll
-        V_SetExtension( str, pModuleExtension, sizeof(str) );
+	// always force the final extension to be .dll
+	V_SetExtension( str, pModuleExtension, sizeof(str) );
 
 	Q_FixSlashes( str );
 
-#ifdef _WIN32
-	ThreadedLoadLibraryFunc_t threadFunc = GetThreadedLoadLibraryFunc();
-	if ( !threadFunc )
-		return InternalLoadLibrary( str, flags );
+	#if IsWindows()
+		ThreadedLoadLibraryFunc_t threadFunc = GetThreadedLoadLibraryFunc();
+		if ( !threadFunc )
+			return InternalLoadLibrary( str, flags );
 
-	// We shouldn't be passing noload while threaded.
-	Assert( !( flags & SYS_NOLOAD ) );
+		// We shouldn't be passing noload while threaded.
+		Assert( !( flags & SYS_NOLOAD ) );
 
-	ThreadedLoadLibaryContext_t context;
-	context.m_pLibraryName = str;
-	context.m_hLibrary = 0;
+		ThreadedLoadLibaryContext_t context;
+		context.m_pLibraryName = str;
+		context.m_hLibrary = 0;
 
-	ThreadHandle_t h = CreateSimpleThread( ThreadedLoadLibraryFunc, &context );
+		ThreadHandle_t h = CreateSimpleThread( ThreadedLoadLibraryFunc, &context );
 
-	unsigned int nTimeout = 0;
-	while( ThreadWaitForObject( h, true, nTimeout ) == TW_TIMEOUT )
-	{
-		nTimeout = threadFunc();
-	}
-
-	ReleaseThreadHandle( h );
-	return context.m_hLibrary;
-
-#elif POSIX
-	int dlopen_mode = RTLD_NOW;
-
-	if ( flags & SYS_NOLOAD )
-		dlopen_mode |= RTLD_NOLOAD;
-
-	HMODULE ret = ( HMODULE )dlopen( str, dlopen_mode );
-	if ( !ret && !( flags & SYS_NOLOAD ) )
-	{
-		const char *pError = dlerror();
-		if ( pError && ( strstr( pError, "No such file" ) == 0 ) && ( strstr( pError, "image not found" ) == 0 ) )
-		{
-			Msg( " failed to dlopen %s error=%s\n", str, pError );
+		unsigned int nTimeout = 0;
+		while( ThreadWaitForObject( h, true, nTimeout ) == TW_TIMEOUT ) {
+			nTimeout = threadFunc();
 		}
-	}
-	
-	return ret;
-#endif
+
+		ReleaseThreadHandle( h );
+		return context.m_hLibrary;
+
+	#elif IsPosix()
+		int dlopen_mode = RTLD_NOW;
+
+		if ( flags & SYS_NOLOAD )
+			dlopen_mode |= RTLD_NOLOAD;
+
+		auto ret = reinterpret_cast<HMODULE>( dlopen( str, dlopen_mode ) );
+		if ( !ret && !( flags & SYS_NOLOAD ) ) {
+			const char *pError = dlerror();
+			if ( pError && ( strstr( pError, "No such file" ) == nullptr || strstr( pError, "image not found" ) == nullptr ) ) {
+				Msg( " failed to dlopen `%s`, error=%s\n", str, pError );
+			}
+		}
+
+		return ret;
+	#endif
 }
 static bool s_bRunningWithDebugModules = false;
 
@@ -245,96 +219,81 @@ static bool s_bRunningWithDebugModules = false;
 // Input  : *pModuleName - filename of the component
 // Output : opaque handle to the module (hides system dependency)
 //-----------------------------------------------------------------------------
-CSysModule *Sys_LoadModule( const char *pModuleName, Sys_Flags flags /* = SYS_NOFLAGS (0) */ )
-{
+CSysModule *Sys_LoadModule( const char *pModuleName, Sys_Flags flags /* = SYS_NOFLAGS (0) */ ) {
 	// If using the Steam filesystem, either the DLL must be a minimum footprint
 	// file in the depot (MFP) or a filesystem GetLocalCopy() call must be made
 	// prior to the call to this routine.
 	char szCwd[1024];
 	HMODULE hDLL = NULL;
 
-	if ( !Q_IsAbsolutePath( pModuleName ) )
-	{
+	if ( !Q_IsAbsolutePath( pModuleName ) ) {
 		// full path wasn't passed in, using the current working dir
 		_getcwd( szCwd, sizeof( szCwd ) );
-		if (szCwd[strlen(szCwd) - 1] == '/' || szCwd[strlen(szCwd) - 1] == '\\' )
-		{
+		if (szCwd[strlen(szCwd) - 1] == '/' || szCwd[strlen(szCwd) - 1] == '\\' ) {
 			szCwd[strlen(szCwd) - 1] = 0;
 		}
 
 		char szAbsoluteModuleName[1024];
 		size_t cCwd = strlen( szCwd );
-		if ( strstr( pModuleName, "bin/") == pModuleName || ( szCwd[ cCwd - 1 ] == 'n'  && szCwd[ cCwd - 2 ] == 'i' && szCwd[ cCwd - 3 ] == 'b' )  )
-		{
+		if ( strstr( pModuleName, "bin/") == pModuleName || ( szCwd[ cCwd - 1 ] == 'n'  && szCwd[ cCwd - 2 ] == 'i' && szCwd[ cCwd - 3 ] == 'b' )  ) {
 			// don't make bin/bin path
 			Q_snprintf( szAbsoluteModuleName, sizeof(szAbsoluteModuleName), "%s/%s", szCwd, pModuleName );			
-		}
-		else
-		{
+		} else {
 			Q_snprintf( szAbsoluteModuleName, sizeof(szAbsoluteModuleName), "%s/bin/%s", szCwd, pModuleName );
 		}
 		hDLL = Sys_LoadLibrary( szAbsoluteModuleName, flags );
 	}
 
-	if ( !hDLL )
-	{
+	if ( !hDLL ) {
 		// full path failed, let LoadLibrary() try to search the PATH now
 		hDLL = Sys_LoadLibrary( pModuleName, flags );
-#if defined( _DEBUG )
-		if ( !hDLL )
-		{
-// So you can see what the error is in the debugger...
-#if defined( _WIN32 )
-			char *lpMsgBuf;
-			
-			FormatMessage( 
-				FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-				FORMAT_MESSAGE_FROM_SYSTEM | 
-				FORMAT_MESSAGE_IGNORE_INSERTS,
-				NULL,
-				GetLastError(),
-				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-				(LPTSTR) &lpMsgBuf,
-				0,
-				NULL 
-			);
+		#if defined( _DEBUG )
+			if ( !hDLL ) {
+				// So you can see what the error is in the debugger...
+				#if defined( _WIN32 )
+					char *lpMsgBuf;
 
-			LocalFree( (HLOCAL)lpMsgBuf );
-#endif // _WIN32
-		}
-#endif // DEBUG
+					FormatMessage(
+						FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+						NULL,
+						GetLastError(),
+						MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+						(LPTSTR) &lpMsgBuf,
+						0,
+						NULL
+					);
+
+					LocalFree( (HLOCAL)lpMsgBuf );
+				#endif // _WIN32
+			}
+		#endif // DEBUG
 	}
 
-#if !defined(LINUX)
-	// If running in the debugger, assume debug binaries are okay, otherwise they must run with -allowdebug
-	if ( Sys_GetProcAddress( hDLL, "BuiltDebug" ) )
-	{
-		if ( hDLL &&
-			 !CommandLine()->FindParm( "-allowdebug" ) && 
-			 !Sys_IsDebuggerPresent() )
-		{
-			Error( "Module %s is a debug build\n", pModuleName );
+	#if !defined(LINUX)
+		// If running in the debugger, assume debug binaries are okay, otherwise they must run with -allowdebug
+		if ( Sys_GetProcAddress( hDLL, "BuiltDebug" ) ) {
+			if ( hDLL && !CommandLine()->FindParm( "-allowdebug" ) && !Sys_IsDebuggerPresent() ) {
+				Error( "Module %s is a debug build\n", pModuleName );
+			}
+
+			DevWarning( "Module %s is a debug build\n", pModuleName );
+
+			if ( !s_bRunningWithDebugModules ) {
+				s_bRunningWithDebugModules = true;
+
+				#if 0 //def IS_WINDOWS_PC
+					char chMemoryName[ MAX_PATH ];
+					DebugKernelMemoryObjectName( chMemoryName );
+
+					(void) CreateFileMapping( INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, 1024, chMemoryName );
+					// Created a shared memory kernel object specific to process id
+					// Existence of this object indicates that we have debug modules loaded
+				#endif
+			}
 		}
+	#endif
 
-		DevWarning( "Module %s is a debug build\n", pModuleName );
-
-		if ( !s_bRunningWithDebugModules )
-		{
-			s_bRunningWithDebugModules = true;
-			
-#if 0 //def IS_WINDOWS_PC
-			char chMemoryName[ MAX_PATH ];
-			DebugKernelMemoryObjectName( chMemoryName );
-			
-			(void) CreateFileMapping( INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, 1024, chMemoryName );
-			// Created a shared memory kernel object specific to process id
-			// Existence of this object indicates that we have debug modules loaded
-#endif
-		}
-	}
-#endif
-
-	return reinterpret_cast<CSysModule *>(hDLL);
+	return reinterpret_cast<CSysModule*>( hDLL );
 }
 
 //-----------------------------------------------------------------------------
@@ -365,18 +324,17 @@ bool Sys_RunningWithDebugModules()
 // Input  : *pModuleName - filename of the component
 // Output : opaque handle to the module (hides system dependency)
 //-----------------------------------------------------------------------------
-void Sys_UnloadModule( CSysModule *pModule )
-{
+void Sys_UnloadModule( CSysModule *pModule ) {
 	if ( !pModule )
 		return;
 
-	HMODULE	hDLL = reinterpret_cast<HMODULE>(pModule);
+	auto hDLL = reinterpret_cast<HMODULE>( pModule );
 
-#ifdef _WIN32
-	FreeLibrary( hDLL );
-#elif defined(POSIX)
-	dlclose((void *)hDLL);
-#endif
+	#ifdef _WIN32
+		FreeLibrary( hDLL );
+	#elif defined(POSIX)
+		dlclose( reinterpret_cast<void*>( hDLL ) );
+	#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -385,32 +343,19 @@ void Sys_UnloadModule( CSysModule *pModule )
 //			*pName - proc name
 // Output : factory for this module
 //-----------------------------------------------------------------------------
-CreateInterfaceFn Sys_GetFactory( CSysModule *pModule )
-{
+CreateInterfaceFn Sys_GetFactory( CSysModule *pModule ) {
 	if ( !pModule )
-		return NULL;
+		return nullptr;
 
-	HMODULE	hDLL = reinterpret_cast<HMODULE>(pModule);
-#ifdef _WIN32
-	return reinterpret_cast<CreateInterfaceFn>(GetProcAddress( hDLL, CREATEINTERFACE_PROCNAME ));
-#elif defined(POSIX)
-	// Linux gives this error:
-	//../public/interface.cpp: In function `IBaseInterface *(*Sys_GetFactory
-	//(CSysModule *)) (const char *, int *)':
-	//../public/interface.cpp:154: ISO C++ forbids casting between
-	//pointer-to-function and pointer-to-object
-	//
-	// so lets get around it :)
-	return (CreateInterfaceFn)(GetProcAddress( (void *)hDLL, CREATEINTERFACE_PROCNAME ));
-#endif
+	auto hDLL = reinterpret_cast<HMODULE>( pModule );
+	return reinterpret_cast<CreateInterfaceFn>( GetProcAddress( hDLL, CREATEINTERFACE_PROCNAME ) );
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: returns the instance of this module
 // Output : interface_instance_t
 //-----------------------------------------------------------------------------
-CreateInterfaceFn Sys_GetFactoryThis( void )
-{
+CreateInterfaceFn Sys_GetFactoryThis() {
 	return &CreateInterfaceInternal;
 }
 
@@ -419,14 +364,8 @@ CreateInterfaceFn Sys_GetFactoryThis( void )
 // Input  : *pModuleName - name of the module
 // Output : interface_instance_t - instance of that module
 //-----------------------------------------------------------------------------
-CreateInterfaceFn Sys_GetFactory( const char *pModuleName )
-{
-#ifdef _WIN32
-	return static_cast<CreateInterfaceFn>( Sys_GetProcAddress( pModuleName, CREATEINTERFACE_PROCNAME ) );
-#elif defined(POSIX)
-	// see Sys_GetFactory( CSysModule *pModule ) for an explanation
-	return (CreateInterfaceFn)( Sys_GetProcAddress( pModuleName, CREATEINTERFACE_PROCNAME ) );
-#endif
+CreateInterfaceFn Sys_GetFactory( const char *pModuleName ) {
+	return reinterpret_cast<CreateInterfaceFn>( Sys_GetProcAddress( pModuleName, CREATEINTERFACE_PROCNAME ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -445,15 +384,13 @@ bool Sys_LoadInterface(
 		return false;
 
 	CreateInterfaceFn fn = Sys_GetFactory( pMod );
-	if ( !fn )
-	{
+	if ( !fn ) {
 		Sys_UnloadModule( pMod );
 		return false;
 	}
 
-	*pOutInterface = fn( pInterfaceVersionName, NULL );
-	if ( !( *pOutInterface ) )
-	{
+	*pOutInterface = fn( pInterfaceVersionName, nullptr );
+	if (! ( *pOutInterface ) ) {
 		Sys_UnloadModule( pMod );
 		return false;
 	}
@@ -473,60 +410,46 @@ bool Sys_LoadInterface(
 //-----------------------------------------------------------------------------
 CDllDemandLoader::CDllDemandLoader( char const *pchModuleName ) : 
 	m_pchModuleName( pchModuleName ), 
-	m_hModule( 0 ),
-	m_bLoadAttempted( false )
-{
-}
+	m_hModule( nullptr ),
+	m_bLoadAttempted( false ) { }
 
-CDllDemandLoader::~CDllDemandLoader()
-{
+CDllDemandLoader::~CDllDemandLoader() {
 	Unload();
 }
 
-CreateInterfaceFn CDllDemandLoader::GetFactory()
-{
-	if ( !m_hModule && !m_bLoadAttempted )
-	{
+CreateInterfaceFn CDllDemandLoader::GetFactory() {
+	if ( !m_hModule && !m_bLoadAttempted ) {
 		m_bLoadAttempted = true;
 		m_hModule = Sys_LoadModule( m_pchModuleName );
 	}
 
-	if ( !m_hModule )
-	{
-		return NULL;
+	if ( !m_hModule ) {
+		return nullptr;
 	}
 
 	return Sys_GetFactory( m_hModule );
 }
 
-void CDllDemandLoader::Unload()
-{
-	if ( m_hModule )
-	{
+void CDllDemandLoader::Unload() {
+	if ( m_hModule ) {
 		Sys_UnloadModule( m_hModule );
-		m_hModule = 0;
+		m_hModule = nullptr;
 	}
 }
 
+
 #if defined( STAGING_ONLY ) && defined( _WIN32 )
+	typedef USHORT( WINAPI RtlCaptureStackBackTrace_FUNC )( ULONG frames_to_skip, ULONG frames_to_capture, PVOID *backtrace, PULONG backtrace_hash );
 
-typedef USHORT( WINAPI RtlCaptureStackBackTrace_FUNC )(
-	ULONG frames_to_skip,
-	ULONG frames_to_capture,
-	PVOID *backtrace,
-	PULONG backtrace_hash );
+	extern "C" int backtrace( void **buffer, int size ) {
+		HMODULE hNTDll = GetModuleHandleA( "ntdll.dll" );
+		static RtlCaptureStackBackTrace_FUNC * const pfnRtlCaptureStackBackTrace =
+			( RtlCaptureStackBackTrace_FUNC * )GetProcAddress( hNTDll, "RtlCaptureStackBackTrace" );
 
-extern "C" int backtrace( void **buffer, int size )
-{
-	HMODULE hNTDll = GetModuleHandleA( "ntdll.dll" );
-	static RtlCaptureStackBackTrace_FUNC * const pfnRtlCaptureStackBackTrace =
-		( RtlCaptureStackBackTrace_FUNC * )GetProcAddress( hNTDll, "RtlCaptureStackBackTrace" );
+		if ( !pfnRtlCaptureStackBackTrace )
+			return 0;
 
-	if ( !pfnRtlCaptureStackBackTrace )
-		return 0;
-
-	return (int)pfnRtlCaptureStackBackTrace( 2, size, buffer, 0 );
-}
-
-#endif // STAGING_ONLY && _WIN32
+		return (int)pfnRtlCaptureStackBackTrace( 2, size, buffer, 0 );
+	}
+#endif
 

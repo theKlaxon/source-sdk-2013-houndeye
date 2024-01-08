@@ -36,7 +36,7 @@ static ISzAlloc g_Alloc = { SzAlloc, SzFree };
 /* static */
 bool CLZMA::IsCompressed( unsigned char *pInput )
 {
-	lzma_header_t *pHeader = (lzma_header_t *)pInput;
+	LzmaHeader*pHeader = (LzmaHeader*)pInput;
 	if ( pHeader && pHeader->id == LZMA_ID )
 	{
 		return true;
@@ -53,7 +53,7 @@ bool CLZMA::IsCompressed( unsigned char *pInput )
 /* static */
 unsigned int CLZMA::GetActualSize( unsigned char *pInput )
 {
-	lzma_header_t *pHeader = (lzma_header_t *)pInput;
+	LzmaHeader*pHeader = (LzmaHeader*)pInput;
 	if ( pHeader && pHeader->id == LZMA_ID )
 	{
 		return LittleLong( pHeader->actualSize );
@@ -70,7 +70,7 @@ unsigned int CLZMA::GetActualSize( unsigned char *pInput )
 /* static */
 unsigned int CLZMA::Uncompress( unsigned char *pInput, unsigned char *pOutput )
 {
-	lzma_header_t *pHeader = (lzma_header_t *)pInput;
+	LzmaHeader*pHeader = (LzmaHeader*)pInput;
 	if ( pHeader->id != LZMA_ID )
 	{
 		// not ours
@@ -91,7 +91,7 @@ unsigned int CLZMA::Uncompress( unsigned char *pInput, unsigned char *pOutput )
 	SizeT outProcessed = pHeader->actualSize;
 	SizeT inProcessed = pHeader->lzmaSize;
 	ELzmaStatus status;
-	SRes result = LzmaDecode( (Byte *)pOutput, &outProcessed, (Byte *)(pInput + sizeof( lzma_header_t ) ),
+	SRes result = LzmaDecode( (Byte *)pOutput, &outProcessed, (Byte *)(pInput + sizeof( LzmaHeader ) ),
 	                          &inProcessed, (Byte *)pHeader->properties, LZMA_PROPS_SIZE, LZMA_FINISH_END, &status, &g_Alloc );
 
 
@@ -318,7 +318,7 @@ CLZMAStream::eHeaderParse CLZMAStream::TryParseHeader( unsigned char *pInput, un
 	else
 	{
 		// Else native source engine style header
-		if ( nBytesAvailable < sizeof( lzma_header_t ) )
+		if ( nBytesAvailable < sizeof( LzmaHeader ) )
 		{
 			// need more input to continue
 			return eHeaderParse_NeedMoreBytes;
@@ -333,14 +333,14 @@ CLZMAStream::eHeaderParse CLZMAStream::TryParseHeader( unsigned char *pInput, un
 			return eHeaderParse_Fail;
 		}
 
-		if ( !CreateDecoderState( ((lzma_header_t *)pInput)->properties ) )
+		if ( !CreateDecoderState( ((LzmaHeader*)pInput)->properties ) )
 		{
 			AssertMsg( false, "Failed decoding Lzma properties" );
 			return eHeaderParse_Fail;
 		}
 
-		m_nCompressedSize = LittleLong( ((lzma_header_t *)pInput)->lzmaSize ) + sizeof( lzma_header_t );
-		nBytesConsumed += sizeof( lzma_header_t );
+		m_nCompressedSize = LittleLong( ((LzmaHeader*)pInput)->lzmaSize ) + sizeof( LzmaHeader );
+		nBytesConsumed += sizeof( LzmaHeader );
 	}
 
 	m_bParsedHeader = true;

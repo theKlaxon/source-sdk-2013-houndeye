@@ -21,8 +21,7 @@
 
 // bind the buffer for correct identification
 #pragma pack(1)
-struct lzma_header_t
-{
+struct LzmaHeader {
 	unsigned int	id;
 	unsigned int	actualSize;		// always little endian
 	unsigned int	lzmaSize;		// always little endian
