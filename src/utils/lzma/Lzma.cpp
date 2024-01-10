@@ -1,10 +1,10 @@
 /**
  *
- * Lzma.c - Implements certain unresolved symbols for tooling LZMA needs.
+ * Lzma.cpp - Implements certain unresolved symbols for tooling LZMA needs.
  *
  * Credit: Based on code by JJL772, https://github.com/JJL772/source-sdk-custom
  */
-#include "LzmaEnc.h"
+#include "C/LzmaEnc.h"
 #include <memory.h>
 #include <cstdlib>
 extern "C" {
@@ -29,7 +29,7 @@ struct LzmaHeader {
 // Encoding glue. Returns non-null Compressed buffer if successful.
 // Caller must free.
 //-----------------------------------------------------------------------------
-unsigned char* LZMA_Compress( unsigned char* pInput, unsigned int inputSize, unsigned int* pOutputSize ) {
+extern "C" unsigned char* LZMA_Compress( unsigned char* pInput, unsigned int inputSize, unsigned int* pOutputSize ) {
 	*pOutputSize = 0;
 
 	if ( inputSize <= sizeof( LzmaHeader ) ) {
@@ -91,7 +91,7 @@ unsigned char* LZMA_Compress( unsigned char* pInput, unsigned int inputSize, uns
 //-----------------------------------------------------------------------------
 // Decoding glue. Returns TRUE if succesful.
 //-----------------------------------------------------------------------------
-bool LZMA_Uncompress( unsigned char* pInput, unsigned char** ppOutput, unsigned int* pOutputSize ) {
+extern "C" bool LZMA_Uncompress( unsigned char* pInput, unsigned char** ppOutput, unsigned int* pOutputSize ) {
 	*pOutputSize = 0;
 
 	if (! LZMA_IsCompressed( pInput ) )
@@ -122,7 +122,7 @@ bool LZMA_Uncompress( unsigned char* pInput, unsigned char** ppOutput, unsigned 
 //-----------------------------------------------------------------------------
 // Decoding helper, returns TRUE if buffer is LZMA compressed.
 //-----------------------------------------------------------------------------
-bool LZMA_IsCompressed( unsigned char* pInput ) {
+extern "C" bool LZMA_IsCompressed( unsigned char* pInput ) {
 	auto* pHeader = reinterpret_cast<LzmaHeader*>( pInput );
 	if ( pHeader && pHeader->id == LZMA_ID ) {
 		return true;
@@ -135,7 +135,7 @@ bool LZMA_IsCompressed( unsigned char* pInput ) {
 //-----------------------------------------------------------------------------
 // Decoding helper, returns non-zero size of data when uncompressed, otherwise 0.
 //-----------------------------------------------------------------------------
-unsigned int LZMA_GetActualSize( unsigned char* pInput ) {
+extern "C" unsigned int LZMA_GetActualSize( unsigned char* pInput ) {
 	auto* pHeader = reinterpret_cast<LzmaHeader*>( pInput );
 	if ( pHeader && pHeader->id == LZMA_ID ) {
 		return pHeader->actualSize;

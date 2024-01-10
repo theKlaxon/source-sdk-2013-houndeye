@@ -6,7 +6,7 @@ set( LZMA_SOURCE_FILES
 	"${LZMA_DIR}/C/LzmaDec.c"
 	"${LZMA_DIR}/C/LzmaEnc.c"
 	"${LZMA_DIR}/C/LzmaLib.c"
-	"${LZMA_DIR}/C/Lzma.cpp"
+	"${LZMA_DIR}/Lzma.cpp"
 )
 
 
