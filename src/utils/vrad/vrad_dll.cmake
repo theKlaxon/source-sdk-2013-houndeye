@@ -208,14 +208,14 @@ target_link_libraries( vrad_dll
 	PRIVATE
 #		ws2_32
 
-		lzma
-		tier0
-		tier1
-		mathlib
-		vstdlib
 		raytrace
 		"${LIBPUBLIC}/bitmap${CMAKE_STATIC_LIBRARY_SUFFIX}"
 		"${LIBPUBLIC}/tier2${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		tier0
+		vstdlib
+		tier1
+		lzma
+		mathlib
 #		"${LIBPUBLIC}/vmpi${CMAKE_STATIC_LIBRARY_SUFFIX}"
 		"${LIBPUBLIC}/vtf${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
