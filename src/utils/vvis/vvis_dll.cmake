@@ -102,7 +102,7 @@ target_link_libraries( vvis_dll
 #		odbccp32
 #		ws2_32
 
-#		lzma
+		lzma
 		tier0
 		tier1
 		mathlib
