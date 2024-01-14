@@ -206,7 +206,7 @@ target_compile_definitions( vrad_dll
 
 target_link_libraries( vrad_dll
 	PRIVATE
-#		ws2_32
+		$<${IS_WINDOWS}:ws2_32>
 
 		raytrace
 		"${LIBPUBLIC}/bitmap${CMAKE_STATIC_LIBRARY_SUFFIX}"

@@ -98,9 +98,9 @@ target_compile_definitions( vvis_dll
 #find_package( liblzma CONFIG REQUIRED )
 target_link_libraries( vvis_dll
 	PRIVATE
-#		odbc32
-#		odbccp32
-#		ws2_32
+		$<${IS_WINDOWS}:odbc32>
+		$<${IS_WINDOWS}:odbccp32>
+		$<${IS_WINDOWS}:ws2_32>
 
 		lzma
 		tier0

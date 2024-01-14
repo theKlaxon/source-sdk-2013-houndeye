@@ -142,34 +142,34 @@ set(
 
 add_executable(vbsp ${VBSP_SOURCE_FILES})
 
-set_target_properties(
-	vbsp PROPERTIES
-	RUNTIME_OUTPUT_DIRECTORY "${GAMEDIR}/bin"
+set_target_properties(vbsp
+	PROPERTIES
+		RUNTIME_OUTPUT_DIRECTORY "${GAMEDIR}/bin"
 )
 
-target_include_directories(
-	vbsp PRIVATE
-	"${SRCDIR}/utils/common"
-	"${SRCDIR}/utils/vmpi"
+target_include_directories(vbsp
+	PRIVATE
+		"${SRCDIR}/utils/common"
+		"${SRCDIR}/utils/vmpi"
 )
 
-target_compile_definitions(
-	vbsp PRIVATE
-	MACRO_MATHLIB
-	PROTECTED_THINGS_DISABLE
+target_compile_definitions(vbsp
+	PRIVATE
+		MACRO_MATHLIB
+		PROTECTED_THINGS_DISABLE
 )
 
-target_link_libraries(
-	vbsp PRIVATE
-	ws2_32
-	odbc32
-	odbccp32
-	winmm
+target_link_libraries(vbsp
+	PRIVATE
+		$<${IS_WINDOWS}:ws2_32>
+		$<${IS_WINDOWS}:odbc32>
+		$<${IS_WINDOWS}:odbccp32>
+		$<${IS_WINDOWS}:winmm>
 
-	"${LIBPUBLIC}/bitmap${CMAKE_STATIC_LIBRARY_SUFFIX}"
-	fgdlib
-	mathlib
-	"${LIBPUBLIC}/tier2${CMAKE_STATIC_LIBRARY_SUFFIX}"
-	"${LIBPUBLIC}/vtf${CMAKE_STATIC_LIBRARY_SUFFIX}"
-	$<$<BOOL:${WIN32}>:"${LIBCOMMON}/lzma${CMAKE_STATIC_LIBRARY_SUFFIX}">
+		"${LIBPUBLIC}/bitmap${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		fgdlib
+		mathlib
+		"${LIBPUBLIC}/tier2${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		"${LIBPUBLIC}/vtf${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		$<${IS_WINDOWS}:"${LIBCOMMON}/lzma${CMAKE_STATIC_LIBRARY_SUFFIX}">
 )
