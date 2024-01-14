@@ -110,7 +110,7 @@ add_compile_definitions( $<$<CONFIG:Release>:NDEBUG> )
 # SETUP D LANG
 include( "_cmake_scripts/dlang.cmake" )
 
-# SETUP THIRD PARTY
+# SETUP THIRD PARTY, before we "customize" our compilation process
 include( "thirdparty/init.cmake" )
 
 if (${IS_WINDOWS})

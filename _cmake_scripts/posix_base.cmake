@@ -17,7 +17,8 @@ add_compile_options(
 	-Usprintf
 	-Ustrncpy
 	-UPROTECTED_THINGS_ENABLE
-	$<${IS_LINUX}:-fabi-compat-version=2>
+	# roughly equivalent to `isLinux && compilers[language].id == "GNU"`
+	$<${IS_LINUX}:$<$<$<COMPILE_LANGUAGE>_COMPILER_ID:GNU>:-fabi-compat-version=2>>
 )
 
 add_link_options(-m32)
