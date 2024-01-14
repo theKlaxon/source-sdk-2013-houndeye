@@ -391,7 +391,7 @@ void CmdLib_Exit( int exitCode )
 	#if IsWindows()
 		TerminateProcess( GetCurrentProcess(), 1 );
 	#elif IsPosix()
-		kill( getpid(), SIGKILL );
+		exit( exitCode );
 	#endif
 }
 
