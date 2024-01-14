@@ -70,7 +70,7 @@ public:
 	//---------------------------------------------------------
 	// IClientVirtualReality implementation
 	//---------------------------------------------------------
-	virtual void DrawMainMenu() OVERRIDE;
+	virtual void DrawMainMenu() override;
 
 
 	//---------------------------------------------------------

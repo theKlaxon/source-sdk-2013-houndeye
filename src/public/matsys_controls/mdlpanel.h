@@ -106,7 +106,7 @@ public:
 
 protected:
 
-	virtual void SetupRenderState( int nDisplayWidth, int nDisplayHeight ) OVERRIDE;
+	virtual void SetupRenderState( int nDisplayWidth, int nDisplayHeight ) override;
 
 	struct MDLData_t
 	{

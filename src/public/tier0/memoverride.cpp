@@ -782,7 +782,7 @@ public:
 class Derived : public Base
 {
 public:
-	void PureFunction() OVERRIDE
+	void PureFunction() override
 	{
 	}
 };

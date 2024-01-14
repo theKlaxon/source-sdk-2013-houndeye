@@ -83,8 +83,8 @@ public:
 	void	SetTrainWatcher( CTeamTrainWatcher *pTrainWatcher ){ m_hTrainWatcher = pTrainWatcher; } // used for train watchers that control train movement
 	CTeamTrainWatcher *GetTrainWatcher( void ) const { return m_hTrainWatcher; }
 
-	virtual void StartTouch(CBaseEntity *pOther) OVERRIDE;
-	virtual void EndTouch(CBaseEntity *pOther) OVERRIDE;
+	virtual void StartTouch(CBaseEntity *pOther) override;
+	virtual void EndTouch(CBaseEntity *pOther) override;
 
 	float GetCapTime() const { return m_flCapTime; }
 
@@ -93,7 +93,7 @@ protected:
 	virtual bool CaptureModeScalesWithPlayers() const;
 
 private:
-	virtual void AreaTouch( CBaseEntity *pOther ) OVERRIDE;
+	virtual void AreaTouch( CBaseEntity *pOther ) override;
 	void	CaptureThink( void );
 
 	void	StartCapture( int team, int capmode );

@@ -1,13 +1,12 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose:
+// Purpose: Abstract away and help with platform-specific code.
 //
 // $NoKeywords: $
 //
 //===========================================================================//
-
-#ifndef PLATFORM_H
-#define PLATFORM_H
+#pragma once
+// TODO: Move as much as possible to CMake, less moving parts are good
 
 #if defined(__x86_64__) || defined(_WIN64)
 	#define PLATFORM_64BITS 1  // this should technically go away as for merge, but it used so nop out
@@ -47,7 +46,7 @@
 #include <new>
 
 // need this for memset
-#include <string.h>
+#include <cstring>
 
 #ifdef _RETAIL
 	#define IsRetail() true
@@ -130,13 +129,6 @@ typedef signed char int8;
 		typedef __int32 intp;
 		typedef unsigned __int32 uintp;
 	#endif
-
-	// Use this to specify that a function is an override of a virtual function.
-	// This lets the compiler catch cases where you meant to override a virtual
-	// function but you accidentally changed the function signature and created
-	// an overloaded function. Usage in function declarations is like this:
-	// int GetData() const OVERRIDE;
-	#define OVERRIDE override
 #elif defined( POSIX )
 	typedef short					int16;
 	typedef unsigned short			uint16;
@@ -152,19 +144,6 @@ typedef signed char int8;
 		typedef unsigned int		uintp;
 	#endif
 	typedef void* HWND;
-
-	// Avoid redefinition warnings if a previous header defines this.
-	#undef OVERRIDE
-	#if __cplusplus >= 201103L
-		#define OVERRIDE override
-		#if defined(__clang__)
-			// warning: 'override' keyword is a C++11 extension [-Wc++11-extensions]
-			// Disabling this warning is less intrusive than enabling C++11 extensions
-			#pragma GCC diagnostic ignored "-Wc++11-extensions"
-		#endif
-	#else
-		#define OVERRIDE
-	#endif
 #endif
 
 // From steam/steamtypes.h
@@ -221,7 +200,7 @@ typedef unsigned int		uint;
 	// generating accurate compiler warnings
 	#define NORETURN				__declspec( noreturn )
 #else
-	#define NORETURN
+	#define NORETURN 				[[noreturn]]
 #endif
 
 // This can be used to declare an abstract (interface only) class.
@@ -389,7 +368,7 @@ FIXME: Enable this when we no longer fear change =)
 	#define ALIGN16_POST
 	#define ALIGN32_POST
 	#define ALIGN128_POST
-#elif defined( GNUC )
+#elif defined( GNUC ) || defined( __clang__ )
 	// gnuc has the align decoration at the end
 	#define ALIGN4
 	#define ALIGN8
@@ -419,7 +398,7 @@ FIXME: Enable this when we no longer fear change =)
 //-----------------------------------------------------------------------------
 // Stack-based allocation related helpers
 //-----------------------------------------------------------------------------
-#if defined( GNUC )
+#if defined( GNUC ) || defined( __clang__ )
 	#define stackalloc( _size )		alloca( ALIGN_VALUE( _size, 16 ) )
 	#ifdef _LINUX
 		#define mallocsize( _p )	( malloc_usable_size( _p ) )
@@ -478,7 +457,7 @@ FIXME: Enable this when we no longer fear change =)
 	#define DLL_GLOBAL_IMPORT		extern __declspec( dllimport )
 
 	#define DLL_LOCAL
-#elif defined GNUC
+#elif defined( GNUC ) || defined( __clang__ )
 	// Used for dll exporting and importing
 	#define  DLL_EXPORT   extern "C" __attribute__ ((visibility("default")))
 	#define  DLL_IMPORT   extern "C"
@@ -504,7 +483,7 @@ FIXME: Enable this when we no longer fear change =)
 	// GCC 3.4.1 has a bug in supporting forced inline of templated functions
 	// this macro lets us not force inlining in that case
 	#define  FORCEINLINE_TEMPLATE		__forceinline
-#elif defined( GNUC )
+#elif defined( GNUC ) || defined( __clang__ )
 	#define  STDCALL
 	#define  FASTCALL				__attribute__((fastcall))
 	#define  FORCEINLINE            inline
@@ -540,39 +519,36 @@ FIXME: Enable this when we no longer fear change =)
 
 
 #ifdef _WIN32
+	// Remove warnings from warning level 4.
+	#pragma warning(disable : 4514) // warning C4514: 'acosl' : unreferenced inline function has been removed
+	#pragma warning(disable : 4100) // warning C4100: 'hwnd' : unreferenced formal parameter
+	#pragma warning(disable : 4127) // warning C4127: conditional expression is constant
+	#pragma warning(disable : 4512) // warning C4512: 'InFileRIFF' : assignment operator could not be generated
+	#pragma warning(disable : 4611) // warning C4611: interaction between '_setjmp' and C++ object destruction is non-portable
+	#pragma warning(disable : 4710) // warning C4710: function 'x' not inlined
+	#pragma warning(disable : 4702) // warning C4702: unreachable code
+	#pragma warning(disable : 4505) // unreferenced local function has been removed
+	#pragma warning(disable : 4239) // nonstandard extension used : 'argument' ( conversion from class Vector to class Vector& )
+	#pragma warning(disable : 4097) // typedef-name 'BaseClass' used as synonym for class-name 'CFlexCycler::CBaseFlex'
+	#pragma warning(disable : 4324) // Padding was added at the end of a structure
+	#pragma warning(disable : 4244) // type conversion warning.
+	#pragma warning(disable : 4305)	// truncation from 'const double ' to 'float '
+	#pragma warning(disable : 4786)	// Disable warnings about long symbol names
+	#pragma warning(disable : 4250) // 'X' : inherits 'Y::Z' via dominance
+	#pragma warning(disable : 4201) // nonstandard extension used : nameless struct/union
+	#pragma warning(disable : 4481) // warning C4481: nonstandard extension used: override specifier 'override'
+	#pragma warning(disable : 4748) // warning C4748: /GS can not protect parameters and local variables from local buffer overrun because optimizations are disabled in function
 
-// Remove warnings from warning level 4.
-#pragma warning(disable : 4514) // warning C4514: 'acosl' : unreferenced inline function has been removed
-#pragma warning(disable : 4100) // warning C4100: 'hwnd' : unreferenced formal parameter
-#pragma warning(disable : 4127) // warning C4127: conditional expression is constant
-#pragma warning(disable : 4512) // warning C4512: 'InFileRIFF' : assignment operator could not be generated
-#pragma warning(disable : 4611) // warning C4611: interaction between '_setjmp' and C++ object destruction is non-portable
-#pragma warning(disable : 4710) // warning C4710: function 'x' not inlined
-#pragma warning(disable : 4702) // warning C4702: unreachable code
-#pragma warning(disable : 4505) // unreferenced local function has been removed
-#pragma warning(disable : 4239) // nonstandard extension used : 'argument' ( conversion from class Vector to class Vector& )
-#pragma warning(disable : 4097) // typedef-name 'BaseClass' used as synonym for class-name 'CFlexCycler::CBaseFlex'
-#pragma warning(disable : 4324) // Padding was added at the end of a structure
-#pragma warning(disable : 4244) // type conversion warning.
-#pragma warning(disable : 4305)	// truncation from 'const double ' to 'float '
-#pragma warning(disable : 4786)	// Disable warnings about long symbol names
-#pragma warning(disable : 4250) // 'X' : inherits 'Y::Z' via dominance
-#pragma warning(disable : 4201) // nonstandard extension used : nameless struct/union
-#pragma warning(disable : 4481) // warning C4481: nonstandard extension used: override specifier 'override'
-#pragma warning(disable : 4748) // warning C4748: /GS can not protect parameters and local variables from local buffer overrun because optimizations are disabled in function
+	#if _MSC_VER >= 1300
+		#pragma warning(disable : 4511)	// Disable warnings about private copy constructors
+		#pragma warning(disable : 4121)	// warning C4121: 'symbol' : alignment of a member was sensitive to packing
+		#pragma warning(disable : 4530)	// warning C4530: C++ exception handler used, but unwind semantics are not enabled. Specify /EHsc (disabled due to std headers having exception syntax)
+	#endif
 
-#if _MSC_VER >= 1300
-#pragma warning(disable : 4511)	// Disable warnings about private copy constructors
-#pragma warning(disable : 4121)	// warning C4121: 'symbol' : alignment of a member was sensitive to packing
-#pragma warning(disable : 4530)	// warning C4530: C++ exception handler used, but unwind semantics are not enabled. Specify /EHsc (disabled due to std headers having exception syntax)
+	#if _MSC_VER >= 1400
+		#pragma warning(disable : 4996)	// functions declared deprecated
+	#endif
 #endif
-
-#if _MSC_VER >= 1400
-#pragma warning(disable : 4996)	// functions declared deprecated
-#endif
-
-
-#endif // _WIN32
 
 #if defined( LINUX ) && ((__GNUC__ * 100) + __GNUC_MINOR__) >= 406
   // based on some Jonathan Wakely macros on the net...
@@ -604,44 +580,42 @@ FIXME: Enable this when we no longer fear change =)
 
 
 #ifdef POSIX
-#define _stricmp stricmp
-#define strcmpi stricmp
-#define stricmp strcasecmp
-#define _vsnprintf vsnprintf
-#define _alloca alloca
-#ifdef _snprintf
-#undef _snprintf
-#endif
-#define _snprintf snprintf
-#define GetProcAddress( ptr, name ) dlsym( reinterpret_cast<void*>( ptr ), name )
-#define _chdir chdir
-#define _strnicmp strnicmp
-#define strnicmp strncasecmp
-#define _getcwd getcwd
-#define _snwprintf swprintf
-#define swprintf_s swprintf
-#define wcsicmp _wcsicmp
-#define _wcsicmp wcscmp
-#define _finite finite
-#define _unlink unlink
-#define _access access
-#define _mkdir(dir) mkdir( dir, S_IRWXU | S_IRWXG | S_IRWXO )
-#define _wtoi(arg) wcstol(arg, NULL, 10)
-#define _wtoi64(arg) wcstoll(arg, NULL, 10)
+	#define _stricmp stricmp
+	#define strcmpi stricmp
+	#define stricmp strcasecmp
+	#define _vsnprintf vsnprintf
+	#define _alloca alloca
+	#ifdef _snprintf
+		#undef _snprintf
+	#endif
+	#define _snprintf snprintf
+	#define GetProcAddress( ptr, name ) dlsym( reinterpret_cast<void*>( ptr ), name )
+	#define _chdir chdir
+	#define _strnicmp strnicmp
+	#define strnicmp strncasecmp
+	#define _getcwd getcwd
+	#define _snwprintf swprintf
+	#define swprintf_s swprintf
+	#define wcsicmp _wcsicmp
+	#define _wcsicmp wcscmp
+	#define _finite finite
+	#define _unlink unlink
+	#define _access access
+	#define _mkdir(dir) mkdir( dir, S_IRWXU | S_IRWXG | S_IRWXO )
+	#define _wtoi(arg) wcstol(arg, NULL, 10)
+	#define _wtoi64(arg) wcstoll(arg, NULL, 10)
 
-typedef uint32 HMODULE;
-typedef void *HANDLE;
+	typedef uint32 HMODULE;
+	typedef void *HANDLE;
 #endif
 
 //-----------------------------------------------------------------------------
 // fsel
 //-----------------------------------------------------------------------------
-static FORCEINLINE float fsel(float fComparand, float fValGE, float fLT)
-{
+static FORCEINLINE float fsel( float fComparand, float fValGE, float fLT ) {
 	return fComparand >= 0 ? fValGE : fLT;
 }
-static FORCEINLINE double fsel(double fComparand, double fValGE, double fLT)
-{
+static FORCEINLINE double fsel( double fComparand, double fValGE, double fLT ) {
 	return fComparand >= 0 ? fValGE : fLT;
 }
 
@@ -652,18 +626,13 @@ static FORCEINLINE double fsel(double fComparand, double fValGE, double fLT)
 //#define CHECK_FLOAT_EXCEPTIONS		1
 
 #if defined( _MSC_VER )
-
 	#if defined( PLATFORM_WINDOWS_PC64 )
-		inline void SetupFPUControlWord()
-		{
-		}
+		inline void SetupFPUControlWord() { }
 	#else
-		inline void SetupFPUControlWordForceExceptions()
-		{
+		inline void SetupFPUControlWordForceExceptions() {
 			// use local to get and store control word
 			uint16 tmpCtrlW;
-			__asm
-			{
+			__asm {
 				fnclex						/* clear all current exceptions */
 				fnstcw word ptr [tmpCtrlW]	/* get current control word */
 				and [tmpCtrlW], 0FCC0h		/* Keep infinity control + rounding control */
@@ -673,41 +642,30 @@ static FORCEINLINE double fsel(double fComparand, double fValGE, double fLT)
 		}
 
 		#ifdef CHECK_FLOAT_EXCEPTIONS
-
-			inline void SetupFPUControlWord()
-			{
+			inline void SetupFPUControlWord() {
 				SetupFPUControlWordForceExceptions();
 			}
-
 		#else
-
-			inline void SetupFPUControlWord()
-			{
+			inline void SetupFPUControlWord() {
 				// use local to get and store control word
 				uint16 tmpCtrlW;
-				__asm
-				{
+				__asm {
 					fnstcw word ptr [tmpCtrlW]	/* get current control word */
 					and [tmpCtrlW], 0FCC0h		/* Keep infinity control + rounding control */
 					or [tmpCtrlW], 023Fh		/* set to 53-bit, mask only inexact, underflow */
 					fldcw word ptr [tmpCtrlW]	/* put new control word in FPU */
 				}
 			}
-
 		#endif
 	#endif
-
 #else
-
-	inline void SetupFPUControlWord()
-	{
+	inline void SetupFPUControlWord() {
 		__volatile unsigned short int __cw;
 		__asm __volatile ("fnstcw %0" : "=m" (__cw));
 		__cw = __cw & 0x0FCC0;	// keep infinity control, keep rounding mode
 		__cw = __cw | 0x023F;	// set 53-bit, no exceptions
 		__asm __volatile ("fldcw %0" : : "m" (__cw));
 	}
-
 #endif // _MSC_VER
 
 
@@ -744,8 +702,7 @@ inline T DWordSwapC( T dw )
 }
 
 template <typename T>
-inline T QWordSwapC( T dw )
-{
+inline T QWordSwapC( T dw ) {
 	// Assert sizes passed to this are already correct, otherwise
 	// the cast to uint64 * below is unsafe and may have wrong results 
 	// or even crash.
@@ -769,7 +726,6 @@ inline T QWordSwapC( T dw )
 // Fast swaps
 //-------------------------------------
 #if defined( _MSC_VER ) && !defined( PLATFORM_WINDOWS_PC64 )
-
 	#define WordSwap  WordSwapAsm
 	#define DWordSwap DWordSwapAsm
 
@@ -777,32 +733,25 @@ inline T QWordSwapC( T dw )
 	#pragma warning (disable:4035) // no return value
 
 	template <typename T>
-	inline T WordSwapAsm( T w )
-	{
-	   __asm
-	   {
+	inline T WordSwapAsm( T w ) {
+	   __asm {
 		  mov ax, w
 		  xchg al, ah
 	   }
 	}
 
 	template <typename T>
-	inline T DWordSwapAsm( T dw )
-	{
-	   __asm
-	   {
+	inline T DWordSwapAsm( T dw ) {
+	   __asm {
 		  mov eax, dw
 		  bswap eax
 	   }
 	}
 
 	#pragma warning(pop)
-
 #else
-
 	#define WordSwap  WordSwapC
 	#define DWordSwap DWordSwapC
-
 #endif
 
 // No ASM implementation for this yet
@@ -813,11 +762,11 @@ inline T QWordSwapC( T dw )
 //-------------------------------------
 
 #if defined(__i386__) && !defined(VALVE_LITTLE_ENDIAN)
-#define VALVE_LITTLE_ENDIAN 1
+	#define VALVE_LITTLE_ENDIAN 1
 #endif
 
 #if defined( _SGI_SOURCE )
-#define	VALVE_BIG_ENDIAN 1
+	#define	VALVE_BIG_ENDIAN 1
 #endif
 
 // If a swapped float passes through the fpu, the bytes may get changed.
@@ -825,71 +774,65 @@ inline T QWordSwapC( T dw )
 #define SafeSwapFloat( pOut, pIn )	(*((uint*)pOut) = DWordSwap( *((uint*)pIn) ))
 
 #if defined(VALVE_LITTLE_ENDIAN)
+	#define BigShort( val )				WordSwap( val )
+	#define BigWord( val )				WordSwap( val )
+	#define BigLong( val )				DWordSwap( val )
+	#define BigDWord( val )				DWordSwap( val )
+	#define LittleShort( val )			( val )
+	#define LittleWord( val )			( val )
+	#define LittleLong( val )			( val )
+	#define LittleDWord( val )			( val )
+	#define LittleQWord( val )			( val )
+	#define SwapShort( val )			BigShort( val )
+	#define SwapWord( val )				BigWord( val )
+	#define SwapLong( val )				BigLong( val )
+	#define SwapDWord( val )			BigDWord( val )
 
-#define BigShort( val )				WordSwap( val )
-#define BigWord( val )				WordSwap( val )
-#define BigLong( val )				DWordSwap( val )
-#define BigDWord( val )				DWordSwap( val )
-#define LittleShort( val )			( val )
-#define LittleWord( val )			( val )
-#define LittleLong( val )			( val )
-#define LittleDWord( val )			( val )
-#define LittleQWord( val )			( val )
-#define SwapShort( val )			BigShort( val )
-#define SwapWord( val )				BigWord( val )
-#define SwapLong( val )				BigLong( val )
-#define SwapDWord( val )			BigDWord( val )
-
-// Pass floats by pointer for swapping to avoid truncation in the fpu
-#define BigFloat( pOut, pIn )		SafeSwapFloat( pOut, pIn )
-#define LittleFloat( pOut, pIn )	( *pOut = *pIn )
-#define SwapFloat( pOut, pIn )		BigFloat( pOut, pIn )
-
+	// Pass floats by pointer for swapping to avoid truncation in the fpu
+	#define BigFloat( pOut, pIn )		SafeSwapFloat( pOut, pIn )
+	#define LittleFloat( pOut, pIn )	( *pOut = *pIn )
+	#define SwapFloat( pOut, pIn )		BigFloat( pOut, pIn )
 #elif defined(VALVE_BIG_ENDIAN)
+	#define BigShort( val )				( val )
+	#define BigWord( val )				( val )
+	#define BigLong( val )				( val )
+	#define BigDWord( val )				( val )
+	#define LittleShort( val )			WordSwap( val )
+	#define LittleWord( val )			WordSwap( val )
+	#define LittleLong( val )			DWordSwap( val )
+	#define LittleDWord( val )			DWordSwap( val )
+	#define LittleQWord( val )			QWordSwap( val )
+	#define SwapShort( val )			LittleShort( val )
+	#define SwapWord( val )				LittleWord( val )
+	#define SwapLong( val )				LittleLong( val )
+	#define SwapDWord( val )			LittleDWord( val )
 
-#define BigShort( val )				( val )
-#define BigWord( val )				( val )
-#define BigLong( val )				( val )
-#define BigDWord( val )				( val )
-#define LittleShort( val )			WordSwap( val )
-#define LittleWord( val )			WordSwap( val )
-#define LittleLong( val )			DWordSwap( val )
-#define LittleDWord( val )			DWordSwap( val )
-#define LittleQWord( val )			QWordSwap( val )
-#define SwapShort( val )			LittleShort( val )
-#define SwapWord( val )				LittleWord( val )
-#define SwapLong( val )				LittleLong( val )
-#define SwapDWord( val )			LittleDWord( val )
-
-// Pass floats by pointer for swapping to avoid truncation in the fpu
-#define BigFloat( pOut, pIn )		( *pOut = *pIn )
-#define LittleFloat( pOut, pIn )	SafeSwapFloat( pOut, pIn )
-#define SwapFloat( pOut, pIn )		LittleFloat( pOut, pIn )
-
+	// Pass floats by pointer for swapping to avoid truncation in the fpu
+	#define BigFloat( pOut, pIn )		( *pOut = *pIn )
+	#define LittleFloat( pOut, pIn )	SafeSwapFloat( pOut, pIn )
+	#define SwapFloat( pOut, pIn )		LittleFloat( pOut, pIn )
 #else
+	// @Note (toml 05-02-02): this technique expects the compiler to
+	//     optimize the expression and eliminate the other path.
+	//     On any new platform/compiler this should be tested.
+	inline short BigShort( short val )		{ int test = 1; return ( *(char *)&test == 1 ) ? WordSwap( val )  : val; }
+	inline uint16 BigWord( uint16 val )		{ int test = 1; return ( *(char *)&test == 1 ) ? WordSwap( val )  : val; }
+	inline long BigLong( long val )			{ int test = 1; return ( *(char *)&test == 1 ) ? DWordSwap( val ) : val; }
+	inline uint32 BigDWord( uint32 val )	{ int test = 1; return ( *(char *)&test == 1 ) ? DWordSwap( val ) : val; }
+	inline short LittleShort( short val )	{ int test = 1; return ( *(char *)&test == 1 ) ? val : WordSwap( val ); }
+	inline uint16 LittleWord( uint16 val )	{ int test = 1; return ( *(char *)&test == 1 ) ? val : WordSwap( val ); }
+	inline long LittleLong( long val )		{ int test = 1; return ( *(char *)&test == 1 ) ? val : DWordSwap( val ); }
+	inline uint32 LittleDWord( uint32 val )	{ int test = 1; return ( *(char *)&test == 1 ) ? val : DWordSwap( val ); }
+	inline uint64 LittleQWord( uint64 val )	{ int test = 1; return ( *(char *)&test == 1 ) ? val : QWordSwap( val ); }
+	inline short SwapShort( short val )					{ return WordSwap( val ); }
+	inline uint16 SwapWord( uint16 val )				{ return WordSwap( val ); }
+	inline long SwapLong( long val )					{ return DWordSwap( val ); }
+	inline uint32 SwapDWord( uint32 val )				{ return DWordSwap( val ); }
 
-// @Note (toml 05-02-02): this technique expects the compiler to
-// optimize the expression and eliminate the other path. On any new
-// platform/compiler this should be tested.
-inline short BigShort( short val )		{ int test = 1; return ( *(char *)&test == 1 ) ? WordSwap( val )  : val; }
-inline uint16 BigWord( uint16 val )		{ int test = 1; return ( *(char *)&test == 1 ) ? WordSwap( val )  : val; }
-inline long BigLong( long val )			{ int test = 1; return ( *(char *)&test == 1 ) ? DWordSwap( val ) : val; }
-inline uint32 BigDWord( uint32 val )	{ int test = 1; return ( *(char *)&test == 1 ) ? DWordSwap( val ) : val; }
-inline short LittleShort( short val )	{ int test = 1; return ( *(char *)&test == 1 ) ? val : WordSwap( val ); }
-inline uint16 LittleWord( uint16 val )	{ int test = 1; return ( *(char *)&test == 1 ) ? val : WordSwap( val ); }
-inline long LittleLong( long val )		{ int test = 1; return ( *(char *)&test == 1 ) ? val : DWordSwap( val ); }
-inline uint32 LittleDWord( uint32 val )	{ int test = 1; return ( *(char *)&test == 1 ) ? val : DWordSwap( val ); }
-inline uint64 LittleQWord( uint64 val )	{ int test = 1; return ( *(char *)&test == 1 ) ? val : QWordSwap( val ); }
-inline short SwapShort( short val )					{ return WordSwap( val ); }
-inline uint16 SwapWord( uint16 val )				{ return WordSwap( val ); }
-inline long SwapLong( long val )					{ return DWordSwap( val ); }
-inline uint32 SwapDWord( uint32 val )				{ return DWordSwap( val ); }
-
-// Pass floats by pointer for swapping to avoid truncation in the fpu
-inline void BigFloat( float *pOut, const float *pIn )		{ int test = 1; ( *(char *)&test == 1 ) ? SafeSwapFloat( pOut, pIn ) : ( *pOut = *pIn ); }
-inline void LittleFloat( float *pOut, const float *pIn )	{ int test = 1; ( *(char *)&test == 1 ) ? ( *pOut = *pIn ) : SafeSwapFloat( pOut, pIn ); }
-inline void SwapFloat( float *pOut, const float *pIn )		{ SafeSwapFloat( pOut, pIn ); }
-
+	// Pass floats by pointer for swapping to avoid truncation in the fpu
+	inline void BigFloat( float *pOut, const float *pIn )		{ int test = 1; ( *(char *)&test == 1 ) ? SafeSwapFloat( pOut, pIn ) : ( *pOut = *pIn ); }
+	inline void LittleFloat( float *pOut, const float *pIn )	{ int test = 1; ( *(char *)&test == 1 ) ? ( *pOut = *pIn ) : SafeSwapFloat( pOut, pIn ); }
+	inline void SwapFloat( float *pOut, const float *pIn )		{ SafeSwapFloat( pOut, pIn ); }
 #endif
 
 FORCEINLINE unsigned long LoadLittleDWord( const unsigned long *base, unsigned int dwordIndex )
@@ -907,24 +850,20 @@ FORCEINLINE void StoreLittleDWord( unsigned long *base, unsigned int dwordIndex,
 // DLL export for platform utilities
 //-----------------------------------------------------------------------------
 #ifndef STATIC_TIER0
-
-#ifdef TIER0_DLL_EXPORT
-#define PLATFORM_INTERFACE	DLL_EXPORT
-#define PLATFORM_OVERLOAD	DLL_GLOBAL_EXPORT
-#define PLATFORM_CLASS		DLL_CLASS_EXPORT
+	#ifdef TIER0_DLL_EXPORT
+		#define PLATFORM_INTERFACE	DLL_EXPORT
+		#define PLATFORM_OVERLOAD	DLL_GLOBAL_EXPORT
+		#define PLATFORM_CLASS		DLL_CLASS_EXPORT
+	#else
+		#define PLATFORM_INTERFACE	DLL_IMPORT
+		#define PLATFORM_OVERLOAD	DLL_GLOBAL_IMPORT
+		#define PLATFORM_CLASS		DLL_CLASS_IMPORT
+	#endif
 #else
-#define PLATFORM_INTERFACE	DLL_IMPORT
-#define PLATFORM_OVERLOAD	DLL_GLOBAL_IMPORT
-#define PLATFORM_CLASS		DLL_CLASS_IMPORT
+	#define PLATFORM_INTERFACE	extern
+	#define PLATFORM_OVERLOAD
+	#define PLATFORM_CLASS
 #endif
-
-#else	// BUILD_AS_DLL
-
-#define PLATFORM_INTERFACE	extern
-#define PLATFORM_OVERLOAD
-#define PLATFORM_CLASS
-
-#endif	// BUILD_AS_DLL
 
 
 // When in benchmark mode, the timer returns a simple incremented value each time you call it.
@@ -1051,8 +990,8 @@ PLATFORM_INTERFACE void	Plat_ApplyHardwareDataBreakpointsToNewThread( unsigned l
 //-----------------------------------------------------------------------------
 PLATFORM_INTERFACE const tchar *Plat_GetCommandLine();
 #ifndef _WIN32
-// helper function for OS's that don't have a ::GetCommandLine() call
-PLATFORM_INTERFACE void Plat_SetCommandLine( const char *cmdLine );
+	// helper function for OS's that don't have a ::GetCommandLine() call
+	PLATFORM_INTERFACE void Plat_SetCommandLine( const char *cmdLine );
 #endif
 PLATFORM_INTERFACE const char *Plat_GetCommandLineA();
 
@@ -1360,6 +1299,3 @@ PLATFORM_INTERFACE void Plat_SetWatchdogHandlerFunction( Plat_WatchDogHandlerFun
 	#define stricmp(s1,s2) V_tier0_stricmp( s1, s2 )
 	#define strcmpi(s1,s2) V_tier0_stricmp( s1, s2 )
 #endif
-
-
-#endif /* PLATFORM_H */

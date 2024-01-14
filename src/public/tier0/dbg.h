@@ -5,45 +5,37 @@
 // $NoKeywords: $
 //
 //=============================================================================//
-#ifndef DBG_H
-#define DBG_H
-
-#ifdef _WIN32
 #pragma once
-#endif
 
 #include "basetypes.h"
 #include "dbgflag.h"
 #include "platform.h"
-#include <math.h>
-#include <stdio.h>
-#include <stdarg.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdarg>
 
-#ifdef POSIX
-#define __cdecl
+#if defined( POSIX )
+	#define __cdecl
 #endif
 
 //-----------------------------------------------------------------------------
 // dll export stuff
 //-----------------------------------------------------------------------------
-#ifndef STATIC_TIER0
-
-#ifdef TIER0_DLL_EXPORT
-#define DBG_INTERFACE	DLL_EXPORT
-#define DBG_OVERLOAD	DLL_GLOBAL_EXPORT
-#define DBG_CLASS		DLL_CLASS_EXPORT
+#if !defined( STATIC_TIER0 )
+	#if defined( TIER0_DLL_EXPORT )
+		#define DBG_INTERFACE	DLL_EXPORT
+		#define DBG_OVERLOAD	DLL_GLOBAL_EXPORT
+		#define DBG_CLASS		DLL_CLASS_EXPORT
+	#else
+		#define DBG_INTERFACE	DLL_IMPORT
+		#define DBG_OVERLOAD	DLL_GLOBAL_IMPORT
+		#define DBG_CLASS		DLL_CLASS_IMPORT
+	#endif
 #else
-#define DBG_INTERFACE	DLL_IMPORT
-#define DBG_OVERLOAD	DLL_GLOBAL_IMPORT
-#define DBG_CLASS		DLL_CLASS_IMPORT
+	#define DBG_INTERFACE	extern
+	#define DBG_OVERLOAD
+	#define DBG_CLASS
 #endif
-
-#else // BUILD_AS_DLL
-
-#define DBG_INTERFACE	extern
-#define DBG_OVERLOAD	
-#define DBG_CLASS		
-#endif // BUILD_AS_DLL
 
 
 class Color;
@@ -225,13 +217,13 @@ DBG_INTERFACE void CallAssertFailedNotifyFunc( const char *pchFile, int nLine, c
 DBG_INTERFACE bool HushAsserts();
 
 #if defined( USE_SDL )
-DBG_INTERFACE void SetAssertDialogParent( struct SDL_Window *window );
-DBG_INTERFACE struct SDL_Window * GetAssertDialogParent();
+	DBG_INTERFACE void SetAssertDialogParent( struct SDL_Window *window );
+	DBG_INTERFACE struct SDL_Window * GetAssertDialogParent();
 #endif
 
 /* Used to define macros, never use these directly. */
 
-#ifdef _PREFAST_
+#if defined( _PREFAST_ )
 	// When doing /analyze builds define _AssertMsg to be __analysis_assume. This tells
 	// the compiler to assume that the condition is true, which helps to suppress many
 	// warnings. This define is done in debug and release builds.
@@ -282,109 +274,101 @@ DBG_INTERFACE struct SDL_Window * GetAssertDialogParent();
 // If enabled, it may display an assert dialog (if DBGFLAG_ASSERTDLG is turned on or running under the debugger),
 // and always terminates the application
 
-#ifdef DBGFLAG_ASSERTFATAL
+#if defined( DBGFLAG_ASSERTFATAL )
+	#define  AssertFatal( _exp )									_AssertMsg( _exp, _T("Assertion Failed: ") _T(#_exp), ((void)0), true )
+	#define  AssertFatalOnce( _exp )								_AssertMsgOnce( _exp, _T("Assertion Failed: ") _T(#_exp), true )
+	#define  AssertFatalMsg( _exp, _msg, ... )						_AssertMsg( _exp, (const tchar *)CDbgFmtMsg( _msg, ##__VA_ARGS__ ), ((void)0), true )
+	#define  AssertFatalMsgOnce( _exp, _msg )						_AssertMsgOnce( _exp, _msg, true )
+	#define  AssertFatalFunc( _exp, _f )							_AssertMsg( _exp, _T("Assertion Failed: " _T(#_exp), _f, true )
+	#define  AssertFatalEquals( _exp, _expectedValue )				AssertFatalMsg2( (_exp) == (_expectedValue), _T("Expected %d but got %d!"), (_expectedValue), (_exp) )
+	#define  AssertFatalFloatEquals( _exp, _expectedValue, _tol )   AssertFatalMsg2( fabs((_exp) - (_expectedValue)) <= (_tol), _T("Expected %f but got %f!"), (_expectedValue), (_exp) )
+	#define  VerifyFatal( _exp )									AssertFatal( _exp )
+	#define  VerifyEqualsFatal( _exp, _expectedValue )				AssertFatalEquals( _exp, _expectedValue )
 
-#define  AssertFatal( _exp )									_AssertMsg( _exp, _T("Assertion Failed: ") _T(#_exp), ((void)0), true )
-#define  AssertFatalOnce( _exp )								_AssertMsgOnce( _exp, _T("Assertion Failed: ") _T(#_exp), true )
-#define  AssertFatalMsg( _exp, _msg, ... )						_AssertMsg( _exp, (const tchar *)CDbgFmtMsg( _msg, ##__VA_ARGS__ ), ((void)0), true )
-#define  AssertFatalMsgOnce( _exp, _msg )						_AssertMsgOnce( _exp, _msg, true )
-#define  AssertFatalFunc( _exp, _f )							_AssertMsg( _exp, _T("Assertion Failed: " _T(#_exp), _f, true )
-#define  AssertFatalEquals( _exp, _expectedValue )				AssertFatalMsg2( (_exp) == (_expectedValue), _T("Expected %d but got %d!"), (_expectedValue), (_exp) ) 
-#define  AssertFatalFloatEquals( _exp, _expectedValue, _tol )   AssertFatalMsg2( fabs((_exp) - (_expectedValue)) <= (_tol), _T("Expected %f but got %f!"), (_expectedValue), (_exp) )
-#define  VerifyFatal( _exp )									AssertFatal( _exp )
-#define  VerifyEqualsFatal( _exp, _expectedValue )				AssertFatalEquals( _exp, _expectedValue )
-
-#define  AssertFatalMsg1( _exp, _msg, a1 )									AssertFatalMsg( _exp, _msg, a1 )
-#define  AssertFatalMsg2( _exp, _msg, a1, a2 )								AssertFatalMsg( _exp, _msg, a1, a2 )
-#define  AssertFatalMsg3( _exp, _msg, a1, a2, a3 )							AssertFatalMsg( _exp, _msg, a1, a2, a3 )
-#define  AssertFatalMsg4( _exp, _msg, a1, a2, a3, a4 )						AssertFatalMsg( _exp, _msg, a1, a2, a3, a4 )
-#define  AssertFatalMsg5( _exp, _msg, a1, a2, a3, a4, a5 )					AssertFatalMsg( _exp, _msg, a1, a2, a3, a4, a5 )
-#define  AssertFatalMsg6( _exp, _msg, a1, a2, a3, a4, a5, a6 )				AssertFatalMsg( _exp, _msg, a1, a2, a3, a4, a5, a6 )
-#define  AssertFatalMsg7( _exp, _msg, a1, a2, a3, a4, a5, a6, a7 )			AssertFatalMsg( _exp, _msg, a1, a2, a3, a4, a5, a6, a7 )
-#define  AssertFatalMsg8( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8 )		AssertFatalMsg( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8 )
-#define  AssertFatalMsg9( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8, a9 )	AssertFatalMsg( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8, a9 )
-
+	#define  AssertFatalMsg1( _exp, _msg, a1 )									AssertFatalMsg( _exp, _msg, a1 )
+	#define  AssertFatalMsg2( _exp, _msg, a1, a2 )								AssertFatalMsg( _exp, _msg, a1, a2 )
+	#define  AssertFatalMsg3( _exp, _msg, a1, a2, a3 )							AssertFatalMsg( _exp, _msg, a1, a2, a3 )
+	#define  AssertFatalMsg4( _exp, _msg, a1, a2, a3, a4 )						AssertFatalMsg( _exp, _msg, a1, a2, a3, a4 )
+	#define  AssertFatalMsg5( _exp, _msg, a1, a2, a3, a4, a5 )					AssertFatalMsg( _exp, _msg, a1, a2, a3, a4, a5 )
+	#define  AssertFatalMsg6( _exp, _msg, a1, a2, a3, a4, a5, a6 )				AssertFatalMsg( _exp, _msg, a1, a2, a3, a4, a5, a6 )
+	#define  AssertFatalMsg7( _exp, _msg, a1, a2, a3, a4, a5, a6, a7 )			AssertFatalMsg( _exp, _msg, a1, a2, a3, a4, a5, a6, a7 )
+	#define  AssertFatalMsg8( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8 )		AssertFatalMsg( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8 )
+	#define  AssertFatalMsg9( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8, a9 )	AssertFatalMsg( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8, a9 )
 #else // DBGFLAG_ASSERTFATAL
+	#define  AssertFatal( _exp )									((void)0)
+	#define  AssertFatalOnce( _exp )								((void)0)
+	#define  AssertFatalMsg( _exp, _msg )							((void)0)
+	#define  AssertFatalMsgOnce( _exp, _msg )						((void)0)
+	#define  AssertFatalFunc( _exp, _f )							((void)0)
+	#define  AssertFatalEquals( _exp, _expectedValue )				((void)0)
+	#define  AssertFatalFloatEquals( _exp, _expectedValue, _tol )	((void)0)
+	#define  VerifyFatal( _exp )									(_exp)
+	#define  VerifyEqualsFatal( _exp, _expectedValue )				(_exp)
 
-#define  AssertFatal( _exp )									((void)0)
-#define  AssertFatalOnce( _exp )								((void)0)
-#define  AssertFatalMsg( _exp, _msg )							((void)0)
-#define  AssertFatalMsgOnce( _exp, _msg )						((void)0)
-#define  AssertFatalFunc( _exp, _f )							((void)0)
-#define  AssertFatalEquals( _exp, _expectedValue )				((void)0)
-#define  AssertFatalFloatEquals( _exp, _expectedValue, _tol )	((void)0)
-#define  VerifyFatal( _exp )									(_exp)
-#define  VerifyEqualsFatal( _exp, _expectedValue )				(_exp)
-
-#define  AssertFatalMsg1( _exp, _msg, a1 )									((void)0)
-#define  AssertFatalMsg2( _exp, _msg, a1, a2 )								((void)0)
-#define  AssertFatalMsg3( _exp, _msg, a1, a2, a3 )							((void)0)
-#define  AssertFatalMsg4( _exp, _msg, a1, a2, a3, a4 )						((void)0)
-#define  AssertFatalMsg5( _exp, _msg, a1, a2, a3, a4, a5 )					((void)0)
-#define  AssertFatalMsg6( _exp, _msg, a1, a2, a3, a4, a5, a6 )				((void)0)
-#define  AssertFatalMsg7( _exp, _msg, a1, a2, a3, a4, a5, a6, a7 )			((void)0)
-#define  AssertFatalMsg8( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8 )		((void)0)
-#define  AssertFatalMsg9( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8, a9 )	((void)0)
-
+	#define  AssertFatalMsg1( _exp, _msg, a1 )									((void)0)
+	#define  AssertFatalMsg2( _exp, _msg, a1, a2 )								((void)0)
+	#define  AssertFatalMsg3( _exp, _msg, a1, a2, a3 )							((void)0)
+	#define  AssertFatalMsg4( _exp, _msg, a1, a2, a3, a4 )						((void)0)
+	#define  AssertFatalMsg5( _exp, _msg, a1, a2, a3, a4, a5 )					((void)0)
+	#define  AssertFatalMsg6( _exp, _msg, a1, a2, a3, a4, a5, a6 )				((void)0)
+	#define  AssertFatalMsg7( _exp, _msg, a1, a2, a3, a4, a5, a6, a7 )			((void)0)
+	#define  AssertFatalMsg8( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8 )		((void)0)
+	#define  AssertFatalMsg9( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8, a9 )	((void)0)
 #endif // DBGFLAG_ASSERTFATAL
 
 // Assert macros
 // Assert is used to detect an important but survivable error.
 // It's only turned on when DBGFLAG_ASSERT is true.
 
-#ifdef DBGFLAG_ASSERT
+#if defined( DBGFLAG_ASSERT )
+	#define  Assert( _exp )           							_AssertMsg( _exp, _T("Assertion Failed: ") _T(#_exp), ((void)0), false )
+	#define  AssertMsg( _exp, _msg, ... )  						_AssertMsg( _exp, (const tchar *)CDbgFmtMsg( _msg, ##__VA_ARGS__ ), ((void)0), false )
+	#define  AssertOnce( _exp )       							_AssertMsgOnce( _exp, _T("Assertion Failed: ") _T(#_exp), false )
+	#define  AssertMsgOnce( _exp, _msg )  						_AssertMsgOnce( _exp, _msg, false )
+	#define  AssertFunc( _exp, _f )   							_AssertMsg( _exp, _T("Assertion Failed: ") _T(#_exp), _f, false )
+	#define  AssertEquals( _exp, _expectedValue )              	AssertMsg2( (_exp) == (_expectedValue), _T("Expected %d but got %d!"), (_expectedValue), (_exp) )
+	#define  AssertFloatEquals( _exp, _expectedValue, _tol )  	AssertMsg2( fabs((_exp) - (_expectedValue)) <= (_tol), _T("Expected %f but got %f!"), (_expectedValue), (_exp) )
+	#define  Verify( _exp )           							Assert( _exp )
+	#define  VerifyMsg1( _exp, _msg, a1 )						AssertMsg1( _exp, _msg, a1 )
+	#define	 VerifyMsg2( _exp, _msg, a1, a2 )					AssertMsg2( _exp, _msg, a1, a2 )
+	#define	 VerifyMsg3( _exp, _msg, a1, a2, a3 )				AssertMsg3( _exp, _msg, a1, a2, a3 )
+	#define  VerifyEquals( _exp, _expectedValue )           	AssertEquals( _exp, _expectedValue )
+	#define  DbgVerify( _exp )           						Assert( _exp )
 
-#define  Assert( _exp )           							_AssertMsg( _exp, _T("Assertion Failed: ") _T(#_exp), ((void)0), false )
-#define  AssertMsg( _exp, _msg, ... )  						_AssertMsg( _exp, (const tchar *)CDbgFmtMsg( _msg, ##__VA_ARGS__ ), ((void)0), false )
-#define  AssertOnce( _exp )       							_AssertMsgOnce( _exp, _T("Assertion Failed: ") _T(#_exp), false )
-#define  AssertMsgOnce( _exp, _msg )  						_AssertMsgOnce( _exp, _msg, false )
-#define  AssertFunc( _exp, _f )   							_AssertMsg( _exp, _T("Assertion Failed: ") _T(#_exp), _f, false )
-#define  AssertEquals( _exp, _expectedValue )              	AssertMsg2( (_exp) == (_expectedValue), _T("Expected %d but got %d!"), (_expectedValue), (_exp) ) 
-#define  AssertFloatEquals( _exp, _expectedValue, _tol )  	AssertMsg2( fabs((_exp) - (_expectedValue)) <= (_tol), _T("Expected %f but got %f!"), (_expectedValue), (_exp) )
-#define  Verify( _exp )           							Assert( _exp )
-#define  VerifyMsg1( _exp, _msg, a1 )						AssertMsg1( _exp, _msg, a1 )
-#define	 VerifyMsg2( _exp, _msg, a1, a2 )					AssertMsg2( _exp, _msg, a1, a2 )
-#define	 VerifyMsg3( _exp, _msg, a1, a2, a3 )				AssertMsg3( _exp, _msg, a1, a2, a3 )
-#define  VerifyEquals( _exp, _expectedValue )           	AssertEquals( _exp, _expectedValue )
-#define  DbgVerify( _exp )           						Assert( _exp )
-
-#define  AssertMsg1( _exp, _msg, a1 )									AssertMsg( _exp, _msg, a1 )
-#define  AssertMsg2( _exp, _msg, a1, a2 )								AssertMsg( _exp, _msg, a1, a2 )
-#define  AssertMsg3( _exp, _msg, a1, a2, a3 )							AssertMsg( _exp, _msg, a1, a2, a3 )
-#define  AssertMsg4( _exp, _msg, a1, a2, a3, a4 )						AssertMsg( _exp, _msg, a1, a2, a3, a4 )
-#define  AssertMsg5( _exp, _msg, a1, a2, a3, a4, a5 )					AssertMsg( _exp, _msg, a1, a2, a3, a4, a5 )
-#define  AssertMsg6( _exp, _msg, a1, a2, a3, a4, a5, a6 )				AssertMsg( _exp, _msg, a1, a2, a3, a4, a5, a6 )
-#define  AssertMsg7( _exp, _msg, a1, a2, a3, a4, a5, a6, a7 )			AssertMsg( _exp, _msg, a1, a2, a3, a4, a5, a6, a7 )
-#define  AssertMsg8( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8 )		AssertMsg( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8 )
-#define  AssertMsg9( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8, a9 )	AssertMsg( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8, a9 )
-
+	#define  AssertMsg1( _exp, _msg, a1 )									AssertMsg( _exp, _msg, a1 )
+	#define  AssertMsg2( _exp, _msg, a1, a2 )								AssertMsg( _exp, _msg, a1, a2 )
+	#define  AssertMsg3( _exp, _msg, a1, a2, a3 )							AssertMsg( _exp, _msg, a1, a2, a3 )
+	#define  AssertMsg4( _exp, _msg, a1, a2, a3, a4 )						AssertMsg( _exp, _msg, a1, a2, a3, a4 )
+	#define  AssertMsg5( _exp, _msg, a1, a2, a3, a4, a5 )					AssertMsg( _exp, _msg, a1, a2, a3, a4, a5 )
+	#define  AssertMsg6( _exp, _msg, a1, a2, a3, a4, a5, a6 )				AssertMsg( _exp, _msg, a1, a2, a3, a4, a5, a6 )
+	#define  AssertMsg7( _exp, _msg, a1, a2, a3, a4, a5, a6, a7 )			AssertMsg( _exp, _msg, a1, a2, a3, a4, a5, a6, a7 )
+	#define  AssertMsg8( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8 )		AssertMsg( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8 )
+	#define  AssertMsg9( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8, a9 )	AssertMsg( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8, a9 )
 #else // DBGFLAG_ASSERT
+	#define  Assert( _exp )										((void)0)
+	#define  AssertOnce( _exp )									((void)0)
+	#define  AssertMsg( _exp, _msg, ... )						((void)0)
+	#define  AssertMsgOnce( _exp, _msg )						((void)0)
+	#define  AssertFunc( _exp, _f )								((void)0)
+	#define  AssertEquals( _exp, _expectedValue )				((void)0)
+	#define  AssertFloatEquals( _exp, _expectedValue, _tol )	((void)0)
+	#define  Verify( _exp )										(_exp)
+	#define	 VerifyMsg1( _exp, _msg, a1 )						(_exp)
+	#define	 VerifyMsg2( _exp, _msg, a1, a2 )					(_exp)
+	#define	 VerifyMsg3( _exp, _msg, a1, a2, a3 )				(_exp)
+	#define  VerifyEquals( _exp, _expectedValue )           	(_exp)
+	#define  DbgVerify( _exp )									(_exp)
 
-#define  Assert( _exp )										((void)0)
-#define  AssertOnce( _exp )									((void)0)
-#define  AssertMsg( _exp, _msg, ... )						((void)0)
-#define  AssertMsgOnce( _exp, _msg )						((void)0)
-#define  AssertFunc( _exp, _f )								((void)0)
-#define  AssertEquals( _exp, _expectedValue )				((void)0)
-#define  AssertFloatEquals( _exp, _expectedValue, _tol )	((void)0)
-#define  Verify( _exp )										(_exp)
-#define	 VerifyMsg1( _exp, _msg, a1 )						(_exp)
-#define	 VerifyMsg2( _exp, _msg, a1, a2 )					(_exp)
-#define	 VerifyMsg3( _exp, _msg, a1, a2, a3 )				(_exp)
-#define  VerifyEquals( _exp, _expectedValue )           	(_exp)
-#define  DbgVerify( _exp )									(_exp)
-
-#define  AssertMsg1( _exp, _msg, a1 )									((void)0)
-#define  AssertMsg2( _exp, _msg, a1, a2 )								((void)0)
-#define  AssertMsg3( _exp, _msg, a1, a2, a3 )							((void)0)
-#define  AssertMsg4( _exp, _msg, a1, a2, a3, a4 )						((void)0)
-#define  AssertMsg5( _exp, _msg, a1, a2, a3, a4, a5 )					((void)0)
-#define  AssertMsg6( _exp, _msg, a1, a2, a3, a4, a5, a6 )				((void)0)
-#define  AssertMsg6( _exp, _msg, a1, a2, a3, a4, a5, a6 )				((void)0)
-#define  AssertMsg7( _exp, _msg, a1, a2, a3, a4, a5, a6, a7 )			((void)0)
-#define  AssertMsg8( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8 )		((void)0)
-#define  AssertMsg9( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8, a9 )	((void)0)
-
+	#define  AssertMsg1( _exp, _msg, a1 )									((void)0)
+	#define  AssertMsg2( _exp, _msg, a1, a2 )								((void)0)
+	#define  AssertMsg3( _exp, _msg, a1, a2, a3 )							((void)0)
+	#define  AssertMsg4( _exp, _msg, a1, a2, a3, a4 )						((void)0)
+	#define  AssertMsg5( _exp, _msg, a1, a2, a3, a4, a5 )					((void)0)
+	#define  AssertMsg6( _exp, _msg, a1, a2, a3, a4, a5, a6 )				((void)0)
+	#define  AssertMsg6( _exp, _msg, a1, a2, a3, a4, a5, a6 )				((void)0)
+	#define  AssertMsg7( _exp, _msg, a1, a2, a3, a4, a5, a6, a7 )			((void)0)
+	#define  AssertMsg8( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8 )		((void)0)
+	#define  AssertMsg9( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8, a9 )	((void)0)
 #endif // DBGFLAG_ASSERT
 
 // The Always version of the assert macros are defined even when DBGFLAG_ASSERT is not, 
@@ -420,14 +404,13 @@ DBG_INTERFACE void Log( PRINTF_FORMAT_STRING const tchar *pMsg, ... ) FMTFUNCTIO
 DBG_INTERFACE void DLog( const tchar *pGroupName, int level, PRINTF_FORMAT_STRING const tchar *pMsg, ... ) FMTFUNCTION( 3, 4 );
 DBG_INTERFACE void LogV( PRINTF_FORMAT_STRING const tchar *pMsg, va_list arglist );
 
-#ifdef Error
-// p4.cpp does a #define Error Warning and in that case the Error prototype needs to
-// be consistent with the Warning prototype.
-DBG_INTERFACE void Error( PRINTF_FORMAT_STRING const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
+#if defined( Error )
+	// p4.cpp does a #define Error Warning and in that case the Error prototype needs to
+	// be consistent with the Warning prototype.
+	DBG_INTERFACE void Error( PRINTF_FORMAT_STRING const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
 #else
-DBG_INTERFACE void NORETURN Error( PRINTF_FORMAT_STRING const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
-DBG_INTERFACE void NORETURN ErrorV( PRINTF_FORMAT_STRING const tchar *pMsg, va_list arglist );
-
+	DBG_INTERFACE [[noreturn]] void Error( PRINTF_FORMAT_STRING const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
+	DBG_INTERFACE [[noreturn]] void ErrorV( PRINTF_FORMAT_STRING const tchar *pMsg, va_list arglist );
 #endif
 
 // You can use this macro like a runtime assert macro.
@@ -483,42 +466,38 @@ DBG_INTERFACE void COM_TimestampedLog( PRINTF_FORMAT_STRING char const *fmt, ...
 
 /* Code macros, debugger interface */
 
-#ifdef DBGFLAG_ASSERT
-
-#define DBG_CODE( _code )            if (0) ; else { _code }
-#define DBG_CODE_NOSCOPE( _code )	 _code
-#define DBG_DCODE( _g, _l, _code )   if (IsSpewActive( _g, _l )) { _code } else {}
-#define DBG_BREAK()                  DebuggerBreak()	/* defined in platform.h */ 
-
+#if defined( DBGFLAG_ASSERT )
+	#define DBG_CODE( _code )            if (0) ; else { _code }
+	#define DBG_CODE_NOSCOPE( _code )	 _code
+	#define DBG_DCODE( _g, _l, _code )   if (IsSpewActive( _g, _l )) { _code } else {}
+	#define DBG_BREAK()                  DebuggerBreak()	/* defined in platform.h */
 #else /* not _DEBUG */
-
-#define DBG_CODE( _code )            ((void)0)
-#define DBG_CODE_NOSCOPE( _code )	 
-#define DBG_DCODE( _g, _l, _code )   ((void)0)
-#define DBG_BREAK()                  ((void)0)
-
+	#define DBG_CODE( _code )            ((void)0)
+	#define DBG_CODE_NOSCOPE( _code )
+	#define DBG_DCODE( _g, _l, _code )   ((void)0)
+	#define DBG_BREAK()                  ((void)0)
 #endif /* _DEBUG */
 
 //-----------------------------------------------------------------------------
 
-#ifndef _RETAIL
-class CScopeMsg
-{
-public:
-	CScopeMsg( const char *pszScope )
+#if !defined( _RETAIL )
+	class CScopeMsg
 	{
-		m_pszScope = pszScope;
-		Msg( "%s { ", pszScope );
-	}
-	~CScopeMsg()
-	{
-		Msg( "} %s", m_pszScope );
-	}
-	const char *m_pszScope;
-};
-#define SCOPE_MSG( msg ) CScopeMsg scopeMsg( msg )
+	public:
+		CScopeMsg( const char *pszScope )
+		{
+			m_pszScope = pszScope;
+			Msg( "%s { ", pszScope );
+		}
+		~CScopeMsg()
+		{
+			Msg( "} %s", m_pszScope );
+		}
+		const char *m_pszScope;
+	};
+	#define SCOPE_MSG( msg ) CScopeMsg scopeMsg( msg )
 #else
-#define SCOPE_MSG( msg )
+	#define SCOPE_MSG( msg )
 #endif
 
 
@@ -530,7 +509,7 @@ public:
 // We're using an ancient version of GCC that can't quite handle some
 // of our complicated templates properly.  Use some preprocessor trickery
 // to workaround this
-#ifdef __GNUC__
+#if defined( __GNUC__ )
 	#define COMPILE_TIME_ASSERT( pred ) typedef int UNIQUE_ID[ (pred) ? 1 : -1 ]
 #else
 	#if _MSC_VER >= 1600
@@ -549,7 +528,7 @@ public:
 #define ASSERT_INVARIANT( pred )	COMPILE_TIME_ASSERT( pred )
 
 
-#ifdef _DEBUG
+#if defined( _DEBUG )
 template<typename DEST_POINTER_TYPE, typename SOURCE_POINTER_TYPE>
 inline DEST_POINTER_TYPE assert_cast(SOURCE_POINTER_TYPE* pSource)
 {
@@ -570,19 +549,15 @@ DBG_INTERFACE void _AssertValidWritePtr( void* ptr, int count = 1 );
 DBG_INTERFACE void _AssertValidReadWritePtr( void* ptr, int count = 1 );
 DBG_INTERFACE void AssertValidStringPtr( const tchar* ptr, int maxchar = 0xFFFFFF );
 
-#ifdef DBGFLAG_ASSERT
-
-FORCEINLINE void AssertValidReadPtr( const void* ptr, int count = 1 )	    { _AssertValidReadPtr( (void*)ptr, count ); }
-FORCEINLINE void AssertValidWritePtr( const void* ptr, int count = 1 )		{ _AssertValidWritePtr( (void*)ptr, count ); }
-FORCEINLINE void AssertValidReadWritePtr( const void* ptr, int count = 1 )	{ _AssertValidReadWritePtr( (void*)ptr, count ); }
-
+#if defined( DBGFLAG_ASSERT )
+	FORCEINLINE void AssertValidReadPtr( const void* ptr, int count = 1 )	    { _AssertValidReadPtr( (void*)ptr, count ); }
+	FORCEINLINE void AssertValidWritePtr( const void* ptr, int count = 1 )		{ _AssertValidWritePtr( (void*)ptr, count ); }
+	FORCEINLINE void AssertValidReadWritePtr( const void* ptr, int count = 1 )	{ _AssertValidReadWritePtr( (void*)ptr, count ); }
 #else
-
-FORCEINLINE void AssertValidReadPtr( const void* ptr, int count = 1 )			 { }
-FORCEINLINE void AssertValidWritePtr( const void* ptr, int count = 1 )		     { }
-FORCEINLINE void AssertValidReadWritePtr( const void* ptr, int count = 1 )	     { }
-#define AssertValidStringPtr AssertValidReadPtr
-
+	FORCEINLINE void AssertValidReadPtr( const void* ptr, int count = 1 )			 { }
+	FORCEINLINE void AssertValidWritePtr( const void* ptr, int count = 1 )		     { }
+	FORCEINLINE void AssertValidReadWritePtr( const void* ptr, int count = 1 )	     { }
+	#define AssertValidStringPtr AssertValidReadPtr
 #endif
 
 #define AssertValidThis() AssertValidReadWritePtr(this,sizeof(*this))
@@ -590,31 +565,31 @@ FORCEINLINE void AssertValidReadWritePtr( const void* ptr, int count = 1 )	     
 //-----------------------------------------------------------------------------
 // Macro to protect functions that are not reentrant
 
-#ifdef _DEBUG
-class CReentryGuard
-{
-public:
-	CReentryGuard(int *pSemaphore)
-	 : m_pSemaphore(pSemaphore)
+#if defined( _DEBUG )
+	class CReentryGuard
 	{
-		++(*m_pSemaphore);
-	}
-	
-	~CReentryGuard()
-	{
-		--(*m_pSemaphore);
-	}
-	
-private:
-	int *m_pSemaphore;
-};
+	public:
+		CReentryGuard(int *pSemaphore)
+		 : m_pSemaphore(pSemaphore)
+		{
+			++(*m_pSemaphore);
+		}
 
-#define ASSERT_NO_REENTRY() \
-	static int fSemaphore##__LINE__; \
-	Assert( !fSemaphore##__LINE__ ); \
-	CReentryGuard ReentryGuard##__LINE__( &fSemaphore##__LINE__ )
+		~CReentryGuard()
+		{
+			--(*m_pSemaphore);
+		}
+
+	private:
+		int *m_pSemaphore;
+	};
+
+	#define ASSERT_NO_REENTRY() \
+		static int fSemaphore##__LINE__; \
+		Assert( !fSemaphore##__LINE__ ); \
+		CReentryGuard ReentryGuard##__LINE__( &fSemaphore##__LINE__ )
 #else
-#define ASSERT_NO_REENTRY()
+	#define ASSERT_NO_REENTRY()
 #endif
 
 //-----------------------------------------------------------------------------
@@ -652,11 +627,9 @@ private:
 // Purpose: Embed debug info in each file.
 //
 #if defined( _WIN32 )
-
-	#ifdef _DEBUG
+	#if defined( _DEBUG )
 		#pragma comment(compiler)
 	#endif
-
 #endif
 
 //-----------------------------------------------------------------------------
@@ -664,127 +637,121 @@ private:
 // Purpose: Wrap around a variable to create a simple place to put a breakpoint
 //
 
-#ifdef _DEBUG
+#if defined( _DEBUG )
+	template< class Type >
+	class CDataWatcher
+	{
+	public:
+		const Type& operator=( const Type &val )
+		{
+			return Set( val );
+		}
 
-template< class Type >
-class CDataWatcher
-{
-public:
-	const Type& operator=( const Type &val ) 
-	{ 
-		return Set( val ); 
-	}
-	
-	const Type& operator=( const CDataWatcher<Type> &val ) 
-	{ 
-		return Set( val.m_Value ); 
-	}
-	
-	const Type& Set( const Type &val )
-	{
-		// Put your breakpoint here
-		m_Value = val;
-		return m_Value;
-	}
-	
-	Type& GetForModify()
-	{
-		return m_Value;
-	}
-	
-	const Type& operator+=( const Type &val ) 
-	{
-		return Set( m_Value + val ); 
-	}
-	
-	const Type& operator-=( const Type &val ) 
-	{
-		return Set( m_Value - val ); 
-	}
-	
-	const Type& operator/=( const Type &val ) 
-	{
-		return Set( m_Value / val ); 
-	}
-	
-	const Type& operator*=( const Type &val ) 
-	{
-		return Set( m_Value * val ); 
-	}
-	
-	const Type& operator^=( const Type &val ) 
-	{
-		return Set( m_Value ^ val ); 
-	}
-	
-	const Type& operator|=( const Type &val ) 
-	{
-		return Set( m_Value | val ); 
-	}
-	
-	const Type& operator++()
-	{
-		return (*this += 1);
-	}
-	
-	Type operator--()
-	{
-		return (*this -= 1);
-	}
-	
-	Type operator++( int ) // postfix version..
-	{
-		Type val = m_Value;
-		(*this += 1);
-		return val;
-	}
-	
-	Type operator--( int ) // postfix version..
-	{
-		Type val = m_Value;
-		(*this -= 1);
-		return val;
-	}
-	
-	// For some reason the compiler only generates type conversion warnings for this operator when used like 
-	// CNetworkVarBase<unsigned tchar> = 0x1
-	// (it warns about converting from an int to an unsigned char).
-	template< class C >
-	const Type& operator&=( C val ) 
-	{ 
-		return Set( m_Value & val ); 
-	}
-	
-	operator const Type&() const 
-	{
-		return m_Value; 
-	}
-	
-	const Type& Get() const 
-	{
-		return m_Value; 
-	}
-	
-	const Type* operator->() const 
-	{
-		return &m_Value; 
-	}
-	
-	Type m_Value;
-	
-};
+		const Type& operator=( const CDataWatcher<Type> &val )
+		{
+			return Set( val.m_Value );
+		}
 
+		const Type& Set( const Type &val )
+		{
+			// Put your breakpoint here
+			m_Value = val;
+			return m_Value;
+		}
+
+		Type& GetForModify()
+		{
+			return m_Value;
+		}
+
+		const Type& operator+=( const Type &val )
+		{
+			return Set( m_Value + val );
+		}
+
+		const Type& operator-=( const Type &val )
+		{
+			return Set( m_Value - val );
+		}
+
+		const Type& operator/=( const Type &val )
+		{
+			return Set( m_Value / val );
+		}
+
+		const Type& operator*=( const Type &val )
+		{
+			return Set( m_Value * val );
+		}
+
+		const Type& operator^=( const Type &val )
+		{
+			return Set( m_Value ^ val );
+		}
+
+		const Type& operator|=( const Type &val )
+		{
+			return Set( m_Value | val );
+		}
+
+		const Type& operator++()
+		{
+			return (*this += 1);
+		}
+
+		Type operator--()
+		{
+			return (*this -= 1);
+		}
+
+		Type operator++( int ) // postfix version..
+		{
+			Type val = m_Value;
+			(*this += 1);
+			return val;
+		}
+
+		Type operator--( int ) // postfix version..
+		{
+			Type val = m_Value;
+			(*this -= 1);
+			return val;
+		}
+
+		// For some reason the compiler only generates type conversion warnings for this operator when used like
+		// CNetworkVarBase<unsigned tchar> = 0x1
+		// (it warns about converting from an int to an unsigned char).
+		template< class C >
+		const Type& operator&=( C val )
+		{
+			return Set( m_Value & val );
+		}
+
+		operator const Type&() const
+		{
+			return m_Value;
+		}
+
+		const Type& Get() const
+		{
+			return m_Value;
+		}
+
+		const Type* operator->() const
+		{
+			return &m_Value;
+		}
+
+		Type m_Value;
+
+	};
 #else
-
-template< class Type >
-class CDataWatcher
-{
-private:
-	CDataWatcher(); // refuse to compile in non-debug builds
-};
-
+	template< class Type >
+	class CDataWatcher
+	{
+	private:
+		CDataWatcher(); // refuse to compile in non-debug builds
+	};
 #endif
 
 //-----------------------------------------------------------------------------
-
-#endif /* DBG_H */

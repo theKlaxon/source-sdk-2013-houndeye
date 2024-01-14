@@ -86,13 +86,13 @@ void BSP_BackgroundRepack( const char *pszInputMapFile,
 		}
 
 		// CThread job - returns 0 for success
-		virtual int Run() OVERRIDE
+		virtual int Run() override
 		{
 			return BSP_SyncRepack( m_strInput.Get(), m_strOutput.Get(), m_eRepackFlags ) ? 0 : 1;
 		}
 
 		// GameSystem
-		virtual const char* Name( void ) OVERRIDE { return "BackgroundBSPRepackThread"; }
+		virtual const char* Name( void ) override { return "BackgroundBSPRepackThread"; }
 
 		// Runs on main thread
 		void CheckFinished()
@@ -111,9 +111,9 @@ void BSP_BackgroundRepack( const char *pszInputMapFile,
 		}
 
 		#ifdef CLIENT_DLL
-		virtual void Update( float frametime ) OVERRIDE { CheckFinished(); }
+		virtual void Update( float frametime ) override { CheckFinished(); }
         #else // GAME DLL
-		virtual void FrameUpdatePostEntityThink() OVERRIDE { CheckFinished(); }
+		virtual void FrameUpdatePostEntityThink() override { CheckFinished(); }
 		#endif
 	private:
 		CUtlString                m_strInput;

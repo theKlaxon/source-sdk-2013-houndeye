@@ -2343,7 +2343,7 @@ class CTriggerTeleport : public CBaseTrigger
 public:
 	DECLARE_CLASS( CTriggerTeleport, CBaseTrigger );
 
-	virtual void Spawn( void ) OVERRIDE;
+	virtual void Spawn( void ) override;
 	virtual void Touch( CBaseEntity *pOther ) OVERRIDE;
 
 	string_t m_iLandmark;

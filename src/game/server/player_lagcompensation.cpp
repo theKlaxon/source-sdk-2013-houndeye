@@ -195,7 +195,7 @@ public:
 	void			StartLagCompensation( CBasePlayer *player, CUserCmd *cmd );
 	void			FinishLagCompensation( CBasePlayer *player );
 
-	bool			IsCurrentlyDoingLagCompensation() const OVERRIDE { return m_isCurrentlyDoingCompensation; }
+	bool			IsCurrentlyDoingLagCompensation() const override { return m_isCurrentlyDoingCompensation; }
 
 private:
 	void			BacktrackPlayer( CBasePlayer *player, float flTargetTime );
