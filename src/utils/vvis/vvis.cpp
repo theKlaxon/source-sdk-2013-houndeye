@@ -963,9 +963,10 @@ int RunVVis( int argc, char** argv ) {
 
 	verbose = false;
 
-	CmdLib_InitFileSystem( argv[ argc - 1 ] );
 	LoadCmdLineFromFile( argc, argv, source, "vvis" );
 	int i = ParseCommandLine( argc, argv );
+
+	CmdLib_InitFileSystem( argv[ argc - 1 ] );
 
 	// The ExpandPath is just for VMPI. VMPI's file system needs the basedir in front of all filenames,
 	// so we prepend qdir here.
@@ -989,6 +990,9 @@ int RunVVis( int argc, char** argv ) {
 	}
 
 	start = Plat_FloatTime();
+	char path[300];
+	g_pFullFileSystem->GetCurrentDirectory( path, 300 );
+	printf( "%s\n", path );
 
 
 	if ( !g_bUseMPI ) {
@@ -1080,6 +1084,8 @@ int RunVVis( int argc, char** argv ) {
 int main( int argc, char** argv ) {
 	CommandLine()->CreateCmdLine( argc, argv );
 
+
+	FileSystem_Init(nullptr, 0, FSInitType_t::FS_INIT_COMPATIBILITY_MODE);
 	MathLib_Init( 2.2f, 2.2f, 0.0f, 1.0f, false, false, false, false );
 	InstallAllocationFunctions();
 	InstallSpewFunction();
