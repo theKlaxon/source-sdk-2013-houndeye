@@ -67,7 +67,7 @@ int main( int argc, char* argv[] ) {
 	int retCode = 0;
 	auto* pDLL = static_cast<ILaunchableDLL*>( fn( LAUNCHABLE_DLL_INTERFACE_VERSION, &retCode ) );
 	if (! pDLL ) {
-		printf( "vvis launcher error: can't get IVVisDLL interface from %s\n", pDLLName );
+		printf( "vvis launcher error: can't get ILaunchableDLL interface from %s\n", pDLLName );
 		Sys_UnloadModule( pModule );
 		return 3;
 	}
