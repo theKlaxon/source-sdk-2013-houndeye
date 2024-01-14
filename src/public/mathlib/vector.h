@@ -2218,9 +2218,9 @@ FORCEINLINE float VectorNormalize( Vector& vec )
 	vec.z *= invlen;
 	return sqrlen * invlen;
 #else
-	using NormalizeFuncType = float FASTCALL *(Vector& v);
-	extern NormalizeFuncType pfVectorNormalize;
-	return *(*pfVectorNormalize)(vec);
+	using NormalizeFuncType = float FASTCALL (Vector& v);
+	extern NormalizeFuncType* pfVectorNormalize;
+	return (*pfVectorNormalize)(vec);
 #endif
 }
 
