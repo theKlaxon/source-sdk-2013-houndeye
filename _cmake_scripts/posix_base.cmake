@@ -12,13 +12,13 @@ add_compile_options(
 	$<$<COMPILE_LANGUAGE:CXX>:-fpermissive>
 	-fdiagnostics-color
 	-Wno-narrowing
-	-Winvalid-offsetof
+	$<$<COMPILE_LANGUAGE:CXX>:-Winvalid-offsetof>
 	$<${IS_LINUX}:-U_FORTIFY_SOURCE>
 	-Usprintf
 	-Ustrncpy
 	-UPROTECTED_THINGS_ENABLE
 	# roughly equivalent to `isLinux && compilers[cxx].id == "GNU"`
-	$<${IS_LINUX}:$<$<CXX_COMPILER_ID:GNU>:-fabi-compat-version=2>>
+	$<$<COMPILE_LANGUAGE:CXX>:$<${IS_LINUX}:$<$<CXX_COMPILER_ID:GNU>:-fabi-compat-version=2>>>
 )
 
 add_link_options(-m32)
