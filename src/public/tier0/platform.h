@@ -12,12 +12,6 @@
 	#define PLATFORM_64BITS 1  // this should technically go away as for merge, but it used so nop out
 #endif
 
-#ifdef __clang__
-	#define COMPILER_CLANG 1
-#elif defined( GNUC )
-	#define COMPILER_GCC 1
-#endif
-
 #include "wchartypes.h"
 #include "basetypes.h"
 #include "tier0/valve_off.h"

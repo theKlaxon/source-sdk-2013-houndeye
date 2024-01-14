@@ -17,8 +17,8 @@ add_compile_options(
 	-Usprintf
 	-Ustrncpy
 	-UPROTECTED_THINGS_ENABLE
-	# roughly equivalent to `isLinux && compilers[language].id == "GNU"`
-	$<${IS_LINUX}:$<$<$<COMPILE_LANGUAGE>_COMPILER_ID:GNU>:-fabi-compat-version=2>>
+	# roughly equivalent to `isLinux && compilers[cxx].id == "GNU"`
+	$<${IS_LINUX}:$<$<CXX_COMPILER_ID:GNU>:-fabi-compat-version=2>>
 )
 
 add_link_options(-m32)
@@ -26,8 +26,8 @@ add_link_options(-m32)
 add_compile_definitions(
 	_POSIX
 	POSIX
-	$<$<STREQUAL:${CMAKE_CXX_COMPILER_ID},GNU>:GNUC>
-	$<$<STREQUAL:${CMAKE_CXX_COMPILER_ID},GNU>:COMPILER_GCC>
+	$<$<CXX_COMPILER_ID:GNU>:GNUC>
+	$<$<CXX_COMPILER_ID:GNU>:COMPILER_GCC=1>
 	NO_HOOK_MALLOC
 	NO_MALLOC_OVERRIDE
 	$<${IS_LINUX}:_LINUX>
