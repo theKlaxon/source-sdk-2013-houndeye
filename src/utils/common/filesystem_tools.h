@@ -23,8 +23,10 @@ extern char gamedir[ 1024 ];
 // ---------------------------------------------------------------------------------------- //
 
 enum FSInitType_t {
-	FS_INIT_FULL,             // Load gameinfo.txt, maybe use filesystem_steam, and setup search paths.
-	FS_INIT_COMPATIBILITY_MODE// Load filesystem_stdio and that's it.
+	// Load gameinfo.txt, maybe use filesystem_steam, and setup search paths.
+	FS_INIT_FULL,
+	// Load filesystem_stdio and that's it.
+	FS_INIT_COMPATIBILITY_MODE
 };
 
 //
