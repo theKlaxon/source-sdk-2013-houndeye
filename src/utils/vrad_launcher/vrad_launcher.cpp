@@ -12,6 +12,7 @@
 #if IsWindows()
 	#include <direct.h>
 #endif
+#include "ilaunchabledll.h"
 #include "tier0/icommandline.h"
 #include "tier1/strtools.h"
 
@@ -117,9 +118,10 @@ int main( int argc, char* argv[] ) {
 		}
 
 		int retCode = 0;
-		auto* pDLL = static_cast<IVRadDLL*>( fn( VRAD_INTERFACE_VERSION, &retCode ) );
+		auto* pDLL = static_cast<ILaunchableDLL*>( fn( LAUNCHABLE_DLL_INTERFACE_VERSION, &retCode ) );
+		#define STRINGIFY( x ) # x
 		if ( !pDLL ) {
-			printf( "vrad_launcher error: can't get IVRadDLL interface from vrad_dll.dll\n" );
+			printf( "vrad_launcher error: can't get ILaunchableDLL interface from vrad_dll" STRINGIFY( _DLL_EXT ) "\n" );
 			Sys_UnloadModule( pModule );
 			return 3;
 		}

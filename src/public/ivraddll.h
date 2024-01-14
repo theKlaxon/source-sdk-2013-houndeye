@@ -4,12 +4,7 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef IVRADDLL_H
-#define IVRADDLL_H
-#ifdef _WIN32
 #pragma once
-#endif
 
 
 #include "interface.h"
@@ -94,6 +89,3 @@ public:
 	// It asynchronously tells DoIncrementalLight to stop as soon as possible and exit.
 	virtual void		Interrupt() = 0;
 };
-
-
-#endif // IVRADDLL_H

@@ -2515,6 +2515,7 @@ int RunVRAD( int argc, char** argv ) {
 	// Initialize the filesystem, so additional commandline options can be loaded
 	Q_StripExtension( argv[ i ], source, sizeof( source ) );
 	CmdLib_InitFileSystem( argv[ i ] );
+	LoadCmdLineFromFile( argc, argv, source, "vrad" );// Don't do this if we're a VMPI worker..
 	Q_FileBase( source, source, sizeof( source ) );
 
 	VRAD_LoadBSP( argv[ i ] );
@@ -2551,7 +2552,6 @@ int VRAD_Main( int argc, char** argv ) {
 	#endif
 #endif
 	{
-		LoadCmdLineFromFile( argc, argv, source, "vrad" );// Don't do this if we're a VMPI worker..
 		SetupDefaultToolsMinidumpHandler();
 	}
 
