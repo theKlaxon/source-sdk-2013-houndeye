@@ -167,10 +167,13 @@ target_link_libraries(vbsp
 		$<${IS_WINDOWS}:odbccp32>
 		$<${IS_WINDOWS}:winmm>
 
-		"${LIBPUBLIC}/bitmap${CMAKE_STATIC_LIBRARY_SUFFIX}"
 		fgdlib
+		lzma
 		mathlib
 		"${LIBPUBLIC}/tier2${CMAKE_STATIC_LIBRARY_SUFFIX}"
 		"${LIBPUBLIC}/vtf${CMAKE_STATIC_LIBRARY_SUFFIX}"
-		$<${IS_WINDOWS}:"${LIBCOMMON}/lzma${CMAKE_STATIC_LIBRARY_SUFFIX}">
+		"${LIBPUBLIC}/bitmap${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		tier1
+		tier0
+		vstdlib
 )
