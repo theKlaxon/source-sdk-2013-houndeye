@@ -73,7 +73,7 @@ class GameData
 		GameData();
 		~GameData();
 
-		BOOL Load(const char *pszFilename);
+		bool Load(const char *pszFilename);
 
 		GDclass *ClassForName(const char *pszName, int *piIndex = NULL);
 

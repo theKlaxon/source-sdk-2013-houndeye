@@ -2,19 +2,20 @@
 //
 //=============================================================================
 
+#include <cstdlib>
 #include "fgdlib/fgdlib.h"
-#include "fgdlib/GameData.h"
-#include "fgdlib/WCKeyValues.h"
+#include "fgdlib/gamedata.h"
+#include "fgdlib/wckeyvalues.h"
 #include "fgdlib/gdvar.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
-#include <tier0/memdbgon.h>
+#include "tier0/memdbgon.h"
 
 
 typedef struct
 {
 	GDIV_TYPE eType;		// The enumeration of this type.
-	char *pszName;			// The name of this type.
+	const char* pszName;			// The name of this type.
 	trtoken_t eStoreAs;		// How this type is stored (STRING, INTEGER, etc).
 } TypeMap_t;
 
@@ -58,7 +59,7 @@ static TypeMap_t TypeMap[] =
 };
 
 
-char *GDinputvariable::m_pszEmpty = "";
+const char *GDinputvariable::m_pszEmpty = "";
 
 
 //-----------------------------------------------------------------------------
@@ -70,7 +71,7 @@ GDinputvariable::GDinputvariable(void)
 	m_szValue[0] = 0;
 	m_bReportable = FALSE;
 	m_bReadOnly = false;
-	m_pszDescription = NULL;
+	m_pszDescription = nullptr;
 }
 
 
@@ -86,7 +87,7 @@ GDinputvariable::GDinputvariable( const char *szType, const char *szName )
 	m_szValue[0] = 0;
 	m_bReportable = FALSE;
 	m_bReadOnly = false;
-	m_pszDescription = NULL;
+	m_pszDescription = nullptr;
 
 	m_eType = GetTypeFromToken( szType );
 	strcpy( m_szName, szName );
@@ -117,14 +118,14 @@ GDinputvariable &GDinputvariable::operator =(GDinputvariable &Other)
 	// Copy the description.
 	//
 	delete [] m_pszDescription;
-	if (Other.m_pszDescription != NULL)
+	if (Other.m_pszDescription != nullptr)
 	{
 		m_pszDescription = new char[strlen(Other.m_pszDescription) + 1];
 		strcpy(m_pszDescription, Other.m_pszDescription);
 	}
 	else
 	{
-		m_pszDescription = NULL;
+		m_pszDescription = nullptr;
 	}
 
 	m_nDefault = Other.m_nDefault;
@@ -374,7 +375,7 @@ BOOL GDinputvariable::InitFromTokens(TokenReader& tr)
 			if ( m_pszDescription )
 			{
 				delete [] m_pszDescription;
-				m_pszDescription = NULL;
+				m_pszDescription = nullptr;
 			}
 			if (!GDGetTokenDynamic(tr, &m_pszDescription, STRING))
 			{
@@ -669,7 +670,7 @@ void GDinputvariable::ToKeyValue(MDkeyvalue *pkv)
 	}
 	else if (eStoreAs == INTEGER)
 	{
-		itoa(m_nValue, pkv->szValue, 10);
+		sprintf(pkv->szValue, "%d", m_nValue);
 	}
 }
 
@@ -691,7 +692,7 @@ const char *GDinputvariable::ItemStringForValue(const char *szValue)
 		}
 	}
 
-	return(NULL);
+	return nullptr;
 }
 
 
@@ -712,7 +713,7 @@ const char *GDinputvariable::ItemValueForString(const char *szString)
 		}
 	}
 
-	return(NULL);
+	return nullptr;
 }
 
 

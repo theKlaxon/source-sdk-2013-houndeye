@@ -2,16 +2,15 @@
 //
 //=============================================================================
 
-#include <windows.h>
-#include <tier0/dbg.h>
-#include <io.h>
-#include <WorldSize.h>
-#include "fgdlib/GameData.h"
-#include "fgdlib/HelperInfo.h"
+#include <filesystem>
+#include "fgdlib/gamedata.h"
 #include "KeyValues.h"
+#include "fgdlib/helperinfo.h"
 #include "filesystem_tools.h"
+#include "tier0/dbg.h"
 #include "tier1/strtools.h"
 #include "utlmap.h"
+#include "worldsize.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -22,7 +21,7 @@
 const int MAX_ERRORS = 5;
 
 
-static GameDataMessageFunc_t g_pMsgFunc = NULL;
+static GameDataMessageFunc_t g_pMsgFunc = nullptr;
 
 
 //-----------------------------------------------------------------------------
@@ -38,8 +37,8 @@ void GDSetMessageFunc(GameDataMessageFunc_t pFunc)
 // Purpose: Fetches the next token from the file.
 // Input  : tr - 
 //			ppszStore - Destination buffer, one of the following:
-//				pointer to NULL - token will be placed in an allocated buffer
-//				pointer to non-NULL buffer - token will be placed in buffer
+//				pointer to nullptr - token will be placed in an allocated buffer
+//				pointer to non-nullptr buffer - token will be placed in buffer
 //			ttexpecting - 
 //			pszExpecting - 
 // Output : 
@@ -48,7 +47,7 @@ static bool DoGetToken(TokenReader &tr, char **ppszStore, int nSize, trtoken_t t
 {
 	trtoken_t ttype;
 
-	if (*ppszStore != NULL)
+	if (*ppszStore != nullptr)
 	{
 		// Reads the token into the given buffer.
 		ttype = tr.NextToken(*ppszStore, nSize);
@@ -82,13 +81,13 @@ static bool DoGetToken(TokenReader &tr, char **ppszStore, int nSize, trtoken_t t
 		}
 	}
 
-	if (bBadTokenType && (pszExpecting == NULL))
+	if (bBadTokenType && (pszExpecting == nullptr))
 	{
 		//
 		// We didn't get the expected token type but no expected
 		// string was specified.
 		//
-		char *pszTokenName;
+		const char *pszTokenName;
 		switch (ttexpecting)
 		{
 			case IDENT:
@@ -120,7 +119,7 @@ static bool DoGetToken(TokenReader &tr, char **ppszStore, int nSize, trtoken_t t
 		GDError(tr, "expecting %s", pszTokenName);
 		return false;
 	}
-	else if (bBadTokenType || ((pszExpecting != NULL) && !IsToken(pszStore, pszExpecting)))
+	else if (bBadTokenType || ((pszExpecting != nullptr) && !IsToken(pszStore, pszExpecting)))
 	{
 		//
 		// An expected string was specified, and we got either the wrong type or
@@ -172,18 +171,18 @@ bool GDError(TokenReader &tr, const char *error, ...)
 //-----------------------------------------------------------------------------
 // Purpose: Fetches the next token from the file.
 // Input  : tr - The token reader object with which to fetch the token.
-//			pszStore - Buffer in which to place the token, NULL to discard the token.
+//			pszStore - Buffer in which to place the token, nullptr to discard the token.
 //			ttexpecting - The token type that we are expecting. If this is not TOKENNONE
 //				and token type read is different, the operation will fail.
 //			pszExpecting - The token string that we are expecting. If this string
-//				is not NULL and the token string read is different, the operation will fail.
+//				is not nullptr and the token string read is different, the operation will fail.
 // Output : Returns TRUE if the operation succeeded, FALSE if there was an error.
 //			If there was an error, the error will be reported in the message window.
 //-----------------------------------------------------------------------------
 bool GDGetToken(TokenReader &tr, char *pszStore, int nSize, trtoken_t ttexpecting, const char *pszExpecting)
 {
-	Assert(pszStore != NULL);
-	if (pszStore != NULL)
+	Assert(pszStore != nullptr);
+	if (pszStore != nullptr)
 	{
 		return DoGetToken(tr, &pszStore, nSize, ttexpecting, pszExpecting);
 	}
@@ -195,11 +194,11 @@ bool GDGetToken(TokenReader &tr, char *pszStore, int nSize, trtoken_t ttexpectin
 //-----------------------------------------------------------------------------
 // Purpose: Fetches the next token from the file.
 // Input  : tr - The token reader object with which to fetch the token.
-//			pszStore - Buffer in which to place the token, NULL to discard the token.
+//			pszStore - Buffer in which to place the token, nullptr to discard the token.
 //			ttexpecting - The token type that we are expecting. If this is not TOKENNONE
 //				and token type read is different, the operation will fail.
 //			pszExpecting - The token string that we are expecting. If this string
-//				is not NULL and the token string read is different, the operation will fail.
+//				is not nullptr and the token string read is different, the operation will fail.
 // Output : Returns TRUE if the operation succeeded, FALSE if there was an error.
 //			If there was an error, the error will be reported in the message window.
 //-----------------------------------------------------------------------------
@@ -225,12 +224,12 @@ bool GDSkipToken(TokenReader &tr, trtoken_t ttexpecting, const char *pszExpectin
 //-----------------------------------------------------------------------------
 bool GDGetTokenDynamic(TokenReader &tr, char **ppszStore, trtoken_t ttexpecting, const char *pszExpecting)
 {
-	if (ppszStore == NULL)
+	if (ppszStore == nullptr)
 	{
 		return false;
 	}
 
-	*ppszStore = NULL;
+	*ppszStore = nullptr;
 	return DoGetToken(tr, ppszStore, -1, ttexpecting, pszExpecting);
 }
 
@@ -242,7 +241,7 @@ GameData::GameData(void)
 {
 	m_nMaxMapCoord = 8192;
 	m_nMinMapCoord = -8192;
-	m_InstanceClass = NULL;
+	m_InstanceClass = nullptr;
 }
 
 
@@ -276,20 +275,20 @@ void GameData::ClearData(void)
 // Input  : pszFilename - 
 // Output : Returns TRUE on success, FALSE on failure.
 //-----------------------------------------------------------------------------
-BOOL GameData::Load(const char *pszFilename)
+bool GameData::Load(const char *pszFilename)
 {
 	TokenReader tr;
 
-	if(GetFileAttributes(pszFilename) == 0xffffffff)
-		return FALSE;
+	if (! std::filesystem::exists( pszFilename ) )
+		return false;
 
 	if(!tr.Open(pszFilename))
-		return FALSE;
+		return false;
 
 	trtoken_t ttype;
 	char szToken[128];
 
-	while (1)
+	while (true)
 	{
 		if (tr.GetErrorCount() >= MAX_ERRORS)
 		{
@@ -304,14 +303,14 @@ BOOL GameData::Load(const char *pszFilename)
 		if(ttype != OPERATOR || !IsToken(szToken, "@"))
 		{
 			if(!GDError(tr, "expected @"))
-				return FALSE;
+				return false;
 		}
 
 		// check what kind it is, and parse a new object
 		if (tr.NextToken(szToken, sizeof(szToken)) != IDENT)
 		{
 			if(!GDError(tr, "expected identifier after @"))
-				return FALSE;
+				return false;
 		}
 
 		if (IsToken(szToken, "baseclass") || IsToken(szToken, "pointclass") || IsToken(szToken, "solidclass") || IsToken(szToken, "keyframeclass") ||
@@ -364,7 +363,7 @@ BOOL GameData::Load(const char *pszFilename)
 				// Check and see if this new class matches an existing one. If so we will override the previous definition.
 				int nExistingClassIndex = 0;
 				GDclass *pExistingClass = ClassForName(pNewClass->GetName(), &nExistingClassIndex);
-				if (NULL != pExistingClass)
+				if (nullptr != pExistingClass)
 				{
 					m_Classes.InsertAfter(nExistingClassIndex, pNewClass);
 					m_Classes.Remove(nExistingClassIndex);
@@ -434,12 +433,12 @@ BOOL GameData::Load(const char *pszFilename)
 
 	if (tr.GetErrorCount() > 0)
 	{
-		return FALSE;
+		return false;
 	}
 
 	tr.Close();
 
-	return TRUE;
+	return true;
 }
 
 
@@ -480,8 +479,8 @@ bool GameData::ParseMapSize(TokenReader &tr)
 
 	if (nMin != nMax)
 	{
-		m_nMinMapCoord = min(nMin, nMax);
-		m_nMaxMapCoord = max(nMin, nMax);
+		m_nMinMapCoord = std::min(nMin, nMax);
+		m_nMaxMapCoord = std::max(nMin, nMax);
 	}
 
 	if (!GDSkipToken(tr, OPERATOR, ")"))
@@ -513,7 +512,7 @@ GDclass *GameData::ClassForName(const char *pszName, int *piIndex)
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -522,7 +521,7 @@ static const char *RequiredKeys[] =
 {
 	"Origin",
 	"Angles",
-	NULL
+	nullptr
 };
 
 //-----------------------------------------------------------------------------
@@ -544,7 +543,7 @@ GDclass *GameData::BeginInstanceRemap( const char *pszClassName, const char *psz
 	if ( m_InstanceClass )
 	{
 		delete m_InstanceClass;
-		m_InstanceClass = NULL;
+		m_InstanceClass = nullptr;
 	}
 
 	if ( strcmpi( pszClassName, "info_overlay_accessor" ) == 0 )
@@ -561,7 +560,7 @@ GDclass *GameData::BeginInstanceRemap( const char *pszClassName, const char *psz
 
 		for( int i = 0; RequiredKeys[ i ]; i++ )
 		{
-			if ( m_InstanceClass->VarForName( RequiredKeys[ i ] ) == NULL )
+			if ( m_InstanceClass->VarForName( RequiredKeys[ i ] ) == nullptr )
 			{
 				BaseClass = ClassForName( RequiredKeys[ i ] );
 				if ( BaseClass )
@@ -573,7 +572,7 @@ GDclass *GameData::BeginInstanceRemap( const char *pszClassName, const char *psz
 	}
 	else
 	{
-		m_InstanceClass = NULL;
+		m_InstanceClass = nullptr;
 	}
 
 	return m_InstanceClass;

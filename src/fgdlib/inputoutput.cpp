@@ -5,21 +5,21 @@
 //=============================================================================
 
 
-#include <tier0/dbg.h>
-#include "fgdlib/InputOutput.h"
+#include "fgdlib/inputoutput.h"
+#include "tier0/dbg.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
-#include <tier0/memdbgon.h>
+#include "tier0/memdbgon.h"
 
 
 typedef struct
 {
-	InputOutputType_t eType;	// The enumeration of this type.
-	char *pszName;				// The name of this type.
+	InputOutputType_t eType;    // The enumeration of this type.
+	const char *pszName;        // The name of this type.
 } TypeMap_t;
 
 
-char *CClassInputOutputBase::g_pszEmpty = "";
+const char *CClassInputOutputBase::g_pszEmpty = "";
 
 
 //-----------------------------------------------------------------------------
