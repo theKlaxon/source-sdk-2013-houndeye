@@ -210,7 +210,7 @@ target_link_libraries( vrad_dll
 
 		raytrace
 		"${LIBPUBLIC}/bitmap${CMAKE_STATIC_LIBRARY_SUFFIX}"
-		"${LIBPUBLIC}/tier2${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		tier2
 		tier0
 		vstdlib
 		tier1

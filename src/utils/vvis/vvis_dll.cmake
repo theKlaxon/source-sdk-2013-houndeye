@@ -107,6 +107,6 @@ target_link_libraries( vvis_dll
 		tier1
 		mathlib
 		vstdlib
-		"${LIBPUBLIC}/tier2${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		tier2
 #		"${LIBPUBLIC}/vmpi${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
