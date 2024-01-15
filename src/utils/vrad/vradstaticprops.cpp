@@ -20,7 +20,6 @@
 #include "materialsystem/hardwareverts.h"
 #include "materialsystem/imaterial.h"
 #include "mathlib/vector.h"
-#include "mpivrad.h"
 #include "optimize.h"
 #include "pacifier.h"
 #include "phyfile.h"
@@ -34,10 +33,6 @@
 #include "vphysics_interface.h"
 #include "vrad.h"
 #include "vtf/vtf.h"
-
-#include "messbuf.h"
-#include "vmpi.h"
-#include "vmpi_distribute_work.h"
 
 
 #define ALIGN_TO_POW2( x, y ) ( ( ( x ) + ( y - 1 ) ) & ~( y - 1 ) )
@@ -206,7 +201,7 @@ CUtlSymbolTable g_ForcedTextureShadowsModels;
 
 // DON'T USE THIS FROM WITHIN A THREAD.  THERE IS A THREAD CONTEXT CREATED
 // INSIDE PropTested_t.  USE THAT INSTEAD.
-IPhysicsCollision* s_pPhysCollision = NULL;
+IPhysicsCollision* s_pPhysCollision = nullptr;
 
 static void ConvertTexelDataToTexture( unsigned int _resX, unsigned int _resY, ImageFormat _destFmt, const CUtlVector<colorTexel_t>& _srcTexels, CUtlMemory<byte>* _outTexture );
 
@@ -238,13 +233,6 @@ public:
 	void ComputeLighting( int iThread );
 
 private:
-#if defined( MPI )
-	// VMPI stuff.
-	static void VMPI_ProcessStaticProp_Static( int iThread, uint64 iStaticProp, MessageBuffer* pBuf );
-	static void VMPI_ReceiveStaticPropResults_Static( uint64 iStaticProp, MessageBuffer* pBuf, int iWorker );
-	void VMPI_ProcessStaticProp( int iThread, int iStaticProp, MessageBuffer* pBuf );
-	void VMPI_ReceiveStaticPropResults( int iStaticProp, MessageBuffer* pBuf, int iWorker );
-#endif
 	// local thread version
 	static void ThreadComputeStaticPropLighting( int iThread, void* pUserData );
 	void ComputeLightingForProp( int iThread, int iStaticProp );
@@ -360,7 +348,7 @@ static bool LoadFile( char const* pFileName, CUtlBuffer& buf ) {
 	if ( !g_pFullFileSystem )
 		return false;
 
-	return g_pFullFileSystem->ReadFile( pFileName, NULL, buf );
+	return g_pFullFileSystem->ReadFile( pFileName, nullptr, buf );
 }
 
 
@@ -379,7 +367,7 @@ static char const* ConstructFileName( char const* pModelName ) {
 //-----------------------------------------------------------------------------
 static CPhysConvex* ComputeConvexHull( mstudiomesh_t* pMesh, studiohdr_t* pStudioHdr ) {
 	const mstudio_meshvertexdata_t* vertData = pMesh->GetVertexData( (void*) pStudioHdr );
-	Assert( vertData );// This can only return NULL on X360 for now
+	Assert( vertData );// This can only return nullptr on X360 for now
 
 	// Generate a list of all verts in the mesh
 	Vector** ppVerts = (Vector**) _alloca( pMesh->numvertices * sizeof( Vector* ) );
@@ -454,8 +442,8 @@ bool LoadStudioModel( char const* pModelName, CUtlBuffer& buf ) {
 	}
 
 	// ensure reset
-	pHdr->pVertexBase = NULL;
-	pHdr->pIndexBase = NULL;
+	pHdr->pVertexBase = nullptr;
+	pHdr->pIndexBase = nullptr;
 
 	return true;
 }
@@ -599,10 +587,10 @@ public:
 
 		CUtlBuffer buf;
 		if ( !LoadFileIntoBuffer( buf, szPath ) )
-			return NULL;
+			return nullptr;
 		IVTFTexture* pTex = CreateVTFTexture();
 		if ( !pTex->Unserialize( buf ) )
-			return NULL;
+			return nullptr;
 		Msg( "Loaded alpha texture %s\n", szPath );
 		unsigned char* pSrcImage = pTex->ImageData( 0, 0, 0, 0, 0, 0 );
 		int iWidth = pTex->Width();
@@ -616,7 +604,7 @@ public:
 		if ( !ImageLoader::ConvertImageFormat( pSrcImage, srcFormat,
 											   pDstImage, dstFormat, iWidth, iHeight, 0, 0 ) ) {
 			delete[] pDstImage;
-			return NULL;
+			return nullptr;
 		}
 
 		*pWidth = iWidth;
@@ -853,8 +841,8 @@ void CVradStaticPropMgr::CreateCollisionModel( char const* pModelName ) {
 	CUtlBuffer bufphy;
 
 	int i = m_StaticPropDict.AddToTail();
-	m_StaticPropDict[ i ].m_pModel = NULL;
-	m_StaticPropDict[ i ].m_pStudioHdr = NULL;
+	m_StaticPropDict[ i ].m_pModel = nullptr;
+	m_StaticPropDict[ i ].m_pStudioHdr = nullptr;
 
 	if ( !LoadStudioModel( pModelName, buf ) ) {
 		VectorCopy( vec3_origin, m_StaticPropDict[ i ].m_Mins );
@@ -984,7 +972,7 @@ void CVradStaticPropMgr::Init() {
 	if ( !physicsFactory )
 		Error( "Unable to load vphysics DLL." );
 
-	s_pPhysCollision = (IPhysicsCollision*) physicsFactory( VPHYSICS_COLLISION_INTERFACE_VERSION, NULL );
+	s_pPhysCollision = (IPhysicsCollision*) physicsFactory( VPHYSICS_COLLISION_INTERFACE_VERSION, nullptr );
 	if ( !s_pPhysCollision ) {
 		Error( "Unable to get '%s' for physics interface.", VPHYSICS_COLLISION_INTERFACE_VERSION );
 		return;
@@ -1040,7 +1028,7 @@ void ComputeDirectLightingAtPoint( Vector& position, Vector& normal, Vector& out
 
 	// Iterate over all direct lights and accumulate their contribution
 	int cluster = ClusterFromPoint( position );
-	for ( directlight_t* dl = activelights; dl != NULL; dl = dl->next ) {
+	for ( directlight_t* dl = activelights; dl != nullptr; dl = dl->next ) {
 		if ( dl->light.style ) {
 			// skip lights with style
 			continue;
@@ -1193,8 +1181,6 @@ void CVradStaticPropMgr::ComputeLighting( CStaticProp& prop, int iThread, int pr
 	const int skip_prop = ( g_bDisablePropSelfShadowing || ( prop.m_Flags & STATIC_PROP_NO_SELF_SHADOWING ) ) ? prop_index : -1;
 	const int nFlags = ( prop.m_Flags & STATIC_PROP_IGNORE_NORMALS ) ? GATHERLFLAGS_IGNORE_NORMALS : 0;
 
-	VMPI_SetCurrentStage( "ComputeLighting" );
-
 	matrix3x4_t matPos, matNormal;
 	AngleMatrix( prop.m_Angles, prop.m_Origin, matPos );
 	AngleMatrix( prop.m_Angles, matNormal );
@@ -1225,7 +1211,7 @@ void CVradStaticPropMgr::ComputeLighting( CStaticProp& prop, int iThread, int pr
 				mstudiomesh_t* pStudioMesh = pStudioModel->pMesh( meshID );
 				const mstudio_meshvertexdata_t* vertData = pStudioMesh->GetVertexData( (void*) pStudioHdr );
 
-				Assert( vertData );// This can only return NULL on X360 for now
+				Assert( vertData );// This can only return nullptr on X360 for now
 
 				// TODO: Move this into its own function. In fact, refactor this whole function.
 				if ( withTexelLighting ) {
@@ -1481,84 +1467,6 @@ void CVradStaticPropMgr::SerializeLighting() {
 		AddBufferToPak( GetPakFile(), filename, (void*) pVhtHdr, pTexelData - (unsigned char*) pVhtHdr, false );
 	}
 }
-#if defined( MPI )
-void CVradStaticPropMgr::VMPI_ProcessStaticProp_Static( int iThread, uint64 iStaticProp, MessageBuffer* pBuf ) {
-	g_StaticPropMgr.VMPI_ProcessStaticProp( iThread, iStaticProp, pBuf );
-}
-
-void CVradStaticPropMgr::VMPI_ReceiveStaticPropResults_Static( uint64 iStaticProp, MessageBuffer* pBuf, int iWorker ) {
-	g_StaticPropMgr.VMPI_ReceiveStaticPropResults( iStaticProp, pBuf, iWorker );
-}
-
-//-----------------------------------------------------------------------------
-// Called on workers to do the computation for a static prop and send
-// it to the master.
-//-----------------------------------------------------------------------------
-void CVradStaticPropMgr::VMPI_ProcessStaticProp( int iThread, int iStaticProp, MessageBuffer* pBuf ) {
-	// Compute the lighting.
-	CComputeStaticPropLightingResults results;
-	ComputeLighting( m_StaticProps[ iStaticProp ], iThread, iStaticProp, &results );
-
-	VMPI_SetCurrentStage( "EncodeLightingResults" );
-
-	// Encode the results.
-	int nLists = results.m_ColorVertsArrays.Count();
-	pBuf->write( &nLists, sizeof( nLists ) );
-
-	for ( int i = 0; i < nLists; i++ ) {
-		CUtlVector<colorVertex_t>& curList = *results.m_ColorVertsArrays[ i ];
-		int count = curList.Count();
-		pBuf->write( &count, sizeof( count ) );
-		pBuf->write( curList.Base(), curList.Count() * sizeof( colorVertex_t ) );
-	}
-
-	nLists = results.m_ColorTexelsArrays.Count();
-	pBuf->write( &nLists, sizeof( nLists ) );
-
-	for ( int i = 0; i < nLists; i++ ) {
-		CUtlVector<colorTexel_t>& curList = *results.m_ColorTexelsArrays[ i ];
-		int count = curList.Count();
-		pBuf->write( &count, sizeof( count ) );
-		pBuf->write( curList.Base(), curList.Count() * sizeof( colorTexel_t ) );
-	}
-}
-
-//-----------------------------------------------------------------------------
-// Called on the master when a worker finishes processing a static prop.
-//-----------------------------------------------------------------------------
-void CVradStaticPropMgr::VMPI_ReceiveStaticPropResults( int iStaticProp, MessageBuffer* pBuf, int iWorker ) {
-	// Read in the results.
-	CComputeStaticPropLightingResults results;
-
-	int nLists;
-	pBuf->read( &nLists, sizeof( nLists ) );
-
-	for ( int i = 0; i < nLists; i++ ) {
-		CUtlVector<colorVertex_t>* pList = new CUtlVector<colorVertex_t>;
-		results.m_ColorVertsArrays.AddToTail( pList );
-
-		int count;
-		pBuf->read( &count, sizeof( count ) );
-		pList->SetSize( count );
-		pBuf->read( pList->Base(), count * sizeof( colorVertex_t ) );
-	}
-
-	pBuf->read( &nLists, sizeof( nLists ) );
-
-	for ( int i = 0; i < nLists; i++ ) {
-		CUtlVector<colorTexel_t>* pList = new CUtlVector<colorTexel_t>;
-		results.m_ColorTexelsArrays.AddToTail( pList );
-
-		int count;
-		pBuf->read( &count, sizeof( count ) );
-		pList->SetSize( count );
-		pBuf->read( pList->Base(), count * sizeof( colorTexel_t ) );
-	}
-
-	// Apply the results.
-	ApplyLightingToStaticProp( iStaticProp, m_StaticProps[ iStaticProp ], &results );
-}
-#endif
 
 void CVradStaticPropMgr::ComputeLightingForProp( int iThread, int iStaticProp ) {
 	// Compute the lighting.
@@ -1568,7 +1476,7 @@ void CVradStaticPropMgr::ComputeLightingForProp( int iThread, int iStaticProp ) 
 }
 
 void CVradStaticPropMgr::ThreadComputeStaticPropLighting( int iThread, void* pUserData ) {
-	while ( 1 ) {
+	while ( true ) {
 		int j = GetThreadWork();
 		if ( j == -1 )
 			break;
@@ -1594,20 +1502,7 @@ void CVradStaticPropMgr::ComputeLighting( int iThread ) {
 	// ensure any traces against us are ignored because we have no inherit lighting contribution
 	m_bIgnoreStaticPropTrace = true;
 
-	if ( g_bUseMPI ) {
-#if defined( MPI )
-		// Distribute the work among the workers.
-		VMPI_SetCurrentStage( "CVradStaticPropMgr::ComputeLighting" );
-
-		DistributeWork(
-			count,
-			VMPI_DISTRIBUTEWORK_PACKETID,
-			&CVradStaticPropMgr::VMPI_ProcessStaticProp_Static,
-			&CVradStaticPropMgr::VMPI_ReceiveStaticPropResults_Static );
-#endif
-	} else {
-		RunThreadsOn( count, true, ThreadComputeStaticPropLighting );
-	}
+	RunThreadsOn( count, true, ThreadComputeStaticPropLighting );
 
 	// restore default
 	m_bIgnoreStaticPropTrace = false;
@@ -1621,7 +1516,7 @@ void CVradStaticPropMgr::ComputeLighting( int iThread ) {
 //-----------------------------------------------------------------------------
 // Adds all static prop polys to the ray trace store.
 //-----------------------------------------------------------------------------
-void CVradStaticPropMgr::AddPolysForRayTrace( void ) {
+void CVradStaticPropMgr::AddPolysForRayTrace() {
 	int count = m_StaticProps.Count();
 	if ( !count ) {
 		// nothing to do
@@ -1714,7 +1609,7 @@ void CVradStaticPropMgr::AddPolysForRayTrace( void ) {
 
 					OptimizedModel::MeshHeader_t* pVtxMesh = pVtxLOD->pMesh( nMesh );
 					const mstudio_meshvertexdata_t* vertData = pMesh->GetVertexData( (void*) pStudioHdr );
-					Assert( vertData );// This can only return NULL on X360 for now
+					Assert( vertData );// This can only return nullptr on X360 for now
 
 					for ( int nGroup = 0; nGroup < pVtxMesh->numStripGroups; ++nGroup ) {
 						OptimizedModel::StripGroupHeader_t* pStripGroup = pVtxMesh->pStripGroup( nGroup );
@@ -1874,7 +1769,7 @@ void CVradStaticPropMgr::BuildTriList( CStaticProp& prop ) {
 				mstudiomesh_t* pMesh = pStudioModel->pMesh( nMesh );
 				OptimizedModel::MeshHeader_t* pVtxMesh = pVtxLOD->pMesh( nMesh );
 				const mstudio_meshvertexdata_t* vertData = pMesh->GetVertexData( (void*) pStudioHdr );
-				Assert( vertData );// This can only return NULL on X360 for now
+				Assert( vertData );// This can only return nullptr on X360 for now
 
 				for ( int nGroup = 0; nGroup < pVtxMesh->numStripGroups; ++nGroup ) {
 					OptimizedModel::StripGroupHeader_t* pStripGroup = pVtxMesh->pStripGroup( nGroup );
@@ -2045,7 +1940,7 @@ static void GenerateLightmapSamplesForMesh( const matrix3x4_t& _matPos, const ma
 	mstudiomesh_t* pMesh = _pStudioModel->pMesh( _meshID );
 	OptimizedModel::MeshHeader_t* pVtxMesh = pVtxLOD->pMesh( _meshID );
 	const mstudio_meshvertexdata_t* vertData = pMesh->GetVertexData( (void*) _pStudioHdr );
-	Assert( vertData );// This can only return NULL on X360 for now
+	Assert( vertData );// This can only return nullptr on X360 for now
 
 	for ( int nGroup = 0; nGroup < pVtxMesh->numStripGroups; ++nGroup ) {
 		OptimizedModel::StripGroupHeader_t* pStripGroup = pVtxMesh->pStripGroup( nGroup );
@@ -2275,7 +2170,7 @@ static void BuildFineMipmap( unsigned int _resX, unsigned int _resY, bool _apply
 			ColorRGBExp32 rgbColor;
 			RGBA8888_t encodedColor;
 			VectorToColorRGBExp32( _srcTexels[ i ].m_Color, rgbColor );
-			ConvertRGBExp32ToRGBA8888( &rgbColor, (unsigned char*) &encodedColor, ( _outLinear ? ( &( *_outLinear )[ i ] ) : NULL ) );
+			ConvertRGBExp32ToRGBA8888( &rgbColor, (unsigned char*) &encodedColor, ( _outLinear ? ( &( *_outLinear )[ i ] ) : nullptr ) );
 			// We drop alpha on the floor here, if this were to fire we'd need to consider using a different compressed format.
 			Assert( encodedColor.a == 0xFF );
 
@@ -2388,7 +2283,7 @@ static void ConvertTexelDataToTexture( unsigned int _resX, unsigned int _resY, I
 static void DumpLightmapLinear( const char* _dstFilename, const CUtlVector<colorTexel_t>& _srcTexels, int _width, int _height ) {
 	CUtlVector<Vector> linearFloats;
 	CUtlVector<BGR888_t> linearBuffer;
-	BuildFineMipmap( _width, _height, true, _srcTexels, NULL, &linearFloats );
+	BuildFineMipmap( _width, _height, true, _srcTexels, nullptr, &linearFloats );
 	linearBuffer.SetCount( linearFloats.Count() );
 
 	for ( int i = 0; i < linearFloats.Count(); ++i ) {

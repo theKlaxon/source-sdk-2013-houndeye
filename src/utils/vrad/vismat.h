@@ -7,6 +7,7 @@
 
 #ifndef VISMAT_H
 #define VISMAT_H
+#include "vrad.h"
 #ifdef _WIN32
 #pragma once
 #endif

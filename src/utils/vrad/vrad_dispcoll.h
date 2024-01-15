@@ -32,7 +32,7 @@ public:
 	// Patches.
 	bool InitPatch( int iPatch, int iParentPatch, int iChild, Vector *pPoints, int *pIndices, float &flArea );
 	bool InitParentPatch( int iPatch, Vector *pPoints, float &flArea );
-	float CreateParentPatches( void );
+	float CreateParentPatches();
 	void CreateChildPatches( int iParentPatch, int nLevel );
 	void CreateChildPatchesFromRoot( int iParentPatch, int *pChildPatch );
 	void CreateChildPatchesSub( int iParentPatch );
@@ -43,10 +43,10 @@ public:
 	void DispUVToSurfNormal( Vector2D const &dispUV, Vector &vecNormal );
 
 	// Data.
-	inline float GetSampleRadius2( void )								{ return m_flSampleRadius2; }
-	inline float GetPatchSampleRadius2( void )							{ return m_flPatchSampleRadius2; }
+	inline float GetSampleRadius2()								{ return m_flSampleRadius2; }
+	inline float GetPatchSampleRadius2()							{ return m_flPatchSampleRadius2; }
 
-	inline int GetParentIndex( void )									{ return m_iParent; }		
+	inline int GetParentIndex()									{ return m_iParent; }
 	inline void GetParentFaceNormal( Vector &vecNormal )				{ vecNormal = m_vecStabDir; }
 
 	inline void GetVert( int iVert, Vector &vecVert )					{ Assert( ( iVert >= 0 ) && ( iVert < GetSize() ) ); vecVert = m_aVerts[iVert]; }
@@ -54,7 +54,7 @@ public:
 	inline Vector2D const& GetLuxelCoord( int iLuxel )					{ Assert( ( iLuxel >= 0 ) && ( iLuxel < GetSize() ) ); return m_aLuxelCoords[iLuxel]; }
 
 	// Raytracing
-	void AddPolysForRayTrace( void );
+	void AddPolysForRayTrace();
 
 protected:
 

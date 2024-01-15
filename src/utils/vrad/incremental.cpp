@@ -91,8 +91,8 @@ IIncremental* GetIncremental() {
 
 CIncremental::CIncremental() {
 	m_TotalMemory = 0;
-	m_pIncrementalFilename = NULL;
-	m_pBSPFilename = NULL;
+	m_pIncrementalFilename = nullptr;
+	m_pBSPFilename = nullptr;
 	m_bSuccessfulRun = false;
 }
 
@@ -130,7 +130,7 @@ bool CIncremental::PrepareForLighting() {
 	// Match the light lists and get rid of lights that we already have all the data for.
 	directlight_t* pNext;
 	directlight_t** pPrev = &activelights;
-	for ( directlight_t* dl = activelights; dl != NULL; dl = pNext ) {
+	for ( directlight_t* dl = activelights; dl != nullptr; dl = pNext ) {
 		pNext = dl->next;
 
 		//float flClosest = 3000000000;
@@ -517,7 +517,7 @@ void CIncremental::Term() {
 
 void CIncremental::AddLightsForActiveLights() {
 	// Create our lights.
-	for ( directlight_t* dl = activelights; dl != NULL; dl = dl->next ) {
+	for ( directlight_t* dl = activelights; dl != nullptr; dl = dl->next ) {
 		CIncLight* pLight = new CIncLight;
 		dl->m_IncrementalID = m_Lights.AddToTail( pLight );
 

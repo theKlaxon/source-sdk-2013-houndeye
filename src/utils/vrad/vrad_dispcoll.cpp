@@ -382,7 +382,7 @@ void CVRADDispColl::DispUVToSurfNormal( Vector2D const &dispUV, Vector &vecNorma
 // Purpose: 
 // Output : float
 //-----------------------------------------------------------------------------
-float CVRADDispColl::CreateParentPatches( void )
+float CVRADDispColl::CreateParentPatches()
 {
 	// Save the total surface area of the displacement.
 	float flTotalArea = 0.0f;
@@ -912,7 +912,7 @@ bool CVRADDispColl::InitPatch( int iPatch, int iParentPatch, int iChild, Vector 
 	memset( pPatch, 0, sizeof( CPatch ) );
 
 	// Setup the parent if we are not the parent.
-	CPatch *pParentPatch = NULL;
+	CPatch *pParentPatch = nullptr;
 	if ( iParentPatch != g_Patches.InvalidIndex() )
 	{
 		// Get the parent patch.
@@ -1061,7 +1061,7 @@ bool CVRADDispColl::InitPatch( int iPatch, int iParentPatch, int iChild, Vector 
 	return true;
 }
 
-void CVRADDispColl::AddPolysForRayTrace( void )
+void CVRADDispColl::AddPolysForRayTrace()
 {
 	if ( !( m_nContents & MASK_OPAQUE ) )
 		return;

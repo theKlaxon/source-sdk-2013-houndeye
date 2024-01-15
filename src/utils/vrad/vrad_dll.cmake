@@ -1,8 +1,7 @@
 # vrad_dll.cmake
 
 set(VRAD_DLL_DIR ${CMAKE_CURRENT_LIST_DIR})
-set(
-	VRAD_DLL_SOURCE_FILES
+set(VRAD_DLL_SOURCE_FILES
 
 	"${SRCDIR}/public/bsptreedata.cpp"
 	"${SRCDIR}/public/disp_common.cpp"
@@ -15,9 +14,6 @@ set(
 	"${SRCDIR}/public/loadcmdline.cpp"
 	"${SRCDIR}/public/lumpfiles.cpp"
 	"${VRAD_DLL_DIR}/macro_texture.cpp"
-#	"${SRCDIR}/utils/common/mpi_stats.cpp"
-#	"${VRAD_DLL_DIR}/mpivrad.cpp"
-#	"${SRCDIR}/utils/common/MySqlDatabase.cpp"
 	"${SRCDIR}/utils/common/pacifier.cpp"
 	"${SRCDIR}/utils/common/physdll.cpp"
 	"${VRAD_DLL_DIR}/radial.cpp"
@@ -25,8 +21,6 @@ set(
 	"${VRAD_DLL_DIR}/trace.cpp"
 	"${SRCDIR}/utils/common/utilmatlib.cpp"
 	"${VRAD_DLL_DIR}/vismat.cpp"
-#	"${SRCDIR}/utils/common/vmpi_tools_shared.cpp"
-#	"${SRCDIR}/utils/common/vmpi_tools_shared.h"
 	"${VRAD_DLL_DIR}/vrad.cpp"
 	"${VRAD_DLL_DIR}/vrad_dispcoll.cpp"
 	"${VRAD_DLL_DIR}/vraddetailprops.cpp"
@@ -66,7 +60,6 @@ set(
 	"${VRAD_DLL_DIR}/lightmap.h"
 	"${VRAD_DLL_DIR}/macro_texture.h"
 	"${SRCDIR}/public/map_utils.h"
-#	"${VRAD_DLL_DIR}/mpivrad.h"
 	"${VRAD_DLL_DIR}/radial.h"
 	"${SRCDIR}/public/bitmap/tgawriter.h"
 	"${VRAD_DLL_DIR}/vismat.h"
@@ -79,24 +72,13 @@ set(
 	"${SRCDIR}/utils/common/bsplib.h"
 	"${SRCDIR}/utils/common/cmdlib.h"
 	"${SRCDIR}/utils/common/consolewnd.h"
-#	"${SRCDIR}/utils/vmpi/ichannel.h"
-#	"${SRCDIR}/utils/vmpi/imysqlwrapper.h"
-#	"${SRCDIR}/utils/vmpi/iphelpers.h"
-#	"${SRCDIR}/utils/common/ISQLDBReplyTarget.h"
 	"${SRCDIR}/utils/common/map_shared.h"
-#	"${SRCDIR}/utils/vmpi/messbuf.h"
 	"${SRCDIR}/utils/common/mpi_stats.h"
-#	"${SRCDIR}/utils/common/MySqlDatabase.h"
 	"${SRCDIR}/utils/common/pacifier.h"
 	"${SRCDIR}/utils/common/polylib.h"
 	"${SRCDIR}/utils/common/scriplib.h"
-#	"${SRCDIR}/utils/vmpi/threadhelpers.h"
 	"${SRCDIR}/utils/common/threads.h"
 	"${SRCDIR}/utils/common/utilmatlib.h"
-#	"${SRCDIR}/utils/vmpi/vmpi_defs.h"
-#	"${SRCDIR}/utils/vmpi/vmpi_dispatch.h"
-#	"${SRCDIR}/utils/vmpi/vmpi_distribute_work.h"
-#	"${SRCDIR}/utils/vmpi/vmpi_filesystem.h"
 
 	# Public Header Files
 	"${SRCDIR}/public/mathlib/amd3dx.h"
@@ -171,7 +153,6 @@ set(
 	"${SRCDIR}/public/mathlib/vector2d.h"
 	"${SRCDIR}/public/mathlib/vector4d.h"
 	"${SRCDIR}/public/mathlib/vmatrix.h"
-#	"${SRCDIR}/utils/vmpi/vmpi.h"
 	"${SRCDIR}/public/vphysics_interface.h"
 	"${SRCDIR}/public/mathlib/vplane.h"
 	"${SRCDIR}/public/tier0/vprof.h"
@@ -192,15 +173,11 @@ set_target_properties( vrad_dll
 target_include_directories( vrad_dll
 	PRIVATE
 		"${SRCDIR}/utils/common"
-		"${SRCDIR}/utils/vmpi"
-		"${SRCDIR}/utils/vmpi/mysql/mysqlpp/include"
-		"${SRCDIR}/utils/vmpi/mysql/include"
 )
 
 target_compile_definitions( vrad_dll
 	PRIVATE
-#		MPI
-#		PROTECTED_THINGS_DISABLE
+		PROTECTED_THINGS_DISABLE
 		VRAD
 )
 
@@ -216,6 +193,5 @@ target_link_libraries( vrad_dll
 		tier1
 		lzma
 		mathlib
-#		"${LIBPUBLIC}/vmpi${CMAKE_STATIC_LIBRARY_SUFFIX}"
 		"${LIBPUBLIC}/vtf${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )

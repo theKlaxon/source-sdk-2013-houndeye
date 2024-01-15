@@ -5,8 +5,7 @@
 // $NoKeywords: $
 //
 //========================================================================//
-#include "vis.h"
-#include "vmpi.h"
+#include "vvis.hpp"
 
 int g_TraceClusterStart = -1;
 int g_TraceClusterStop = -1;
@@ -64,7 +63,6 @@ void CheckStack( leaf_t* leaf, threaddata_t* thread ) {
 			if ( p2->leaf == p->leaf )
 				Error( "CheckStack: late leaf recursion" );
 	}
-	//	Msg ("\n");
 }
 
 
@@ -79,8 +77,6 @@ winding_t* AllocStackWinding( pstack_t* stack ) {
 	}
 
 	Error( "Out of memory. AllocStackWinding: failed" );
-
-	return NULL;
 }
 
 void FreeStackWinding( winding_t* w, pstack_t* stack ) {
@@ -100,7 +96,7 @@ void FreeStackWinding( winding_t* w, pstack_t* stack ) {
 // ChopWinding
 // ============== //
 
-#ifdef _WIN32
+#if defined( COMPILER_MSVC )
 	#pragma warning( disable : 4701 )
 #endif
 
@@ -135,7 +131,7 @@ winding_t* ChopWinding( winding_t* in, pstack_t* stack, plane_t* split ) {
 
 	if ( !counts[ 0 ] ) {
 		FreeStackWinding( in, stack );
-		return NULL;
+		return nullptr;
 	}
 
 	sides[ i ] = sides[ 0 ];
@@ -195,7 +191,7 @@ winding_t* ChopWinding( winding_t* in, pstack_t* stack, plane_t* split ) {
 	return neww;
 }
 
-#ifdef _WIN32
+#if defined( COMPILER_MSVC )
 	#pragma warning( default : 4701 )
 #endif
 
@@ -420,7 +416,7 @@ void WritePortalTrace( const char* source ) {
 // RecursiveLeafFlow
 //
 // Flood fill through the leafs
-// If src_portal is NULL, this is the originating leaf
+// If src_portal is nullptr, this is the originating leaf
 // ===================================================== //
 void RecursiveLeafFlow( int leafnum, threaddata_t* thread, pstack_t* prevstack ) {
 	pstack_t stack;

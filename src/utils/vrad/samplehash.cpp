@@ -104,7 +104,7 @@ UtlHashHandle_t SampleData_AddSample( sample_t *pSample, SampleHandle_t sampleHa
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void SampleData_Log( void )
+void SampleData_Log()
 {
 	if( g_bLogHashData )
 	{

@@ -284,8 +284,6 @@ extern bool IsModelTextureShadowsForced( const char* pModelName );
 #define TRACE_ID_STATICPROP 0x04000000// static prop - lower bits are prop ID
 extern RayTracingEnvironment g_RtEnv;
 
-#include "mpivrad.h"
-
 void MakeShadowSplits();
 
 //==============================================
@@ -346,7 +344,7 @@ void BuildFacelights( int facenum, int threadnum );
 void PrecompLightmapOffsets();
 void FinalLightFace( int threadnum, int facenum );
 void PvsForOrigin( Vector& org, byte* pvs );
-void ConvertRGBExp32ToRGBA8888( const ColorRGBExp32* pSrc, unsigned char* pDst, Vector* _optOutLinear = NULL );
+void ConvertRGBExp32ToRGBA8888( const ColorRGBExp32* pSrc, unsigned char* pDst, Vector* _optOutLinear = nullptr );
 void ConvertRGBExp32ToLinear( const ColorRGBExp32* pSrc, Vector* pDst );
 void ConvertLinearToRGBA8888( const Vector* pSrc, unsigned char* pDst );
 

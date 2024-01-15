@@ -21,7 +21,7 @@ bool bOrigFacesTouched[MAX_MAP_FACES];
 //         face list allowing an original face to only be processed once in 
 //         pairing edges!
 //-----------------------------------------------------------------------------
-void ResetOrigFacesTouched( void )
+void ResetOrigFacesTouched()
 {
     for( int i = 0; i < MAX_MAP_FACES; i++ )
     {

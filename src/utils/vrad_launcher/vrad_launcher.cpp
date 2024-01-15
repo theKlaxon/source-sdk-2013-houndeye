@@ -8,9 +8,11 @@
 // vrad_launcher.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
+#include "interface.h"
 #if IsWindows()
 	#include <direct.h>
+#elif IsLinux()
+	#include <cerrno>
 #endif
 #include "ilaunchabledll.h"
 #include "tier0/icommandline.h"
@@ -98,10 +100,9 @@ int main( int argc, char* argv[] ) {
 		if ( mode && ( !both_arg ) )
 			continue;
 
-
 		// If it didn't load the module above, then use the
 		if ( !pModule ) {
-			strcpy( dllName, "vrad_dll.dll" );
+			strcpy( dllName, "vrad_dll" DLL_EXT_STRING );
 			pModule = Sys_LoadModule( dllName );
 		}
 
@@ -112,16 +113,15 @@ int main( int argc, char* argv[] ) {
 
 		CreateInterfaceFn fn = Sys_GetFactory( pModule );
 		if ( !fn ) {
-			printf( "vrad_launcher error: can't get factory from vrad_dll.dll\n" );
+			printf( "vrad_launcher error: can't get factory from %s\n", dllName );
 			Sys_UnloadModule( pModule );
 			return 2;
 		}
 
 		int retCode = 0;
 		auto* pDLL = static_cast<ILaunchableDLL*>( fn( LAUNCHABLE_DLL_INTERFACE_VERSION, &retCode ) );
-		#define STRINGIFY( x ) # x
 		if ( !pDLL ) {
-			printf( "vrad_launcher error: can't get ILaunchableDLL interface from vrad_dll" STRINGIFY( _DLL_EXT ) "\n" );
+			printf( "vrad_launcher error: can't get ILaunchableDLL interface from %s\n", dllName );
 			Sys_UnloadModule( pModule );
 			return 3;
 		}

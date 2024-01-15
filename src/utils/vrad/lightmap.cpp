@@ -20,7 +20,6 @@
 #include "tier1/utlbuffer.h"
 #include "tier1/utlrbtree.h"
 #include "tier1/utlvector.h"
-#include "vmpi.h"
 #include "vrad.h"
 
 enum {
@@ -134,7 +133,7 @@ int EdgeVertex( dface_t* f, int edge ) {
   PairEdges
   ============
 */
-void PairEdges( void ) {
+void PairEdges() {
 	int i, j, k, n, m;
 	dface_t* f;
 	int numneighbors;
@@ -280,7 +279,7 @@ void PairEdges( void ) {
 }
 
 
-void SaveVertexNormals( void ) {
+void SaveVertexNormals() {
 	faceneighbor_t* fn;
 	int i, j;
 	dface_t* f;
@@ -1350,7 +1349,7 @@ static void ParseLightPoint( entity_t* e, directlight_t* dl ) {
   =============
 */
 #define DIRECT_SCALE ( 100.0 * 100.0 )
-void CreateDirectLights( void ) {
+void CreateDirectLights() {
 	unsigned i;
 	CPatch* p = nullptr;
 	directlight_t* dl = nullptr;
@@ -2831,12 +2830,7 @@ void BuildFacelights( int iThread, int facenum ) {
 		}
 	}
 
-	if ( !g_bUseMPI ) {
-		//
-		// This is done on the master node when MPI is used
-		//
-		BuildPatchLights( facenum );
-	}
+	BuildPatchLights( facenum );
 
 	if ( g_bDumpPatches ) {
 		DumpSamples( facenum, fl );

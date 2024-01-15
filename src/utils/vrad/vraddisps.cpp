@@ -83,8 +83,8 @@ public:
 	virtual ~CVRadDispMgr();
 
 	// creation/destruction
-	void Init( void );
-	void Shutdown( void );
+	void Init();
+	void Shutdown();
 
 	// "CalcPoints"
 	bool BuildDispSamples( lightinfo_t *pLightInfo, facelight_t *pFaceLight, int ndxFace );
@@ -92,12 +92,12 @@ public:
 	bool BuildDispSamplesAndLuxels_DoFast( lightinfo_t *pLightInfo, facelight_t *pFaceLight, int ndxFace );
 
 	// patching functions
-	void MakePatches( void );
+	void MakePatches();
 	void SubdividePatch( int iPatch );
 
 	// pre "FinalLightFace"
-	void InsertSamplesDataIntoHashTable( void );
-	void InsertPatchSampleDataIntoHashTable( void );
+	void InsertSamplesDataIntoHashTable();
+	void InsertPatchSampleDataIntoHashTable();
 
 	// "FinalLightFace"
 	radial_t *BuildLuxelRadial( int ndxFace, int ndxStyle, bool bBump );
@@ -117,11 +117,11 @@ public:
 		int ndxLeaf, float& dist, Vector *pNormal );
 
 	void StartRayTest( DispTested_t &dispTested );
-	void AddPolysForRayTrace( void );
+	void AddPolysForRayTrace();
 
 	// general timing -- should be moved!!
 	void StartTimer( const char *name );
-	void EndTimer( void );
+	void EndTimer();
 
 	//=========================================================================
 	//
@@ -147,7 +147,7 @@ private:
 	//
 	// Displacement Data Loader (from .bsp)
 	//
-	void UnserializeDisps( void );
+	void UnserializeDisps();
 	void DispBuilderInit( CCoreDispInfo *pBuilderDisp, dface_t *pFace, int ndxFace );
 
 	//=========================================================================
@@ -204,7 +204,7 @@ private:
 
 static CVRadDispMgr	s_DispMgr;
 
-IVRadDispMgr *StaticDispMgr( void )
+IVRadDispMgr *StaticDispMgr()
 {
 	return &s_DispMgr;
 }
@@ -315,7 +315,7 @@ void CVRadDispMgr::RemoveDispFromTree( int ndxDisp )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CVRadDispMgr::Init( void )
+void CVRadDispMgr::Init()
 {
 	// initialize the bsp tree
 	m_pBSPTreeData->Init( ToolBSPTree() );
@@ -327,7 +327,7 @@ void CVRadDispMgr::Init( void )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CVRadDispMgr::Shutdown( void )
+void CVRadDispMgr::Shutdown()
 {
 	// remove all displacements from the tree
 	for( int ndxDisp = m_DispTrees.Size(); ndxDisp >= 0; ndxDisp-- )
@@ -423,7 +423,7 @@ void CVRadDispMgr::DispBuilderInit( CCoreDispInfo *pBuilderDisp, dface_t *pFace,
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CVRadDispMgr::UnserializeDisps( void ) 
+void CVRadDispMgr::UnserializeDisps()
 {
 	// temporarily create the "builder" displacements
 	CUtlVector<CCoreDispInfo*> builderDisps;
@@ -495,7 +495,7 @@ void CVRadDispMgr::UnserializeDisps( void )
 // Purpose: create a set of patches for each displacement surface to transfer
 //          bounced light around with
 //-----------------------------------------------------------------------------
-void CVRadDispMgr::MakePatches( void )
+void CVRadDispMgr::MakePatches()
 {
 	// Collect stats - keep track of the total displacement surface area.
 	float flTotalArea = 0.0f;
@@ -612,7 +612,7 @@ void CVRadDispMgr::ClipRayToDispInLeaf( DispTested_t &dispTested, Ray_t const &r
 	}
 }
 
-void CVRadDispMgr::AddPolysForRayTrace( void )
+void CVRadDispMgr::AddPolysForRayTrace()
 {
 	int nTreeCount = m_DispTrees.Size();
 	for( int iTree = 0; iTree < nTreeCount; ++iTree )
@@ -1035,7 +1035,7 @@ radial_t *CVRadDispMgr::BuildLuxelRadial( int ndxFace, int ndxStyle, bool bBump 
 	// allocate the radial
 	radial_t *pRadial = AllocateRadial( ndxFace );
 	if( !pRadial )
-		return NULL;
+		return nullptr;
 
 	//
 	// step 1: get the displacement surface to be lit
@@ -1043,7 +1043,7 @@ radial_t *CVRadDispMgr::BuildLuxelRadial( int ndxFace, int ndxStyle, bool bBump 
 	DispCollTree_t &dispTree = m_DispTrees[g_pFaces[ndxFace].dispinfo];
 	CVRADDispColl *pDispTree = dispTree.m_pDispTree;
 	if( !pDispTree )
-		return NULL;
+		return nullptr;
 
 	// step 2: build radial luxels
 	RadialLuxelBuild( pDispTree, pRadial, ndxStyle, bBump );
@@ -1393,7 +1393,7 @@ radial_t *CVRadDispMgr::BuildPatchRadial( int ndxFace, bool bBump )
 	// allocate the radial
 	radial_t *pRadial = AllocateRadial( ndxFace );
 	if( !pRadial )
-		return NULL;
+		return nullptr;
 
 	//
 	// step 1: get the displacement surface to be lit
@@ -1401,7 +1401,7 @@ radial_t *CVRadDispMgr::BuildPatchRadial( int ndxFace, bool bBump )
 	DispCollTree_t &dispTree = m_DispTrees[g_pFaces[ndxFace].dispinfo];
 	CVRADDispColl *pDispTree = dispTree.m_pDispTree;
 	if( !pDispTree )
-		return NULL;
+		return nullptr;
 
 	// step 2: build radial of patch light
 	RadialPatchBuild( pDispTree, pRadial, bBump );
@@ -1422,7 +1422,7 @@ bool SampleInSolid( sample_t *pSample )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CVRadDispMgr::InsertSamplesDataIntoHashTable( void )
+void CVRadDispMgr::InsertSamplesDataIntoHashTable()
 {
 	int totalSamples = 0;
 #if 0
@@ -1486,7 +1486,7 @@ void CVRadDispMgr::InsertSamplesDataIntoHashTable( void )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CVRadDispMgr::InsertPatchSampleDataIntoHashTable( void )
+void CVRadDispMgr::InsertPatchSampleDataIntoHashTable()
 {
 	// don't insert patch samples if we are not bouncing light
 	if( numbounce <= 0 )
@@ -1507,13 +1507,13 @@ void CVRadDispMgr::InsertPatchSampleDataIntoHashTable( void )
 		//
 		// for each patch
 		//
-		CPatch *pNextPatch = NULL;
+		CPatch *pNextPatch = nullptr;
 		if( g_FacePatches.Element( ndxFace ) != g_FacePatches.InvalidIndex() )
 		{
 			for( CPatch *pPatch = &g_Patches.Element( g_FacePatches.Element( ndxFace ) ); pPatch; pPatch = pNextPatch )
 			{
 				// next patch
-				pNextPatch = NULL;
+				pNextPatch = nullptr;
 				if( pPatch->ndxNext != g_Patches.InvalidIndex() )
 				{
 					pNextPatch = &g_Patches.Element( pPatch->ndxNext );
@@ -1544,7 +1544,7 @@ void CVRadDispMgr::StartTimer( const char *name )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CVRadDispMgr::EndTimer( void )
+void CVRadDispMgr::EndTimer()
 {
 	m_Timer.End();
 	CCycleCount duration = m_Timer.GetDuration();

@@ -7,11 +7,11 @@
 //=============================================================================//
 // vvis_launcher.cpp : Defines the entry point for the console application.
 //
-
-#include "stdafx.h"
-#include <cerrno>
+#include "interface.h"
 #if IsWindows()
 	#include <direct.h>
+#elif IsLinux()
+	#include <cerrno>
 #endif
 #include "tier0/icommandline.h"
 #include "ilaunchabledll.h"

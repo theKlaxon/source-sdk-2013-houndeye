@@ -4,24 +4,16 @@
 //
 // $NoKeywords: $
 //
-//=============================================================================//
-// vis.c
-
-
-#include <filesystem>
+//========================================================================//
+#include "vvis.hpp"
 #include "byteswap.h"
 #include "collisionutils.h"
 #include "ilaunchabledll.h"
 #include "loadcmdline.h"
-#include "mpivis.h"
-#include "pacifier.h"
 #include "threads.h"
 #include "tier0/icommandline.h"
 #include "tier1/strtools.h"
 #include "tools_minidump.h"
-#include "vis.h"
-#include "vmpi.h"
-#include "vmpi_tools_shared.h"
 #include <cstdlib>
 
 
@@ -137,7 +129,7 @@ void BuildTracePortals( int clusterStart ) {
 	}
 }
 
-void SortPortals( void ) {
+void SortPortals() {
 	int i;
 
 	for ( i = 0; i < g_numportals * 2; i++ )
@@ -269,7 +261,7 @@ static int CompressAndCrosscheckClusterVis( int clusternum ) {
 CalcPortalVis
 ==================
 */
-void CalcPortalVis( void ) {
+void CalcPortalVis() {
 	int i;
 
 	// fastvis just uses mightsee for a very loose bound
@@ -282,15 +274,11 @@ void CalcPortalVis( void ) {
 	}
 
 
-	if ( g_bUseMPI ) {
-		RunMPIPortalFlow();
-	} else {
-		RunThreadsOnIndividual( g_numportals * 2, true, PortalFlow );
-	}
+	RunThreadsOnIndividual( g_numportals * 2, true, PortalFlow );
 }
 
 
-void CalcVisTrace( void ) {
+void CalcVisTrace() {
 	RunThreadsOnIndividual( g_numportals * 2, true, BasePortalVis );
 	BuildTracePortals( g_TraceClusterStart );
 	// NOTE: We only schedule the one-way portals out of the start cluster here
@@ -303,14 +291,10 @@ void CalcVisTrace( void ) {
 CalcVis
 ==================
 */
-void CalcVis( void ) {
+void CalcVis() {
 	int i;
 
-	if ( g_bUseMPI ) {
-		RunMPIBasePortalVis();
-	} else {
-		RunThreadsOnIndividual( g_numportals * 2, true, BasePortalVis );
-	}
+	RunThreadsOnIndividual( g_numportals * 2, true, BasePortalVis );
 
 	SortPortals();
 
@@ -377,50 +361,15 @@ void LoadPortals( char* name ) {
 	int leafnums[ 2 ];
 	plane_t plane;
 
-	FILE* f;
-
 	// Open the portal file.
-	if ( g_bUseMPI ) {
-		// If we're using MPI, copy off the file to a temporary first. This will download the file
-		// from the MPI master, then we get to use nice functions like fscanf on it.
-		char tempFile[ MAX_PATH ];
-
-		std::error_code error;
-		auto tempDir = std::filesystem::temp_directory_path(error);
-		if ( error.value() != 0 ) {
-			Error( "LoadPortals: Failed to get temp directory path.\n" );
-		}
-
-		auto id = std::time( nullptr ) & 0x0000FFFF;
-		std::sprintf( tempFile, "%svvis_portal_%ld", tempDir.c_str(), id );
-
-		// Read all the data from the network file into memory.
-		FileHandle_t hFile = g_pFileSystem->Open( name, "r" );
-		if ( hFile == FILESYSTEM_INVALID_HANDLE )
-			Error( "LoadPortals( %s ): couldn't get file from master.\n", name );
-
-		CUtlVector<char> data;
-		data.SetSize( g_pFileSystem->Size( hFile ) );
-		g_pFileSystem->Read( data.Base(), data.Count(), hFile );
-		g_pFileSystem->Close( hFile );
-
-		// Dump it into a temp file.
-		f = fopen( tempFile, "wt" );
-		fwrite( data.Base(), 1, data.Count(), f );
-		fclose( f );
-
-		// Open the temp file up.
-		f = fopen( tempFile, "rSTD" );// read only, sequential, temporary, delete on close
-	} else {
-		f = fopen( name, "r" );
-	}
+	FILE* f = fopen( name, "r" );
 
 	if ( !f )
 		Error( "LoadPortals: couldn't read %s\n", name );
 
 	if ( fscanf( f, "%79s\n%i\n%i\n", magic, &portalclusters, &g_numportals ) != 3 )
 		Error( "LoadPortals %s: failed to read header", name );
-	if ( stricmp( magic, PORTALFILE ) )
+	if ( stricmp( magic, PORTALFILE ) != 0 )
 		Error( "LoadPortals %s: not a portal file", name );
 
 	Msg( "%4i portalclusters\n", portalclusters );
@@ -520,7 +469,7 @@ Calculate the PAS (Potentially Audible Set)
 by ORing together all the PVS visible from a leaf
 ================
 */
-void CalcPAS( void ) {
+void CalcPAS() {
 	int i, j, k, l, index;
 	int bitbyte;
 	long *dest, *src;
@@ -719,7 +668,7 @@ static float CalcDistanceFromLeafToWater( int leafNum ) {
 	return minDist;
 }
 
-static void CalcDistanceFromLeavesToWater( void ) {
+static void CalcDistanceFromLeavesToWater() {
 	int i;
 	for ( i = 0; i < numleafs; i++ ) {
 		g_LeafMinDistToWater[ i ] = (unsigned short) CalcDistanceFromLeafToWater( i );
@@ -864,19 +813,8 @@ int ParseCommandLine( int argc, char** argv ) {
 			++i;
 		} else if ( !Q_stricmp( argv[ i ], "-allowdebug" ) || !Q_stricmp( argv[ i ], "-steam" ) ) {
 			// nothing to do here, but don't bail on this option
-		}
-		// NOTE: the -mpi checks must come last here because they allow the previous argument
-		// to be -mpi as well. If it game before something else like -game, then if the previous
-		// argument was -mpi and the current argument was something valid like -game, it would skip it.
-		else if ( !Q_strncasecmp( argv[ i ], "-mpi", 4 ) || !Q_strncasecmp( argv[ i - 1 ], "-mpi", 4 ) ) {
-			if ( stricmp( argv[ i ], "-mpi" ) == 0 )
-				g_bUseMPI = true;
-
-			// Any other args that start with -mpi are ok too.
-			if ( i == argc - 1 )
-				break;
 		} else if ( argv[ i ][ 0 ] == '-' ) {
-			Warning( "VBSP: Unknown option \"%s\"\n\n", argv[ i ] );
+			Warning( "VVIS: Unknown option \"%s\"\n\n", argv[ i ] );
 			i = 100000;// force it to print the usage
 			break;
 		} else
@@ -900,13 +838,12 @@ void PrintUsage( int argc, char** argv ) {
 
 	Warning(
 		"usage  : vvis [options...] bspfile\n"
-		"example: vvis -fast c:\\hl2\\hl2\\maps\\test\n"
+		"example: vvis -fast C:\\hl2\\hl2\\maps\\test\n"
 		"\n"
 		"Common options:\n"
 		"\n"
 		"  -v (or -verbose): Turn on verbose output (also shows more command\n"
 		"  -fast           : Only do first quick pass on vis calculations.\n"
-		"  -mpi            : Use VMPI to distribute computations.\n"
 		"  -low            : Run as an idle-priority process.\n"
 		"                    env_fog_controller specifies one.\n"
 		"\n"
@@ -916,7 +853,6 @@ void PrintUsage( int argc, char** argv ) {
 		"Other options:\n"
 		"  -novconfig      : Don't bring up graphical UI on vproject errors.\n"
 		"  -radius_override: Force a vis radius, regardless of whether an\n"
-		"  -mpi_pw <pw>    : Use a password to choose a specific set of VMPI workers.\n"
 		"  -threads        : Control the number of threads vbsp uses (defaults to the #\n"
 		"                    or processors on your machine).\n"
 		"  -nosort         : Don't sort portals (sorting is an optimization).\n"
@@ -925,30 +861,7 @@ void PrintUsage( int argc, char** argv ) {
 		"  -trace <start cluster> <end cluster> : Writes a linefile that traces the vis from one cluster to another for debugging map vis.\n"
 		"  -FullMinidumps  : Write large minidumps on crash.\n"
 		"\n"
-#if 1// Disabled for the initial SDK release with VMPI so we can get feedback from selected users.
 	);
-#else
-		"  -mpi_ListParams : Show a list of VMPI parameters.\n"
-		"\n" );
-
-	// Show VMPI parameters?
-	for ( int i = 1; i < argc; i++ ) {
-		if ( V_stricmp( argv[ i ], "-mpi_ListParams" ) == 0 ) {
-			Warning( "VMPI-specific options:\n\n" );
-
-			bool bIsSDKMode = VMPI_IsSDKMode();
-			for ( int i = k_eVMPICmdLineParam_FirstParam + 1; i < k_eVMPICmdLineParam_LastParam; i++ ) {
-				if ( ( VMPI_GetParamFlags( (EVMPICmdLineParam) i ) & VMPI_PARAM_SDK_HIDDEN ) && bIsSDKMode )
-					continue;
-
-				Warning( "[%s]\n", VMPI_GetParamString( (EVMPICmdLineParam) i ) );
-				Warning( VMPI_GetParamHelpString( (EVMPICmdLineParam) i ) );
-				Warning( "\n\n" );
-			}
-			break;
-		}
-	}
-#endif
 }
 
 
@@ -958,8 +871,7 @@ int RunVVis( int argc, char** argv ) {
 	char mapFile[ 1024 ];
 	double start, end;
 
-
-	Msg( "Valve Software - vvis.exe (%s)\n", __DATE__ );
+	Msg( "Valve Software - AuroraSource - vvis.exe ( " __DATE__ " )\n" );
 
 	verbose = false;
 
@@ -968,13 +880,9 @@ int RunVVis( int argc, char** argv ) {
 
 	CmdLib_InitFileSystem( argv[ argc - 1 ] );
 
-	// The ExpandPath is just for VMPI. VMPI's file system needs the basedir in front of all filenames,
-	// so we prepend qdir here.
-
 	// XXX(johns): Somewhat preserving legacy behavior here to avoid changing tool behavior, there's no specific rhyme
 	//             or reason to this. We get just the base name we were passed, discarding any directory or extension
-	//             information. We then ExpandPath() it (see VMPI comment above), and tack on .bsp for the file access
-	//             parts.
+	//             information. We then ExpandPath() it, and tack on .bsp for the file access parts.
 	V_FileBase( argv[ argc - 1 ], mapFile, sizeof( mapFile ) );
 	V_strncpy( mapFile, ExpandPath( mapFile ), sizeof( mapFile ) );
 	V_strncat( mapFile, ".bsp", sizeof( mapFile ) );
@@ -992,15 +900,12 @@ int RunVVis( int argc, char** argv ) {
 	start = Plat_FloatTime();
 	char path[300];
 	g_pFullFileSystem->GetCurrentDirectory( path, 300 );
-	printf( "%s\n", path );
 
 
-	if ( !g_bUseMPI ) {
-		// Setup the logfile.
-		char logFile[ 512 ];
-		_snprintf( logFile, sizeof( logFile ), "%s.log", source );
-		SetSpewFunctionLogFile( logFile );
-	}
+	// Setup the logfile.
+	char logFile[ 512 ];
+	_snprintf( logFile, sizeof( logFile ), "%s.log", source );
+	SetSpewFunctionLogFile( logFile );
 
 	// Run in the background?
 	if ( g_bLowPriority ) {
@@ -1060,9 +965,6 @@ int RunVVis( int argc, char** argv ) {
 		if ( g_TraceClusterStart < 0 || g_TraceClusterStart >= portalclusters || g_TraceClusterStop < 0 || g_TraceClusterStop >= portalclusters ) {
 			Error( "Invalid cluster trace: %d to %d, valid range is 0 to %d\n", g_TraceClusterStart, g_TraceClusterStop, portalclusters - 1 );
 		}
-		if ( g_bUseMPI ) {
-			Warning( "Can't compile trace in MPI mode\n" );
-		}
 		CalcVisTrace();
 		WritePortalTrace( source );
 	}
@@ -1084,19 +986,13 @@ int RunVVis( int argc, char** argv ) {
 int main( int argc, char** argv ) {
 	CommandLine()->CreateCmdLine( argc, argv );
 
-
 	FileSystem_Init(nullptr, 0, FSInitType_t::FS_INIT_COMPATIBILITY_MODE);
 	MathLib_Init( 2.2f, 2.2f, 0.0f, 1.0f, false, false, false, false );
 	InstallAllocationFunctions();
 	InstallSpewFunction();
 
-	VVIS_SetupMPI( argc, argv );
-
 	// Install an exception handler.
-	if ( g_bUseMPI && !g_bMPIMaster )
-		SetupToolsMinidumpHandler( VMPI_ExceptionFilter );
-	else
-		SetupDefaultToolsMinidumpHandler();
+	SetupDefaultToolsMinidumpHandler();
 
 	return RunVVis( argc, argv );
 }
@@ -1111,4 +1007,4 @@ public:
 	}
 };
 
-EXPOSE_SINGLE_INTERFACE( CVVisDLL, ILaunchableDLL, LAUNCHABLE_DLL_INTERFACE_VERSION );
+EXPOSE_SINGLE_INTERFACE( CVVisDLL, ILaunchableDLL, LAUNCHABLE_DLL_INTERFACE_VERSION )

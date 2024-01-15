@@ -199,11 +199,11 @@ void DM_ClipBoxToBrush( CToolTrace *trace, const Vector& mins, const Vector& max
 
 	float enterfrac = NEVER_UPDATED;
 	float leavefrac = 1.f;
-	clipplane = NULL;
+	clipplane = nullptr;
 
 	bool getout = false;
 	bool startout = false;
-	leadside = NULL;
+	leadside = nullptr;
 
 	// Loop interchanged, so we don't have to check trace->ispoint every side.
 	if ( !trace->ispoint )
@@ -482,7 +482,7 @@ dmodel_t *BrushmodelForEntity( entity_t *pEntity )
 			return &dmodels[modelIndex];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void AddBrushToRaytraceEnvironment( dbrush_t *pBrush, const VMatrix &xform )
@@ -588,7 +588,7 @@ void ExtractBrushEntityShadowCasters()
 	}
 }
 
-void AddBrushesForRayTrace( void )
+void AddBrushesForRayTrace()
 {
 	if ( !nummodels )
 		return;

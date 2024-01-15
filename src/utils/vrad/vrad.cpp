@@ -5,9 +5,6 @@
 // $NoKeywords: $
 //
 //=============================================================================//
-
-// vrad.c
-
 #include "vrad.h"
 #include "byteswap.h"
 #include "leaf_ambient_lighting.h"
@@ -17,12 +14,10 @@
 #include "physdll.h"
 #include "tier1/strtools.h"
 #include "tools_minidump.h"
-#include "vmpi.h"
-#include "vmpi_tools_shared.h"
 
 #define ALLOWDEBUGOPTIONS ( 0 || _DEBUG )
 
-static FileHandle_t pFpTrans = NULL;
+static FileHandle_t pFpTrans = nullptr;
 
 /*
 
@@ -1672,7 +1667,7 @@ void BuildFacesVisibleToLights( bool bAllVisible ) {
 	int nDWords = aggregate.Count() / 4;
 	int nBytes = aggregate.Count() - nDWords * 4;
 
-	for ( directlight_t* dl = activelights; dl != NULL; dl = dl->next ) {
+	for ( directlight_t* dl = activelights; dl != nullptr; dl = dl->next ) {
 		byte* pIn = dl->pvs;
 		byte* pOut = aggregate.Base();
 		for ( int iDWord = 0; iDWord < nDWords; iDWord++ ) {
@@ -1820,14 +1815,7 @@ bool RadWorld_Go() {
 	}
 
 	// build initial facelights
-	if ( g_bUseMPI ) {
-		#if defined( MPI )
-		// RunThreadsOnIndividual (numfaces, true, BuildFacelights);
-		RunMPIBuildFacelights();
-		#endif
-	} else {
-		RunThreadsOnIndividual( numfaces, true, BuildFacelights );
-	}
+	RunThreadsOnIndividual( numfaces, true, BuildFacelights );
 
 	// Was the process interrupted?
 	if ( g_pIncremental && ( g_iCurFace != numfaces ) )
@@ -1873,16 +1861,8 @@ bool RadWorld_Go() {
 		StaticDispMgr()->EndTimer();
 
 		// blend bounced light into direct light and save
-#if defined( MPI )
-		VMPI_SetCurrentStage( "FinalLightFace" );
-#endif
-		if ( !g_bUseMPI || g_bMPIMaster )
-			RunThreadsOnIndividual( numfaces, true, FinalLightFace );
+		RunThreadsOnIndividual( numfaces, true, FinalLightFace );
 
-		// Distribute the lighting data to workers.
-#if defined( MPI )
-		VMPI_DistributeLightData();
-#endif
 		Msg( "FinalLightFace Done\n" );
 		fflush( stdout );
 	}
@@ -1895,7 +1875,7 @@ bool RadWorld_Go() {
 FileHandle_t pFileSamples[ 4 ][ 4 ];
 
 void LoadPhysicsDLL() {
-	PhysicsDLLPath( "VPHYSICS.DLL" );
+	PhysicsDLLPath( "vphysics" DLL_EXT_STRING );
 }
 
 
@@ -1933,12 +1913,10 @@ void VRAD_LoadBSP( char const* pFilename ) {
 	// so we prepend qdir here.
 	strcpy( source, ExpandPath( source ) );
 
-	if ( !g_bUseMPI ) {
-		// Setup the logfile.
-		char logFile[ 512 ];
-		_snprintf( logFile, sizeof( logFile ), "%s.log", source );
-		SetSpewFunctionLogFile( logFile );
-	}
+	// Setup the logfile.
+	char logFile[ 512 ];
+	_snprintf( logFile, sizeof( logFile ), "%s.log", source );
+	SetSpewFunctionLogFile( logFile );
 
 	LoadPhysicsDLL();
 
@@ -1948,7 +1926,7 @@ void VRAD_LoadBSP( char const* pFilename ) {
 		// Otherwise, try looking in the BIN directory from which we were run from
 		Msg( "Could not find lights.rad in %s.\nTrying VRAD BIN directory instead...\n", global_lights );
 		#if IsWindows()
-			GetModuleFileName( NULL, global_lights, sizeof( global_lights ) );
+			GetModuleFileName( nullptr, global_lights, sizeof( global_lights ) );
 		#elif IsPosix()
 			Dl_info info{};
 			dladdr( reinterpret_cast<const void*>( VRAD_LoadBSP ), &info );
@@ -1978,23 +1956,11 @@ void VRAD_LoadBSP( char const* pFilename ) {
 	Q_DefaultExtension( source, ".bsp", sizeof( source ) );
 
 	Msg( "Loading %s\n", source );
-#if defined( MPI )
-	VMPI_SetCurrentStage( "LoadBSPFile" );
-#endif
 	LoadBSPFile( source );
 
 	// Add this bsp to our search path so embedded resources can be found
-	if ( g_bUseMPI && g_bMPIMaster ) {
-#if defined( MPI )
-		// MPI Master, MPI workers don't need to do anything
-		g_pOriginalPassThruFileSystem->AddSearchPath( source, "GAME", PATH_ADD_TO_HEAD );
-		g_pOriginalPassThruFileSystem->AddSearchPath( source, "MOD", PATH_ADD_TO_HEAD );
-#endif
-	} else if ( !g_bUseMPI ) {
-		// Non-MPI
-		g_pFullFileSystem->AddSearchPath( source, "GAME", PATH_ADD_TO_HEAD );
-		g_pFullFileSystem->AddSearchPath( source, "MOD", PATH_ADD_TO_HEAD );
-	}
+	g_pFullFileSystem->AddSearchPath( source, "GAME", PATH_ADD_TO_HEAD );
+	g_pFullFileSystem->AddSearchPath( source, "MOD", PATH_ADD_TO_HEAD );
 
 	// now, set whether or not static prop lighting is present
 	if ( g_bStaticPropLighting )
@@ -2106,7 +2072,6 @@ void VRAD_Finish() {
 	}
 
 	Msg( "Writing %s\n", source );
-	VMPI_SetCurrentStage( "WriteBSPFile" );
 	WriteBSPFile( source );
 
 	if ( g_bDumpPatches ) {
@@ -2371,17 +2336,7 @@ int ParseCommandLine( int argc, char** argv, bool* onlydetail ) {
 			}
 		}
 #endif
-		// NOTE: the -mpi checks must come last here because they allow the previous argument
-		// to be -mpi as well. If it game before something else like -game, then if the previous
-		// argument was -mpi and the current argument was something valid like -game, it would skip it.
-		else if ( !Q_strncasecmp( argv[ i ], "-mpi", 4 ) || !Q_strncasecmp( argv[ i - 1 ], "-mpi", 4 ) ) {
-			if ( stricmp( argv[ i ], "-mpi" ) == 0 )
-				g_bUseMPI = true;
-
-			// Any other args that start with -mpi are ok too.
-			if ( i == argc - 1 && V_stricmp( argv[ i ], "-mpi_ListParams" ) != 0 )
-				break;
-		} else if ( mapArg == -1 ) {
+		else if ( mapArg == -1 ) {
 			mapArg = i;
 		} else {
 			return -1;
@@ -2406,7 +2361,7 @@ void PrintUsage( int argc, char** argv ) {
 
 	Warning(
 		"usage  : vrad [options...] bspfile\n"
-		"example: vrad c:\\hl2\\hl2\\maps\\test\n"
+		"example: vrad C:\\hl2\\hl2\\maps\\test\n"
 		"\n"
 		"Common options:\n"
 		"\n"
@@ -2417,7 +2372,6 @@ void PrintUsage( int argc, char** argv ) {
 		"  -final          : High quality processing. equivalent to -extrasky 16.\n"
 		"  -extrasky n     : trace N times as many rays for indirect light and sky ambient.\n"
 		"  -low            : Run as an idle-priority process.\n"
-		"  -mpi            : Use VMPI to distribute computations.\n"
 		"  -rederror       : Show errors in red.\n"
 		"\n"
 		"  -vproject <directory> : Override the VPROJECT environment variable.\n"
@@ -2440,7 +2394,6 @@ void PrintUsage( int argc, char** argv ) {
 		"  -dlightmap      : Force direct lighting into different lightmap than\n"
 		"                    radiosity.\n"
 		"  -stoponexit	   : Wait for a keypress on exit.\n"
-		"  -mpi_pw <pw>    : Use a password to choose a specific set of VMPI workers.\n"
 		"  -nodetaillight  : Don't light detail props.\n"
 		"  -centersamples  : Move sample centers.\n"
 		"  -luxeldensity # : Rescale all luxels by the specified amount (default: 1.0).\n"
@@ -2467,38 +2420,11 @@ void PrintUsage( int argc, char** argv ) {
 		"  -noskyboxrecurse : Turn off recursion into 3d skybox (skybox shadows on world)\n"
 		"  -nossprops      : Globally disable self-shadowing on static props\n"
 		"\n"
-#if 1// Disabled for the initial SDK release with VMPI so we can get feedback from selected users.
 	);
-#else
-		"  -mpi_ListParams : Show a list of VMPI parameters.\n"
-		"\n" );
-
-	// Show VMPI parameters?
-	for ( int i = 1; i < argc; i++ ) {
-		if ( V_stricmp( argv[ i ], "-mpi_ListParams" ) == 0 ) {
-			Warning( "VMPI-specific options:\n\n" );
-
-			bool bIsSDKMode = VMPI_IsSDKMode();
-			for ( int i = k_eVMPICmdLineParam_FirstParam + 1; i < k_eVMPICmdLineParam_LastParam; i++ ) {
-				if ( ( VMPI_GetParamFlags( (EVMPICmdLineParam) i ) & VMPI_PARAM_SDK_HIDDEN ) && bIsSDKMode )
-					continue;
-
-				Warning( "[%s]\n", VMPI_GetParamString( (EVMPICmdLineParam) i ) );
-				Warning( VMPI_GetParamHelpString( (EVMPICmdLineParam) i ) );
-				Warning( "\n\n" );
-			}
-			break;
-		}
-	}
-#endif
 }
 
 int RunVRAD( int argc, char** argv ) {
-	#if defined( _MSC_VER ) && ( _MSC_VER >= 1310 )
-		Msg( "Valve Software - vrad.exe SSE (" __DATE__ ")\n" );
-	#else
-		Msg( "Valve Software - vrad.exe (" __DATE__ ")\n" );
-	#endif
+	Msg( "Valve Software - AuroraSource - vrad.exe ( " __DATE__ " )\n" );
 
 	Msg( "\n      Valve Radiosity Simulator     \n" );
 
@@ -2528,8 +2454,6 @@ int RunVRAD( int argc, char** argv ) {
 
 	VRAD_Finish();
 
-	VMPI_SetCurrentStage( "master done" );
-
 	DeleteCmdLine( argc, argv );
 	CmdLib_Cleanup();
 	return 0;
@@ -2542,18 +2466,7 @@ int VRAD_Main( int argc, char** argv ) {
 	VRAD_Init();
 
 	// This must come first.
-#if defined( MPI )
-	VRAD_SetupMPI( argc, argv );
-
-	#if !defined( _DEBUG )
-		if ( g_bUseMPI && !g_bMPIMaster ) {
-			SetupToolsMinidumpHandler( VMPI_ExceptionFilter );
-		} else
-	#endif
-#endif
-	{
-		SetupDefaultToolsMinidumpHandler();
-	}
+	SetupDefaultToolsMinidumpHandler();
 
 	return RunVRAD( argc, argv );
 }

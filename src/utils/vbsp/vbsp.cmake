@@ -94,7 +94,6 @@ set(
 	"${SRCDIR}/utils/common/polylib.h"
 	"${SRCDIR}/public/tier1/tokenreader.h"
 	"${SRCDIR}/utils/common/utilmatlib.h"
-	"${SRCDIR}/utils/vmpi/vmpi.h"
 	"${SRCDIR}/public/zip_uncompressed.h"
 
 	# Public Headers
@@ -151,7 +150,6 @@ set_target_properties(vbsp
 target_include_directories(vbsp
 	PRIVATE
 		"${SRCDIR}/utils/common"
-		"${SRCDIR}/utils/vmpi"
 )
 
 target_compile_definitions(vbsp

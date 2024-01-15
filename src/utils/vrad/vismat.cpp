@@ -7,18 +7,11 @@
 //=============================================================================//
 
 #include "vrad.h"
-#include "vmpi.h"
-#ifdef MPI
-#include "messbuf.h"
-static MessageBuffer mb;
-#endif
 
-#define	HALFBIT
-
-extern char		source[MAX_PATH];
-extern char		vismatfile[_MAX_PATH];
-extern char		incrementfile[_MAX_PATH];
-extern qboolean	incremental;
+extern char source[MAX_PATH];
+extern char vismatfile[_MAX_PATH];
+extern char incrementfile[_MAX_PATH];
+extern bool incremental;
 
 /*
 ===================================================================
@@ -223,7 +216,7 @@ void TestPatchToFace (unsigned patchnum, int facenum, int head, transfer_t *tran
 		for( ; patch2; patch2 = pNextPatch )
 		{
 			// next patch
-			pNextPatch = NULL;
+			pNextPatch = nullptr;
 			if( patch2->ndxNextParent != g_Patches.InvalidIndex() )
 			{
 				pNextPatch = &g_Patches.Element( patch2->ndxNextParent );
@@ -253,7 +246,7 @@ static CUtlVector<ClusterDispList_t> g_ClusterDispFaces;
 //-----------------------------------------------------------------------------
 // Helps us find all displacements associated with a particular cluster
 //-----------------------------------------------------------------------------
-void AddDispsToClusterTable( void )
+void AddDispsToClusterTable()
 {
 	g_ClusterDispFaces.SetCount( g_ClusterLeaves.Count() );
 
@@ -271,11 +264,11 @@ void AddDispsToClusterTable( void )
 		//
 		if( g_FacePatches.Element( ndxFace ) != g_FacePatches.InvalidIndex() )
 		{
-			CPatch *pNextPatch = NULL;
+			CPatch *pNextPatch = nullptr;
 			for( CPatch *pPatch = &g_Patches.Element( g_FacePatches.Element( ndxFace ) ); pPatch; pPatch = pNextPatch )
 			{
 				// next patch
-				pNextPatch = NULL;
+				pNextPatch = nullptr;
 				if( pPatch->ndxNext != g_Patches.InvalidIndex() )
 				{
 					pNextPatch = &g_Patches.Element( pPatch->ndxNext );
@@ -409,7 +402,7 @@ void BuildVisLeafs_Cluster(
 			//
 			// next patch
 			//
-			pNextPatch = NULL;
+			pNextPatch = nullptr;
 			if( patch->ndxNextClusterChild != g_Patches.InvalidIndex() )
 			{
 				pNextPatch = &g_Patches.Element( patch->ndxNextClusterChild );
@@ -442,7 +435,7 @@ void BuildVisLeafs( int threadnum, void *pUserData )
 {
 	transfer_t *transfers = BuildVisLeafs_Start();
 	
-	while ( 1 )
+	while ( true )
 	{
 		//
 		// build a minimal BSP tree that only
@@ -453,7 +446,7 @@ void BuildVisLeafs( int threadnum, void *pUserData )
 		if ( iCluster == -1 )
 			break;
 
-		BuildVisLeafs_Cluster( threadnum, transfers, iCluster, NULL );
+		BuildVisLeafs_Cluster( threadnum, transfers, iCluster, nullptr );
 	}
 	
 	BuildVisLeafs_End( transfers );
@@ -465,21 +458,9 @@ void BuildVisLeafs( int threadnum, void *pUserData )
 BuildVisMatrix
 ==============
 */
-void BuildVisMatrix (void)
-{
-	if ( g_bUseMPI )
-	{
-#if defined( MPI )
-	RunMPIBuildVisLeafs();
-#endif
-	}
-	else 
-	{
-		RunThreadsOn (dvis->numclusters, true, BuildVisLeafs);
-	}
+void BuildVisMatrix() {
+	RunThreadsOn( dvis->numclusters, true, BuildVisLeafs );
 }
 
-void FreeVisMatrix (void)
-{
-
+void FreeVisMatrix() {
 }
