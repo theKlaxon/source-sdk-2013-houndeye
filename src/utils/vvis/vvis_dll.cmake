@@ -26,6 +26,7 @@ set(
 	"${VVIS_DLL_DIR}/vvis.cpp"
 	"${VVIS_DLL_DIR}/WaterDist.cpp"
 	"${SRCDIR}/public/zip_utils.cpp"
+	"${SRCDIR}/utils/common/tools_stub.cpp"
 
 	# Header Files
 	"${SRCDIR}/public/mathlib/amd3dx.h"
@@ -65,7 +66,6 @@ set(
 #	"${SRCDIR}/utils/common/vmpi_tools_shared.h"
 	"${SRCDIR}/public/vstdlib/vstdlib.h"
 	"${SRCDIR}/public/wadtypes.h"
-	"${VVIS_DLL_DIR}/stub.cpp"
 )
 
 set(

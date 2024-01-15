@@ -58,6 +58,7 @@ set(
 	"${SRCDIR}/utils/common/threads.cpp"
 	"${SRCDIR}/utils/common/tools_minidump.cpp"
 	"${SRCDIR}/utils/common/tools_minidump.h"
+	"${SRCDIR}/utils/common/tools_stub.cpp"
 
 	# Header Files
 	"${VBSP_DIR}/boundbox.h"

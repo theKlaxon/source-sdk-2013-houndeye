@@ -34,7 +34,6 @@ set(
 	"${VRAD_DLL_DIR}/vraddll.cpp"
 	"${VRAD_DLL_DIR}/vradstaticprops.cpp"
 	"${SRCDIR}/public/zip_utils.cpp"
-	"${SRCDIR}/utils/vvis/stub.cpp"
 
 	# Common Files
 	"${SRCDIR}/utils/common/bsplib.cpp"
@@ -48,6 +47,7 @@ set(
 	"${SRCDIR}/utils/common/threads.cpp"
 	"${SRCDIR}/utils/common/tools_minidump.cpp"
 	"${SRCDIR}/utils/common/tools_minidump.h"
+	"${SRCDIR}/utils/common/tools_stub.cpp"
 
 	# Public Files
 	"${SRCDIR}/public/collisionutils.cpp"
