@@ -5,11 +5,8 @@
 // $NoKeywords: $
 //
 //=============================================================================//
+#pragma once
 
-#if !defined( VBSP_H )
-#define VBSP_H
-
-	   
 #include "cmdlib.h"
 #include "mathlib/vector.h"
 #include "scriplib.h"
@@ -20,8 +17,8 @@
 #include "utilmatlib.h"
 #include "chunkfile.h"
 
-#ifdef WIN32
-#pragma warning( disable: 4706 )
+#if defined( COMPILER_MSVC )
+	#pragma warning( disable: 4706 )
 #endif
 
 class CUtlBuffer;
@@ -652,6 +649,3 @@ void Overlay_Translate( mapoverlay_t *pOverlay, Vector &OriginOffset, QAngle &An
 void RemoveAreaPortalBrushes_R( node_t *node );
 
 dtexdata_t *GetTexData( int index );
-
-#endif
-

@@ -10,10 +10,8 @@
 //
 // Each cordon is a named collection of bounding boxes.
 //
-struct Cordon_t
-{
-	inline Cordon_t()
-	{
+struct Cordon_t {
+	inline Cordon_t() {
 		m_bActive = false;
 	}
 
@@ -22,18 +20,16 @@ struct Cordon_t
 	CUtlVector<BoundBox> m_Boxes;
 };
 
-class CManifestMap
-{
+class CManifestMap {
 public:
-	CManifestMap( void );
+	CManifestMap();
 	char		m_RelativeMapFileName[ MAX_PATH ];
 	bool		m_bTopLevelMap;
 };
 
-class CManifest
-{
+class CManifest {
 public:
-	CManifest( void );
+	CManifest();
 
 	static ChunkFileResult_t LoadManifestMapKeyCallback( const char *szKey, const char *szValue, CManifestMap *pManifestMap );
 	static ChunkFileResult_t LoadManifestVMFCallback( CChunkFile *pFile, CManifest *pManifest );

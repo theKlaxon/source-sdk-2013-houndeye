@@ -5,9 +5,7 @@
 //			including windows.h.
 //
 //=============================================================================
-
-#ifndef THREADTOOLS_H
-#define THREADTOOLS_H
+#pragma once
 
 #include <limits.h>
 
@@ -16,35 +14,34 @@
 #include "tier0/vcrmode.h"
 
 #ifdef PLATFORM_WINDOWS_PC
-#include <intrin.h>
+	#include <intrin.h>
 #endif
 
-#ifdef POSIX
-#include <pthread.h>
-#include <errno.h>
-#define WAIT_OBJECT_0 0
-#define WAIT_TIMEOUT 0x00000102
-#define WAIT_FAILED -1
-#define THREAD_PRIORITY_HIGHEST 2
+#if IsPosix()
+	#include <pthread.h>
+	#include <cerrno>
+	#define WAIT_OBJECT_0 0
+	#define WAIT_TIMEOUT 0x00000102
+	#define WAIT_FAILED (-1)
+	#define THREAD_PRIORITY_HIGHEST 2
 #endif
 
-#if defined( _WIN32 )
-#pragma once
-#pragma warning(push)
-#pragma warning(disable:4251)
+#if defined( COMPILER_MSVC )
+	#pragma warning(push)
+	#pragma warning(disable:4251)
 #endif
 
 // #define THREAD_PROFILER 1
 
 #ifndef _RETAIL
-#define THREAD_MUTEX_TRACING_SUPPORTED
-#if defined(_WIN32) && defined(_DEBUG)
-#define THREAD_MUTEX_TRACING_ENABLED
-#endif
+	#define THREAD_MUTEX_TRACING_SUPPORTED
+	#if defined(_WIN32) && defined(_DEBUG)
+		#define THREAD_MUTEX_TRACING_ENABLED
+	#endif
 #endif
 
 #ifdef _WIN32
-typedef void *HANDLE;
+	typedef void* HANDLE;
 #endif
 
 //-----------------------------------------------------------------------------
@@ -54,15 +51,13 @@ typedef void *HANDLE;
 const unsigned TT_INFINITE = 0xffffffff;
 
 #ifndef NO_THREAD_LOCAL
-
-#ifndef THREAD_LOCAL
-#ifdef _WIN32
-#define THREAD_LOCAL __declspec(thread)
-#elif POSIX
-#define THREAD_LOCAL __thread
-#endif
-#endif
-
+	#ifndef THREAD_LOCAL
+		#ifdef _WIN32
+			#define THREAD_LOCAL __declspec(thread)
+		#elif POSIX
+			#define THREAD_LOCAL __thread
+		#endif
+	#endif
 #endif // NO_THREAD_LOCAL
 
 typedef unsigned long ThreadId_t;
@@ -98,20 +93,20 @@ PLATFORM_INTERFACE void SetThreadedLoadLibraryFunc( ThreadedLoadLibraryFunc_t fu
 PLATFORM_INTERFACE ThreadedLoadLibraryFunc_t GetThreadedLoadLibraryFunc();
 
 #if defined( _WIN32 ) && !defined( _WIN64 )
-extern "C" unsigned long __declspec(dllimport) __stdcall GetCurrentThreadId();
-#define ThreadGetCurrentId GetCurrentThreadId
+	extern "C" unsigned long __declspec(dllimport) __stdcall GetCurrentThreadId();
+	#define ThreadGetCurrentId GetCurrentThreadId
 #endif
 
 inline void ThreadPause()
 {
-#if defined( PLATFORM_WINDOWS_PC )
-	// Intrinsic for __asm pause; from <intrin.h>
-	_mm_pause();
-#elif POSIX
-	__asm __volatile( "pause" );
-#else
-#error "implement me"
-#endif
+	#if defined( PLATFORM_WINDOWS_PC )
+		// Intrinsic for __asm pause; from <intrin.h>
+		_mm_pause();
+	#elif POSIX
+		__asm __volatile( "pause" );
+	#else
+		#error "ThreadPause: implement me"
+	#endif
 }
 
 PLATFORM_INTERFACE bool ThreadJoin( ThreadHandle_t, unsigned timeout = TT_INFINITE );
@@ -127,15 +122,14 @@ PLATFORM_INTERFACE void ThreadSetAffinity( ThreadHandle_t hThread, int nAffinity
 
 //-----------------------------------------------------------------------------
 
-enum ThreadWaitResult_t
-{
+enum ThreadWaitResult_t {
 	TW_FAILED = 0xffffffff, // WAIT_FAILED
 	TW_TIMEOUT = 0x00000102, // WAIT_TIMEOUT
 };
 
 #ifdef _WIN32
-PLATFORM_INTERFACE int ThreadWaitForObjects( int nEvents, const HANDLE *pHandles, bool bWaitAll = true, unsigned timeout = TT_INFINITE );
-inline int ThreadWaitForObject( HANDLE handle, bool bWaitAll = true, unsigned timeout = TT_INFINITE ) { return ThreadWaitForObjects( 1, &handle, bWaitAll, timeout ); }
+	PLATFORM_INTERFACE int ThreadWaitForObjects( int nEvents, const HANDLE *pHandles, bool bWaitAll = true, unsigned timeout = TT_INFINITE );
+	inline int ThreadWaitForObject( HANDLE handle, bool bWaitAll = true, unsigned timeout = TT_INFINITE ) { return ThreadWaitForObjects( 1, &handle, bWaitAll, timeout ); }
 #endif
 
 //-----------------------------------------------------------------------------
@@ -145,10 +139,10 @@ inline int ThreadWaitForObject( HANDLE handle, bool bWaitAll = true, unsigned ti
 //
 //-----------------------------------------------------------------------------
 
-#ifdef _WIN32
-#define NOINLINE
+#if defined( COMPILER_MSVC )
+	#define NOINLINE
 #elif POSIX
-#define NOINLINE __attribute__ ((noinline))
+	#define NOINLINE __attribute__ ((noinline))
 #endif
 
 // ThreadMemoryBarrier is a fence/barrier sufficient for most uses. It prevents reads
@@ -156,7 +150,7 @@ inline int ThreadWaitForObject( HANDLE handle, bool bWaitAll = true, unsigned ti
 // read-acquire and write-release barriers. It is not a full barrier and it does
 // not prevent reads from moving past writes -- that would require a full __sync()
 // on PPC and is significantly more expensive.
-#if defined(_MSC_VER)
+#if defined( COMPILER_MSVC )
 	// Prevent compiler reordering across this barrier. This is
 	// sufficient for most purposes on x86/x64.
 
@@ -166,7 +160,7 @@ inline int ThreadWaitForObject( HANDLE handle, bool bWaitAll = true, unsigned ti
 		#pragma intrinsic(_ReadWriteBarrier)
 	#endif
 	#define ThreadMemoryBarrier() _ReadWriteBarrier()
-#elif defined(GNUC) || defined(__clang__)  // TODO: Verify this for clang
+#elif defined(COMPILER_GCC) || defined(COMPILER_CLANG)  // TODO: Verify this for clang
 	// Prevent compiler reordering across this barrier. This is
 	// sufficient for most purposes on x86/x64.
 	// http://preshing.com/20120625/memory-ordering-at-compile-time
@@ -175,10 +169,8 @@ inline int ThreadWaitForObject( HANDLE handle, bool bWaitAll = true, unsigned ti
 	#error Every platform needs to define ThreadMemoryBarrier to at least prevent compiler reordering
 #endif
 
-#if defined(_WIN32)
-	#if ( _MSC_VER >= 1310 )
-		#define USE_INTRINSIC_INTERLOCKED
-	#endif
+#if defined( COMPILER_MSVC ) && _MSC_VER >= 1310
+	#define USE_INTRINSIC_INTERLOCKED
 #endif
 
 #if defined( USE_INTRINSIC_INTERLOCKED )
@@ -311,8 +303,7 @@ inline bool ThreadInterlockedAssignIf( int volatile *p, int value, int comperand
 #ifndef __AFXTLS_H__ // not compatible with some Windows headers
 #ifndef NO_THREAD_LOCAL
 
-class PLATFORM_CLASS CThreadLocalBase
-	{
+class PLATFORM_CLASS CThreadLocalBase {
 public:
 		CThreadLocalBase();
 		~CThreadLocalBase();
@@ -1503,128 +1494,125 @@ public:
 //
 //-----------------------------------------------------------------------------
 
-#ifdef _WIN32
-typedef struct _RTL_CRITICAL_SECTION RTL_CRITICAL_SECTION;
-typedef RTL_CRITICAL_SECTION CRITICAL_SECTION;
+#if IsWindows()
+	typedef struct _RTL_CRITICAL_SECTION RTL_CRITICAL_SECTION;
+	typedef RTL_CRITICAL_SECTION CRITICAL_SECTION;
 
-extern "C"
-{
-	void __declspec(dllimport) __stdcall InitializeCriticalSection(CRITICAL_SECTION *);
-	void __declspec(dllimport) __stdcall EnterCriticalSection(CRITICAL_SECTION *);
-	void __declspec(dllimport) __stdcall LeaveCriticalSection(CRITICAL_SECTION *);
-	void __declspec(dllimport) __stdcall DeleteCriticalSection(CRITICAL_SECTION *);
-};
+	extern "C"
+	{
+		void __declspec(dllimport) __stdcall InitializeCriticalSection(CRITICAL_SECTION *);
+		void __declspec(dllimport) __stdcall EnterCriticalSection(CRITICAL_SECTION *);
+		void __declspec(dllimport) __stdcall LeaveCriticalSection(CRITICAL_SECTION *);
+		void __declspec(dllimport) __stdcall DeleteCriticalSection(CRITICAL_SECTION *);
+	};
 
-//---------------------------------------------------------
+	//---------------------------------------------------------
 
-inline void CThreadMutex::Lock()
-{
-#ifdef THREAD_MUTEX_TRACING_ENABLED
-		uint thisThreadID = ThreadGetCurrentId();
-		if ( m_bTrace && m_currentOwnerID && ( m_currentOwnerID != thisThreadID ) )
-		Msg( "Thread %u about to wait for lock %p owned by %u\n", ThreadGetCurrentId(), (CRITICAL_SECTION *)&m_CriticalSection, m_currentOwnerID );
-	#endif
-
-	VCRHook_EnterCriticalSection((CRITICAL_SECTION *)&m_CriticalSection);
-
+	inline void CThreadMutex::Lock()
+	{
 	#ifdef THREAD_MUTEX_TRACING_ENABLED
-		if (m_lockCount == 0)
-		{
-			// we now own it for the first time.  Set owner information
-			m_currentOwnerID = thisThreadID;
-			if ( m_bTrace )
-			Msg( "Thread %u now owns lock %p\n", m_currentOwnerID, (CRITICAL_SECTION *)&m_CriticalSection );
-		}
-		m_lockCount++;
-	#endif
-}
+			uint thisThreadID = ThreadGetCurrentId();
+			if ( m_bTrace && m_currentOwnerID && ( m_currentOwnerID != thisThreadID ) )
+			Msg( "Thread %u about to wait for lock %p owned by %u\n", ThreadGetCurrentId(), (CRITICAL_SECTION *)&m_CriticalSection, m_currentOwnerID );
+		#endif
 
-//---------------------------------------------------------
+		VCRHook_EnterCriticalSection((CRITICAL_SECTION *)&m_CriticalSection);
 
-inline void CThreadMutex::Unlock()
-{
+		#ifdef THREAD_MUTEX_TRACING_ENABLED
+			if (m_lockCount == 0)
+			{
+				// we now own it for the first time.  Set owner information
+				m_currentOwnerID = thisThreadID;
+				if ( m_bTrace )
+				Msg( "Thread %u now owns lock %p\n", m_currentOwnerID, (CRITICAL_SECTION *)&m_CriticalSection );
+			}
+			m_lockCount++;
+		#endif
+	}
+
+	//---------------------------------------------------------
+
+	inline void CThreadMutex::Unlock()
+	{
+		#ifdef THREAD_MUTEX_TRACING_ENABLED
+			AssertMsg( m_lockCount >= 1, "Invalid unlock of thread lock" );
+			m_lockCount--;
+			if (m_lockCount == 0)
+			{
+				if ( m_bTrace )
+				Msg( "Thread %u releasing lock %p\n", m_currentOwnerID, (CRITICAL_SECTION *)&m_CriticalSection );
+				m_currentOwnerID = 0;
+			}
+		#endif
+		LeaveCriticalSection((CRITICAL_SECTION *)&m_CriticalSection);
+	}
+
+	//---------------------------------------------------------
+
+	inline bool CThreadMutex::AssertOwnedByCurrentThread()
+	{
 	#ifdef THREAD_MUTEX_TRACING_ENABLED
-		AssertMsg( m_lockCount >= 1, "Invalid unlock of thread lock" );
-		m_lockCount--;
-		if (m_lockCount == 0)
-		{
-			if ( m_bTrace )
-			Msg( "Thread %u releasing lock %p\n", m_currentOwnerID, (CRITICAL_SECTION *)&m_CriticalSection );
-			m_currentOwnerID = 0;
-		}
-	#endif
-	LeaveCriticalSection((CRITICAL_SECTION *)&m_CriticalSection);
-}
-
-//---------------------------------------------------------
-
-inline bool CThreadMutex::AssertOwnedByCurrentThread()
-{
-#ifdef THREAD_MUTEX_TRACING_ENABLED
-	if (ThreadGetCurrentId() == m_currentOwnerID)
+		if (ThreadGetCurrentId() == m_currentOwnerID)
+			return true;
+		AssertMsg3( 0, "Expected thread %u as owner of lock %p, but %u owns", ThreadGetCurrentId(), (CRITICAL_SECTION *)&m_CriticalSection, m_currentOwnerID );
+		return false;
+	#else
 		return true;
-	AssertMsg3( 0, "Expected thread %u as owner of lock %p, but %u owns", ThreadGetCurrentId(), (CRITICAL_SECTION *)&m_CriticalSection, m_currentOwnerID );
-	return false;
-#else
-	return true;
-#endif
-}
+	#endif
+	}
 
-//---------------------------------------------------------
+	//---------------------------------------------------------
 
-inline void CThreadMutex::SetTrace( bool bTrace )
-{
-#ifdef THREAD_MUTEX_TRACING_ENABLED
-	m_bTrace = bTrace;
-#endif
-}
+	inline void CThreadMutex::SetTrace( bool bTrace )
+	{
+	#ifdef THREAD_MUTEX_TRACING_ENABLED
+		m_bTrace = bTrace;
+	#endif
+	}
 
-//---------------------------------------------------------
+	//---------------------------------------------------------
+#elif IsPosix()
+	inline CThreadMutex::CThreadMutex()
+	{
+		// enable recursive locks as we need them
+		pthread_mutexattr_init( &m_Attr );
+		pthread_mutexattr_settype( &m_Attr, PTHREAD_MUTEX_RECURSIVE );
+		pthread_mutex_init( &m_Mutex, &m_Attr );
+	}
 
-#elif defined(POSIX)
+	//---------------------------------------------------------
 
-inline CThreadMutex::CThreadMutex()
-{
-	// enable recursive locks as we need them
-	pthread_mutexattr_init( &m_Attr );
-	pthread_mutexattr_settype( &m_Attr, PTHREAD_MUTEX_RECURSIVE );
-	pthread_mutex_init( &m_Mutex, &m_Attr );
-}
+	inline CThreadMutex::~CThreadMutex()
+	{
+		pthread_mutex_destroy( &m_Mutex );
+	}
 
-//---------------------------------------------------------
+	//---------------------------------------------------------
 
-inline CThreadMutex::~CThreadMutex()
-{
-	pthread_mutex_destroy( &m_Mutex );
-}
+	inline void CThreadMutex::Lock()
+	{
+		pthread_mutex_lock( &m_Mutex );
+	}
 
-//---------------------------------------------------------
+	//---------------------------------------------------------
 
-inline void CThreadMutex::Lock()
-{
-	pthread_mutex_lock( &m_Mutex );
-}
+	inline void CThreadMutex::Unlock()
+	{
+		pthread_mutex_unlock( &m_Mutex );
+	}
 
-//---------------------------------------------------------
+	//---------------------------------------------------------
 
-inline void CThreadMutex::Unlock()
-{
-	pthread_mutex_unlock( &m_Mutex );
-}
+	inline bool CThreadMutex::AssertOwnedByCurrentThread()
+	{
+		return true;
+	}
 
-//---------------------------------------------------------
+	//---------------------------------------------------------
 
-inline bool CThreadMutex::AssertOwnedByCurrentThread()
-{
-	return true;
-}
-
-//---------------------------------------------------------
-
-inline void CThreadMutex::SetTrace(bool fTrace)
-{
-}
-
+	inline void CThreadMutex::SetTrace(bool fTrace)
+	{
+	}
 #endif // POSIX
 
 //-----------------------------------------------------------------------------
@@ -1741,8 +1729,6 @@ template<class T> FORCEINLINE T ReadVolatileMemory( T const *pPtr )
 
 //-----------------------------------------------------------------------------
 
-#if defined( _WIN32 )
-#pragma warning(pop)
+#if defined( COMPILER_MSVC )
+	#pragma warning(pop)
 #endif
-
-#endif // THREADTOOLS_H

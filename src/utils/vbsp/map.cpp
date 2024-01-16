@@ -18,8 +18,8 @@
 #include <cstdio>
 #include <cstdlib>
 
-#ifdef VSVMFIO
-#include "VmfImport.h"
+#if defined( VSVMFIO )
+	#include "VmfImport.h"
 #endif // VSVMFIO
 
 

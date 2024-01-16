@@ -595,6 +595,7 @@ FIXME: Enable this when we no longer fear change =)
 	#define swprintf_s swprintf
 	#define wcsicmp _wcsicmp
 	#define _wcsicmp wcscmp
+	#define _tempnam tempnam
 	#define _finite finite
 	#define _unlink unlink
 	#define _access access

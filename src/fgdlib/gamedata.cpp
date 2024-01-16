@@ -2,7 +2,6 @@
 //
 //=============================================================================
 
-#include <filesystem>
 #include "fgdlib/gamedata.h"
 #include "KeyValues.h"
 #include "fgdlib/helperinfo.h"
@@ -237,7 +236,7 @@ bool GDGetTokenDynamic(TokenReader &tr, char **ppszStore, trtoken_t ttexpecting,
 //-----------------------------------------------------------------------------
 // Purpose: Constructor.
 //-----------------------------------------------------------------------------
-GameData::GameData(void)
+GameData::GameData()
 {
 	m_nMaxMapCoord = 8192;
 	m_nMinMapCoord = -8192;
@@ -248,7 +247,7 @@ GameData::GameData(void)
 //-----------------------------------------------------------------------------
 // Purpose: Destructor.
 //-----------------------------------------------------------------------------
-GameData::~GameData(void)
+GameData::~GameData()
 {
 	ClearData();
 }
@@ -257,7 +256,7 @@ GameData::~GameData(void)
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void GameData::ClearData(void)
+void GameData::ClearData()
 {
 	// delete classes.
 	int nCount = m_Classes.Count();
@@ -279,8 +278,10 @@ bool GameData::Load(const char *pszFilename)
 {
 	TokenReader tr;
 
-	if (! std::filesystem::exists( pszFilename ) )
-		return false;
+	#ifdef _WIN32
+		if(GetFileAttributes(pszFilename) == 0xffffffff)
+			return FALSE;
+	#endif
 
 	if(!tr.Open(pszFilename))
 		return false;

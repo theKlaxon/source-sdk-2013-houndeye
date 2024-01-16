@@ -3,19 +3,14 @@
 // Purpose: 
 //
 //=============================================================================//
+#pragma once
 
-#ifndef GAMEDATA_H
-#define GAMEDATA_H
-#ifdef _WIN32
-	#pragma once
-#endif
-
-#if _MSC_VER
+#if defined( COMPILER_MSVC )
 	#pragma warning(push, 1)
 	#pragma warning(disable:4701 4702 4530)
 #endif
 #include <fstream>
-#if _MSC_VER
+#if defined( COMPILER_MSVC )
 	#pragma warning(pop)
 #endif
 #include "tokenreader.h"
@@ -75,12 +70,12 @@ class GameData
 
 		bool Load(const char *pszFilename);
 
-		GDclass *ClassForName(const char *pszName, int *piIndex = NULL);
+		GDclass *ClassForName(const char *pszName, int *piIndex = nullptr);
 
 		void ClearData();
 
-		inline int GetMaxMapCoord(void);
-		inline int GetMinMapCoord(void);
+		inline int GetMaxMapCoord();
+		inline int GetMinMapCoord();
 
 		inline int GetClassCount();
 		inline GDclass *GetClass(int nIndex);
@@ -127,7 +122,7 @@ inline int GameData::GetClassCount()
 inline GDclass *GameData::GetClass(int nIndex)
 {
 	if (nIndex >= m_Classes.Count())
-		return NULL;
+		return nullptr;
 		
 	return m_Classes.Element(nIndex);
 }
@@ -136,7 +131,7 @@ inline GDclass *GameData::GetClass(int nIndex)
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int GameData::GetMinMapCoord(void)
+int GameData::GetMinMapCoord()
 {
 	return m_nMinMapCoord;
 }
@@ -145,7 +140,7 @@ int GameData::GetMinMapCoord(void)
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int GameData::GetMaxMapCoord(void)
+int GameData::GetMaxMapCoord()
 {
 	return m_nMaxMapCoord;
 }
@@ -153,9 +148,6 @@ int GameData::GetMaxMapCoord(void)
 
 void GDSetMessageFunc(GameDataMessageFunc_t pFunc);
 bool GDError(TokenReader &tr, PRINTF_FORMAT_STRING const char *error, ...);
-bool GDSkipToken(TokenReader &tr, trtoken_t ttexpecting = TOKENNONE, const char *pszExpecting = NULL);
-bool GDGetToken(TokenReader &tr, char *pszStore, int nSize, trtoken_t ttexpecting = TOKENNONE, const char *pszExpecting = NULL);
-bool GDGetTokenDynamic(TokenReader &tr, char **pszStore, trtoken_t ttexpecting, const char *pszExpecting = NULL);
-
-
-#endif // GAMEDATA_H
+bool GDSkipToken(TokenReader &tr, trtoken_t ttexpecting = TOKENNONE, const char *pszExpecting = nullptr);
+bool GDGetToken(TokenReader &tr, char *pszStore, int nSize, trtoken_t ttexpecting = TOKENNONE, const char *pszExpecting = nullptr);
+bool GDGetTokenDynamic(TokenReader &tr, char **pszStore, trtoken_t ttexpecting, const char *pszExpecting = nullptr);

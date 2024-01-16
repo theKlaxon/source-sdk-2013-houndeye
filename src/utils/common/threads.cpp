@@ -96,25 +96,8 @@ void RunThreadsOnIndividual( int workcnt, bool showpacifier, ThreadWorkerFn func
 }
 
 int numthreads = -1;
-#if IsWindows()
-	CRITICAL_SECTION crit;
-#else
-	pthread_mutex_t mutex;
-#endif
+CThreadMutex mutex;
 static int enter;
-
-
-class CCritInit {
-public:
-	CCritInit() {
-		#if IsWindows()
-			InitializeCriticalSection( &crit );
-		#elif IsPosix()
-			pthread_mutex_init( &mutex, nullptr );
-		#endif
-	}
-} g_CritInit;
-
 
 void SetLowPriority() {
 	#if IsWindows()
@@ -146,11 +129,7 @@ void ThreadLock() {
 	if (! threaded ) {
 		return;
 	}
-	#if IsWindows()
-		EnterCriticalSection( &crit );
-	#elif IsPosix()
-		pthread_mutex_lock( &mutex );
-	#endif
+	mutex.Lock();
 	if ( enter )
 		Error( "Recursive ThreadLock\n" );
 	enter = 1;
@@ -162,11 +141,7 @@ void ThreadUnlock() {
 	if (! enter )
 		Error( "ThreadUnlock without lock\n" );
 	enter = 0;
-	#if IsWindows()
-		LeaveCriticalSection( &crit );
-	#elif IsPosix()
-		pthread_mutex_unlock( &mutex );
-	#endif
+	mutex.Unlock();
 }
 
 // This runs in the thread and dispatches a RunThreadsFn call.
@@ -202,7 +177,7 @@ void RunThreads_Start( RunThreadsFn fn, void* pUserData, ERunThreadsPriority ePr
 				nullptr                  // [out]                LPDWORD lpThreadId
 			);
 		#elif IsPosix()
-			pthread_create( &g_ThreadHandles[ i ], nullptr, InternalRunThreadsFn, nullptr );
+			pthread_create( &g_ThreadHandles[ i ], nullptr, InternalRunThreadsFn, &g_RunThreadsData[i] );
 			#define SetThreadPriority      pthread_setschedprio
 			#define THREAD_PRIORITY_LOWEST 19
 			#define THREAD_PRIORITY_IDLE   0
@@ -222,12 +197,12 @@ void RunThreads_End() {
 	#if IsWindows()
 		WaitForMultipleObjects( numthreads, g_ThreadHandles, TRUE, INFINITE );
 	#endif
-	for ( int i = 0; i < numthreads; i++ ) {
+	for ( auto handle : g_ThreadHandles ) {
 		#if IsWindows()
-			CloseHandle( g_ThreadHandles[ i ] );
+			CloseHandle( handle );
 		#elif IsPosix()
-			pthread_join( g_ThreadHandles[ i ], nullptr );
-			pthread_cancel( g_ThreadHandles[ i ] );
+			pthread_join( handle, nullptr );
+			pthread_cancel( handle );
 		#endif
 	}
 
@@ -247,7 +222,7 @@ void RunThreadsOn( int workcnt, bool showpacifier, RunThreadsFn fn, void* pUserD
 	StartPacifier( "" );
 	pacifier = showpacifier;
 
-#ifdef _PROFILE
+#if defined( _PROFILE )
 	threaded = false;
 	( *func )( 0 );
 	return;

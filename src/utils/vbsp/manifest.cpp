@@ -3,32 +3,30 @@
 #include "map_shared.h"
 #include "fgdlib/fgdlib.h"
 #include "manifest.h"
-#ifdef _WIN32
-	#include <windows.h>
+#if defined( _WIN32 )
+	#include <winbase.h>
 #else
 	#include <unistd.h>
-	#include <sys/types.h>
 	#include <pwd.h>
 #endif
 //-----------------------------------------------------------------------------
 // Purpose: default constructor
 //-----------------------------------------------------------------------------
-CManifestMap::CManifestMap( void )
+CManifestMap::CManifestMap()
 {
 	m_RelativeMapFileName[ 0 ] = 0;
 	m_bTopLevelMap = false;
-
 }
 
 
 //-----------------------------------------------------------------------------
 // Purpose: default constructor
 //-----------------------------------------------------------------------------
-CManifest::CManifest( void ) 
+CManifest::CManifest()
 { 
 	m_InstancePath[ 0 ] = 0;
 	m_bIsCordoning = false;
-	m_CordoningMapEnt = NULL;
+	m_CordoningMapEnt = nullptr;
 }
 
 
@@ -365,13 +363,13 @@ bool CManifest::LoadVMFManifestUserPrefs( const char *pszFileName )
 	DWORD		UserNameSize;
 
 	UserNameSize = sizeof( UserName );
-	#if defined( _WIN32 )
+	#if IsWindows()
 		if ( GetUserName( UserName, &UserNameSize ) == 0 )
 	#else
-		struct passwd *pw = getpwuid(getuid());
+		struct passwd* pw = getpwuid( getuid() );
 
-		strcpy( pw->pw_dir, UserName );
-		if ( pw->pw_dir )
+		strcpy( pw->pw_name, UserName );
+		if ( pw->pw_name )
 	#endif
 	{
 		strcpy( UserPrefsFileName, "default" );
@@ -466,7 +464,7 @@ bool CManifest::LoadVMFManifest( const char *pszFileName )
 	{
 		int index = g_Maps.AddToTail( new CMapFile() );
 		g_LoadingMap = g_Maps[ index ];
-		if ( g_MainMap == NULL )
+		if ( g_MainMap == nullptr )
 		{
 			g_MainMap = g_LoadingMap;
 		}
@@ -535,7 +533,7 @@ void CManifest::CordonWorld( )
 		}
 		else if ( &g_MainMap->entities[ i ] != m_CordoningMapEnt )
 		{	// for all other entities, even if they include brushes, we look at origin
-			if ( g_MainMap->entities[ i ].numbrushes == 0 && g_MainMap->entities[ i ].epairs == NULL )
+			if ( g_MainMap->entities[ i ].numbrushes == 0 && g_MainMap->entities[ i ].epairs == nullptr )
 			{
 				continue;
 			}
@@ -567,7 +565,7 @@ void CManifest::CordonWorld( )
 			if ( bRemove )
 			{
 				g_MainMap->entities[ i ].numbrushes = 0;
-				g_MainMap->entities[ i ].epairs = NULL;
+				g_MainMap->entities[ i ].epairs = nullptr;
 			}
 		}
 	}
@@ -576,6 +574,6 @@ void CManifest::CordonWorld( )
 	{
 		g_MainMap->MoveBrushesToWorldGeneral( m_CordoningMapEnt );
 		m_CordoningMapEnt->numbrushes = 0;
-		m_CordoningMapEnt->epairs = NULL;
+		m_CordoningMapEnt->epairs = nullptr;
 	}
 }

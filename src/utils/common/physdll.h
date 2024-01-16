@@ -4,27 +4,19 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef PHYSDLL_H
-#define PHYSDLL_H
 #pragma once
 
+#if !defined( __cplusplus )
+	#error "Why are you not compiling with C++?"
+#endif
 
-#ifdef __cplusplus
 #include "vphysics_interface.h"
 class IPhysics;
 class IPhysicsCollision;
 
-extern CreateInterfaceFn	GetPhysicsFactory( void );
+extern CreateInterfaceFn GetPhysicsFactory();
 
 extern "C" {
-#endif
-
-// tools need to force the path
-void					PhysicsDLLPath( const char *pPathname );
-
-#ifdef __cplusplus
+	// tools need to force the path
+	void PhysicsDLLPath( const char *pPathname );
 }
-#endif
-
-#endif // PHYSDLL_H

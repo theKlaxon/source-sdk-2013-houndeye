@@ -5,17 +5,13 @@
 // $NoKeywords: $
 //
 //===========================================================================//
-
-// scriplib.c
-
 #include "scriplib.h"
 #include "cmdlib.h"
 #include "tier1/strtools.h"
 #include "tier2/tier2.h"
-#if defined( POSIX )
+#if IsPosix()
 	#include <dirent.h>
 	#include <sys/stat.h>
-	#include <filesystem>
 #endif
 /*
 =============================================================================
@@ -955,26 +951,16 @@ int CScriptLib::CompareFileTime( const char* pFilenameA, const char* pFilenameB 
 // Make a temporary filename
 //-----------------------------------------------------------------------------
 char* CScriptLib::MakeTemporaryFilename( char const* pchModPath, char* pPath, int pathSize ) {
-	auto pBuffer = new char[MAXNAMLEN];
-
-	std::error_code error;
-	auto tempDir = std::filesystem::temp_directory_path(error);
-	if ( error.value() != 0 ) {
-		Error( "MakeTemporaryFilename: Failed to get temp directory path.\n" );
-	}
-
-	auto id = std::time( nullptr ) & 0x0000FFFF;
-	std::sprintf( pBuffer, "%smgd_%ld", tempDir.c_str(), id );
-
-	if ( pBuffer[ 0 ] == '\\' ) {
+	char *pBuffer = _tempnam( pchModPath, "mgd_" );
+	if ( pBuffer[0] == '\\' ) {
 		pBuffer++;
 	}
-	if ( pBuffer[ strlen( pBuffer ) - 1 ] == '.' ) {
-		pBuffer[ strlen( pBuffer ) - 1 ] = '\0';
+	if ( pBuffer[strlen( pBuffer )-1] == '.' ) {
+		pBuffer[strlen( pBuffer )-1] = '\0';
 	}
 	V_snprintf( pPath, pathSize, "%s.tmp", pBuffer );
 
-	delete[] pBuffer;
+	free( pBuffer );
 
 	return pPath;
 }
@@ -1070,40 +1056,27 @@ int CScriptLib::GetFileList( const char* pDirPath, const char* pPattern, CUtlVec
 #elif defined( POSIX )
 	Q_FixSlashes( fullPath );
 	DIR* dir = opendir( fullPath );
-	if (! dir ) {
+	if (! dir )
 		return 0;
-	}
 
 	dirent* findData{};
 	while ( (findData = readdir(dir)) ) {
-		// dos attribute complexities i.e. _A_NORMAL is 0
-		if ( bFindDirs ) {
-			// skip non dirs
-			if ( findData->d_type != DT_DIR )
-				continue;
-		} else {
-			// skip dirs
-			if ( findData->d_type == DT_DIR )
-				continue;
-		}
-
-		if (! stricmp( findData->d_name, "." ) )
+		// skip non dirs if `bFindDir`, else skip dirs
+		if ( (findData->d_type != DT_DIR) == bFindDirs )
 			continue;
 
-		if (! stricmp( findData->d_name, ".." ) )
+		// skip `.` and `..`
+		if ( stricmp( findData->d_name, "." ) == 0 || stricmp( findData->d_name, ".." ) == 0 )
 			continue;
 
-		char fileName[ MAX_PATH ];
-		strcpy( fileName, sourcePath );
-		strcat( fileName, findData->d_name );
-
-		int j = fileList.AddToTail();
-		fileList[ j ].fileName.Set( fileName );
+		// append file to list
+		int i = fileList.AddToTail();
+		fileList[ i ].fileName.Set( findData->d_name );
 		struct stat statbuf{};
-		if ( stat( fileName, &statbuf ) )
-			fileList[ j ].timeWrite = statbuf.st_mtime;
+		if ( stat( findData->d_name, &statbuf ) )
+			fileList[ i ].timeWrite = statbuf.st_mtime;
 		else
-			fileList[ j ].timeWrite = 0;
+			fileList[ i ].timeWrite = 0;
 	}
 	closedir( dir );
 

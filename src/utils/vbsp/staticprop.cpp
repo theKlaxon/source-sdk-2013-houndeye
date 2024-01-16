@@ -5,7 +5,6 @@
 // $Revision: $
 // $NoKeywords: $
 //=============================================================================//
-
 #include "vbsp.h"
 #include "bsplib.h"
 #include "utlvector.h"
@@ -13,10 +12,8 @@
 #include "gamebspfile.h"
 #include "vphysics_interface.h"
 #include "studio.h"
-#include "byteswap.h"
 #include "utlbuffer.h"
 #include "collisionutils.h"
-#include <float.h>
 #include "cmodel.h"
 #include "physdll.h"
 #include "utlsymbol.h"
@@ -26,7 +23,7 @@
 static void SetCurrentModel( studiohdr_t *pStudioHdr );
 static void FreeCurrentModelVertexes();
 
-IPhysicsCollision *s_pPhysCollision = NULL;
+IPhysicsCollision *s_pPhysCollision = nullptr;
 
 //-----------------------------------------------------------------------------
 // These puppies are used to construct the game lumps
@@ -148,7 +145,7 @@ static int AddStaticPropDictLump( char const* pModelName )
 //-----------------------------------------------------------------------------
 bool LoadStudioModel( char const* pModelName, char const* pEntityType, CUtlBuffer& buf )
 {
-	if ( !g_pFullFileSystem->ReadFile( pModelName, NULL, buf ) )
+	if ( !g_pFullFileSystem->ReadFile( pModelName, nullptr, buf ) )
 		return false;
 
 	// Check that it's valid
@@ -183,8 +180,8 @@ bool LoadStudioModel( char const* pModelName, char const* pEntityType, CUtlBuffe
 	}
 
 	// ensure reset
-	pHdr->pVertexBase = NULL;
-	pHdr->pIndexBase  = NULL;
+	pHdr->pVertexBase = nullptr;
+	pHdr->pIndexBase  = nullptr;
 
 	return true;
 }
@@ -198,7 +195,7 @@ static CPhysConvex* ComputeConvexHull( mstudiomesh_t* pMesh )
 	// Generate a list of all verts in the mesh
 	Vector** ppVerts = (Vector**)stackalloc(pMesh->numvertices * sizeof(Vector*) );
 	const mstudio_meshvertexdata_t *vertData = pMesh->GetVertexData();
-	Assert( vertData ); // This can only return NULL on X360 for now
+	Assert( vertData ); // This can only return nullptr on X360 for now
 	for (int i = 0; i < pMesh->numvertices; ++i)
 	{
 		ppVerts[i] = vertData->Position(i);
@@ -247,11 +244,7 @@ static CPhysCollide* GetCollisionModel( char const* pModelName )
 	// Convert to a common string
 	char* pTemp = (char*)_alloca(strlen(pModelName) + 1);
 	strcpy( pTemp, pModelName );
-	#if defined( _WIN32 )
-		_strlwr( pTemp );
-	#else
-		strlwr( pTemp );
-	#endif
+	strlwr( pTemp );
 	char* pSlash = strchr( pTemp, '\\' );
 	while( pSlash )
 	{
@@ -575,7 +568,7 @@ void EmitStaticProps()
 	CreateInterfaceFn physicsFactory = GetPhysicsFactory();
 	if ( physicsFactory )
 	{
-		s_pPhysCollision = (IPhysicsCollision *)physicsFactory( VPHYSICS_COLLISION_INTERFACE_VERSION, NULL );
+		s_pPhysCollision = (IPhysicsCollision *)physicsFactory( VPHYSICS_COLLISION_INTERFACE_VERSION, nullptr );
 		if( !s_pPhysCollision )
 			return;
 	}
@@ -698,7 +691,7 @@ static void FreeCurrentModelVertexes()
 	if ( g_pActiveStudioHdr->pVertexBase )
 	{
 		free( g_pActiveStudioHdr->pVertexBase );
-		g_pActiveStudioHdr->pVertexBase = NULL;
+		g_pActiveStudioHdr->pVertexBase = nullptr;
 	}
 }
 
@@ -708,7 +701,7 @@ const vertexFileHeader_t * mstudiomodel_t::CacheVertexData( void * pModelData )
 	FileHandle_t		fileHandle;
 	vertexFileHeader_t	*pVvdHdr;
 
-	Assert( pModelData == NULL );
+	Assert( pModelData == nullptr );
 	Assert( g_pActiveStudioHdr );
 
 	if ( g_pActiveStudioHdr->pVertexBase )
