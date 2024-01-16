@@ -8,43 +8,9 @@
 // vvis_launcher.cpp : Defines the entry point for the console application.
 //
 #include "interface.h"
-#if IsWindows()
-	#include <direct.h>
-#elif IsLinux()
-	#include <cerrno>
-#endif
 #include "tier0/icommandline.h"
 #include "ilaunchabledll.h"
 #include "platform.h"
-
-
-
-char* GetLastErrorString() {
-	static char err[2048];
-	#if IsWindows()
-		LPVOID lpMsgBuf;
-		FormatMessage(
-			FORMAT_MESSAGE_ALLOCATE_BUFFER |
-			FORMAT_MESSAGE_FROM_SYSTEM |
-			FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL,
-			GetLastError(),
-			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-			(LPTSTR) &lpMsgBuf,
-			0,
-			NULL
-		);
-
-		strncpy( err, (char*)lpMsgBuf, sizeof( err ) );
-		LocalFree( lpMsgBuf );
-	#elif IsLinux()
-		strncpy( err, strerror( errno ), sizeof( err ) );
-	#endif
-
-	err[ sizeof( err ) - 1 ] = 0;
-
-	return err;
-}
 
 
 int main( int argc, char* argv[] ) {
@@ -53,7 +19,7 @@ int main( int argc, char* argv[] ) {
 
 	CSysModule* pModule = Sys_LoadModule( pDLLName );
 	if (! pModule ) {
-		printf( "vvis launcher error: can't load %s\n%s", pDLLName, GetLastErrorString() );
+		printf( "vvis launcher error: can't load %s\n%s", pDLLName, Sys_LastErrorString() );
 		return 1;
 	}
 

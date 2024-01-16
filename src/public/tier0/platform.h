@@ -583,7 +583,10 @@ FIXME: Enable this when we no longer fear change =)
 		#undef _snprintf
 	#endif
 	#define _snprintf snprintf
-	#define GetProcAddress( ptr, name ) dlsym( reinterpret_cast<void*>( ptr ), name )
+	#define GetProcAddress( ptr, name ) ({ \
+		static_assert( std::is_same_v<decltype( ptr ), HMODULE> == true ); \
+		dlsym( reinterpret_cast<void*>( ptr ), name ); \
+	})
 	#define _chdir chdir
 	#define _strnicmp strnicmp
 	#define strnicmp strncasecmp

@@ -9,41 +9,10 @@
 //
 
 #include "interface.h"
-#if IsWindows()
-	#include <direct.h>
-#elif IsLinux()
-	#include <cerrno>
-#endif
 #include "ilaunchabledll.h"
 #include "tier0/icommandline.h"
 #include "tier1/strtools.h"
 
-
-char* GetLastErrorString() {
-	static char err[ 2048 ];
-	#if IsWindows()
-		LPVOID lpMsgBuf;
-		FormatMessage(
-			FORMAT_MESSAGE_ALLOCATE_BUFFER |
-				FORMAT_MESSAGE_FROM_SYSTEM |
-				FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL,
-			GetLastError(),
-			MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),// Default language
-			(LPTSTR) &lpMsgBuf,
-			0,
-			NULL );
-
-		strncpy( err, (char*) lpMsgBuf, sizeof( err ) );
-		LocalFree( lpMsgBuf );
-	#elif IsLinux()
-		strncpy( err, strerror( errno ), sizeof( err ) );
-	#endif
-
-	err[ sizeof( err ) - 1 ] = 0;
-
-	return err;
-}
 
 
 void MakeFullPath( const char* pIn, char* pOut, int outLen ) {
@@ -107,7 +76,7 @@ int main( int argc, char* argv[] ) {
 		}
 
 		if ( !pModule ) {
-			printf( "vrad_launcher error: can't load %s\n%s", dllName, GetLastErrorString() );
+			printf( "vrad_launcher error: can't load %s\n%s", dllName, Sys_LastErrorString() );
 			return 1;
 		}
 
