@@ -31,8 +31,8 @@
 		//
 		// |gameinfo_path| points at the directory where gameinfo.txt is.
 		// We always want to mount that directory relative to gameinfo.txt, so
-		// people can mount stuff in c:\mymod, and the main game resources are in
-		// someplace like c:\program files\valve\steam\steamapps\half-life 2.
+		// people can mount stuff in C:\mymod, and the main game resources are in
+		// someplace like C:\program files\valve\steam\steamapps\half-life 2.
 		//
 		SearchPaths {
 			// First, mount all user customizations.
@@ -51,7 +51,7 @@
 			gamebin				|gameinfo_path|bin
 
 			// We search VPK files before ordinary folders, because most files will be found in
-			// VPK and we can avoid making thousands of file system calls to attempt to open files
+			// VPKs, and we can avoid making thousands of file system calls to attempt to open files
 			// in folders where they don't exist.
 			// (Searching a VPK is much faster than making an operating system call.)
 			game_lv				hl2/hl2_lv.vpk
