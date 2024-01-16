@@ -30,7 +30,7 @@ enum FSInitType_t {
 };
 
 //
-// Initializes qdir,  and gamedir. Also initializes the VMPI filesystem if MPI is defined.
+// Initializes qdir,  and gamedir.
 //
 // pFilename can be NULL if you want to rely on vproject and qproject. If it's specified, FileSystem_Init
 // will go up directories from pFilename looking for gameinfo.txt (if vproject isn't specified).
@@ -44,9 +44,9 @@ void FileSystem_Term();
 // Used to connect app-framework based console apps to the filesystem tools
 void FileSystem_SetupStandardDirectories( const char* pFilename, const char* pGameInfoPath );
 
-CreateInterfaceFn FileSystem_GetFactory( void );
+CreateInterfaceFn FileSystem_GetFactory();
 
 
 extern IBaseFileSystem* g_pFileSystem;
-// NOTE: this is here when VMPI is being used, but a VMPI app can ONLY use LoadModule/UnloadModule.
+// NOTE?: this is here when VMPI is being used, but a VMPI app can ONLY use LoadModule/UnloadModule.
 extern IFileSystem* g_pFullFileSystem;

@@ -6,15 +6,11 @@
 // $Date:         $
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef UTILMATLIB_H
-#define UTILMATLIB_H
-
-#ifdef _WIN32
 #pragma once
-#endif
 
-#define MATERIAL_NOT_FOUND NULL
+#include "interface.h"
+
+#define MATERIAL_NOT_FOUND nullptr
 	
 class IMaterialSystem;
 extern IMaterialSystem *g_pMaterialSystem;
@@ -36,6 +32,3 @@ int GetMaterialShaderPropertyInt( MaterialSystemMaterial_t materialHandle, int p
 const char *GetMaterialVar( MaterialSystemMaterial_t materialHandle, const char *propertyName );
 void GetMaterialReflectivity( MaterialSystemMaterial_t materialHandle, float *reflectivityVect );
 const char *GetMaterialShaderName( MaterialSystemMaterial_t materialHandle );
-
-
-#endif // UTILMATLIB_H

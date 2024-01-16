@@ -376,17 +376,12 @@ transfer_t* BuildVisLeafs_Start()
 
 
 // If PatchCB is non-null, it is called after each row is generated (used by MPI).
-void BuildVisLeafs_Cluster( 
-	int threadnum,
-	transfer_t *transfers, 
-	int iCluster, 
-	void (*PatchCB)(int iThread, int patchnum, CPatch *patch)
-	)
+void BuildVisLeafs_Cluster( int threadnum, transfer_t *transfers, int iCluster )
 {
-	byte	pvs[(MAX_MAP_CLUSTERS+7)/8];
-	CPatch	*patch;
-	int		head;
-	unsigned	patchnum;
+	byte     pvs[(MAX_MAP_CLUSTERS+7)/8];
+	CPatch*  patch;
+	int      head;
+	unsigned patchnum;
 	
 	DecompressVis( &dvisdata[ dvis->bitofs[ iCluster ][DVIS_PVS] ], pvs);
 	head = 0;
@@ -416,10 +411,6 @@ void BuildVisLeafs_Cluster(
 			
 			// do the transfers
 			MakeScales( patchnum, transfers );
-
-			// Let MPI aggregate the data if it's being used.
-			if ( PatchCB )
-				PatchCB( threadnum, patchnum, patch );
 		}
 	}
 }
@@ -446,7 +437,7 @@ void BuildVisLeafs( int threadnum, void *pUserData )
 		if ( iCluster == -1 )
 			break;
 
-		BuildVisLeafs_Cluster( threadnum, transfers, iCluster, nullptr );
+		BuildVisLeafs_Cluster( threadnum, transfers, iCluster );
 	}
 	
 	BuildVisLeafs_End( transfers );
