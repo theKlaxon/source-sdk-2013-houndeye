@@ -33,7 +33,7 @@
 #pragma once
 
 #ifdef USE_SDL
-#include "SDL_opengl.h"
+	#include <SDL/SDL_opengl.h>
 #endif
 
 #include "tier0/platform.h"

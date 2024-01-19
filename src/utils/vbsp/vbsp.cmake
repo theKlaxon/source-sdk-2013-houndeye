@@ -158,6 +158,7 @@ target_compile_definitions(vbsp
 		PROTECTED_THINGS_DISABLE
 )
 
+find_package( SDL2 CONFIG REQUIRED )
 target_link_libraries(vbsp
 	PRIVATE
 		$<${IS_WINDOWS}:ws2_32>
@@ -168,10 +169,13 @@ target_link_libraries(vbsp
 		fgdlib
 		lzma
 		mathlib
-		"${LIBPUBLIC}/tier2${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		tier2
 		"${LIBPUBLIC}/vtf${CMAKE_STATIC_LIBRARY_SUFFIX}"
 		"${LIBPUBLIC}/bitmap${CMAKE_STATIC_LIBRARY_SUFFIX}"
 		tier1
 		tier0
 		vstdlib
+#		OpengGL
+	INTERFACE
+		SDL2::SDL2
 )

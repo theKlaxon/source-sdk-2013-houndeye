@@ -29,6 +29,7 @@
 #define DXABSTRACT_TYPES_H
 
 #pragma once
+#define GL_HALF_FLOAT GL_HALF_FLOAT_NV  // FIXME: ??
 
 #if GL_BATCH_PERF_ANALYSIS
 	class simple_bitmap;

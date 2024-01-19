@@ -8,13 +8,14 @@
 #define DEFORMATIONS_H
 
 #ifdef _WIN32
-#pragma once
+	#pragma once
 #endif
 
 #include "tier0/platform.h"
+#include "mathlib/vector.h"
 
 // nonlinear transformations which may be applied to model vertices when rendering. must be powers of two
-enum DeformationType_t	
+enum DeformationType_t
 {
 	DEFORMATION_CLAMP_TO_BOX_IN_WORLDSPACE = 1,							// minxyz.minsoftness / maxxyz.maxsoftness
 };
