@@ -83,6 +83,11 @@ set(ADDITIONAL_COMPILE_DEFINITIONS_EXE)
 set(ADDITIONAL_COMPILE_DEFINITIONS_DLL)
 set(ADDITIONAL_COMPILE_DEFINITIONS_LIB)
 
+# SETUP THIRD PARTY, before we "customize" our compilation process
+include( "thirdparty/init.cmake" )
+include( "_cmake_scripts/dlang.cmake" )
+
+# Init project structure
 include("_cmake_scripts/pch_skip.cmake")
 include("_cmake_scripts/platform_dirs.cmake")
 include("_cmake_scripts/base.cmake")
@@ -107,18 +112,13 @@ include_directories(
 add_compile_definitions( $<$<CONFIG:Debug>:DEBUG> $<$<CONFIG:Debug>:_DEBUG> )
 add_compile_definitions( $<$<CONFIG:Release>:NDEBUG> )
 
-# SETUP D LANG
-include( "_cmake_scripts/dlang.cmake" )
-
-# SETUP THIRD PARTY, before we "customize" our compilation process
-include( "thirdparty/init.cmake" )
-
 if (${IS_WINDOWS})
 	include("_cmake_scripts/windows_base.cmake")
 elseif (${IS_LINUX})
 	include("_cmake_scripts/posix_base.cmake")
 endif()
 
+# import the projects
 include("_cmake_scripts/groups.cmake")
 
 # Store all targets in a variable name ( See: https://stackoverflow.com/questions/37434946/how-do-i-iterate-over-all-cmake-targets-programmatically/62311397#62311397 )

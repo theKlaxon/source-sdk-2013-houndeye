@@ -28,10 +28,5 @@ target_link_libraries(
 		tier1
 		tier2
 		vstdlib
-)
-
-target_vcpkg_dependency(
-	inputsystem PRIVATE
-		SDL2
-		magic-enum
+		SDL3::SDL3-shared
 )

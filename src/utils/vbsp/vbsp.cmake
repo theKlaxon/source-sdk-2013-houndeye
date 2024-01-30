@@ -158,7 +158,6 @@ target_compile_definitions(vbsp
 		PROTECTED_THINGS_DISABLE
 )
 
-find_package( SDL2 CONFIG REQUIRED )
 target_link_libraries(vbsp
 	PRIVATE
 		$<${IS_WINDOWS}:ws2_32>
@@ -177,5 +176,5 @@ target_link_libraries(vbsp
 		vstdlib
 #		OpengGL
 	INTERFACE
-		SDL2::SDL2
+		SDL3::SDL3-shared
 )

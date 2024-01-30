@@ -3,7 +3,11 @@
 include_guard(GLOBAL)
 
 function(target_strip_symbols target)
-	if (${IS_LINUX})
+	set( bindir )
+	set( thirdparty )
+	get_target_property( bindir ${target} "BINARY_DIR" )
+	string( FIND "${bindir}" "thirdparty" thirdparty )
+	if ( ${IS_LINUX} AND "${thirdparty}" STREQUAL "-1" )
 		add_custom_command(
 			TARGET ${target} POST_BUILD
 			COMMAND ${CMAKE_OBJCOPY} "$<TARGET_FILE:${target}>" "$<TARGET_FILE:${target}>.dbg"

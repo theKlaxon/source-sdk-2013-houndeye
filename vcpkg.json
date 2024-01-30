@@ -4,13 +4,10 @@
     "description" : "A modern Source SDK 2013 branch",
     "builtin-baseline" : "1384becefca5c1511f0e070c43f66ad6a3783c8e",
     "dependencies" : [
-        "sdl2",
-        "magic-enum",
         "liblzma",
         "jemalloc",
         "stduuid"
     ],
     "overrides": [
-
     ]
 }

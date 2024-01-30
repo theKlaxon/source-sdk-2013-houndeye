@@ -3,17 +3,11 @@
 // Purpose: 
 //
 //=============================================================================
-
-#ifndef DMATTRIBUTETYPES_H
-#define DMATTRIBUTETYPES_H
-#ifdef _WIN32
 #pragma once
-#endif
 
 #include "tier1/utlvector.h"
 #include "tier1/utlbinaryblock.h"
 #include "tier1/utlstring.h"
-#include "tier1/uniqueid.h"
 #include "Color.h"
 #include "mathlib/vector2d.h"
 #include "mathlib/vector.h"
@@ -21,6 +15,7 @@
 #include "mathlib/vmatrix.h"
 #include "datamodel/dmelementhandle.h"
 #include "tier1/utlsymbol.h"
+#include "tier1/uniqueid.h"
 
 
 //-----------------------------------------------------------------------------
@@ -312,6 +307,3 @@ DECLARE_ATTRIBUTE_ARRAY_TYPE( CUtlString,		AT_STRING_ARRAY,		"string_array" )
 DECLARE_ATTRIBUTE_ARRAY_TYPE( CUtlBinaryBlock,	AT_VOID_ARRAY,			"binary_array" )
 DECLARE_ATTRIBUTE_ARRAY_TYPE( DmObjectId_t,		AT_OBJECTID_ARRAY,		"elementid_array" )
 DECLARE_ATTRIBUTE_ARRAY_TYPE_INTERNAL( DmElementHandle_t, DmElementArray_t,	AT_ELEMENT_ARRAY, "element_array" )
-
-
-#endif // DMATTRIBUTETYPES_H

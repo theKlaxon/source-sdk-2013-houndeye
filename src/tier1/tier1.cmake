@@ -49,6 +49,7 @@ set(
 	"${TIER1_DIR}/snappy.cpp"
 	"${TIER1_DIR}/snappy-sinksource.cpp"
 	"${TIER1_DIR}/snappy-stubs-internal.cpp"
+	"${TIER1_DIR}/uniqueid.cpp"
 
 	# Select bits from the LZMA SDK to support lzmaDecoder.h
 	# Encoding support requires the full lzma project
@@ -69,6 +70,7 @@ set(
 	"${SRCDIR}/public/tier1/characterset.h"
 	"${SRCDIR}/public/tier1/checksum_crc.h"
 	"${SRCDIR}/public/tier1/checksum_md5.h"
+	"${SRCDIR}/public/tier1/uniqueid.h"
 	"${SRCDIR}/public/tier1/checksum_sha1.h"
 	"${SRCDIR}/public/tier1/CommandBuffer.h"
 	"${SRCDIR}/public/tier1/convar.h"
