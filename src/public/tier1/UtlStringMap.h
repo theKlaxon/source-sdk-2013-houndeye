@@ -47,7 +47,7 @@ public:
 
 	bool Defined( const char *pString ) const
 	{
-		return m_SymbolTable.Find( pString ) != UTL_INVAL_SYMBOL;
+		return static_cast<UtlSymId_t>( m_SymbolTable.Find( pString ) ) != UTL_INVAL_SYMBOL;
 	}
 
 	UtlSymId_t Find( const char *pString ) const

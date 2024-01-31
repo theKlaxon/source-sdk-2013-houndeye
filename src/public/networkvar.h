@@ -3,16 +3,12 @@
 // Purpose: 
 //
 //=============================================================================//
-
-#ifndef NETWORKVAR_H
-#define NETWORKVAR_H
-#ifdef _WIN32
 #pragma once
-#endif
 
 
 #include "tier0/dbg.h"
 #include "convar.h"
+#include "Color.h"
 
 #if defined( CLIENT_DLL ) || defined( GAME_DLL )
 	#include "basehandle.h"
@@ -179,7 +175,6 @@ static inline void DispatchNetworkStateChanged( T *pObj, void *pVar )
 
 template<typename T>
 FORCEINLINE void NetworkVarConstruct( T &x ) { x = T(0); }
-FORCEINLINE void NetworkVarConstruct( color32_s &x ) { x.r = x.g = x.b = x.a = 0; }
 
 template< class Type, class Changer >
 class CNetworkVarBase
@@ -775,7 +770,3 @@ private:
 		} \
 	}; \
 	base< type, NetworkVar_##name > name;
-
-
-
-#endif // NETWORKVAR_H

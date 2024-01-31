@@ -119,13 +119,13 @@ void ScalableImagePanel::PaintBackground()
 		{
 			//uvh - row 0 or 2, is src_corner_height
 			uvh = m_flCornerHeightPercent;
-			drawH = m_iCornerHeight;
+			drawH = static_cast<float>( m_iCornerHeight );
 		}
 		else
 		{
 			//uvh - row 1, is tall - ( 2 * src_corner_height ) ( min 0 )
-			uvh = max( 1.0 - 2 * m_flCornerHeightPercent, 0.0f );
-			drawH = max( 0, ( tall - 2 * m_iCornerHeight ) );
+			uvh = std::max( 1.0f - 2 * m_flCornerHeightPercent, 0.0f );
+			drawH = static_cast<float>( std::max( 0, ( tall - 2 * m_iCornerHeight ) ) );
 		}
 
 		for ( col=0;col<3;col++ )
@@ -134,13 +134,13 @@ void ScalableImagePanel::PaintBackground()
 			{
 				//uvw - col 0 or 2, is src_corner_width
 				uvw = m_flCornerWidthPercent;
-				drawW = m_iCornerWidth;
+				drawW = static_cast<float>( m_iCornerWidth );
 			}
 			else
 			{
 				//uvw - col 1, is wide - ( 2 * src_corner_width ) ( min 0 )
-				uvw = max( 1.0 - 2 * m_flCornerWidthPercent, 0.0f );
-				drawW = max( 0, ( wide - 2 * m_iCornerWidth ) );
+				uvw = std::max( 1.0f - 2 * m_flCornerWidthPercent, 0.0f );
+				drawW = static_cast<float>( std::max( 0, ( wide - 2 * m_iCornerWidth ) ) );
 			}
 
 			Vector2D uv11( uvx, uvy );
