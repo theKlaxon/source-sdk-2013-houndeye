@@ -11,9 +11,9 @@
 #include <appframework/AppFramework.h>
 #include <appframework/IAppSystemGroup.h>
 #include <datacache/idatacache.h>
-#include <engine_hlds_api.h>
 #include <filesystem/IQueuedLoader.h>
 #include <filesystem_init.h>
+#include <engine/hlds_api.h>
 #include <idedicatedexports.h>
 #include <inputsystem/iinputsystem.h>
 #include <istudiorender.h>
@@ -51,7 +51,7 @@ public:
 CDedicatedExports g_DedicatedExports;
 
 
-SpewRetval_t LauncherDSSpewFunc( SpewType_t spewType, char const* pMsg ) {
+SpewRetval_t LauncherSpewFunc( SpewType_t spewType, char const* pMsg ) {
 	switch ( spewType ) {
 		case SPEW_MESSAGE:
 			printf( "[I] %s", pMsg );
