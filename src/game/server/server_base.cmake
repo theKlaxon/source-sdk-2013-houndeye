@@ -988,8 +988,8 @@ function(target_use_server_base target EXCLUDE_SOURCES)
 		"${LIBPUBLIC}/particles${CMAKE_STATIC_LIBRARY_SUFFIX}"
 		"${LIBPUBLIC}/dmxloader${CMAKE_STATIC_LIBRARY_SUFFIX}"
 		mathlib
-		"${LIBPUBLIC}/tier2${CMAKE_STATIC_LIBRARY_SUFFIX}"
-		"${LIBPUBLIC}/tier3${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		tier2
+		tier3
 		steam_api
 	)
 
