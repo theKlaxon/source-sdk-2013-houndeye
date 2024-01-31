@@ -1,17 +1,17 @@
 //
 // Created by ENDERZOMBI102 on 06/09/2023.
 //
-
 #include <SDL.h>
 #include <array>
 
+#include "ButtonEntry.hpp"
 #include "icommandline.h"
 #include "inputsystem.hpp"
 
 InitReturnVal_t CInputSystem::Init() {
 	if ( CommandLine()->CheckParm( "-nojoy" ) ) ;
 
-	auto res = SDL_InitSubSystem( SDL_INIT_EVENTS | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC );
+	auto res = SDL_InitSubSystem( SDL_INIT_EVENTS | SDL_INIT_GAMEPAD | SDL_INIT_HAPTIC );
 
 	if ( res < 0 ) {
 		// TODO: Finish this
@@ -34,8 +34,16 @@ void CInputSystem::AttachToWindow( void* hWnd ) {
 	if ( this->m_pSdlWindow )
 		Error( "`CInputSystem::AttachToWindow`: Cannot attach to two windows at once!" );
 
-	this->m_pSdlWindow = SDL_CreateWindowFrom( hWnd );
-	AssertMsg( this->m_pSdlWindow != nullptr, SDL_GetError() );
+	auto props { SDL_CreateProperties() };
+	#if IsWindows()
+		SDL_SetNumberProperty( props, SDL_PROPERTY_WINDOW_CREATE_WIN32_HWND_POINTER, reinterpret_cast<int>( hWnd ) );
+	#elif IsLinux()
+		// TODO: When we move to wayland, this should change!
+		SDL_SetNumberProperty( props, SDL_PROPERTY_WINDOW_X11_WINDOW_NUMBER, reinterpret_cast<int>( hWnd ) );
+	#endif
+
+	this->m_pSdlWindow = SDL_CreateWindowWithProperties( props );
+	AssertMsg( this->m_pSdlWindow != nullptr, "%s", SDL_GetError() );
 }
 
 void CInputSystem::DetachFromWindow() {
@@ -126,7 +134,8 @@ void CInputSystem::PostUserEvent( const InputEvent_t& event ) {
 }
 
 int CInputSystem::GetJoystickCount() const {
-	auto count = SDL_NumJoysticks();
+	int count{0};
+	SDL_GetJoysticks( &count );
 
 	if ( count < 0 ) {
 		DevWarning( "[AuroraSource | InputSystem] Failed to enumerate joysticks: %s", SDL_GetError() );
@@ -170,7 +179,7 @@ void CInputSystem::SetPrimaryUserId( int userId ) {
 }
 
 const char* CInputSystem::ButtonCodeToString( ButtonCode_t code ) const {
-	for ( auto entry : CInputSystem::BUTTON_MAP )
+	for ( auto entry : BUTTON_MAP )
 		if ( entry.code == code )
 			return entry.name;
 	return "";
@@ -182,7 +191,7 @@ const char* CInputSystem::AnalogCodeToString( AnalogCode_t code ) const {
 }
 
 ButtonCode_t CInputSystem::StringToButtonCode( const char* pString ) const {
-	for ( auto& entry : CInputSystem::BUTTON_MAP )
+	for ( auto& entry : BUTTON_MAP )
 		if ( entry.name && Q_strcmp( entry.name, pString ) == 0 )
 			return entry.code;
 	return BUTTON_CODE_INVALID;
@@ -257,7 +266,7 @@ int CInputSystem::CMessagePumpThread::Run() {
 		while ( SDL_PollEvent( &sdlEvent ) ) {
 			InputEvent_t inputEvent{};
 			switch ( sdlEvent.type ) {
-				case SDL_EventType::SDL_QUIT:
+				case SDL_EventType::SDL_EVENT_QUIT:
 					inputEvent.m_nType = InputEventType_t::IE_Quit;
 					break;
 			}
@@ -267,112 +276,3 @@ int CInputSystem::CMessagePumpThread::Run() {
 	}
 	return 0;
 }
-
-std::array<CInputSystem::ButtonEntry_t, 107> CInputSystem::BUTTON_MAP {{
-	{ "0", ButtonCode_t::KEY_0 },
-	{ "1", ButtonCode_t::KEY_1 },
-	{ "2", ButtonCode_t::KEY_2 },
-	{ "3", ButtonCode_t::KEY_3 },
-	{ "4", ButtonCode_t::KEY_4 },
-	{ "5", ButtonCode_t::KEY_5 },
-	{ "6", ButtonCode_t::KEY_6 },
-	{ "7", ButtonCode_t::KEY_7 },
-	{ "8", ButtonCode_t::KEY_8 },
-	{ "9", ButtonCode_t::KEY_9 },
-	{ "A", ButtonCode_t::KEY_A },
-	{ "B", ButtonCode_t::KEY_B },
-	{ "C", ButtonCode_t::KEY_C },
-	{ "D", ButtonCode_t::KEY_D },
-	{ "E", ButtonCode_t::KEY_E },
-	{ "F", ButtonCode_t::KEY_F },
-	{ "G", ButtonCode_t::KEY_G },
-	{ "H", ButtonCode_t::KEY_H },
-	{ "I", ButtonCode_t::KEY_I },
-	{ "J", ButtonCode_t::KEY_J },
-	{ "K", ButtonCode_t::KEY_K },
-	{ "L", ButtonCode_t::KEY_L },
-	{ "M", ButtonCode_t::KEY_M },
-	{ "N", ButtonCode_t::KEY_N },
-	{ "O", ButtonCode_t::KEY_O },
-	{ "P", ButtonCode_t::KEY_P },
-	{ "Q", ButtonCode_t::KEY_Q },
-	{ "R", ButtonCode_t::KEY_R },
-	{ "S", ButtonCode_t::KEY_S },
-	{ "T", ButtonCode_t::KEY_T },
-	{ "U", ButtonCode_t::KEY_U },
-	{ "V", ButtonCode_t::KEY_V },
-	{ "W", ButtonCode_t::KEY_W },
-	{ "X", ButtonCode_t::KEY_X },
-	{ "Y", ButtonCode_t::KEY_Y },
-	{ "Z", ButtonCode_t::KEY_Z },
-	{ "PAD_0", ButtonCode_t::KEY_PAD_0 },
-	{ "PAD_1", ButtonCode_t::KEY_PAD_1 },
-	{ "PAD_2", ButtonCode_t::KEY_PAD_2 },
-	{ "PAD_3", ButtonCode_t::KEY_PAD_3 },
-	{ "PAD_4", ButtonCode_t::KEY_PAD_4 },
-	{ "PAD_5", ButtonCode_t::KEY_PAD_5 },
-	{ "PAD_6", ButtonCode_t::KEY_PAD_6 },
-	{ "PAD_7", ButtonCode_t::KEY_PAD_7 },
-	{ "PAD_8", ButtonCode_t::KEY_PAD_8 },
-	{ "PAD_9", ButtonCode_t::KEY_PAD_9 },
-	{ "PAD_DIVIDE", ButtonCode_t::KEY_PAD_DIVIDE },
-	{ "PAD_MULTIPLY", ButtonCode_t::KEY_PAD_MULTIPLY },
-	{ "PAD_MINUS", ButtonCode_t::KEY_PAD_MINUS },
-	{ "PAD_PLUS", ButtonCode_t::KEY_PAD_PLUS },
-	{ "PAD_ENTER", ButtonCode_t::KEY_PAD_ENTER },
-	{ "PAD_DECIMAL", ButtonCode_t::KEY_PAD_DECIMAL },
-	{ "LBRACKET", ButtonCode_t::KEY_LBRACKET },
-	{ "RBRACKET", ButtonCode_t::KEY_RBRACKET },
-	{ "SEMICOLON", ButtonCode_t::KEY_SEMICOLON },
-	{ "APOSTROPHE", ButtonCode_t::KEY_APOSTROPHE },
-	{ "BACKQUOTE", ButtonCode_t::KEY_BACKQUOTE },
-	{ "COMMA", ButtonCode_t::KEY_COMMA },
-	{ "PERIOD", ButtonCode_t::KEY_PERIOD },
-	{ "SLASH", ButtonCode_t::KEY_SLASH },
-	{ "BACKSLASH", ButtonCode_t::KEY_BACKSLASH },
-	{ "MINUS", ButtonCode_t::KEY_MINUS },
-	{ "EQUAL", ButtonCode_t::KEY_EQUAL },
-	{ "ENTER", ButtonCode_t::KEY_ENTER },
-	{ "SPACE", ButtonCode_t::KEY_SPACE },
-	{ "BACKSPACE", ButtonCode_t::KEY_BACKSPACE },
-	{ "TAB", ButtonCode_t::KEY_TAB },
-	{ "CAPSLOCK", ButtonCode_t::KEY_CAPSLOCK },
-	{ "NUMLOCK", ButtonCode_t::KEY_NUMLOCK },
-	{ "ESCAPE", ButtonCode_t::KEY_ESCAPE },
-	{ "SCROLLLOCK", ButtonCode_t::KEY_SCROLLLOCK },
-	{ "INSERT", ButtonCode_t::KEY_INSERT },
-	{ "DELETE", ButtonCode_t::KEY_DELETE },
-	{ "HOME", ButtonCode_t::KEY_HOME },
-	{ "END", ButtonCode_t::KEY_END },
-	{ "PAGEUP", ButtonCode_t::KEY_PAGEUP },
-	{ "PAGEDOWN", ButtonCode_t::KEY_PAGEDOWN },
-	{ "BREAK", ButtonCode_t::KEY_BREAK },
-	{ "LSHIFT", ButtonCode_t::KEY_LSHIFT },
-	{ "RSHIFT", ButtonCode_t::KEY_RSHIFT },
-	{ "LALT", ButtonCode_t::KEY_LALT },
-	{ "RALT", ButtonCode_t::KEY_RALT },
-	{ "LCONTROL", ButtonCode_t::KEY_LCONTROL },
-	{ "RCONTROL", ButtonCode_t::KEY_RCONTROL },
-	{ "LWIN", ButtonCode_t::KEY_LWIN },
-	{ "RWIN", ButtonCode_t::KEY_RWIN },
-	{ "APP", ButtonCode_t::KEY_APP },
-	{ "UP", ButtonCode_t::KEY_UP },
-	{ "LEFT", ButtonCode_t::KEY_LEFT },
-	{ "DOWN", ButtonCode_t::KEY_DOWN },
-	{ "RIGHT", ButtonCode_t::KEY_RIGHT },
-	{ "F1", ButtonCode_t::KEY_F1 },
-	{ "F2", ButtonCode_t::KEY_F2 },
-	{ "F3", ButtonCode_t::KEY_F3 },
-	{ "F4", ButtonCode_t::KEY_F4 },
-	{ "F5", ButtonCode_t::KEY_F5 },
-	{ "F6", ButtonCode_t::KEY_F6 },
-	{ "F7", ButtonCode_t::KEY_F7 },
-	{ "F8", ButtonCode_t::KEY_F8 },
-	{ "F9", ButtonCode_t::KEY_F9 },
-	{ "F10", ButtonCode_t::KEY_F10 },
-	{ "F11", ButtonCode_t::KEY_F11 },
-	{ "F12", ButtonCode_t::KEY_F12 },
-	{ "CAPSLOCKTOGGLE", ButtonCode_t::KEY_CAPSLOCKTOGGLE },
-	{ "NUMLOCKTOGGLE", ButtonCode_t::KEY_NUMLOCKTOGGLE },
-	{ "SCROLLLOCKTOGGLE", ButtonCode_t::KEY_SCROLLLOCKTOGGLE }
-}};
