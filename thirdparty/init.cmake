@@ -8,7 +8,8 @@ function( included name folder )
 		return()
 	endif()
 
-	add_subdirectory( "${CMAKE_CURRENT_LIST_DIR}/${folder}" )
+
+	add_subdirectory( "${CMAKE_CURRENT_LIST_DIR}/${folder}" EXCLUDE_FROM_ALL SYSTEM )
 endfunction()
 
 # Find vcpkg dynlib output dir
