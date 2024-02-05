@@ -2,15 +2,14 @@ cmake_minimum_required(VERSION 3.27 FATAL_ERROR)
 
 if ( APPLE )
 	message( FATAL_ERROR "Aurora Source has discontinued OSX support, please use either Windows or Linux." )
-elseif ( NOT DEFINED CMAKE_TOOLCHAIN_FILE )
-	message( FATAL_ERROR "vcpkg was not configured on this system, please configure it and come back" )
-elseif ("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+endif()
+if ("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
 	message( FATAL_ERROR "Aurora Source only supports 32-bit generation for now" )
 endif()
 
 set( CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE )
 
-message( NOTICE "Running CMake v${CMAKE_VERSION}\n" )
+message( NOTICE "Running CMake v${CMAKE_VERSION}" )
 
 project(
 	AuroraSource

@@ -12,20 +12,6 @@ function( included name folder )
 	add_subdirectory( "${CMAKE_CURRENT_LIST_DIR}/${folder}" EXCLUDE_FROM_ALL SYSTEM )
 endfunction()
 
-# Find vcpkg dynlib output dir
-foreach ( path ${CMAKE_PREFIX_PATH} )
-	STRING( FIND ${path} "/debug" isDebugFolder )
-
-	if ( ${isDebugFolder} EQUAL -1 )
-		set( VCPKG_OUTPUT_DIR "${path}/bin" )
-	endif()
-endforeach()
-
-if ( NOT DEFINED VCPKG_OUTPUT_DIR )
-	message( FATAL_ERROR "No vcpkg dynamic library output path was found" )
-endif()
-message( STATUS "vcpkg dynamic library output path is: `${VCPKG_OUTPUT_DIR}`" )
-
 
 # For gmodules, declare them here, for vcpkg deps, declare them directly in the dependant project
 included( SDL "SDL" )
