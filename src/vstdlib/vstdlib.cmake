@@ -4,6 +4,7 @@ add_library( vstdlib IMPORTED SHARED )
 
 if ( UNIX )
 	set( VSTDLIB_NAME "libvstdlib.so" )
+	configure_file( "${LIBPUBLIC}/libvstdlib.so" "${GAMEDIR}/bin/libvstdlib.so" COPYONLY )
 else ()
 	set( VSTDLIB_NAME "vstdlib.lib" )
 endif ()
@@ -13,4 +14,3 @@ set_target_properties( vstdlib
 		IMPORTED_IMPLIB "${LIBPUBLIC}/${VSTDLIB_NAME}"
 		IMPORTED_NO_SONAME true
 )
-configure_file( "${LIBPUBLIC}/${VSTDLIB_NAME}" "${GAMEDIR}/bin/${VSTDLIB_NAME}" COPYONLY )
