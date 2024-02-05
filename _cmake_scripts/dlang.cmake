@@ -17,18 +17,20 @@ function( setup_dlang )
 	configure_file( "${DLIB_DIR}/${LIBD_RUNTIME_NAME}" "${GAMEDIR}/bin/${LIBD_RUNTIME_NAME}" COPYONLY )
 endfunction()
 
-function( add_dlang_project NAMED Name IN ProjectDir )
+function( add_dlang_project )
+	cmake_parse_arguments( DLP "" "NAMED;IN" "" ${ARGN} )
+
 	if ( NOT DEFINED "LDC2_RUNTIME_ROOT" )
 		setup_dlang()
 	endif ()
-	add_custom_target( ${Name}
+	add_custom_target( ${DLP_NAMED}
 		COMMAND
 			dub build --quiet --arch=x86
 		DEPENDS
 			"${GAMEDIR}/bin/${LIBD_PHOBOS_NAME}"
 			"${GAMEDIR}/bin/${LIBD_RUNTIME_NAME}"
 		WORKING_DIRECTORY
-			${ProjectDir}
+			${DLP_IN}
 		USES_TERMINAL
 	)
 endfunction()
