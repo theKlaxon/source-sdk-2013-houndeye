@@ -409,8 +409,8 @@ DBG_INTERFACE void LogV( PRINTF_FORMAT_STRING const tchar *pMsg, va_list arglist
 	// be consistent with the Warning prototype.
 	DBG_INTERFACE void Error( PRINTF_FORMAT_STRING const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
 #else
-	DBG_INTERFACE [[noreturn]] void Error( PRINTF_FORMAT_STRING const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
-	DBG_INTERFACE [[noreturn]] void ErrorV( PRINTF_FORMAT_STRING const tchar *pMsg, va_list arglist );
+	DBG_INTERFACE __attribute__((noreturn)) void Error( PRINTF_FORMAT_STRING const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
+	DBG_INTERFACE __attribute__((noreturn)) void ErrorV( PRINTF_FORMAT_STRING const tchar *pMsg, va_list arglist );
 #endif
 
 // You can use this macro like a runtime assert macro.

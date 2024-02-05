@@ -348,7 +348,7 @@ FIXME: Enable this when we no longer fear change =)
 	#define DECL_ALIGN(x) /* */
 #endif
 
-#ifdef _MSC_VER
+#if defined( _MSC_VER ) || defined( COMPILER_CLANG )
 	// MSVC has the align at the start of the struct
 	#define ALIGN4 DECL_ALIGN(4)
 	#define ALIGN8 DECL_ALIGN(8)
@@ -361,7 +361,7 @@ FIXME: Enable this when we no longer fear change =)
 	#define ALIGN16_POST
 	#define ALIGN32_POST
 	#define ALIGN128_POST
-#elif defined( GNUC ) || defined( __clang__ )
+#elif defined( GNUC )
 	// gnuc has the align decoration at the end
 	#define ALIGN4
 	#define ALIGN8
@@ -396,7 +396,7 @@ FIXME: Enable this when we no longer fear change =)
 	#if IsLinux()
 		#define mallocsize( _p )	( malloc_usable_size( _p ) )
 	#elif IsWindows()
-		#define mallocsize( _p )	( malloc_usable_size( _p ) )
+		#define mallocsize( _p )	( _msize( _p ) )
 	#else
 		#error "mallocsize: Unsupported platform, please implement!"
 	#endif

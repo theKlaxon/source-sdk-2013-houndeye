@@ -6,6 +6,8 @@
 #if defined( _WIN32 )
 	#include <libloaderapi.h>
 	#include <errhandlingapi.h>
+	#include <winbase.h>
+	#include <windef.h>
 	#include <direct.h>// getcwd
 #elif POSIX
 	#include <dlfcn.h>

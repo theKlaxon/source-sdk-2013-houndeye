@@ -49,7 +49,13 @@
 					void* operator new( size_t nSize, int blah, const char *pFileName, int nLine );
 					void* operator new[]( size_t nSize, int blah, const char *pFileName, int nLine );
 				#endif
-			#else // defined(POSIX)
+			#else
+				#if defined( __clang__ ) && !defined( DID_THE_OPERATOR_NEW )
+					#define DID_THE_OPERATOR_NEW
+					// clang doesn't have a new of this form, so we impl our own
+					void* operator new( size_t nSize, int blah, const char *pFileName, int nLine );
+					void* operator new[]( size_t nSize, int blah, const char *pFileName, int nLine );
+				#endif
 				// Include crtdbg.h and make sure _DEBUG is set to 1.
 				#if !defined(_DEBUG)
 					#define _DEBUG 1
@@ -57,8 +63,8 @@
 					#undef _DEBUG
 				#else
 					#include <crtdbg.h>
-				#endif // !defined(_DEBUG)
-			#endif // defined(POSIX)
+				#endif
+			#endif
 		#endif
 
 		#include "tier0/memdbgoff.h"
@@ -97,6 +103,9 @@
 			#define realloc(p, s)			g_pMemAlloc->Realloc( p, s, __FILE__, __LINE__ )
 			#define _aligned_malloc( s, a )	MemAlloc_AllocAligned( s, a, __FILE__, __LINE__ )
 
+			#if defined( _malloc_dbg )
+				#undef _malloc_dbg
+			#endif
 			#define _malloc_dbg(s, t, f, l)	WHYCALLINGTHISDIRECTLY(s)
 
 			#if !defined( LINUX )

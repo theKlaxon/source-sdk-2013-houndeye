@@ -4,9 +4,9 @@
 //
 // $NoKeywords: $
 //=============================================================================//
+#pragma once
 
-bool CheckMMXTechnology(void);
-bool CheckSSETechnology(void);
-bool CheckSSE2Technology(void);
-bool Check3DNowTechnology(void);
-
+bool CheckMMXTechnology();
+bool CheckSSETechnology();
+bool CheckSSE2Technology();
+bool Check3DNowTechnology();
