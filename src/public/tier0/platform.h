@@ -16,7 +16,7 @@
 #include "basetypes.h"
 #include "tier0/valve_off.h"
 
-#ifdef _DEBUG
+#if defined( _DEBUG )
 	#if !defined( PLAT_COMPILE_TIME_ASSERT )
 		#define PLAT_COMPILE_TIME_ASSERT( pred )	switch(0){case 0:case pred:;}
 	#endif
@@ -29,7 +29,7 @@
 // feature enables
 #define NEW_SOFTWARE_LIGHTING
 
-#ifdef POSIX
+#if defined( POSIX )
 	// need this for _alloca
 	#include <alloca.h>
 	#include <unistd.h>
@@ -42,13 +42,13 @@
 // need this for memset
 #include <cstring>
 
-#ifdef _RETAIL
+#if defined( _RETAIL )
 	#define IsRetail() true
 #else
 	#define IsRetail() false
 #endif
 
-#ifdef _DEBUG
+#if defined( _DEBUG )
 	#define IsRelease() false
 	#define IsDebug() true
 #else
@@ -198,12 +198,11 @@ typedef unsigned int		uint;
 #endif
 
 // This can be used to declare an abstract (interface only) class.
-// Classes marked abstract should not be instantiated.  If they are, an access violation will occur.
+// Classes marked abstract should not be instantiated; If they are, an access violation will occur.
 //
 // Example of use:
 //
-// abstract_class CFoo
-// {
+// abstract_class CFoo {
 //      ...
 // }
 //
@@ -394,7 +393,9 @@ FIXME: Enable this when we no longer fear change =)
 //-----------------------------------------------------------------------------
 #if defined( GNUC ) || defined( __clang__ )
 	#define stackalloc( _size )		alloca( ALIGN_VALUE( _size, 16 ) )
-	#ifdef _LINUX
+	#if IsLinux()
+		#define mallocsize( _p )	( malloc_usable_size( _p ) )
+	#elif IsWindows()
 		#define mallocsize( _p )	( malloc_usable_size( _p ) )
 	#else
 		#error "mallocsize: Unsupported platform, please implement!"

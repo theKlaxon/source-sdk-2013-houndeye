@@ -1,7 +1,13 @@
 # vstdlib.cmake
 
 add_library( vstdlib IMPORTED SHARED )
-set( VSTDLIB_NAME ${CMAKE_SHARED_LIBRARY_PREFIX}vstdlib${CMAKE_SHARED_LIBRARY_SUFFIX} )
+
+if ( UNIX )
+	set( VSTDLIB_NAME "libvstdlib.so" )
+else ()
+	set( VSTDLIB_NAME "vstdlib.lib" )
+endif ()
+
 set_target_properties( vstdlib
 	PROPERTIES
 		IMPORTED_IMPLIB "${LIBPUBLIC}/${VSTDLIB_NAME}"

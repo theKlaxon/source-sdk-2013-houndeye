@@ -1,7 +1,13 @@
 # tier0.cmake
 
 add_library( tier0 IMPORTED SHARED )
-set( TIER0_NAME ${CMAKE_SHARED_LIBRARY_PREFIX}tier0${CMAKE_SHARED_LIBRARY_SUFFIX} )
+
+if ( UNIX )
+	set( TIER0_NAME "libtier0.so" )
+else ()
+	set( TIER0_NAME "tier0.lib" )
+endif ()
+
 set_target_properties( tier0
 	PROPERTIES
 		IMPORTED_IMPLIB "${LIBPUBLIC}/${TIER0_NAME}"

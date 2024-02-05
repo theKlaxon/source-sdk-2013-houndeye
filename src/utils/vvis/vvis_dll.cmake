@@ -84,7 +84,6 @@ target_compile_definitions( vvis_dll
 		PROTECTED_THINGS_DISABLE
 )
 
-#find_package( liblzma CONFIG REQUIRED )
 target_link_libraries( vvis_dll
 	PRIVATE
 		$<${IS_WINDOWS}:odbc32>
