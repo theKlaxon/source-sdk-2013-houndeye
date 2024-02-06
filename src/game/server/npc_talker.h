@@ -6,31 +6,16 @@
 // $Date:         $
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef TALKNPC_H
-#define TALKNPC_H
-
-#ifdef POSIX
-#undef time
-#include <time.h>
-#endif
-
-#undef min
-#undef max
-#pragma warning(push)
-#include <set>
-#pragma warning(pop)
-
-#ifdef _WIN32
 #pragma once
+
+#if defined( POSIX )
+	#undef time
+	#include <time.h>
 #endif
 
-// the include <set> monkey's with the MAX() define, unbreak it
-#undef MINMAX_H
-#include "minmax.h"
+#include <set>
 
 #include "ai_playerally.h"
-
 #include "soundflags.h"
 
 #include "ai_task.h"
@@ -242,5 +227,3 @@ protected:
 };
 
 #include "tier0/memdbgoff.h"
-
-#endif		//TALKNPC_H

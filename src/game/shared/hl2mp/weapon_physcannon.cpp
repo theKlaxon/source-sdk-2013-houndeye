@@ -1566,10 +1566,10 @@ void CWeaponPhysCannon::PrimaryFireEffect( void )
 
 	pOwner->ViewPunch( QAngle(-6, SharedRandomInt( "physcannonfire", -2,2) ,0) );
 	
-#ifndef CLIENT_DLL
-	color32 white = { 245, 245, 255, 32 };
-	UTIL_ScreenFade( pOwner, white, 0.1f, 0.0f, FFADE_IN );
-#endif
+	#if !defined( CLIENT_DLL )
+		Color white = { 245, 245, 255, 32 };
+		UTIL_ScreenFade( pOwner, white, 0.1f, 0.0f, FFADE_IN );
+	#endif
 
 	WeaponSound( SINGLE );
 }

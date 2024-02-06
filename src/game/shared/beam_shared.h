@@ -338,7 +338,7 @@ inline void CBeam::SetNoise( float amplitude )
 
 inline void CBeam::SetColor( int r, int g, int b )		
 { 
-	SetRenderColor( r, g, b, GetRenderColor().a );
+	SetRenderColor( r, g, b, GetRenderColor().a() );
 }
 
 inline void CBeam::SetBrightness( int brightness )		
@@ -415,7 +415,7 @@ inline float CBeam::GetNoise( void ) const
 
 inline int CBeam::GetBrightness( void ) const	
 { 
-	return GetRenderColor().a;
+	return GetRenderColor().a();
 }
 
 inline float CBeam::GetFrame( void ) const		

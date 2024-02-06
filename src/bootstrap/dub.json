@@ -16,7 +16,7 @@
     "targetName": "aurosrc",
     "targetPath": "../../game/bin",
     "workingDirectory": "../../game",
-
+    "lflags": [ "-rpath", "$$ORIGIN" ],
     "dflags": [ "--link-defaultlib-shared" ],
 
     "toolchainRequirements": {

@@ -91,8 +91,8 @@ bool CShadowControl::KeyValue( const char *szKeyName, const char *szValue )
 {
 	if ( FStrEq( szKeyName, "color" ) )
 	{
-		color32 tmp;
-		UTIL_StringToColor32( &tmp, szValue );
+		Color tmp;
+		UTIL_StringToColor32( tmp, szValue );
 		m_shadowColor = tmp;
 		return true;
 	}

@@ -9,13 +9,17 @@
 #include <type_traits>
 
 //-----------------------------------------------------------------------------
-// Purpose: Basic handler for a rgb set of colors
-//			This class is fully inline
+// Purpose: Basic handler for a rgba (32b) set of colors.
+//			This class is fully inline.
 //-----------------------------------------------------------------------------
 class Color {
 public:
 	// constructors
 	constexpr Color() = default;
+	constexpr Color( const Color& ) = default;
+	explicit Color( int _color ) {
+		this->SetRawColor( _color );
+	};
 	constexpr Color( int _r, int _g, int _b ) {
 		this->SetColor( _r, _g, _b, 0 );
 	}
@@ -46,6 +50,10 @@ public:
 		*reinterpret_cast<int*>( this ) = color32;
 	}
 
+	[[deprecated( "This shouldn't be used" )]] void SetRawColor( const color32 color32 ) {
+		*reinterpret_cast<int*>( this ) = *reinterpret_cast<const int*>( &color32 );
+	}
+
 	[[nodiscard]] int GetRawColor() const {
 		return *reinterpret_cast<const int*>( this );
 	}
@@ -55,7 +63,12 @@ public:
 	[[nodiscard]] inline int b() const { return this->_color[ 2 ]; }
 	[[nodiscard]] inline int a() const { return this->_color[ 3 ]; }
 
-	constexpr unsigned char& operator[]( int index ) {
+	inline void r( unsigned char value ) { this->_color[ 0 ] = value; }
+	inline void g( unsigned char value ) { this->_color[ 1 ] = value; }
+	inline void b( unsigned char value ) { this->_color[ 2 ] = value; }
+	inline void a( unsigned char value ) { this->_color[ 3 ] = value; }
+
+	constexpr inline unsigned char& operator[]( int index ) {
 		return this->_color[ index ];
 	}
 
@@ -73,14 +86,14 @@ public:
 		return ! this->operator==( rhs );
 	}
 
-	Color& operator=( const Color& rhs ) {
-		if ( &rhs == this )
-			return *this;
-
-		this->SetRawColor( rhs.GetRawColor() );
-		return *this;
-	}
+//	Color& operator=( const Color& rhs ) {
+//		if ( &rhs == this )
+//			return *this;
+//
+//		this->SetRawColor( rhs.GetRawColor() );
+//		return *this;
+//	}
 
 private:
-	unsigned char _color[ 4 ] { 0 };
+	unsigned char _color[ 4 ]{ 0 };
 };

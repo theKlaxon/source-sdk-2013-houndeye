@@ -248,29 +248,29 @@ int CFogController::DrawDebugTextOverlays(void)
 		EntityText(text_offset,tempstr,0);
 		text_offset++;
 
-		color32 color = m_fog.colorPrimary;
-		Q_snprintf(tempstr,sizeof(tempstr),"1) Red  : %i",color.r);
+		Color color = m_fog.colorPrimary;
+		Q_snprintf(tempstr,sizeof(tempstr),"1) Red  : %i",color.r());
 		EntityText(text_offset,tempstr,0);
 		text_offset++;
 
-		Q_snprintf(tempstr,sizeof(tempstr),"1) Green: %i",color.g);
+		Q_snprintf(tempstr,sizeof(tempstr),"1) Green: %i",color.g());
 		EntityText(text_offset,tempstr,0);
 		text_offset++;
 
-		Q_snprintf(tempstr,sizeof(tempstr),"1) Blue : %i",color.b);
+		Q_snprintf(tempstr,sizeof(tempstr),"1) Blue : %i",color.b());
 		EntityText(text_offset,tempstr,0);
 		text_offset++;
 
 		color = m_fog.colorSecondary;
-		Q_snprintf(tempstr,sizeof(tempstr),"2) Red  : %i",color.r);
+		Q_snprintf(tempstr,sizeof(tempstr),"2) Red  : %i",color.r());
 		EntityText(text_offset,tempstr,0);
 		text_offset++;
 
-		Q_snprintf(tempstr,sizeof(tempstr),"2) Green: %i",color.g);
+		Q_snprintf(tempstr,sizeof(tempstr),"2) Green: %i",color.g());
 		EntityText(text_offset,tempstr,0);
 		text_offset++;
 
-		Q_snprintf(tempstr,sizeof(tempstr),"2) Blue : %i",color.b);
+		Q_snprintf(tempstr,sizeof(tempstr),"2) Blue : %i",color.b());
 		EntityText(text_offset,tempstr,0);
 		text_offset++;
 	}

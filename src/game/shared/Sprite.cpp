@@ -238,7 +238,7 @@ void CSprite::Spawn( void )
 	}
 
 	//Set our state
-	SetBrightness( m_clrRender->a );
+	SetBrightness( m_clrRender->a() );
 	SetScale( scale );
 
 #if defined( CLIENT_DLL )
@@ -472,14 +472,14 @@ void CSprite::ExpandThink( void )
 	SetSpriteScale( m_flSpriteScale + m_flSpeed * frametime );
 
 	int sub = (int)(m_iHealth * frametime);
-	if ( sub > m_clrRender->a )
+	if ( sub > m_clrRender->a() )
 	{
 		SetRenderColorA( 0 );
 		Remove( );
 	}
 	else
 	{
-		SetRenderColorA( m_clrRender->a - sub );
+		SetRenderColorA( m_clrRender->a() - sub );
 		SetNextThink( gpGlobals->curtime );
 		m_flLastTime		= gpGlobals->curtime;
 	}
@@ -604,19 +604,19 @@ void CSprite::InputShowSprite( inputdata_t &inputdata )
 void CSprite::InputColorRedValue( inputdata_t &inputdata )
 {
 	int nNewColor = clamp( FastFloatToSmallInt( inputdata.value.Float() ), 0, 255 );
-	SetColor( nNewColor, m_clrRender->g, m_clrRender->b );
+	SetColor( nNewColor, m_clrRender->g(), m_clrRender->b() );
 }
 
 void CSprite::InputColorGreenValue( inputdata_t &inputdata )
 {
 	int nNewColor = clamp( FastFloatToSmallInt( inputdata.value.Float() ), 0, 255 );
-	SetColor( m_clrRender->r, nNewColor, m_clrRender->b );
+	SetColor( m_clrRender->r(), nNewColor, m_clrRender->b() );
 }
 
 void CSprite::InputColorBlueValue( inputdata_t &inputdata )
 {
 	int nNewColor = clamp( FastFloatToSmallInt( inputdata.value.Float() ), 0, 255 );
-	SetColor( m_clrRender->r, m_clrRender->g, nNewColor );
+	SetColor( m_clrRender->r(), m_clrRender->g(), nNewColor );
 }
 
 //-----------------------------------------------------------------------------

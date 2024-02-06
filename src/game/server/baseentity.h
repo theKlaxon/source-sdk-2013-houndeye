@@ -791,13 +791,13 @@ public:
 	CNetworkVar( unsigned char, m_nRenderMode );
 	CNetworkVar( short, m_nModelIndex );
 	
-#ifdef TF_DLL
-	CNetworkArray( int, m_nModelIndexOverrides, MAX_VISION_MODES ); // used to override the base model index on the client if necessary
-#endif
+	#ifdef TF_DLL
+		CNetworkArray( int, m_nModelIndexOverrides, MAX_VISION_MODES ); // used to override the base model index on the client if necessary
+	#endif
 
 	// was pev->rendercolor
 	CNetworkColor32( m_clrRender );
-	const color32 GetRenderColor() const;
+	[[nodiscard]] const Color GetRenderColor() const;
 	void SetRenderColor( byte r, byte g, byte b );
 	void SetRenderColor( byte r, byte g, byte b, byte a );
 	void SetRenderColorR( byte r );
@@ -2307,7 +2307,7 @@ inline void CBaseEntity::SetWaterLevel( int nLevel )
 	m_nWaterLevel = nLevel;
 }
 
-inline const color32 CBaseEntity::GetRenderColor() const
+inline const Color CBaseEntity::GetRenderColor() const
 {
 	return m_clrRender.Get();
 }

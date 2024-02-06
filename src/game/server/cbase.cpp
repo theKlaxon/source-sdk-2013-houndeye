@@ -1241,7 +1241,7 @@ void variant_t::Set( fieldtype_t ftype, void *data )
 	case FIELD_INTEGER:		iVal = *((int *)data);				break;
 	case FIELD_STRING:		iszVal = *((string_t *)data);		break;
 	case FIELD_FLOAT:		flVal = *((float *)data);			break;
-	case FIELD_COLOR32:		rgbaVal = *((color32 *)data);		break;
+	case FIELD_COLOR32:		rgbaVal = *((Color*)data);		break;
 
 	case FIELD_VECTOR:
 	case FIELD_POSITION_VECTOR:
@@ -1276,7 +1276,7 @@ void variant_t::SetOther( void *data )
 	case FIELD_INTEGER:		*((int *)data) = iVal;				break;
 	case FIELD_STRING:		*((string_t *)data) = iszVal;		break;
 	case FIELD_FLOAT:		*((float *)data) = flVal;			break;
-	case FIELD_COLOR32:		*((color32 *)data) = rgbaVal;		break;
+	case FIELD_COLOR32:		*((Color *)data) = rgbaVal;			break;
 
 	case FIELD_VECTOR:
 	case FIELD_POSITION_VECTOR:
@@ -1524,7 +1524,7 @@ const char *variant_t::ToString( void ) const
 
 	case FIELD_COLOR32:
 		{
-			Q_snprintf(szBuf,sizeof(szBuf), "%d %d %d %d", (int)rgbaVal.r, (int)rgbaVal.g, (int)rgbaVal.b, (int)rgbaVal.a);
+			Q_snprintf(szBuf,sizeof(szBuf), "%d %d %d %d", (int)rgbaVal.r(), (int)rgbaVal.g(), (int)rgbaVal.b(), (int)rgbaVal.a());
 			return(szBuf);
 		}
 

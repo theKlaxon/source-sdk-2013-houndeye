@@ -3995,9 +3995,9 @@ void CBaseEntity::InputAlternativeSorting( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CBaseEntity::InputColor( inputdata_t &inputdata )
 {
-	color32 clr = inputdata.value.Color32();
+	Color clr = inputdata.value.Color32();
 
-	SetRenderColor( clr.r, clr.g, clr.b );
+	SetRenderColor( clr.r(), clr.g(), clr.b() );
 }
 
 
@@ -7056,7 +7056,7 @@ void CBaseEntity::SUB_PerformFadeOut( void )
 	}
 	m_nRenderMode = kRenderTransTexture;
 	int speed = MAX(1,256*dt); // fade out over 1 second
-	SetRenderColorA( UTIL_Approach( 0, m_clrRender->a, speed ) );
+	SetRenderColorA( UTIL_Approach( 0, m_clrRender->a(), speed ) );
 }
 
 bool CBaseEntity::SUB_AllowedToFade( void )
@@ -7090,7 +7090,7 @@ void CBaseEntity::SUB_FadeOut( void  )
     
 	SUB_PerformFadeOut();
 
-	if ( m_clrRender->a == 0 )
+	if ( m_clrRender->a() == 0 )
 	{
 		UTIL_Remove(this);
 	}

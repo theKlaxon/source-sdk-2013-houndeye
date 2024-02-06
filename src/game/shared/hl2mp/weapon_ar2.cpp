@@ -195,7 +195,7 @@ void CWeaponAR2::DelayedAttack( void )
 						pOwner );
 
 	// View effects
-	color32 white = {255, 255, 255, 64};
+	Color white = { 255, 255, 255, 64 };
 	UTIL_ScreenFade( pOwner, white, 0.1, 0, FFADE_IN  );
 #endif
 	

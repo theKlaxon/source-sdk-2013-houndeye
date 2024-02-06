@@ -247,7 +247,7 @@ public:
 
 	bool IsMapInMapCycle( const char *pszName );
 
-	virtual bool IsManualMapChangeOkay( const char **pszReason ) OVERRIDE;
+	virtual bool IsManualMapChangeOkay( const char **pszReason ) override;
 
 protected:
 	virtual bool UseSuicidePenalty() { return true; }		// apply point penalty for suicide?

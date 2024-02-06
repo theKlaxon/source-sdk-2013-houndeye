@@ -36,6 +36,7 @@ public:
 	Panel * operator = (Panel *pPanel)		{ return Set(pPanel); }
 
 	bool operator == (Panel *pPanel)		{ return (Get() == pPanel); }
+	bool operator == (PHandle& pPanel)		{ return (this->m_iPanelID == pPanel.m_iPanelID); } // ASrcEdit
 	operator bool ()						{ return Get() != 0; }
 
 private:

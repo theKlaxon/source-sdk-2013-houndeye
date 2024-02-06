@@ -55,7 +55,7 @@ class CUserCmd;
 // Put this in your derived class definition to declare it's activity table
 // UNDONE: Cascade these?
 #define DECLARE_ACTTABLE()		static acttable_t m_acttable[];\
-	virtual acttable_t *ActivityList( int &iActivityCount ) OVERRIDE;
+	virtual acttable_t *ActivityList( int &iActivityCount ) override;
 
 // You also need to include the activity table itself in your class' implementation:
 // e.g.

@@ -985,6 +985,16 @@ void UTIL_StringToColor32( color32 *color, const char *pString )
 	color->b = tmp[2];
 	color->a = tmp[3];
 }
+// FIXME: Replace with just this overload
+void UTIL_StringToColor32( Color& color, const char *pString )
+{
+	int tmp[4];
+	UTIL_StringToIntArray( tmp, 4, pString );
+	color.r( tmp[0] );
+	color.g( tmp[1] );
+	color.b( tmp[2] );
+	color.a( tmp[3] );
+}
 
 void UTIL_DecodeICE( unsigned char * buffer, int size, const unsigned char *key)
 {

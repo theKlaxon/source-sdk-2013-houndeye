@@ -3482,18 +3482,18 @@ bool CBaseAnimating::Dissolve( const char *pMaterialName, float flStartTime, boo
 //-----------------------------------------------------------------------------
 void CBaseAnimating::Scorch( int rate, int floor )
 {
-	color32 color = GetRenderColor();
+	Color color = GetRenderColor();
 
-	if( color.r > floor )
-		color.r -= rate;
+	if( color.r() > floor )
+		color[0] -= rate;
 
-	if( color.g > floor )
-		color.g -= rate;
+	if( color.g() > floor )
+		color[1] -= rate;
 
-	if( color.b > floor )
-		color.b -= rate;
+	if( color.b() > floor )
+		color[2] -= rate;
 
-	SetRenderColor( color.r, color.g, color.b );
+	SetRenderColor( color.r(), color.g(), color.b() );
 }
 
 

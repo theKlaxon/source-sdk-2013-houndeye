@@ -177,10 +177,10 @@ CWeaponStunStick::CWeaponStunStick( void )
 	//  any players are connected which is a bug
 	m_bActive = false;
 
-#ifdef CLIENT_DLL
-	m_bSwungLastFrame = false;
-	m_flFadeTime = FADE_DURATION;	// Start off past the fade point
-#endif
+	#ifdef CLIENT_DLL
+		m_bSwungLastFrame = false;
+		m_flFadeTime = FADE_DURATION;	// Start off past the fade point
+	#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -389,7 +389,7 @@ void CWeaponStunStick::Operator_HandleAnimEvent( animevent_t *pEvent, CBaseComba
 
 					if ( !bFlashed )
 					{
-						color32 red = {128,0,0,128};
+						Color red = {128,0,0,128};
 						UTIL_ScreenFade( pPlayer, red, 0.5f, 0.1f, FFADE_IN );
 					}
 					

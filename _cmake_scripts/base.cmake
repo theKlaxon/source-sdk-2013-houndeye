@@ -33,8 +33,5 @@ add_compile_definitions(
 	# PLATFORM-SPECIFIC (kinda)
 	$<$<CXX_COMPILER_ID:Clang>:COMPILER_CLANG=1>
 	_DLL_EXT=${CMAKE_SHARED_LIBRARY_SUFFIX}
+	USE_SDL # We use SDL instead of whatever windows provides
 )
-
-include_directories( "${CMAKE_CURRENT_BINARY_DIR}/vcpkg_installed/x86-linux/include" )
-link_directories( "${CMAKE_CURRENT_BINARY_DIR}/vcpkg_installed/x86-linux/lib" )
-add_link_options( "LINKER:-rpath,." )  # FIXME: Dynamic Linker runtime on linux is fucked and doesn't load `.so`s from the exe's folder...

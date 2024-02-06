@@ -18,6 +18,7 @@ add_library( launcher MODULE ${LAUNCHER_SOURCE_FILES} )
 set_target_properties(
 	launcher PROPERTIES
 		LIBRARY_OUTPUT_DIRECTORY "${GAMEDIR}/bin"
+		PREFIX ""
 )
 
 target_include_directories(

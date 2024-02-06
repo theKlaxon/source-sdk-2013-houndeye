@@ -115,7 +115,7 @@ void CEnvFade::InputFade( inputdata_t &inputdata )
 // Input  : flTime - Returns the fade time in seconds (the time to fade in or out)
 //			clrFade - Returns the color to fade to or from.
 //-----------------------------------------------------------------------------
-static void GetFadeParms( const CCommand &args, float &flTime, color32 &clrFade)
+static void GetFadeParms( const CCommand &args, float &flTime, Color &clrFade)
 {
 	flTime = 2.0f;
 
@@ -124,20 +124,17 @@ static void GetFadeParms( const CCommand &args, float &flTime, color32 &clrFade)
 		flTime = atof( args[1] );
 	}
 	
-	clrFade.r = 0;
-	clrFade.g = 0;
-	clrFade.b = 0;
-	clrFade.a = 255;
+	clrFade.SetColor(0, 0, 0, 255);
 
 	if ( args.ArgC() > 4 )
 	{
-		clrFade.r = atoi( args[2] );
-		clrFade.g = atoi( args[3] );
-		clrFade.b = atoi( args[4] );
+		clrFade.r( atoi( args[2] ) );
+		clrFade.g( atoi( args[3] ) );
+		clrFade.b( atoi( args[4] ) );
 
 		if ( args.ArgC() == 5 )
 		{
-			clrFade.a = atoi( args[5] );
+			clrFade.a( atoi( args[5] ) );
 		}
 	}
 }
@@ -149,7 +146,7 @@ static void GetFadeParms( const CCommand &args, float &flTime, color32 &clrFade)
 static void CC_FadeOut( const CCommand &args )
 {
 	float flTime;
-	color32 clrFade;
+	Color clrFade;
 	GetFadeParms( args, flTime, clrFade );
 
 	CBasePlayer *pPlayer = UTIL_GetCommandClient();
@@ -164,7 +161,7 @@ static ConCommand fadeout("fadeout", CC_FadeOut, "fadeout {time r g b}: Fades th
 static void CC_FadeIn( const CCommand &args )
 {
 	float flTime;
-	color32 clrFade;
+	Color clrFade;
 	GetFadeParms( args, flTime, clrFade );
 
 	CBasePlayer *pPlayer = UTIL_GetCommandClient();

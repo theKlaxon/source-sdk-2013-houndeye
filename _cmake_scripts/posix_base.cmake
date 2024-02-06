@@ -19,9 +19,14 @@ add_compile_options(
 	-UPROTECTED_THINGS_ENABLE
 	# roughly equivalent to `isLinux && compilers[cxx].id == "GNU"`
 	$<$<COMPILE_LANGUAGE:CXX>:$<${IS_LINUX}:$<$<CXX_COMPILER_ID:GNU>:-fabi-compat-version=2>>>
+	-Bsymbolic
 )
 
-add_link_options(-m32)
+add_link_options(
+	-m32
+	"LINKER:-rpath,\$ORIGIN" # FIXME: Dynamic Linker runtime on linux is fucked and doesn't load `.so`s from the exe's folder...
+)
+
 
 add_compile_definitions(
 	_POSIX
@@ -36,15 +41,13 @@ add_compile_definitions(
 
 if (${IS_LINUX})
 	if (NOT ${DEDICATED})
-		list(
-			APPEND ADDITIONAL_LINK_OPTIONS_EXE
+		list( APPEND ADDITIONAL_LINK_OPTIONS_EXE
 			-Wl,--no-as-needed -ltcmalloc_minimal -Wl,--as-needed
 		)
 	endif()
 
 	# Helps us catch any linker errors from out of order linking or in general
-	list(
-		APPEND ADDITIONAL_LINK_OPTIONS_DLL
+	list( APPEND ADDITIONAL_LINK_OPTIONS_DLL
 		-Wl,--no-undefined
 	)
 endif()

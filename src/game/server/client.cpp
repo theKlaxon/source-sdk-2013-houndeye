@@ -1562,7 +1562,7 @@ void ClientCommand( CBasePlayer *pPlayer, const CCommand &args )
 	}
 	else if ( FStrEq( pCmd, "fade" ) )
 	{
-		color32 black = {32,63,100,200};
+		Color black = { 32, 63, 100, 200 };
 		UTIL_ScreenFade( pPlayer, black, 3, 3, FFADE_OUT  );
 	} 
 	else if ( FStrEq( pCmd, "te" ) )

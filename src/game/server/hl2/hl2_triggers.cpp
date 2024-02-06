@@ -549,15 +549,15 @@ void CWateryDeathLeech::LeechThink( void )
 		int speed = MAX(1,256*dt); // fade out over 1 second
 
 		if ( m_iFadeState == -1 )
-			 SetRenderColorA( UTIL_Approach( 0, m_clrRender->a, speed ) );
+			 SetRenderColorA( UTIL_Approach( 0, m_clrRender->a(), speed ) );
 		else
-			 SetRenderColorA( UTIL_Approach( 255, m_clrRender->a, speed ) );
+			 SetRenderColorA( UTIL_Approach( 255, m_clrRender->a(), speed ) );
 
-		if ( m_clrRender->a == 0 )
+		if ( m_clrRender->a() == 0 )
 		{
 			UTIL_Remove(this);
 		}
-		else if ( m_clrRender->a == 255 )
+		else if ( m_clrRender->a() == 255 )
 		{
 			m_iFadeState = 0;
 		}

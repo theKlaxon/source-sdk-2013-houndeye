@@ -29,7 +29,6 @@ char g_szBaseDir[ MAX_PATH ];
 char g_szGameInfoDir[ MAX_PATH ];
 bool g_bDedicatedServer{ false };
 
-
 //-----------------------------------------------------------------------------
 //   Main entry point
 //-----------------------------------------------------------------------------
@@ -65,7 +64,7 @@ void Init() {
 		{ "datacache", DATACACHE_INTERFACE_VERSION },
 		{ "datacache", MDLCACHE_INTERFACE_VERSION },
 		{ "datacache", STUDIO_DATA_CACHE_INTERFACE_VERSION },
-		{ "FileSystem_Stdio", QUEUEDLOADER_INTERFACE_VERSION },
+		{ "filesystem_stdio", QUEUEDLOADER_INTERFACE_VERSION },
 		{ "inputsystem", INPUTSYSTEM_INTERFACE_VERSION }
 	}};
 
@@ -172,6 +171,7 @@ int Main() {
 	} else {
 		// TODO: What about the client?
 	}
+	return 0;
 }
 
 void Shutdown() {

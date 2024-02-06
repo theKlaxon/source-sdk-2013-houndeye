@@ -1988,11 +1988,11 @@ void CNPC_CScanner::BlindFlashTarget( CBaseEntity *pTarget )
 
 		if ( tr.startsolid == false && tr.fraction == 1.0)
 		{
-			color32 white = { 255, 255, 255, (byte)(SCANNER_FLASH_MAX_VALUE * dotPr) };
+			Color white = { 255, 255, 255, (byte)(SCANNER_FLASH_MAX_VALUE * dotPr) };
 
 			if ( ( g_pMaterialSystemHardwareConfig != NULL ) && ( g_pMaterialSystemHardwareConfig->GetHDRType() != HDR_TYPE_NONE ) )
 			{
-				white.a = ( byte )( ( float )white.a * 0.9f );
+				white.a( static_cast<byte>( static_cast<float>( white.a() ) * 0.9f ) );
 			}
 
 			float flFadeTime = 3.0f;

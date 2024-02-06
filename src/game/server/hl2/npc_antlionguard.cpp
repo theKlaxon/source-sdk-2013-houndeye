@@ -1474,7 +1474,7 @@ void CNPC_AntlionGuard::Shove( void )
 			UTIL_ScreenShake( pHurt->GetAbsOrigin(), 100.0, 1.5, 1.0, 2, SHAKE_START );
 
 			//Red damage indicator
-			color32 red = {128,0,0,128};
+			Color red = { 128, 0, 0, 128 };
 			UTIL_ScreenFade( pHurt, red, 1.0f, 0.1f, FFADE_IN );
 
 			Vector forward, up;
@@ -4161,7 +4161,7 @@ void CNPC_AntlionGuard::ChargeDamage( CBaseEntity *pTarget )
 		vecNewVelocity[2] += 128.0f;
 		pPlayer->SetAbsVelocity( vecNewVelocity );
 
-		color32 red = {128,0,0,128};
+		Color red = { 128, 0, 0, 128 };
 		UTIL_ScreenFade( pPlayer, red, 1.0f, 0.1f, FFADE_IN );
 	}
 	

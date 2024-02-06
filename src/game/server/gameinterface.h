@@ -109,46 +109,46 @@ public:
 
 	virtual void			OnQueryCvarValueFinished( QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue ) override;
 
-	virtual void			PreSaveGameLoaded( char const *pSaveName, bool bInGame ) OVERRIDE;
+	virtual void			PreSaveGameLoaded( char const *pSaveName, bool bInGame ) override;
 
 	// Returns true if the game DLL wants the server not to be made public.
 	// Used by commentary system to hide multiplayer commentary servers from the master.
-	virtual bool			ShouldHideServer( void ) OVERRIDE;
+	virtual bool			ShouldHideServer( void ) override;
 
-	virtual void			InvalidateMdlCache() OVERRIDE;
+	virtual void			InvalidateMdlCache() override;
 
-	virtual void			SetServerHibernation( bool bHibernating ) OVERRIDE;
+	virtual void			SetServerHibernation( bool bHibernating ) override;
 
 	float	m_fAutoSaveDangerousTime;
 	float	m_fAutoSaveDangerousMinHealthToCommit;
 	bool	m_bIsHibernating;
 
 	// Called after the steam API has been activated post-level startup
-	virtual void			GameServerSteamAPIActivated( void ) OVERRIDE;
+	virtual void			GameServerSteamAPIActivated( void ) override;
 
 	// Called after the steam API has been shutdown post-level startup
-	virtual void			GameServerSteamAPIShutdown( void ) OVERRIDE;
+	virtual void			GameServerSteamAPIShutdown( void ) override;
 
 	// interface to the new GC based lobby system
-	virtual IServerGCLobby *GetServerGCLobby() OVERRIDE;
+	virtual IServerGCLobby *GetServerGCLobby() override;
 
-	virtual const char *GetServerBrowserMapOverride() OVERRIDE;
-	virtual const char *GetServerBrowserGameData() OVERRIDE;
+	virtual const char *GetServerBrowserMapOverride() override;
+	virtual const char *GetServerBrowserGameData() override;
 
 	// Called to add output to the status command
-	virtual void 			Status( void (*print) (const char *fmt, ...) ) OVERRIDE;
+	virtual void 			Status( void (*print) (const char *fmt, ...) ) override;
 
 	virtual void PrepareLevelResources( /* in/out */ char *pszMapName, size_t nMapNameSize,
-	                                    /* in/out */ char *pszMapFile, size_t nMapFileSize ) OVERRIDE;
+	                                    /* in/out */ char *pszMapFile, size_t nMapFileSize ) override;
 
 	virtual ePrepareLevelResourcesResult AsyncPrepareLevelResources( /* in/out */ char *pszMapName, size_t nMapNameSize,
 	                                                                 /* in/out */ char *pszMapFile, size_t nMapFileSize,
-	                                                                 float *flProgress = NULL ) OVERRIDE;
+	                                                                 float *flProgress = NULL ) override;
 
-	virtual eCanProvideLevelResult CanProvideLevel( /* in/out */ char *pMapName, int nMapNameMax ) OVERRIDE;
+	virtual eCanProvideLevelResult CanProvideLevel( /* in/out */ char *pMapName, int nMapNameMax ) override;
 
 	// Called to see if the game server is okay with a manual changelevel or map command
-	virtual bool			IsManualMapChangeOkay( const char **pszReason ) OVERRIDE;
+	virtual bool			IsManualMapChangeOkay( const char **pszReason ) override;
 
 private:
 

@@ -973,13 +973,13 @@ void CBasePlayer::DamageEffect(float flDamage, int fDamageType)
 	if (fDamageType & DMG_CRUSH)
 	{
 		//Red damage indicator
-		color32 red = {128,0,0,128};
+		Color red = { 128, 0, 0, 128 };
 		UTIL_ScreenFade( this, red, 1.0f, 0.1f, FFADE_IN );
 	}
 	else if (fDamageType & DMG_DROWN)
 	{
 		//Blue damage indicator
-		color32 blue = {0,0,128,128};
+		Color blue = { 0, 0, 128, 128 };
 		UTIL_ScreenFade( this, blue, 1.0f, 0.1f, FFADE_IN );
 	}
 	else if (fDamageType & DMG_SLASH)
@@ -990,7 +990,7 @@ void CBasePlayer::DamageEffect(float flDamage, int fDamageType)
 	else if (fDamageType & DMG_PLASMA)
 	{
 		// Blue screen fade
-		color32 blue = {0,0,255,100};
+		Color blue = {0,0,255,100};
 		UTIL_ScreenFade( this, blue, 0.2, 0.4, FFADE_MODULATE );
 
 		// Very small screen shake
@@ -5024,7 +5024,7 @@ void CBasePlayer::Spawn( void )
 	StopReplayMode();
 
 	// Clear any screenfade
-	color32 nothing = {0,0,0,255};
+	Color nothing = { 0, 0, 0, 255 };
 	UTIL_ScreenFade( this, nothing, 0, 0, FFADE_IN | FFADE_PURGE );
 
 	g_pGameRules->PlayerSpawn( this );

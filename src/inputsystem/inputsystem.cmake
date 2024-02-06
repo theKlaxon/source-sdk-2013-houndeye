@@ -14,6 +14,7 @@ add_library( inputsystem MODULE ${INPUTSYSTEM_SOURCE_FILES} )
 set_target_properties( inputsystem
 	PROPERTIES
 		LIBRARY_OUTPUT_DIRECTORY "${GAMEDIR}/bin"
+		PREFIX ""
 )
 
 target_include_directories( inputsystem

@@ -308,7 +308,7 @@ protected:
 
 
 template< class Type, class Changer >
-class CNetworkColor32Base : public CNetworkVarBase< Type, Changer >
+class CNetworkColorBase : public CNetworkVarBase< Type, Changer >
 {
 public:
 	inline void Init( byte rVal, byte gVal, byte bVal )
@@ -330,19 +330,19 @@ public:
 		return this->Set( val ); 
 	}
 
-	const Type& operator=( const CNetworkColor32Base<Type,Changer> &val ) 
+	const Type& operator=( const CNetworkColorBase<Type,Changer> &val )
 	{ 
 		return CNetworkVarBase<Type,Changer>::Set( val.m_Value );
 	}
 	
-	inline byte GetR() const { return CNetworkColor32Base<Type,Changer>::m_Value.r; }
-	inline byte GetG() const { return CNetworkColor32Base<Type,Changer>::m_Value.g; }
-	inline byte GetB() const { return CNetworkColor32Base<Type,Changer>::m_Value.b; }
-	inline byte GetA() const { return CNetworkColor32Base<Type,Changer>::m_Value.a; }
-	inline void SetR( byte val ) { SetVal( CNetworkColor32Base<Type,Changer>::m_Value.r, val ); }
-	inline void SetG( byte val ) { SetVal( CNetworkColor32Base<Type,Changer>::m_Value.g, val ); }
-	inline void SetB( byte val ) { SetVal( CNetworkColor32Base<Type,Changer>::m_Value.b, val ); }
-	inline void SetA( byte val ) { SetVal( CNetworkColor32Base<Type,Changer>::m_Value.a, val ); }
+	[[nodiscard]] inline byte GetR() const { return CNetworkColorBase<Type,Changer>::m_Value[0]; }
+	[[nodiscard]] inline byte GetG() const { return CNetworkColorBase<Type,Changer>::m_Value[1]; }
+	[[nodiscard]] inline byte GetB() const { return CNetworkColorBase<Type,Changer>::m_Value[2]; }
+	[[nodiscard]] inline byte GetA() const { return CNetworkColorBase<Type,Changer>::m_Value[3]; }
+	inline void SetR( byte val ) { SetVal( CNetworkColorBase<Type,Changer>::m_Value[0], val ); }
+	inline void SetG( byte val ) { SetVal( CNetworkColorBase<Type,Changer>::m_Value[1], val ); }
+	inline void SetB( byte val ) { SetVal( CNetworkColorBase<Type,Changer>::m_Value[2], val ); }
+	inline void SetA( byte val ) { SetVal( CNetworkColorBase<Type,Changer>::m_Value[3], val ); }
 
 protected:
 	inline void SetVal( byte &out, const byte &in )
@@ -662,8 +662,8 @@ private:
 
 // Helper for color32's. Contains GetR(), SetR(), etc.. functions.
 #define CNetworkColor32( name ) \
-	NETWORK_VAR_START( color32, name ) \
-	NETWORK_VAR_END( color32, name, CNetworkColor32Base, NetworkStateChanged )
+	NETWORK_VAR_START( Color, name ) \
+	NETWORK_VAR_END( Color, name, CNetworkColorBase, NetworkStateChanged )
 
 
 #define CNetworkString( name, length ) \

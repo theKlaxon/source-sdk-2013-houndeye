@@ -585,22 +585,21 @@ void CInput::AccumulateMouse( void )
 	{
 		//Assert( !vgui::surface()->IsCursorVisible() );
 		// By design, we follow the old mouse path even when using SDL for Windows, to retain old mouse behavior.
-#if defined( PLATFORM_WINDOWS )
-		int current_posx, current_posy;
+		#if IsWindows()
+			int current_posx, current_posy;
 
-		GetMousePos(current_posx, current_posy);
+			GetMousePos(current_posx, current_posy);
 
-		m_flAccumulatedMouseXMovement += current_posx - x;
-		m_flAccumulatedMouseYMovement += current_posy - y;
-		
-#elif defined( USE_SDL )
-		int dx, dy;
-		engine->GetMouseDelta( dx, dy );
-		m_flAccumulatedMouseXMovement += dx;
-		m_flAccumulatedMouseYMovement += dy;
-#else
-#error
-#endif
+			m_flAccumulatedMouseXMovement += current_posx - x;
+			m_flAccumulatedMouseYMovement += current_posy - y;
+		#elif defined( USE_SDL )
+			int dx, dy;
+			engine->GetMouseDelta( dx, dy );
+			m_flAccumulatedMouseXMovement += dx;
+			m_flAccumulatedMouseYMovement += dy;
+		#else
+			#error
+		#endif
 		// force the mouse to the center, so there's room to move
 		ResetMouse();
 	}

@@ -486,7 +486,7 @@ public:
 					m_iTeleportStage = TELEPORT_TELEPORT;
 					m_flNextTeleportTime = gpGlobals->curtime + 0.35;
 
-					color32_s clr = { 0,0,0,255 };
+					Color clr = { 0, 0, 0, 255 };
 					UTIL_ScreenFade( pPlayer, clr, 0.3, 0, FFADE_OUT | FFADE_PURGE | FFADE_STAYOUT );
 				}
 				else if ( m_iTeleportStage == TELEPORT_TELEPORT )
@@ -504,7 +504,7 @@ public:
 					m_iTeleportStage = TELEPORT_NONE;
 					m_flNextTeleportTime = gpGlobals->curtime + 0.25;
 
-					color32_s clr = { 0,0,0,255 };
+					Color clr = { 0, 0, 0, 255 };
 					UTIL_ScreenFade( pPlayer, clr, 0.3, 0, FFADE_IN | FFADE_PURGE );
 				}
 			}

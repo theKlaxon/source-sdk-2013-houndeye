@@ -165,7 +165,7 @@ CGrenadeBeam* CGrenadeBeam::Create( CBaseEntity* pOwner, const Vector &vStart)
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CGrenadeBeam::Format(color32 clrColor, float flWidth)
+void CGrenadeBeam::Format(Color clrColor, float flWidth)
 {
 	m_clrRender		= clrColor;
 	m_flBeamWidth	= flWidth;
@@ -340,7 +340,7 @@ void CGrenadeBeam::CreateBeams(void)
 	for ( int i=0; i < GRENADEBEAM_MAXBEAMS; ++i )
 	{
 		m_pBeam[i] = CBeam::BeamCreate( "sprites/laser.vmt", m_flBeamWidth );
-		m_pBeam[i]->SetColor( m_clrRender->r, m_clrRender->g, m_clrRender->b );
+		m_pBeam[i]->SetColor( m_clrRender->r(), m_clrRender->g(), m_clrRender->b() );
 		m_pBeam[i]->EntsInit( this, m_hBeamChaser );
 		m_pBeam[i]->SetBrightness( 255 );
 		m_pBeam[i]->SetNoise( 1 );

@@ -30,7 +30,7 @@ class variant_t
 		int iVal;
 		float flVal;
 		float vecVal[3];
-		color32 rgbaVal;
+		Color rgbaVal;
 	};
 	CHandle<CBaseEntity> eVal; // this can't be in the union because it has a constructor.
 
@@ -47,7 +47,7 @@ public:
 	inline int Int( void ) const						{ return( fieldType == FIELD_INTEGER ) ? iVal : 0; }
 	inline float Float( void ) const					{ return( fieldType == FIELD_FLOAT ) ? flVal : 0; }
 	inline const CHandle<CBaseEntity> &Entity(void) const;
-	inline color32 Color32(void) const					{ return rgbaVal; }
+	inline Color Color32(void) const					{ return rgbaVal; }
 	inline void Vector3D(Vector &vec) const;
 
 	fieldtype_t FieldType( void ) { return fieldType; }
@@ -59,8 +59,9 @@ public:
 	void SetEntity( CBaseEntity *val );
 	void SetVector3D( const Vector &val ) { vecVal[0] = val[0]; vecVal[1] = val[1]; vecVal[2] = val[2]; fieldType = FIELD_VECTOR; }
 	void SetPositionVector3D( const Vector &val ) { vecVal[0] = val[0]; vecVal[1] = val[1]; vecVal[2] = val[2]; fieldType = FIELD_POSITION_VECTOR; }
-	void SetColor32( color32 val ) { rgbaVal = val; fieldType = FIELD_COLOR32; }
-	void SetColor32( int r, int g, int b, int a ) { rgbaVal.r = r; rgbaVal.g = g; rgbaVal.b = b; rgbaVal.a = a; fieldType = FIELD_COLOR32; }
+	[[deprecated( "Use the `Color` overload." )]] void SetColor32( color32 val ) { rgbaVal.SetRawColor( val ); fieldType = FIELD_COLOR32; }
+	void SetColor32( Color val ) { rgbaVal = val; fieldType = FIELD_COLOR32; }
+	void SetColor32( int r, int g, int b, int a ) { rgbaVal.SetColor( r, g, b, a ); fieldType = FIELD_COLOR32; }
 	void Set( fieldtype_t ftype, void *data );
 	void SetOther( void *data );
 	bool Convert( fieldtype_t newType );

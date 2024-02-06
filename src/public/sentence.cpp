@@ -1480,8 +1480,8 @@ float CSentence::GetIntensity( float time, float endtime )
 	int end = i + 1;
 	int next = i + 2;
 
-	prev = max( -1, prev );
-	start = max( -1, start );
+	prev = std::max( -1, prev );
+	start = std::max( -1, start );
 	end = std::min( end, GetNumSamples() );
 	next = std::min( next, GetNumSamples() );
 

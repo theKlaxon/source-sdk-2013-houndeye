@@ -1,19 +1,19 @@
 import libloader;
 import std.stdio;
-import std.process;
-import core.runtime;
 import std.path;
-import std.conv;
 import std.typecons;
+import std.process;
 import std.string : toStringz;
-import std.algorithm : canFind;
 
 
 int main( string[] argv ) {
-	auto lib = library( "launcher" );
+	auto binDir = dirName(argv[0]);
+	environment["LD_LIBRARY_PATH"] = binDir;
+	auto lib = library( binDir ~ "/launcher" );
+
 
 	if (! lib.isLoaded() ) {
-		writeln( "Failed to load `launcher` dll:" ~ lib.getLastError() );
+		writeln( "Failed to load `launcher` dll: " ~ lib.getLastError() );
 		return 1;
 	}
 

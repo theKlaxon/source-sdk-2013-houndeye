@@ -48,7 +48,7 @@ public:
 public:
 	void		Spawn( void );
 	void		Precache( void );
-	void		Format( color32 clrColor, float flWidth);
+	void		Format( Color clrColor, float flWidth);
 	void 		GrenadeBeamTouch( CBaseEntity *pOther );
 	void 		KillBeam();
 	void		CreateBeams(void);

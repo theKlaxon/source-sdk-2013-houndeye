@@ -991,14 +991,14 @@ void UTIL_ViewPunch( const Vector &center, QAngle angPunch, float radius, bool b
 }
 
 
-void UTIL_ScreenFadeBuild( ScreenFade_t &fade, const color32 &color, float fadeTime, float fadeHold, int flags )
+void UTIL_ScreenFadeBuild( ScreenFade_t &fade, const Color &color, float fadeTime, float fadeHold, int flags )
 {
 	fade.duration = FixedUnsigned16( fadeTime, 1<<SCREENFADE_FRACBITS );		// 7.9 fixed
 	fade.holdTime = FixedUnsigned16( fadeHold, 1<<SCREENFADE_FRACBITS );		// 7.9 fixed
-	fade.r = color.r;
-	fade.g = color.g;
-	fade.b = color.b;
-	fade.a = color.a;
+	fade.r = color.r();
+	fade.g = color.g();
+	fade.b = color.b();
+	fade.a = color.a();
 	fade.fadeFlags = flags;
 }
 
@@ -1023,7 +1023,7 @@ void UTIL_ScreenFadeWrite( const ScreenFade_t &fade, CBaseEntity *pEntity )
 }
 
 
-void UTIL_ScreenFadeAll( const color32 &color, float fadeTime, float fadeHold, int flags )
+void UTIL_ScreenFadeAll( const Color &color, float fadeTime, float fadeHold, int flags )
 {
 	int			i;
 	ScreenFade_t	fade;
@@ -1040,7 +1040,7 @@ void UTIL_ScreenFadeAll( const color32 &color, float fadeTime, float fadeHold, i
 }
 
 
-void UTIL_ScreenFade( CBaseEntity *pEntity, const color32 &color, float fadeTime, float fadeHold, int flags )
+void UTIL_ScreenFade( CBaseEntity *pEntity, const Color &color, float fadeTime, float fadeHold, int flags )
 {
 	ScreenFade_t	fade;
 

@@ -17,11 +17,12 @@ namespace SourceApp {
 	// Loads all specified modules and interfaces. Returns 0 on success or the index of the request it failed to load plus one
 	int Load();
 
+	CreateInterfaceFn GetFactory();
+
 	// Returns the specified module
 	template<class T>
 	T* FindSystem( const char* interfaceName ) {
-		extern void* Factory( const char* interfaceName, int* retCode );
-		return reinterpret_cast<T*>( Factory( interfaceName, 0 ) );
+		return reinterpret_cast<T*>( GetFactory()( interfaceName, 0 ) );
 	}
 
 	// Returns the specified module
@@ -34,6 +35,4 @@ namespace SourceApp {
 	int Init();
 
 	void Shutdown();
-
-	CreateInterfaceFn GetFactory();
 }

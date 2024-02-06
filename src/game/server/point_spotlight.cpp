@@ -364,7 +364,7 @@ void CPointSpotlight::SpotlightCreate(void)
 	// Set the temporary spawnflag on the beam so it doesn't save (we'll recreate it on restore)
 	m_hSpotlight->SetHDRColorScale( m_flHDRColorScale );
 	m_hSpotlight->AddSpawnFlags( SF_BEAM_TEMPORARY );
-	m_hSpotlight->SetColor( m_clrRender->r, m_clrRender->g, m_clrRender->b ); 
+	m_hSpotlight->SetColor( m_clrRender->r(), m_clrRender->g(), m_clrRender->b() );
 	m_hSpotlight->SetHaloTexture(m_nHaloSprite);
 	m_hSpotlight->SetHaloScale(60);
 	m_hSpotlight->SetEndWidth(m_flSpotlightGoalWidth);

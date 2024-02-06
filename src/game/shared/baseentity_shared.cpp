@@ -523,15 +523,15 @@ bool CBaseEntity::GetKeyValue( const char *szKeyName, char *szValue, int iMaxLen
 {
 	if ( FStrEq( szKeyName, "rendercolor" ) || FStrEq( szKeyName, "rendercolor32" ))
 	{
-		color32 tmp = GetRenderColor();
-		Q_snprintf( szValue, iMaxLen, "%d %d %d %d", tmp.r, tmp.g, tmp.b, tmp.a );
+		Color tmp = GetRenderColor();
+		Q_snprintf( szValue, iMaxLen, "%d %d %d %d", tmp.r(), tmp.g(), tmp.b(), tmp.a() );
 		return true;
 	}
 	
 	if ( FStrEq( szKeyName, "renderamt" ) )
 	{
-		color32 tmp = GetRenderColor();
-		Q_snprintf( szValue, iMaxLen, "%d", tmp.a );
+		Color tmp = GetRenderColor();
+		Q_snprintf( szValue, iMaxLen, "%d", tmp.a() );
 		return true;
 	}
 
