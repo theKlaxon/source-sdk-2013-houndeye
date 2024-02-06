@@ -35,6 +35,7 @@ elseif (${BUILD_GROUP} STREQUAL "everything")
 	include("${SRCDIR}/tier2/tier2.cmake")
 	include("${SRCDIR}/tier3/tier3.cmake")
 	include("${SRCDIR}/vstdlib/vstdlib.cmake")
+	include("${SRCDIR}/appframework/appframework.cmake")
 
 	include("${SRCDIR}/fgdlib/fgdlib.cmake")
 	include("${SRCDIR}/utils/vbsp/vbsp.cmake")
