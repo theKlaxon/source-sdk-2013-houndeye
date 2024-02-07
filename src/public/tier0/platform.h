@@ -454,18 +454,18 @@ FIXME: Enable this when we no longer fear change =)
 	#define DLL_LOCAL
 #elif defined( GNUC ) || defined( __clang__ )
 	// Used for dll exporting and importing
-	#define  DLL_EXPORT   extern "C" __attribute__ ((visibility("default")))
+	#define  DLL_EXPORT   extern "C" [[gnu::visibility( "default" )]]
 	#define  DLL_IMPORT   extern "C"
 
 	// Can't use extern "C" when DLL exporting a class
-	#define  DLL_CLASS_EXPORT __attribute__ ((visibility("default")))
+	#define  DLL_CLASS_EXPORT [[gnu::visibility( "default" )]]
 	#define  DLL_CLASS_IMPORT
 
 	// Can't use extern "C" when DLL exporting a global
-	#define  DLL_GLOBAL_EXPORT   extern __attribute ((visibility("default")))
+	#define  DLL_GLOBAL_EXPORT   extern [[gnu::visibility( "default" )]]
 	#define  DLL_GLOBAL_IMPORT   extern
 
-	#define  DLL_LOCAL __attribute__ ((visibility("hidden")))
+	#define  DLL_LOCAL // is now the default
 #else
 	#error "Unsupported Platform."
 #endif

@@ -4,18 +4,19 @@
 #include "launcher.hpp"
 #include <array>
 
+#include "appframework/IAppSystemGroup.h"
 #include "datacache/idatacache.h"
-#include "tier3/tier3.h"
+#include "engine/hlds_api.h"
+#include "engine/launcher_api.hpp"
 #include "filesystem.h"
 #include "filesystem/IQueuedLoader.h"
 #include "filesystem_init.h"
-#include "engine/hlds_api.h"
-#include "engine/launcher_api.hpp"
 #include "icommandline.h"
 #include "inputsystem/iinputsystem.h"
 #include "istudiorender.h"
 #include "materialsystem/imaterialsystem.h"
 #include "sourceinit.hpp"
+#include "tier3/tier3.h"
 #include "vphysics_interface.h"
 
 
@@ -65,14 +66,9 @@ void Init() {
 		{ "datacache", MDLCACHE_INTERFACE_VERSION },
 		{ "datacache", STUDIO_DATA_CACHE_INTERFACE_VERSION },
 		{ "filesystem_stdio", QUEUEDLOADER_INTERFACE_VERSION },
-		{ "inputsystem", INPUTSYSTEM_INTERFACE_VERSION }
+		{ "inputsystem", INPUTSYSTEM_INTERFACE_VERSION },
+		{ "engine", g_bDedicatedServer ? VENGINE_HLDS_API_VERSION : VENGINE_LAUNCHER_API_VERSION }
 	}};
-
-	if ( g_bDedicatedServer ) {
-		appSystems[8] = { "engine", VENGINE_HLDS_API_VERSION };
-	} else {
-		appSystems[8] = { "engine", VENGINE_LAUNCHER_API_VERSION };  // ??
-	}
 
 	SourceApp::SetSystemRequest( appSystems );
 

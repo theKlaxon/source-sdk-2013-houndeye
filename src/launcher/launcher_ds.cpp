@@ -75,9 +75,9 @@ SpewRetval_t LauncherSpewFunc( SpewType_t spewType, char const* pMsg ) {
 }
 
 bool CLauncherDS::Create() {
-	SpewOutputFunc( LauncherDSSpewFunc );
+	SpewOutputFunc( LauncherSpewFunc );
 
-	AppSystemInfo_t appSystems[] {
+	std::array<AppSystemInfo_t, 9> appSystems{{
 		{ "materialsystem.dll", MATERIAL_SYSTEM_INTERFACE_VERSION },
 		{ "studiorender.dll", STUDIO_RENDER_INTERFACE_VERSION },
 		{ "vphysics.dll", VPHYSICS_INTERFACE_VERSION },
@@ -87,8 +87,7 @@ bool CLauncherDS::Create() {
 		{ "engine.dll", VENGINE_HLDS_API_VERSION },
 		{ "FileSystem_Stdio.dll", QUEUEDLOADER_INTERFACE_VERSION },
 		{ "inputsystem.dll", INPUTSYSTEM_INTERFACE_VERSION },
-		{ "", nullptr } // Required to terminate the list
-	};
+	}};
 
 	if (! this->AddSystems( appSystems ) )
 		return false;

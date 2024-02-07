@@ -12,7 +12,7 @@ static CSysModule* pPhysicsModule = nullptr;
 
 CreateInterfaceFn GetPhysicsFactory() {
 	if ( !pPhysicsModule ) {
-		pPhysicsModule = g_pFullFileSystem->LoadModule( "vphysics" DLL_EXT_STRING );
+		pPhysicsModule = g_pFullFileSystem->LoadModule( "vphysics" );
 		if ( !pPhysicsModule )
 			return nullptr;
 	}

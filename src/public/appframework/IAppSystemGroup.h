@@ -18,6 +18,7 @@
 #include "tier1/interface.h"
 #include "tier1/utldict.h"
 #include "tier1/utlvector.h"
+#include <span>
 
 //-----------------------------------------------------------------------------
 // forward declarations
@@ -96,7 +97,7 @@ public:
 
 public:
 	// constructor
-	explicit CAppSystemGroup( CAppSystemGroup* pParentAppSystem = NULL );
+	explicit CAppSystemGroup( CAppSystemGroup* pParentAppSystem = nullptr );
 
 	// Runs the app system group.
 	// First, modules are loaded, next they are connected, followed by initialization
@@ -125,7 +126,11 @@ protected:
 
 	// Simpler method of doing the LoadModule/AddSystem thing.
 	// Make sure the last AppSystemInfo has a NULL module name
+	[[deprecated( "Use span-based method instead." )]]
 	bool AddSystems( AppSystemInfo_t* pSystems );
+
+	// Simpler method of doing the LoadModule/AddSystem thing.
+	bool AddSystems( const std::span<AppSystemInfo_t> pSystems );
 
 	// Method to look up a particular named system...
 	void* FindSystem( const char* pInterfaceName );
@@ -164,7 +169,7 @@ private:
 	struct Module_t {
 		CSysModule* m_pModule;
 		CreateInterfaceFn m_Factory;
-		char* m_pModuleName;
+		const char* m_pModuleName;
 	};
 
 	CUtlVector<Module_t> m_Modules;

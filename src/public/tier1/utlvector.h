@@ -193,7 +193,6 @@ private:
 	CUtlVector( CUtlVector const& vec );
 };
 
-
 // this is kind of ugly, but until C++ gets templatized typedefs in C++0x, it's our only choice
 template < class T >
 class CUtlBlockVector : public CUtlVector< T, CUtlBlockMemory< T, int > >
@@ -470,6 +469,7 @@ public:
 		return -1;
 	}
 
+
 	bool FindAndRemove( const T& src )
 	{
 		int elem = Find( src );
@@ -729,7 +729,7 @@ inline bool CUtlVector<T, A>::IsValidIndex( int i ) const
  
 
 //-----------------------------------------------------------------------------
-// Returns in invalid index
+// Returns an invalid index
 //-----------------------------------------------------------------------------
 template< typename T, class A >
 inline int CUtlVector<T, A>::InvalidIndex()

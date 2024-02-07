@@ -27,14 +27,14 @@
 
 	class ILauncherMgr : public IAppSystem {
 	public:
-		virtual bool Connect( CreateInterfaceFn factory ) = 0;
-		virtual void Disconnect() = 0;
+		bool Connect( CreateInterfaceFn factory ) override = 0;
+		void Disconnect() override = 0;
 
-		virtual void* QueryInterface( const char* pInterfaceName ) = 0;
+		void* QueryInterface( const char* pInterfaceName ) override = 0;
 
 		// Init, shutdown
-		virtual InitReturnVal_t Init() = 0;
-		virtual void Shutdown() = 0;
+		InitReturnVal_t Init() override = 0;
+		void Shutdown() override = 0;
 
 		// Create the window.
 		virtual bool CreateGameWindow( const char* pTitle, bool bWindowed, int width, int height ) = 0;
@@ -73,7 +73,7 @@
 			virtual PseudoGLContextPtr CreateExtraContext() = 0;
 			virtual void DeleteContext( PseudoGLContextPtr hContext ) = 0;
 			virtual bool MakeContextCurrent( PseudoGLContextPtr hContext ) = 0;
-			virtual GLMDisplayDB* GetDisplayDB( void ) = 0;
+			virtual GLMDisplayDB* GetDisplayDB() = 0;
 			virtual void GetDesiredPixelFormatAttribsAndRendererInfo( uint** ptrOut, uint* countOut, GLMRendererInfoFields* rendInfoOut ) = 0;
 			virtual void ShowPixels( CShowPixelsParams* params ) = 0;
 		#endif

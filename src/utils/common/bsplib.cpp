@@ -1460,7 +1460,7 @@ DEFINE_FIELD( size, FIELD_INTEGER ),
 
 		static void SwapPhyscollideLump( byte* pDestBase, byte* pSrcBase, unsigned int& count ) {
 	IPhysicsCollision* physcollision = NULL;
-	CSysModule* pPhysicsModule = g_pFullFileSystem->LoadModule( "vphysics.dll" );
+	CSysModule* pPhysicsModule = g_pFullFileSystem->LoadModule( "vphysics" );
 	if ( pPhysicsModule ) {
 		CreateInterfaceFn physicsFactory = Sys_GetFactory( pPhysicsModule );
 		if ( physicsFactory ) {
