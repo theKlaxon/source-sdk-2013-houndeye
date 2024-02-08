@@ -201,8 +201,10 @@ void RunThreads_End() {
 		#if IsWindows()
 			CloseHandle( handle );
 		#elif IsPosix()
-			pthread_join( handle, nullptr );
-			pthread_cancel( handle );
+			if ( handle ) {
+				pthread_join( handle, nullptr );
+				pthread_cancel( handle );
+			}
 		#endif
 	}
 
