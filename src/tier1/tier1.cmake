@@ -2,8 +2,7 @@
 
 set(TIER1_DIR ${CMAKE_CURRENT_LIST_DIR})
 
-set(
-	TIER1_SOURCE_FILES
+set( TIER1_SOURCE_FILES
 	"${TIER1_DIR}/bitbuf.cpp"
 	"${TIER1_DIR}/newbitbuf.cpp"
 	"${TIER1_DIR}/byteswap.cpp"
@@ -131,22 +130,17 @@ set(
 )
 
 if (${IS_LINUX} AND CMAKE_C_COMPILER_VERSION GREATER 5)
-	list(APPEND TIER1_SOURCE_FILES "${TIER1_DIR}/math_proxy.cpp")
+	list( APPEND TIER1_SOURCE_FILES "${TIER1_DIR}/math_proxy.cpp" )
 endif()
 
-set_source_files_properties(
-	"$<${IS_WINDOWS}:${TIER1_DIR}/processor_detect.cpp>"
+set_source_files_properties( "$<${IS_WINDOWS}:${TIER1_DIR}/processor_detect.cpp>"
 	PROPERTIES
-	COMPILE_FLAGS
-	/EHsc
+		COMPILE_FLAGS /EHsc
 )
 
-add_library(
-	tier1 STATIC
-	${TIER1_SOURCE_FILES}
-)
+add_library( tier1 STATIC ${TIER1_SOURCE_FILES} )
 
-target_compile_definitions(
-	tier1 PRIVATE
-	TIER1_STATIC_LIB
+target_compile_definitions( tier1
+	PRIVATE
+		TIER1_STATIC_LIB
 )

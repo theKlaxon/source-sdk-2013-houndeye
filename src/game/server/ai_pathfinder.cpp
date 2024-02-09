@@ -1689,7 +1689,7 @@ public:
 	{
 		// Cast to int in order to indicate that we are intentionally comparing different
 		// enum types, to suppress gcc warnings.
-		COMPILE_TIME_ASSERT( bits_BUILD_GROUND == (int)bits_CAP_MOVE_GROUND && bits_BUILD_FLY == (int)bits_CAP_MOVE_FLY && bits_BUILD_JUMP == (int)bits_CAP_MOVE_JUMP && bits_BUILD_CLIMB == (int)bits_CAP_MOVE_CLIMB );
+		static_assert( bits_BUILD_GROUND == (int)bits_CAP_MOVE_GROUND && bits_BUILD_FLY == (int)bits_CAP_MOVE_FLY && bits_BUILD_JUMP == (int)bits_CAP_MOVE_JUMP && bits_BUILD_CLIMB == (int)bits_CAP_MOVE_CLIMB );
 	}
 
 	bool IsValid( CAI_Node *pNode )

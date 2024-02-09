@@ -119,7 +119,7 @@ public:
 	bool IsIdxValid( intp i ) const;
 
 	// Specify the invalid ('null') index that we'll only return on failure
-	static const intp INVALID_INDEX = 0; // For use with COMPILE_TIME_ASSERT
+	static const intp INVALID_INDEX = 0; // For use with static_assert
 	static intp InvalidIndex() { return INVALID_INDEX; }
 
 	// Size

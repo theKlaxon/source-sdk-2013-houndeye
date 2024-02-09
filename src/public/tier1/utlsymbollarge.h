@@ -431,7 +431,7 @@ inline CUtlSymbolLarge CUtlSymbolTableLargeBase<TreeType, CASEINSENSITIVE, POOL_
 	// make sure that all strings are aligned on 2-byte boundaries so the hashes will read correctly
 	// This assert seems to be invalid because LargeSymbolTableHashDecoration_t is always
 	// a uint32, by design.
-	//COMPILE_TIME_ASSERT(sizeof(LargeSymbolTableHashDecoration_t) == sizeof(intp));
+	//static_assert(sizeof(LargeSymbolTableHashDecoration_t) == sizeof(intp));
 	lenDecorated = ALIGN_VALUE(lenDecorated, sizeof( intp ) );
 
 	// Find a pool with space for this string, or allocate a new one.

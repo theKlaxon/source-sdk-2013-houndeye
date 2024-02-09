@@ -1039,7 +1039,7 @@ inline void CVertexBuilder::SelectVertex( int nIndex )
 	m_pCurrPosition = OffsetFloatPointer( m_pPosition, m_nCurrentVertex, m_VertexSize_Position );
 	m_pCurrNormal = OffsetFloatPointer( m_pNormal, m_nCurrentVertex, m_VertexSize_Normal );
 
-	COMPILE_TIME_ASSERT( VERTEX_MAX_TEXTURE_COORDINATES == 8 );
+	static_assert( VERTEX_MAX_TEXTURE_COORDINATES == 8 );
 	m_pCurrTexCoord[0] = OffsetFloatPointer( m_pTexCoord[0], m_nCurrentVertex, m_VertexSize_TexCoord[0] );
 	m_pCurrTexCoord[1] = OffsetFloatPointer( m_pTexCoord[1], m_nCurrentVertex, m_VertexSize_TexCoord[1] );
 	m_pCurrTexCoord[2] = OffsetFloatPointer( m_pTexCoord[2], m_nCurrentVertex, m_VertexSize_TexCoord[2] );
@@ -1075,7 +1075,7 @@ template<int nFlags, int nNumTexCoords> FORCEINLINE void CVertexBuilder::Advance
 	if ( nFlags & VTX_HAVECOLOR )
 		m_pCurrColor += m_VertexSize_Color;
 
-	COMPILE_TIME_ASSERT( VERTEX_MAX_TEXTURE_COORDINATES == 8 );
+	static_assert( VERTEX_MAX_TEXTURE_COORDINATES == 8 );
 	if ( nNumTexCoords > 0 )
 		IncrementFloatPointer( m_pCurrTexCoord[0], m_VertexSize_TexCoord[0] );
 	if ( nNumTexCoords > 1 )
@@ -1116,7 +1116,7 @@ inline void CVertexBuilder::AdvanceVertices( int nVerts )
 	IncrementFloatPointer( m_pCurrPosition, m_VertexSize_Position*nVerts );
 	IncrementFloatPointer( m_pCurrNormal, m_VertexSize_Normal*nVerts );
 
-	COMPILE_TIME_ASSERT( VERTEX_MAX_TEXTURE_COORDINATES == 8 );
+	static_assert( VERTEX_MAX_TEXTURE_COORDINATES == 8 );
 	IncrementFloatPointer( m_pCurrTexCoord[0], m_VertexSize_TexCoord[0]*nVerts );
 	IncrementFloatPointer( m_pCurrTexCoord[1], m_VertexSize_TexCoord[1]*nVerts );
 	IncrementFloatPointer( m_pCurrTexCoord[2], m_VertexSize_TexCoord[2]*nVerts );

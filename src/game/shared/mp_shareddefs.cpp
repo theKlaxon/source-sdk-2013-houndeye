@@ -194,7 +194,7 @@ const char *g_pszMPConcepts[] =
 
 	"TLK_PLAYER_ASK_FOR_BALL",				// MP_CONCEPT_PLAYER_ASK_FOR_BALL
 };
-COMPILE_TIME_ASSERT( ARRAYSIZE( g_pszMPConcepts ) == MP_TF_CONCEPT_COUNT );
+static_assert( ARRAYSIZE( g_pszMPConcepts ) == MP_TF_CONCEPT_COUNT );
 
 //-----------------------------------------------------------------------------
 // Purpose:

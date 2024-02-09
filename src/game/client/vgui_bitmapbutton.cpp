@@ -51,7 +51,7 @@ void CBitmapButton::ApplySettings(KeyValues *pInitData)
 {
 	BaseClass::ApplySettings(pInitData);
 
-	COMPILE_TIME_ASSERT( BUTTON_STATE_COUNT == 4 );
+	static_assert( BUTTON_STATE_COUNT == 4 );
 	const char *pSectionName[BUTTON_STATE_COUNT] = 
 	{
 		"enabledImage",

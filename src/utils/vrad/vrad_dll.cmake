@@ -132,7 +132,6 @@ set(VRAD_DLL_SOURCE_FILES
 	"${SRCDIR}/utils/common/physdll.h"
 	"${SRCDIR}/public/tier0/platform.h"
 	"${SRCDIR}/public/tier0/protected_things.h"
-	"${SRCDIR}/public/vstdlib/random.h"
 	"${SRCDIR}/public/scratchpad3d.h"
 	"${SRCDIR}/public/scratchpadutils.h"
 	"${SRCDIR}/public/string_t.h"

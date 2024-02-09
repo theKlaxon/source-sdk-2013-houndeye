@@ -306,7 +306,7 @@ public:
 	template < typename T >
 	CConstructLocalizedString( const locchar_t *loc_Format, T arg0 )
 	{
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<T>::kIsValid );
+		static_assert( CLocalizedStringArg<T>::kIsValid );
 
 		m_loc_Buffer[0] = '\0';
 
@@ -319,8 +319,8 @@ public:
 	template < typename T, typename U >
 	CConstructLocalizedString( const locchar_t *loc_Format, T arg0, U arg1 )
 	{
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<T>::kIsValid );
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<U>::kIsValid );
+		static_assert( CLocalizedStringArg<T>::kIsValid );
+		static_assert( CLocalizedStringArg<U>::kIsValid );
 
 		m_loc_Buffer[0] = '\0';
 
@@ -333,9 +333,9 @@ public:
 	template < typename T, typename U, typename V >
 	CConstructLocalizedString( const locchar_t *loc_Format, T arg0, U arg1, V arg2 )
 	{
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<T>::kIsValid );
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<U>::kIsValid );
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<V>::kIsValid );
+		static_assert( CLocalizedStringArg<T>::kIsValid );
+		static_assert( CLocalizedStringArg<U>::kIsValid );
+		static_assert( CLocalizedStringArg<V>::kIsValid );
 
 		m_loc_Buffer[0] = '\0';
 
@@ -354,10 +354,10 @@ public:
 	template < typename T, typename U, typename V, typename W >
 	CConstructLocalizedString( const locchar_t *loc_Format, T arg0, U arg1, V arg2, W arg3 )
 	{
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<T>::kIsValid );
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<U>::kIsValid );
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<V>::kIsValid );
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<W>::kIsValid );
+		static_assert( CLocalizedStringArg<T>::kIsValid );
+		static_assert( CLocalizedStringArg<U>::kIsValid );
+		static_assert( CLocalizedStringArg<V>::kIsValid );
+		static_assert( CLocalizedStringArg<W>::kIsValid );
 
 		m_loc_Buffer[0] = '\0';
 
@@ -377,12 +377,12 @@ public:
 	template < typename T, typename U, typename V, typename W, typename X, typename Y >
 	CConstructLocalizedString( const locchar_t *loc_Format, T arg0, U arg1, V arg2, W arg3, X arg4, Y arg5 )
 	{
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<T>::kIsValid );
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<U>::kIsValid );
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<V>::kIsValid );
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<W>::kIsValid );
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<X>::kIsValid );
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<Y>::kIsValid );
+		static_assert( CLocalizedStringArg<T>::kIsValid );
+		static_assert( CLocalizedStringArg<U>::kIsValid );
+		static_assert( CLocalizedStringArg<V>::kIsValid );
+		static_assert( CLocalizedStringArg<W>::kIsValid );
+		static_assert( CLocalizedStringArg<X>::kIsValid );
+		static_assert( CLocalizedStringArg<Y>::kIsValid );
 
 		m_loc_Buffer[0] = '\0';
 
@@ -404,13 +404,13 @@ public:
 	template < typename T, typename U, typename V, typename W, typename X, typename Y, typename Z >
 	CConstructLocalizedString( const locchar_t *loc_Format, T arg0, U arg1, V arg2, W arg3, X arg4, Y arg5, Z arg6)
 	{
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<T>::kIsValid );
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<U>::kIsValid );
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<V>::kIsValid );
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<W>::kIsValid );
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<X>::kIsValid );
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<Y>::kIsValid );
-		COMPILE_TIME_ASSERT( CLocalizedStringArg<Z>::kIsValid );
+		static_assert( CLocalizedStringArg<T>::kIsValid );
+		static_assert( CLocalizedStringArg<U>::kIsValid );
+		static_assert( CLocalizedStringArg<V>::kIsValid );
+		static_assert( CLocalizedStringArg<W>::kIsValid );
+		static_assert( CLocalizedStringArg<X>::kIsValid );
+		static_assert( CLocalizedStringArg<Y>::kIsValid );
+		static_assert( CLocalizedStringArg<Z>::kIsValid );
 
 		m_loc_Buffer[0] = '\0';
 

@@ -3,9 +3,6 @@
 // Purpose: setjmp/longjmp based cooperative multitasking system
 //
 //=============================================================================
-
-#ifndef COROUTINE_H
-#define COROUTINE_H
 #pragma once
 
 #include "vstdlib/vstdlib.h"
@@ -31,7 +28,7 @@ VSTDLIB_INTERFACE HCoroutine Coroutine_Create( CoroutineFunc_t pFunc, void *pvPa
 
 // continues the specified coroutine
 // returns true if the coroutine is still running, false otherwise
-VSTDLIB_INTERFACE bool Coroutine_Continue( HCoroutine hCoroutine, const char *pchName = NULL );
+VSTDLIB_INTERFACE bool Coroutine_Continue( HCoroutine hCoroutine, const char *pchName = nullptr );
 
 // cancels a currently running coroutine
 VSTDLIB_INTERFACE void Coroutine_Cancel( HCoroutine hCoroutine );
@@ -63,7 +60,3 @@ VSTDLIB_INTERFACE void Coroutine_ValidateGlobals( class CValidator &validator );
 
 // for debugging purposes - returns stack depth of current coroutine
 VSTDLIB_INTERFACE size_t Coroutine_GetStackDepth();
-
-
-
-#endif // COROUTINE_H

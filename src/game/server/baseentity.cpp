@@ -347,8 +347,8 @@ CBaseEntity::CBaseEntity( bool bServerOnly )
 {
 	m_pAttributes = NULL;
 
-	COMPILE_TIME_ASSERT( MOVETYPE_LAST < (1 << MOVETYPE_MAX_BITS) );
-	COMPILE_TIME_ASSERT( MOVECOLLIDE_COUNT < (1 << MOVECOLLIDE_MAX_BITS) );
+	static_assert( MOVETYPE_LAST < (1 << MOVETYPE_MAX_BITS) );
+	static_assert( MOVECOLLIDE_COUNT < (1 << MOVECOLLIDE_MAX_BITS) );
 
 #ifdef _DEBUG
 	// necessary since in debug, we initialize vectors to NAN for debugging
@@ -6920,7 +6920,7 @@ void CBaseEntity::SetRefEHandle( const CBaseHandle &handle )
 	m_RefEHandle = handle;
 	if ( edict() )
 	{
-		COMPILE_TIME_ASSERT( NUM_NETWORKED_EHANDLE_SERIAL_NUMBER_BITS <= 8*sizeof( edict()->m_NetworkSerialNumber ) );
+		static_assert( NUM_NETWORKED_EHANDLE_SERIAL_NUMBER_BITS <= 8*sizeof( edict()->m_NetworkSerialNumber ) );
 		edict()->m_NetworkSerialNumber = m_RefEHandle.GetSerialNumber() & ( (1 << NUM_NETWORKED_EHANDLE_SERIAL_NUMBER_BITS) - 1 );
 	}
 }

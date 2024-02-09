@@ -462,7 +462,7 @@ FIXME: Enable this when we no longer fear change =)
 	#define  DLL_CLASS_IMPORT
 
 	// Can't use extern "C" when DLL exporting a global
-	#define  DLL_GLOBAL_EXPORT   extern [[gnu::visibility( "default" )]]
+	#define  DLL_GLOBAL_EXPORT   [[gnu::visibility( "default" )]] extern
 	#define  DLL_GLOBAL_IMPORT   extern
 
 	#define  DLL_LOCAL // is now the default

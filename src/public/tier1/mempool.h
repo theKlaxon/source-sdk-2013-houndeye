@@ -138,9 +138,9 @@ public:
 	CClassMemoryPool(int numElements, int growMode = GROW_FAST, int nAlignment = 0 ) :
 		CUtlMemoryPool( sizeof(T), numElements, growMode, MEM_ALLOC_CLASSNAME(T), nAlignment ) {
 			#ifdef PLATFORM_64BITS 
-				COMPILE_TIME_ASSERT( sizeof(CUtlMemoryPool) == 64 );
+				static_assert( sizeof(CUtlMemoryPool) == 64 );
 			#else
-				COMPILE_TIME_ASSERT( sizeof(CUtlMemoryPool) == 48 );
+				static_assert( sizeof(CUtlMemoryPool) == 48 );
 			#endif
 		}
 
@@ -388,8 +388,8 @@ inline CAlignedMemPool<ITEM_SIZE, ALIGNMENT, CHUNK_SIZE, CAllocator, COMPACT_THR
 	m_nFree( 0 ),
 	m_TimeLastCompact( 0 )
 {
-	COMPILE_TIME_ASSERT( sizeof( FreeBlock_t ) >= BLOCK_SIZE );
-	COMPILE_TIME_ASSERT( ALIGN_VALUE( sizeof( FreeBlock_t ), ALIGNMENT ) == sizeof( FreeBlock_t ) );
+	static_assert( sizeof( FreeBlock_t ) >= BLOCK_SIZE );
+	static_assert( ALIGN_VALUE( sizeof( FreeBlock_t ), ALIGNMENT ) == sizeof( FreeBlock_t ) );
 }
 
 template <int ITEM_SIZE, int ALIGNMENT, int CHUNK_SIZE, class CAllocator, int COMPACT_THRESHOLD >

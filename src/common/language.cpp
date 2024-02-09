@@ -134,7 +134,7 @@ ELanguage PchLanguageICUCodeToELanguage( const char *pchICUCode, ELanguage eDefa
 //-----------------------------------------------------------------------------
 const char *GetLanguageShortName( ELanguage eLang )
 {
-	COMPILE_TIME_ASSERT( Q_ARRAYSIZE(s_LanguageNames) == k_Lang_MAX + 1 );
+	static_assert( Q_ARRAYSIZE(s_LanguageNames) == k_Lang_MAX + 1 );
 	if ( s_LanguageNames[ eLang + 1 ].m_ELanguage == eLang )
 	{
 		Assert( eLang + 1 < ARRAYSIZE(s_LanguageNames) );
@@ -150,7 +150,7 @@ const char *GetLanguageShortName( ELanguage eLang )
 //-----------------------------------------------------------------------------
 const char *GetLanguageICUName( ELanguage eLang )
 {
-	COMPILE_TIME_ASSERT( Q_ARRAYSIZE(s_LanguageNames) == k_Lang_MAX + 1 );
+	static_assert( Q_ARRAYSIZE(s_LanguageNames) == k_Lang_MAX + 1 );
 	if ( s_LanguageNames[ eLang + 1 ].m_ELanguage == eLang )
 	{
 		Assert( eLang + 1 < ARRAYSIZE(s_LanguageNames) );
@@ -205,7 +205,7 @@ const char *GetLangugeCLocaleName( ELanguage eLang )
 //-----------------------------------------------------------------------------
 const char *GetLanguageVGUILocalization( ELanguage eLang )
 {
-	COMPILE_TIME_ASSERT( Q_ARRAYSIZE(s_LanguageNames) == k_Lang_MAX + 1 );
+	static_assert( Q_ARRAYSIZE(s_LanguageNames) == k_Lang_MAX + 1 );
 	if ( s_LanguageNames[ eLang + 1 ].m_ELanguage == eLang )
 	{
 		Assert( eLang + 1 < ARRAYSIZE(s_LanguageNames) );

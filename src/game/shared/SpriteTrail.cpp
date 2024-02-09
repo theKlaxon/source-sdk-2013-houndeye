@@ -318,7 +318,7 @@ void CSpriteTrail::ConvertSkybox()
 TrailPoint_t *CSpriteTrail::GetTrailPoint( int n )
 {
 	Assert( n < MAX_SPRITE_TRAIL_POINTS );
-	COMPILE_TIME_ASSERT( (MAX_SPRITE_TRAIL_POINTS & (MAX_SPRITE_TRAIL_POINTS-1)) == 0 );
+	static_assert( (MAX_SPRITE_TRAIL_POINTS & (MAX_SPRITE_TRAIL_POINTS-1)) == 0 );
 	int nIndex = (n + m_nFirstStep) & MAX_SPRITE_TRAIL_MASK; 
 	return &m_vecSteps[nIndex];
 }

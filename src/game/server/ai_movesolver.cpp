@@ -104,7 +104,7 @@ bool CAI_MoveSolver::Solve( const AI_MoveSuggestion_t *pSuggestions, int nSugges
 	const int NUM_SOLUTIONS	= 120;
 	const int SOLUTION_ANG	= 360 / NUM_SOLUTIONS;
 
-	COMPILE_TIME_ASSERT( ( 360 % NUM_SOLUTIONS ) == 0 );
+	static_assert( ( 360 % NUM_SOLUTIONS ) == 0 );
 
 	struct Solution_t
 	{

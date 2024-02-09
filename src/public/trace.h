@@ -10,13 +10,7 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef TRACE_H
-#define TRACE_H
-
-#ifdef _WIN32
 #pragma once
-#endif
 
 
 #include "mathlib/mathlib.h"
@@ -33,10 +27,8 @@
 // - shared between engine/game dlls and tools (vrad)
 //=============================================================================
 
-class CBaseTrace
-{
+class CBaseTrace {
 public:
-
 	// Displacement flags tests.
 	bool IsDispSurface( void )				{ return ( ( dispFlags & DISPSURF_FLAG_SURFACE ) != 0 ); }
 	bool IsDispSurfaceWalkable( void )		{ return ( ( dispFlags & DISPSURF_FLAG_WALKABLE ) != 0 ); }
@@ -45,7 +37,6 @@ public:
 	bool IsDispSurfaceProp2( void )			{ return ( ( dispFlags & DISPSURF_FLAG_SURFPROP2 ) != 0 ); }
 
 public:
-
 	// these members are aligned!!
 	Vector			startpos;				// start position
 	Vector			endpos;					// final position
@@ -65,5 +56,3 @@ private:
 	// No copy constructors allowed
 	CBaseTrace(const CBaseTrace& vOther);
 };
-
-#endif // TRACE_H

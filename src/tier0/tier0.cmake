@@ -1,5 +1,70 @@
 # tier0.cmake
 
+set( TIER0_DIR ${CMAKE_CURRENT_LIST_DIR} )
+set( TIER0_SOURCE_FILES
+	"${TIER0_DIR}/dbg.cpp"
+	"${TIER0_DIR}/commandline.cpp"
+
+	# Header files
+
+	# Private
+#	"${TIER0_DIR}/ccvarsystem.hpp"
+
+	# Other
+
+	# Public
+	"${SRCDIR}/public/tier0/afxmem_override.cpp"
+	"${SRCDIR}/public/tier0/annotations.h"
+	"${SRCDIR}/public/tier0/basetypes.h"
+	"${SRCDIR}/public/tier0/commonmacros.h"
+	"${SRCDIR}/public/tier0/cpumonitoring.h"
+	"${SRCDIR}/public/tier0/dbg.h"
+	"${SRCDIR}/public/tier0/dbgflag.h"
+	"${SRCDIR}/public/tier0/dynfunction.h"
+	"${SRCDIR}/public/tier0/etwprof.h"
+	"${SRCDIR}/public/tier0/EventMasks.h"
+	"${SRCDIR}/public/tier0/EventModes.h"
+	"${SRCDIR}/public/tier0/fasttimer.h"
+	"${SRCDIR}/public/tier0/ia32detect.h"
+	"${SRCDIR}/public/tier0/icommandline.h"
+	"${SRCDIR}/public/tier0/IOCTLCodes.h"
+	"${SRCDIR}/public/tier0/K8PerformanceCounters.h"
+	"${SRCDIR}/public/tier0/l2cache.h"
+	"${SRCDIR}/public/tier0/mem.h"
+	"${SRCDIR}/public/tier0/memalloc.h"
+	"${SRCDIR}/public/tier0/memdbgoff.h"
+	"${SRCDIR}/public/tier0/memdbgon.h"
+	"${SRCDIR}/public/tier0/memoverride.cpp"
+	"${SRCDIR}/public/tier0/minidump.h"
+	"${SRCDIR}/public/tier0/P4PerformanceCounters.h"
+	"${SRCDIR}/public/tier0/P5P6PerformanceCounters.h"
+	"${SRCDIR}/public/tier0/platform.h"
+	"${SRCDIR}/public/tier0/PMELib.h"
+	"${SRCDIR}/public/tier0/pointeroverride.asm"
+	"${SRCDIR}/public/tier0/progressbar.h"
+	"${SRCDIR}/public/tier0/protected_things.h"
+	"${SRCDIR}/public/tier0/stacktools.h"
+	"${SRCDIR}/public/tier0/systeminformation.h"
+	"${SRCDIR}/public/tier0/testthread.h"
+	"${SRCDIR}/public/tier0/threadtools.h"
+	"${SRCDIR}/public/tier0/tmapi_dummy.h"
+	"${SRCDIR}/public/tier0/tslist.h"
+	"${SRCDIR}/public/tier0/validator.h"
+	"${SRCDIR}/public/tier0/valobject.h"
+	"${SRCDIR}/public/tier0/valve_off.h"
+	"${SRCDIR}/public/tier0/valve_on.h"
+	"${SRCDIR}/public/tier0/vcr_shared.h"
+	"${SRCDIR}/public/tier0/vcrmode.h"
+	"${SRCDIR}/public/tier0/vprof.h"
+	"${SRCDIR}/public/tier0/vprof_telemetry.h"
+	"${SRCDIR}/public/tier0/wchartypes.h"
+)
+
+add_library( tier02 SHARED ${TIER0_SOURCE_FILES} )
+target_compile_definitions( tier02
+	PRIVATE TIER0_DLL_EXPORT
+)
+
 add_library( tier0 IMPORTED SHARED )
 
 if ( UNIX )

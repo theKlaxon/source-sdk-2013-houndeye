@@ -1101,21 +1101,21 @@ public:
 	void FunctionCheck( void *pFunction, const char *name );
 	ENTITYFUNCPTR TouchSet( ENTITYFUNCPTR func, const char *name )
 	{ 
-		COMPILE_TIME_ASSERT( sizeof(func) == ENTITYFUNCPTR_SIZE );
+		static_assert( sizeof(func) == ENTITYFUNCPTR_SIZE );
 		m_pfnTouch = func; 
 		FunctionCheck( *(reinterpret_cast<void **>(&m_pfnTouch)), name ); 
 		return func;
 	}
 	USEPTR	UseSet( USEPTR func, const char *name )
 	{ 
-		COMPILE_TIME_ASSERT( sizeof(func) == ENTITYFUNCPTR_SIZE );
+		static_assert( sizeof(func) == ENTITYFUNCPTR_SIZE );
 		m_pfnUse = func; 
 		FunctionCheck( *(reinterpret_cast<void **>(&m_pfnUse)), name ); 
 		return func;
 	}
 	ENTITYFUNCPTR	BlockedSet( ENTITYFUNCPTR func, const char *name )
 	{ 
-		COMPILE_TIME_ASSERT( sizeof(func) == ENTITYFUNCPTR_SIZE );
+		static_assert( sizeof(func) == ENTITYFUNCPTR_SIZE );
 		m_pfnBlocked = func; 
 		FunctionCheck( *(reinterpret_cast<void **>(&m_pfnBlocked)), name ); 
 		return func;

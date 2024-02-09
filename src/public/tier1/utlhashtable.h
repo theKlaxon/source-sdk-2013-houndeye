@@ -743,7 +743,7 @@ public:
 	typedef typename CTypeSelect< sizeof( IndexStorageT ) == 2, uint16, uint32 >::type IndexStorage_t;
 
 protected:
-	COMPILE_TIME_ASSERT( sizeof( IndexStorage_t ) == sizeof( IndexStorageT ) );
+	static_assert( sizeof( IndexStorage_t ) == sizeof( IndexStorageT ) );
 
 	typedef CUtlKeyValuePair< KeyT, ValueT > KVPair;
 	struct HashProxy;

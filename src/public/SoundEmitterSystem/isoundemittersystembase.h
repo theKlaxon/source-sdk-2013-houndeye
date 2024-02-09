@@ -87,7 +87,7 @@ struct SoundFile
 		symbol = UTL_INVAL_SYMBOL;
 		gender = GENDER_NONE;
 		available = true;
-		COMPILE_TIME_ASSERT( sizeof(SoundFile) == 4 );
+		static_assert( sizeof(SoundFile) == 4 );
 	}
 
 	CUtlSymbol	symbol;

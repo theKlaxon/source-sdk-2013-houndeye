@@ -434,7 +434,7 @@ CUtlLinkedList<T,S,ML,I,M>::CUtlLinkedList( int growSize, int initSize ) :
 	m_Memory( growSize, initSize ), m_LastAlloc( m_Memory.InvalidIterator() )
 {
 	// Prevent signed non-int datatypes
-	COMPILE_TIME_ASSERT( sizeof(S) == 4 || ( ( (S)-1 ) > 0 ) );
+	static_assert( sizeof(S) == 4 || ( ( (S)-1 ) > 0 ) );
 	ConstructList();
 	ResetDbgInfo();
 }
@@ -559,11 +559,11 @@ inline bool CUtlLinkedList<T,S,ML,I,M>::IndexInRange( I index ) // Static method
 
 	// Do some static checks here:
 	//  'I' needs to be able to store 'S'
-	COMPILE_TIME_ASSERT( sizeof(I) >= sizeof(S) );
+	static_assert( sizeof(I) >= sizeof(S) );
 	//  'S' should be unsigned (to avoid signed arithmetic errors for plausibly exhaustible ranges)
-	COMPILE_TIME_ASSERT( ( sizeof(S) > 2 ) || ( ( (S)-1 ) > 0 ) );
+	static_assert( ( sizeof(S) > 2 ) || ( ( (S)-1 ) > 0 ) );
 	//  M::INVALID_INDEX should be storable in S to avoid ambiguities (e.g. with 65536)
-	COMPILE_TIME_ASSERT( ( M::INVALID_INDEX == -1 ) || ( M::INVALID_INDEX == (S)M::INVALID_INDEX ) );
+	static_assert( ( M::INVALID_INDEX == -1 ) || ( M::INVALID_INDEX == (S)M::INVALID_INDEX ) );
 
 	return ( ( (S)index == index ) && ( (S)index != InvalidIndex() ) );
 }
@@ -1099,7 +1099,7 @@ public:
 		: m_pFirst( NULL ),
 		m_nElems( 0 )
 	{
-		COMPILE_TIME_ASSERT( sizeof(IndexType_t) == sizeof(Node_t *) );
+		static_assert( sizeof(IndexType_t) == sizeof(Node_t *) );
 	}
 
 	~CUtlPtrLinkedList()

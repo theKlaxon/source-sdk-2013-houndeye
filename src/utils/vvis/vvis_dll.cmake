@@ -94,6 +94,6 @@ target_link_libraries( vvis_dll
 		tier0
 		tier1
 		mathlib
-		vstdlib
+		vstdlib2
 		tier2
 )

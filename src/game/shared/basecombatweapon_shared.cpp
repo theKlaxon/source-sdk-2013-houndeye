@@ -1843,7 +1843,7 @@ const WeaponProficiencyInfo_t *CBaseCombatWeapon::GetProficiencyValues()
 		{ 1.0, 1.0	},
 	};
 
-	COMPILE_TIME_ASSERT( ARRAYSIZE(defaultWeaponProficiencyTable) == WEAPON_PROFICIENCY_PERFECT + 1);
+	static_assert( ARRAYSIZE(defaultWeaponProficiencyTable) == WEAPON_PROFICIENCY_PERFECT + 1);
 	return defaultWeaponProficiencyTable;
 }
 

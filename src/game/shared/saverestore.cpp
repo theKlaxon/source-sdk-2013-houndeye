@@ -52,7 +52,7 @@ void AddRestoredEntity( C_BaseEntity *pEntity );
 // A bit arbitrary, but unlikely to collide with any saved games...
 #define TICK_NEVER_THINK_ENCODE	( INT_MAX - 3 )
 
-ASSERT_INVARIANT( sizeof(EHandlePlaceholder_t) == sizeof(EHANDLE) );
+static_assert( sizeof(EHandlePlaceholder_t) == sizeof(EHANDLE) );
 
 //-----------------------------------------------------------------------------
 
@@ -397,7 +397,7 @@ void CSave::WriteInt( const int *value, int count )
 
 void CSave::WriteBool( const bool *value, int count )
 {
-	COMPILE_TIME_ASSERT( sizeof(bool) == sizeof(char) );
+	static_assert( sizeof(bool) == sizeof(char) );
 	BufferData( (const char *)value, sizeof(bool) * count );
 }
 
@@ -485,7 +485,7 @@ void CSave::WriteInt( const char *pname, const int *data, int count )
 
 void CSave::WriteBool( const char *pname, const bool *data, int count )
 {
-	COMPILE_TIME_ASSERT( sizeof(bool) == sizeof(char) );
+	static_assert( sizeof(bool) == sizeof(char) );
 	BufferField( pname, sizeof(bool) * count, (const char *)data );
 }
 
@@ -1405,7 +1405,7 @@ void CRestore::ReadBasicField( const SaveRestoreRecordHeader_t &header, void *pD
 
 		case FIELD_COLOR32:
 		{
-			COMPILE_TIME_ASSERT( sizeof(color32) == sizeof(int) );
+			static_assert( sizeof(color32) == sizeof(int) );
 			ReadInt( (int *)pDest, pField->fieldSize, header.size );
 			break;
 		}
@@ -1768,7 +1768,7 @@ int CRestore::ReadInt( int *pValue, int nElems, int nBytesAvailable )
 
 int CRestore::ReadBool( bool *pValue, int nElems, int nBytesAvailable )
 {
-	COMPILE_TIME_ASSERT( sizeof(bool) == sizeof(char) );
+	static_assert( sizeof(bool) == sizeof(char) );
 	return ReadSimple( pValue, nElems, nBytesAvailable );
 }
 

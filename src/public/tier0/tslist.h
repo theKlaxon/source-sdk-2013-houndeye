@@ -583,7 +583,7 @@ public:
 	} TSLIST_HEAD_ALIGN_POST;
 
 	CTSQueue() {
-		COMPILE_TIME_ASSERT( sizeof( Node_t ) >= sizeof( TSLNodeBase_t ) );
+		static_assert( sizeof( Node_t ) >= sizeof( TSLNodeBase_t ) );
 		if ( ( (size_t) &m_Head ) % TSLIST_HEAD_ALIGNMENT != 0 ) {
 			Error( "CTSQueue: Misaligned queue\n" );
 			DebuggerBreak();

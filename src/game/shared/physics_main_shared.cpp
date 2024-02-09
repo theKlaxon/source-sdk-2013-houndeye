@@ -130,7 +130,7 @@ public:
 	CDataObjectAccessSystem()
 	{
 		// Cast to int to make it clear that we know we are comparing different enum types.
-		COMPILE_TIME_ASSERT( (int)NUM_DATAOBJECT_TYPES <= (int)MAX_ACCESSORS );
+		static_assert( (int)NUM_DATAOBJECT_TYPES <= (int)MAX_ACCESSORS );
 
 		Q_memset( m_Accessors, 0, sizeof( m_Accessors ) );
 	}

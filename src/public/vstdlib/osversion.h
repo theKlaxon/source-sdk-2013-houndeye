@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Workfile:     $
 // $Date:         $
@@ -10,25 +10,22 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef OSVERSION_H
-#define OSVERSION_H
 #pragma once
 
 #include "vstdlib/vstdlib.h"
 
+// TODO: Add missing newer versions
 // OS types we know about
 // Must be in ascending capability order, we use this for min OS requirements
-enum EOSType
-{
+enum EOSType {
 	k_eOSUnknown = -1,
 	k_eMacOSUnknown = -102,
 	k_eMacOS104 = -101,
 	k_eMacOS105 = -100,
 	k_eMacOS1058 = -99,
-	k_eMacOS106  = -95,
+	k_eMacOS106 = -95,
 	k_eMacOS1063 = -94,
-	k_eMacOS107  = -90,
+	k_eMacOS107 = -90,
 	// k_eMacOSMax = -1
 	k_eLinuxUnknown = -203,
 	k_eLinux22 = -202,
@@ -48,13 +45,11 @@ enum EOSType
 	k_eWindows7,
 	k_eWin2008,
 	k_eWinMAX,
-	k_eOSTypeMax = k_eWinMAX + 11 // win types + other ifdef'd types
+	k_eOSTypeMax = k_eWinMAX + 11// win types + other ifdef'd types
 };
 
-VSTDLIB_INTERFACE const char *GetNameFromOSType( EOSType eOSType );
-VSTDLIB_INTERFACE const char *GetOSDetailString( char *pchOutBuf, int cchOutBuf );
+VSTDLIB_INTERFACE const char* GetNameFromOSType( EOSType eOSType );
+VSTDLIB_INTERFACE const char* GetOSDetailString( char* pchOutBuf, int cchOutBuf );
 VSTDLIB_INTERFACE EOSType GetOSType();
 VSTDLIB_INTERFACE bool OSTypesAreCompatible( EOSType eOSTypeDetected, EOSType eOSTypeRequired );
-VSTDLIB_INTERFACE const char *GetPlatformName( bool *pbIs64Bit );
-
-#endif // OSVERSION_H
+VSTDLIB_INTERFACE const char* GetPlatformName( bool* pbIs64Bit );

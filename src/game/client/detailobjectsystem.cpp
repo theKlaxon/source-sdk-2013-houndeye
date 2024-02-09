@@ -2296,7 +2296,7 @@ void CDetailObjectSystem::RenderFastSprites( const Vector &viewOrigin, const Vec
 			FastSpriteQuadBuildoutBufferNonSIMDView_t const *pQuadBuffer =
 				( FastSpriteQuadBuildoutBufferNonSIMDView_t const *) m_pBuildoutBuffer;
 
-			COMPILE_TIME_ASSERT( sizeof( FastSpriteQuadBuildoutBufferNonSIMDView_t ) ==
+			static_assert( sizeof( FastSpriteQuadBuildoutBufferNonSIMDView_t ) ==
 								 sizeof( FastSpriteQuadBuildoutBufferX4_t ) );
 
 			while( nCount )

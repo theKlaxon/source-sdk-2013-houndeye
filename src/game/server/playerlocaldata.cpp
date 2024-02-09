@@ -193,7 +193,7 @@ void CPlayerLocalData::UpdateAreaBits( CBasePlayer *pl, unsigned char chAreaPort
 	Vector origin = pl->EyePosition();
 
 	unsigned char tempBits[32];
-	COMPILE_TIME_ASSERT( sizeof( tempBits ) >= sizeof( ((CPlayerLocalData*)0)->m_chAreaBits ) );
+	static_assert( sizeof( tempBits ) >= sizeof( ((CPlayerLocalData*)0)->m_chAreaBits ) );
 
 	int i;
 	int area = engine->GetArea( origin );

@@ -340,7 +340,7 @@ inline bool ThreadInterlockedAssignIf( int volatile* p, int value, int comperand
 			class CThreadLocal : public CThreadLocalBase {
 			public:
 				CThreadLocal() {
-					COMPILE_TIME_ASSERT( sizeof( T ) == sizeof( void* ) );
+					static_assert( sizeof( T ) == sizeof( void* ) );
 				}
 
 				T Get() const {
@@ -359,7 +359,7 @@ inline bool ThreadInterlockedAssignIf( int volatile* p, int value, int comperand
 		class CThreadLocalInt : public CThreadLocal<T> {
 		public:
 			CThreadLocalInt() {
-				COMPILE_TIME_ASSERT( sizeof( T ) >= sizeof( int ) );
+				static_assert( sizeof( T ) >= sizeof( int ) );
 			}
 
 			operator int() const { return static_cast<int>( this->Get() ); }
@@ -464,7 +464,7 @@ inline bool ThreadInterlockedAssignIf( int volatile* p, int value, int comperand
 template<typename T>
 class CInterlockedIntT {
 public:
-	CInterlockedIntT() : m_value( 0 ) { COMPILE_TIME_ASSERT( sizeof( T ) == sizeof( long ) ); }
+	CInterlockedIntT() : m_value( 0 ) { static_assert( sizeof( T ) == sizeof( long ) ); }
 	CInterlockedIntT( T value ) : m_value( value ) {}
 
 	T GetRaw() const { return m_value; }
@@ -1167,7 +1167,7 @@ private:
 class ALIGN8 PLATFORM_CLASS CThreadSpinRWLock {
 public:
 	CThreadSpinRWLock() {
-		COMPILE_TIME_ASSERT( sizeof( LockInfo_t ) == sizeof( int64 ) );
+		static_assert( sizeof( LockInfo_t ) == sizeof( int64 ) );
 		Assert( (intp) this % 8 == 0 );
 		memset( this, 0, sizeof( *this ) );
 	}

@@ -88,7 +88,7 @@ EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CServerTools, IServerTools002, VSERVERTOOLS_I
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CServerTools, IServerTools, VSERVERTOOLS_INTERFACE_VERSION, g_ServerTools );
 
 // When bumping the version to this interface, check that our assumption is still valid and expose the older version in the same way
-COMPILE_TIME_ASSERT( VSERVERTOOLS_INTERFACE_VERSION_INT == 3 );
+static_assert( VSERVERTOOLS_INTERFACE_VERSION_INT == 3 );
 
 
 IServerEntity *CServerTools::GetIServerEntity( IClientEntity *pClientEntity )

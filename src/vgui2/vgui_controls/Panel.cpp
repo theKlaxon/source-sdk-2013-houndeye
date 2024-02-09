@@ -64,7 +64,7 @@ const char *g_PinCornerStrings [] =
 	"PIN_CENTER_LEFT",
 };
 
-COMPILE_TIME_ASSERT( Panel::PIN_LAST == ARRAYSIZE( g_PinCornerStrings ) );
+static_assert( Panel::PIN_LAST == ARRAYSIZE( g_PinCornerStrings ) );
 
 static const char *COM_GetModDirectory()
 {
@@ -409,7 +409,7 @@ KeyBindingContextHandle_t Panel::CreateKeyBindingsContext( char const *filename,
 	return g_KBMgr.CreateContext( filename, pathID );
 }
 
-COMPILE_TIME_ASSERT( ( MOUSE_MIDDLE - MOUSE_LEFT ) == 2 );
+static_assert( ( MOUSE_MIDDLE - MOUSE_LEFT ) == 2 );
 Panel* Panel::m_sMousePressedPanels[] = { NULL, NULL, NULL };
 
 //-----------------------------------------------------------------------------

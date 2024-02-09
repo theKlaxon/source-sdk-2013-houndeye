@@ -5,14 +5,13 @@
 // $NoKeywords: $
 //
 //=============================================================================//
-
 #if defined( _WIN32 )
-#include <windows.h>		// for WideCharToMultiByte and MultiByteToWideChar
-#elif defined(POSIX)
-#include <wchar.h> // wcslen()
-#define _alloca alloca
-#define _wtoi(arg) wcstol(arg, NULL, 10)
-#define _wtoi64(arg) wcstoll(arg, NULL, 10)
+	#include <stringapiset.h>		// for WideCharToMultiByte and MultiByteToWideChar
+#elif defined( POSIX )
+	#include <cwchar> // wcslen()
+	#define _alloca alloca
+	#define _wtoi(arg) wcstol(arg, NULL, 10)
+	#define _wtoi64(arg) wcstoll(arg, NULL, 10)
 #endif
 
 #include <KeyValues.h>
@@ -39,7 +38,7 @@ static const char * s_LastFileLoadingFrom = "unknown"; // just needed for error 
 // Statics for the growable string table
 int (*KeyValues::s_pfGetSymbolForString)( const char *name, bool bCreate ) = &KeyValues::GetSymbolForStringClassic;
 const char *(*KeyValues::s_pfGetStringForSymbol)( int symbol ) = &KeyValues::GetStringForSymbolClassic;
-CKeyValuesGrowableStringTable *KeyValues::s_pGrowableStringTable = NULL;
+CKeyValuesGrowableStringTable *KeyValues::s_pGrowableStringTable = nullptr;
 
 #define KEYVALUES_TOKEN_SIZE	4096
 static char s_pTokenBuf[KEYVALUES_TOKEN_SIZE];
@@ -163,62 +162,58 @@ private:
 // #define LEAKTRACK
 
 #ifdef LEAKTRACK
-
-class CLeakTrack
-{
-public:
-	CLeakTrack()
+	class CLeakTrack
 	{
-	}
-	~CLeakTrack()
-	{
-		if ( keys.Count() != 0 )
+	public:
+		CLeakTrack()
 		{
-			Assert( 0 );
 		}
-	}
-
-	struct kve
-	{
-		KeyValues *kv;
-		char		name[ 256 ];
-	};
-
-	void AddKv( KeyValues *kv, char const *name )
-	{
-		kve k;
-		Q_strncpy( k.name, name ? name : "NULL", sizeof( k.name ) );
-		k.kv = kv;
-
-		keys.AddToTail( k );
-	}
-
-	void RemoveKv( KeyValues *kv )
-	{
-		int c = keys.Count();
-		for ( int i = 0; i < c; i++ )
+		~CLeakTrack()
 		{
-			if ( keys[i].kv == kv )
+			if ( keys.Count() != 0 )
 			{
-				keys.Remove( i );
-				break;
+				Assert( 0 );
 			}
 		}
-	}
 
-	CUtlVector< kve > keys;
-};
+		struct kve
+		{
+			KeyValues *kv;
+			char		name[ 256 ];
+		};
 
-static CLeakTrack track;
+		void AddKv( KeyValues *kv, char const *name )
+		{
+			kve k;
+			Q_strncpy( k.name, name ? name : "NULL", sizeof( k.name ) );
+			k.kv = kv;
 
-#define TRACK_KV_ADD( ptr, name )	track.AddKv( ptr, name )
-#define TRACK_KV_REMOVE( ptr )		track.RemoveKv( ptr )
+			keys.AddToTail( k );
+		}
 
+		void RemoveKv( KeyValues *kv )
+		{
+			int c = keys.Count();
+			for ( int i = 0; i < c; i++ )
+			{
+				if ( keys[i].kv == kv )
+				{
+					keys.Remove( i );
+					break;
+				}
+			}
+		}
+
+		CUtlVector< kve > keys;
+	};
+
+	static CLeakTrack track;
+
+	#define TRACK_KV_ADD( ptr, name )	track.AddKv( ptr, name )
+	#define TRACK_KV_REMOVE( ptr )		track.RemoveKv( ptr )
 #else
-
-#define TRACK_KV_ADD( ptr, name ) 
-#define TRACK_KV_REMOVE( ptr )	
-
+	#define TRACK_KV_ADD( ptr, name )
+	#define TRACK_KV_REMOVE( ptr )
 #endif
 
 
@@ -231,7 +226,7 @@ class CKeyValuesGrowableStringTable
 public: 
 	// Constructor
 	CKeyValuesGrowableStringTable() :
-		#ifdef PLATFORM_64BITS
+		#if IsPlatform64Bits()
 			m_vecStrings( 0, 4 * 512 * 1024 )
 		#else
 			m_vecStrings( 0, 512 * 1024 )
@@ -285,7 +280,7 @@ private:
 	class CLookupFunctor
 	{
 	public:
-		CLookupFunctor() : m_pchCurString( NULL ), m_pchCurBase( NULL ) {}
+		CLookupFunctor() : m_pchCurString( nullptr ), m_pchCurBase( nullptr ) {}
 
 		// Sets what we are currently inserting or looking for.
 		void SetCurString( const char *pchCurString ) { m_pchCurString = pchCurString; }

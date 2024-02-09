@@ -545,7 +545,7 @@ inline CBitVecT<BASE_OPS>::CBitVecT()
 	// undef this is ints are not 4 bytes
 	// generate a compile error if sizeof(int) is not 4 (HACK: can't use the preprocessor so use the compiler)
 	
-	COMPILE_TIME_ASSERT( sizeof(int)==4 );
+	static_assert( sizeof(int)==4 );
 	
 	// Initialize bitstring by clearing all bits
 	ClearAll();
@@ -559,7 +559,7 @@ inline CBitVecT<BASE_OPS>::CBitVecT(int numBits)
 	// undef this is ints are not 4 bytes
 	// generate a compile error if sizeof(int) is not 4 (HACK: can't use the preprocessor so use the compiler)
 	
-	COMPILE_TIME_ASSERT( sizeof(int)==4 );
+	static_assert( sizeof(int)==4 );
 	
 	// Initialize bitstring by clearing all bits
 	ClearAll();

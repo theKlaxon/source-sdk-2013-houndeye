@@ -83,7 +83,7 @@ public:
 	bool IsIdxValid( I i ) const;
 
 	// Specify the invalid ('null') index that we'll only return on failure
-	static const I INVALID_INDEX = ( I )-1; // For use with COMPILE_TIME_ASSERT
+	static const I INVALID_INDEX = ( I )-1; // For use with static_assert
 	static I InvalidIndex() { return INVALID_INDEX; }
 
 	// Gets the base address (can change when adding elements!)
@@ -206,7 +206,7 @@ public:
 	bool IsIdxValid( int i ) const							{ return (size_t)i < SIZE; }
 
 	// Specify the invalid ('null') index that we'll only return on failure
-	static const int INVALID_INDEX = -1; // For use with COMPILE_TIME_ASSERT
+	static const int INVALID_INDEX = -1; // For use with static_assert
 	static int InvalidIndex() { return INVALID_INDEX; }
 
 	// Gets the base address
@@ -895,7 +895,7 @@ CUtlMemoryAligned<T, nAlignment>::CUtlMemoryAligned( int nGrowSize, int nInitAll
 	this->ValidateGrowSize();
 
 	// Alignment must be a power of two
-	COMPILE_TIME_ASSERT( (nAlignment & (nAlignment-1)) == 0 );
+	static_assert( (nAlignment & (nAlignment-1)) == 0 );
 	Assert( (nGrowSize >= 0) && (nGrowSize != CUtlMemory<T>::EXTERNAL_BUFFER_MARKER) );
 	if ( CUtlMemory<T>::m_nAllocationCount )
 	{

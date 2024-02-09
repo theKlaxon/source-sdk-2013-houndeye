@@ -246,7 +246,7 @@ bool CAI_Senses::SeeEntity( CBaseEntity *pSightEnt )
 
 CBaseEntity *CAI_Senses::GetFirstSeenEntity( AISightIter_t *pIter, seentype_t iSeenType ) const
 { 
-	COMPILE_TIME_ASSERT( sizeof( AISightIter_t ) == sizeof( AISightIterVal_t ) );
+	static_assert( sizeof( AISightIter_t ) == sizeof( AISightIterVal_t ) );
 	
 	AISightIterVal_t *pIterVal = (AISightIterVal_t *)pIter;
 	

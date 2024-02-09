@@ -556,7 +556,7 @@ void CSoundParametersInternal::AddToTail( SoundFile **pDest, uint16 *pDestCount,
 	{
 		// NOTE: when there's only one soundfile in the list, we store it
 		// packed into the pointer itself, the four bytes for the pointer is just used to store the sound file!
-		COMPILE_TIME_ASSERT( sizeof(SoundFile) <= sizeof(SoundFile *) );
+		static_assert( sizeof(SoundFile) <= sizeof(SoundFile *) );
 		*((SoundFile *)(pDest)) = source;
 	}
 	else

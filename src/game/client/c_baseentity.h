@@ -1157,7 +1157,7 @@ public:
 
 	ENTITYFUNCPTR TouchSet( ENTITYFUNCPTR func, const char *name )
 	{ 
-		//COMPILE_TIME_ASSERT( sizeof(func) == 4 );
+		//static_assert( sizeof(func) == 4 );
 		m_pfnTouch = func; 
 		//FunctionCheck( *(reinterpret_cast<void **>(&m_pfnTouch)), name ); 
 		return func;

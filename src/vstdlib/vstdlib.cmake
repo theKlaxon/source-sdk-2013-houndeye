@@ -1,5 +1,32 @@
 # vstdlib.cmake
 
+set( VSTDLIB_DIR ${CMAKE_CURRENT_LIST_DIR} )
+set( VSTDLIB_SOURCE_FILES
+	"${VSTDLIB_DIR}/ccvarsystem.cpp"
+
+	# Header files
+
+	# Private
+	"${VSTDLIB_DIR}/ccvarsystem.hpp"
+
+	# Public
+	"${SRCDIR}/public/vstdlib/vstdlib.h"
+	"${SRCDIR}/public/vstdlib/vcover.h"
+	"${SRCDIR}/public/vstdlib/random.h"
+	"${SRCDIR}/public/vstdlib/osversion.h"
+	"${SRCDIR}/public/vstdlib/jobthread.h"
+	"${SRCDIR}/public/vstdlib/iprocessutils.h"
+	"${SRCDIR}/public/vstdlib/IKeyValuesSystem.h"
+	"${SRCDIR}/public/vstdlib/cvar.h"
+	"${SRCDIR}/public/vstdlib/coroutine.h"
+)
+
+add_library( vstdlib2 SHARED ${VSTDLIB_SOURCE_FILES} )
+target_compile_definitions( vstdlib2
+	PRIVATE VSTDLIB_DLL_EXPORT
+)
+
+
 add_library( vstdlib IMPORTED SHARED )
 
 if ( UNIX )
