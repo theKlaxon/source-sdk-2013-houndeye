@@ -2,12 +2,12 @@
 
 set( VSTDLIB_DIR ${CMAKE_CURRENT_LIST_DIR} )
 set( VSTDLIB_SOURCE_FILES
-	"${VSTDLIB_DIR}/ccvarsystem.cpp"
+	"${VSTDLIB_DIR}/cvarsystem.cpp"
 
 	# Header files
 
 	# Private
-	"${VSTDLIB_DIR}/ccvarsystem.hpp"
+	"${VSTDLIB_DIR}/cvarsystem.hpp"
 
 	# Public
 	"${SRCDIR}/public/vstdlib/vstdlib.h"
