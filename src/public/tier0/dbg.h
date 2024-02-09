@@ -170,7 +170,7 @@ enum SpewRetval_t {
 typedef SpewRetval_t ( *SpewOutputFunc_t )( SpewType_t pSpewType, const tchar* pMsg );
 
 /* Used to redirect spew output */
-DBG_INTERFACE void SpewOutputFunc( SpewOutputFunc_t func );
+DBG_INTERFACE void SpewOutputFunc( SpewOutputFunc_t pFunc );
 
 /* Used to get the current spew output function */
 DBG_INTERFACE SpewOutputFunc_t GetSpewOutputFunc();
@@ -179,7 +179,7 @@ DBG_INTERFACE SpewOutputFunc_t GetSpewOutputFunc();
 DBG_INTERFACE SpewRetval_t DefaultSpewFunc( SpewType_t pSpewType, const tchar* pMsg );
 
 /* Same as the default spew func, but returns SPEW_ABORT for asserts */
-DBG_INTERFACE SpewRetval_t DefaultSpewFuncAbortOnAsserts( SpewType_t type, const tchar* pMsg );
+DBG_INTERFACE SpewRetval_t DefaultSpewFuncAbortOnAsserts( SpewType_t pSpewType, const tchar* pMsg );
 
 /* Should be called only inside a SpewOutputFunc_t, returns groupname, level, color */
 DBG_INTERFACE const tchar* GetSpewOutputGroup();
@@ -209,14 +209,14 @@ DBG_INTERFACE void SetAllAssertsDisabled( bool bAssertsEnabled );
 
 // Provides a callback that is called on asserts regardless of spew levels
 typedef void ( *AssertFailedNotifyFunc_t )( const char* pchFile, int nLine, const char* pchMessage );
-DBG_INTERFACE void SetAssertFailedNotifyFunc( AssertFailedNotifyFunc_t func );
+DBG_INTERFACE void SetAssertFailedNotifyFunc( AssertFailedNotifyFunc_t pFunc );
 DBG_INTERFACE void CallAssertFailedNotifyFunc( const char* pchFile, int nLine, const char* pchMessage );
 
 /* True if -hushasserts was passed on command line. */
 DBG_INTERFACE bool HushAsserts();
 
 #if defined( USE_SDL )
-	DBG_INTERFACE void SetAssertDialogParent( struct SDL_Window* window );
+	DBG_INTERFACE void SetAssertDialogParent( struct SDL_Window* pWindow );
 	DBG_INTERFACE struct SDL_Window* GetAssertDialogParent();
 #endif
 
