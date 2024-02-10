@@ -4,6 +4,7 @@ set( TIER0_DIR ${CMAKE_CURRENT_LIST_DIR} )
 set( TIER0_SOURCE_FILES
 	"${TIER0_DIR}/dbg.cpp"
 	"${TIER0_DIR}/commandline.cpp"
+	"${TIER0_DIR}/platform.cpp"
 
 	# Header files
 
@@ -61,6 +62,8 @@ add_library( tier02 SHARED ${TIER0_SOURCE_FILES} )
 target_compile_definitions( tier02
 	PRIVATE TIER0_DLL_EXPORT
 )
+link_to_bin( TARGET tier02 )
+declare_library( TARGET tier02 )
 
 add_library( tier0 IMPORTED SHARED )
 
