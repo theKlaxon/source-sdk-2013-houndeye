@@ -1,8 +1,7 @@
 # vvis_dll.cmake
 
 set( VVIS_DLL_DIR ${CMAKE_CURRENT_LIST_DIR} )
-set(VVIS_DLL_SOURCE_FILES
-
+set( VVIS_DLL_SOURCE_FILES
 	"${SRCDIR}/utils/common/bsplib.cpp"
 	"${SRCDIR}/utils/common/cmdlib.cpp"
 	"${SRCDIR}/public/collisionutils.cpp"
@@ -73,15 +72,14 @@ set_target_properties( vvis_dll
 
 
 target_include_directories( vvis_dll
-	PRIVATE
-		"${SRCDIR}/utils/common"
-		"${SRCDIR}/utils/vmpi"
-		"${SRCDIR}/utils/vmpi/mysql/include"
+	PRIVATE "${SRCDIR}/utils/common"
+)
+target_link_directories( vvis_dll
+	PRIVATE "${GAMEDIR}/bin"
 )
 
 target_compile_definitions( vvis_dll
-	PRIVATE
-		PROTECTED_THINGS_DISABLE
+	PRIVATE PROTECTED_THINGS_DISABLE
 )
 
 target_link_libraries( vvis_dll
@@ -91,9 +89,9 @@ target_link_libraries( vvis_dll
 		$<${IS_WINDOWS}:ws2_32>
 
 		lzma
-		tier0
+		"${CMAKE_CURRENT_BINARY_DIR}/libtier02.so" # FIXME: Why is the full path needed?
 		tier1
 		mathlib
-		vstdlib2
+		"${CMAKE_CURRENT_BINARY_DIR}/libvstdlib2.so" # FIXME: Why is the full path needed?
 		tier2
 )

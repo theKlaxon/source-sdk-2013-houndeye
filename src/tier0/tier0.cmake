@@ -10,10 +10,7 @@ set( TIER0_SOURCE_FILES
 	# Private
 #	"${TIER0_DIR}/ccvarsystem.hpp"
 
-	# Other
-
 	# Public
-	"${SRCDIR}/public/tier0/afxmem_override.cpp"
 	"${SRCDIR}/public/tier0/annotations.h"
 	"${SRCDIR}/public/tier0/basetypes.h"
 	"${SRCDIR}/public/tier0/commonmacros.h"

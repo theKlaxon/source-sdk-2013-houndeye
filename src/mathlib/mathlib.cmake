@@ -1,9 +1,7 @@
 # mathlib.cmake
 
-set(MATHLIB_DIR ${CMAKE_CURRENT_LIST_DIR})
-set(
-	MATHLIB_SOURCE_FILES
-
+set( MATHLIB_DIR ${CMAKE_CURRENT_LIST_DIR} )
+set( MATHLIB_SOURCE_FILES
 	"${MATHLIB_DIR}/color_conversion.cpp"
 	"${MATHLIB_DIR}/halton.cpp"
 	"${MATHLIB_DIR}/lightdesc.cpp"
@@ -58,14 +56,12 @@ set(
 	"$<$<OR:${IS_WINDOWS},${IS_LINUX}>:${MATHLIB_DIR}/3dnow.h>"
 )
 
-add_library(mathlib STATIC ${MATHLIB_SOURCE_FILES})
+add_library( mathlib STATIC ${MATHLIB_SOURCE_FILES} )
 
-target_include_directories(
-	mathlib PRIVATE
-	"${SRCDIR}/public/mathlib"
+target_include_directories( mathlib
+	PRIVATE "${SRCDIR}/public/mathlib"
 )
 
-target_compile_definitions(
-	mathlib PRIVATE
-	MATHLIB_LIB
+target_compile_definitions( mathlib
+	PRIVATE MATHLIB_LIB
 )

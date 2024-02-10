@@ -70,9 +70,8 @@ add_compile_options(
 	-msse2 -mfpmath=sse -mtune=core2
 )
 
-list(
-	APPEND ADDITIONAL_LINK_LIBRARIES_DLL
-	tier0
-	tier1
-	vstdlib
+list( APPEND ADDITIONAL_LINK_LIBRARIES_DLL
+#	tier0
+#	tier1
+#	vstdlib
 )

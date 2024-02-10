@@ -22,9 +22,8 @@ set( VSTDLIB_SOURCE_FILES
 )
 
 add_library( vstdlib2 SHARED ${VSTDLIB_SOURCE_FILES} )
-target_compile_definitions( vstdlib2
-	PRIVATE VSTDLIB_DLL_EXPORT
-)
+target_compile_definitions( vstdlib2 PRIVATE VSTDLIB_DLL_EXPORT )
+target_link_libraries( vstdlib2 PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/libtier02.so" ) # FIXME: Why is the full path needed?
 
 
 add_library( vstdlib IMPORTED SHARED )

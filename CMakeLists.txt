@@ -130,7 +130,12 @@ endfunction()
 macro(get_all_targets_recursive targets dir)
     get_property(subdirectories DIRECTORY ${dir} PROPERTY SUBDIRECTORIES)
     foreach(subdir ${subdirectories})
-        get_all_targets_recursive(${targets} ${subdir})
+		set( found )
+		string( FIND REVERSE ${subdir} "thirdparty" ${found} )
+		# avoid checking in the third-party targets
+		if ( "${found}" STREQUAL "-1" )
+        	get_all_targets_recursive(${targets} ${subdir})
+		endif ()
     endforeach()
 
     get_property(current_targets DIRECTORY ${dir} PROPERTY BUILDSYSTEM_TARGETS)
