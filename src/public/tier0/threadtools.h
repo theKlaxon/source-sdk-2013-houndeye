@@ -8,13 +8,13 @@
 #pragma once
 
 #include <algorithm>
-#include <limits.h>
+#include <climits>
 
 #include "tier0/dbg.h"
 #include "tier0/platform.h"
 #include "tier0/vcrmode.h"
 
-#ifdef PLATFORM_WINDOWS_PC
+#if IsWindows() && IsPC()
 	#include <intrin.h>
 #endif
 
@@ -34,15 +34,15 @@
 
 // #define THREAD_PROFILER 1
 
-#ifndef _RETAIL
+#if !defined( _RETAIL )
 	#define THREAD_MUTEX_TRACING_SUPPORTED
 	#if defined( _WIN32 ) && defined( _DEBUG )
 		#define THREAD_MUTEX_TRACING_ENABLED
 	#endif
 #endif
 
-#ifdef _WIN32
-typedef void* HANDLE;
+#if IsWindows()
+	typedef void* HANDLE;
 #endif
 
 //-----------------------------------------------------------------------------
@@ -51,15 +51,15 @@ typedef void* HANDLE;
 
 const unsigned TT_INFINITE = 0xffffffff;
 
-#ifndef NO_THREAD_LOCAL
-	#ifndef THREAD_LOCAL
-		#ifdef _WIN32
+#if defined( NO_THREAD_LOCAL )
+	#if defined( THREAD_LOCAL )
+		#if IsWindows()
 			#define THREAD_LOCAL __declspec( thread )
-		#elif POSIX
+		#elif IsPIsPosix()
 			#define THREAD_LOCAL __thread
 		#endif
 	#endif
-#endif// NO_THREAD_LOCAL
+#endif
 
 typedef unsigned long ThreadId_t;
 
@@ -82,9 +82,9 @@ PLATFORM_INTERFACE bool ReleaseThreadHandle( ThreadHandle_t );
 PLATFORM_INTERFACE void ThreadSleep( unsigned duration = 0 );
 PLATFORM_INTERFACE uint ThreadGetCurrentId();
 PLATFORM_INTERFACE ThreadHandle_t ThreadGetCurrentHandle();
-PLATFORM_INTERFACE int ThreadGetPriority( ThreadHandle_t hThread = NULL );
+PLATFORM_INTERFACE int ThreadGetPriority( ThreadHandle_t hThread = nullptr );
 PLATFORM_INTERFACE bool ThreadSetPriority( ThreadHandle_t hThread, int priority );
-inline bool ThreadSetPriority( int priority ) { return ThreadSetPriority( NULL, priority ); }
+inline bool ThreadSetPriority( int priority ) { return ThreadSetPriority( nullptr, priority ); }
 PLATFORM_INTERFACE bool ThreadInMainThread();
 PLATFORM_INTERFACE void DeclareCurrentThreadIsMainThread();
 
@@ -93,16 +93,16 @@ typedef int ( *ThreadedLoadLibraryFunc_t )();
 PLATFORM_INTERFACE void SetThreadedLoadLibraryFunc( ThreadedLoadLibraryFunc_t func );
 PLATFORM_INTERFACE ThreadedLoadLibraryFunc_t GetThreadedLoadLibraryFunc();
 
-#if defined( _WIN32 ) && !defined( _WIN64 )
+#if IsWindows() && !IsPlatform64Bits()
 	extern "C" unsigned long __declspec( dllimport ) __stdcall GetCurrentThreadId();
 	#define ThreadGetCurrentId GetCurrentThreadId
 #endif
 
 inline void ThreadPause() {
-	#if defined( PLATFORM_WINDOWS_PC )
+	#if IsWindows() && IsPC()
 		// Intrinsic for __asm pause; from <intrin.h>
 		_mm_pause();
-	#elif POSIX
+	#elif IsPosix()
 		__asm __volatile( "pause" );
 	#else
 		#error "ThreadPause: implement me"
@@ -111,12 +111,12 @@ inline void ThreadPause() {
 
 PLATFORM_INTERFACE bool ThreadJoin( ThreadHandle_t, unsigned timeout = TT_INFINITE );
 // If you're not calling ThreadJoin, you need to call ThreadDetach so pthreads on Linux knows it can
-//	free the memory for this thread. Otherwise you wind up leaking threads until you run out and
+//	free the memory for this thread. Otherwise, you wind up leaking threads until you run out and
 //	CreateSimpleThread() will fail.
 PLATFORM_INTERFACE void ThreadDetach( ThreadHandle_t );
 
 PLATFORM_INTERFACE void ThreadSetDebugName( ThreadId_t id, const char* pszName );
-inline void ThreadSetDebugName( const char* pszName ) { ThreadSetDebugName( (ThreadId_t) -1, pszName ); }
+inline void ThreadSetDebugName( const char* pszName ) { ThreadSetDebugName( static_cast<ThreadId_t>( -1 ), pszName ); }
 
 PLATFORM_INTERFACE void ThreadSetAffinity( ThreadHandle_t hThread, int nAffinityMask );
 
@@ -127,7 +127,7 @@ enum ThreadWaitResult_t {
 	TW_TIMEOUT = 0x00000102,// WAIT_TIMEOUT
 };
 
-#ifdef _WIN32
+#if IsWindows()
 	PLATFORM_INTERFACE int ThreadWaitForObjects( int nEvents, const HANDLE* pHandles, bool bWaitAll = true, unsigned timeout = TT_INFINITE );
 	inline int ThreadWaitForObject( HANDLE handle, bool bWaitAll = true, unsigned timeout = TT_INFINITE ) { return ThreadWaitForObjects( 1, &handle, bWaitAll, timeout ); }
 #endif
@@ -238,7 +238,7 @@ inline void const* ThreadInterlockedExchangePointerToConst( void const* volatile
 inline void const* ThreadInterlockedCompareExchangePointerToConst( void const* volatile* p, void const* value, void const* comperand ) { return ThreadInterlockedCompareExchangePointer( const_cast<void* volatile*>( p ), const_cast<void*>( value ), const_cast<void*>( comperand ) ); }
 inline bool ThreadInterlockedAssignPointerToConstIf( void const* volatile* p, void const* value, void const* comperand ) { return ThreadInterlockedAssignPointerIf( const_cast<void* volatile*>( p ), const_cast<void*>( value ), const_cast<void*>( comperand ) ); }
 
-#if defined( PLATFORM_64BITS )
+#if IsPlatform64Bits()
 	#if defined( _WIN32 )
 		typedef __m128i int128;
 		inline int128 int128_zero() { return _mm_setzero_si128(); }
@@ -276,7 +276,7 @@ inline bool ThreadInterlockedAssignIf( int volatile* p, int value, int comperand
 //-----------------------------------------------------------------------------
 // Access to VTune thread profiling
 //-----------------------------------------------------------------------------
-#if defined( _WIN32 ) && defined( THREAD_PROFILER )
+#if IsWindows() && defined( THREAD_PROFILER )
 	PLATFORM_INTERFACE void ThreadNotifySyncPrepare( void* p );
 	PLATFORM_INTERFACE void ThreadNotifySyncCancel( void* p );
 	PLATFORM_INTERFACE void ThreadNotifySyncAcquired( void* p );

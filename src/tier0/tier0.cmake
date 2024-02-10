@@ -5,6 +5,7 @@ set( TIER0_SOURCE_FILES
 	"${TIER0_DIR}/dbg.cpp"
 	"${TIER0_DIR}/commandline.cpp"
 	"${TIER0_DIR}/platform.cpp"
+	"${TIER0_DIR}/threadtools.cpp"
 
 	# Header files
 
