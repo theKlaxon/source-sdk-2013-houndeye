@@ -137,12 +137,6 @@ void Msg( const tchar* pMsg, ... ) {
 	SpewInternal( SpewType_t::SPEW_MESSAGE, pMsg, args );
 	va_end( args );
 }
-void DMsg( const tchar* pGroupName, int level, const tchar* pMsg, ... ) {
-	va_list args;
-	va_start( args, pMsg );
-	SpewInternal( SpewType_t::SPEW_MESSAGE, pMsg, args );
-	va_end( args );
-}
 
 void Warning( const tchar* pMsg, ... ) {
 	va_list args;
@@ -150,20 +144,8 @@ void Warning( const tchar* pMsg, ... ) {
 	SpewInternal( SpewType_t::SPEW_WARNING, pMsg, args );
 	va_end( args );
 }
-void DWarning( const tchar* pGroupName, int level, const tchar* pMsg, ... ) {
-	va_list args;
-	va_start( args, pMsg );
-	SpewInternal( SpewType_t::SPEW_WARNING, pMsg, args );
-	va_end( args );
-}
 
 void Log( const tchar* pMsg, ... ) {
-	va_list args;
-	va_start( args, pMsg );
-	SpewInternal( SpewType_t::SPEW_LOG, pMsg, args );
-	va_end( args );
-}
-void DLog( const tchar* pGroupName, int level, const tchar* pMsg, ... ) {
 	va_list args;
 	va_start( args, pMsg );
 	SpewInternal( SpewType_t::SPEW_LOG, pMsg, args );
