@@ -36,7 +36,7 @@
 
 #if !defined( _RETAIL )
 	#define THREAD_MUTEX_TRACING_SUPPORTED
-	#if defined( _WIN32 ) && defined( _DEBUG )
+	#if IsWindows() && IsDebug()
 		#define THREAD_MUTEX_TRACING_ENABLED
 	#endif
 #endif
@@ -72,14 +72,13 @@ typedef unsigned long ThreadId_t;
 FORWARD_DECLARE_HANDLE( ThreadHandle_t );
 typedef unsigned ( *ThreadFunc_t )( void* pParam );
 
-PLATFORM_OVERLOAD ThreadHandle_t CreateSimpleThread( ThreadFunc_t, void* pParam, ThreadId_t* pID, unsigned stackSize = 0 );
-PLATFORM_INTERFACE ThreadHandle_t CreateSimpleThread( ThreadFunc_t, void* pParam, unsigned stackSize = 0 );
-PLATFORM_INTERFACE bool ReleaseThreadHandle( ThreadHandle_t );
+PLATFORM_OVERLOAD ThreadHandle_t CreateSimpleThread( ThreadFunc_t pHandle, void* pParam, ThreadId_t* pID, unsigned stackSize = 0 );
+PLATFORM_INTERFACE ThreadHandle_t CreateSimpleThread( ThreadFunc_t pHandle, void* pParam, unsigned stackSize = 0 );
+PLATFORM_INTERFACE bool ReleaseThreadHandle( ThreadHandle_t pHandle );
 
 
 //-----------------------------------------------------------------------------
-
-PLATFORM_INTERFACE void ThreadSleep( unsigned duration = 0 );
+PLATFORM_INTERFACE void ThreadSleep( unsigned pDurationMs = 0 );
 PLATFORM_INTERFACE uint ThreadGetCurrentId();
 PLATFORM_INTERFACE ThreadHandle_t ThreadGetCurrentHandle();
 PLATFORM_INTERFACE int ThreadGetPriority( ThreadHandle_t hThread = nullptr );
@@ -407,8 +406,8 @@ inline bool ThreadInterlockedAssignIf( int volatile* p, int value, int comperand
 			operator T*() { return (T*) Get(); }
 
 			int operator=( int i ) {
-				AssertMsg( i == 0, "Only NULL allowed on integer assign" );
-				Set( NULL );
+				AssertMsg( i == 0, "Only nullptr allowed on integer assign" );
+				Set( nullptr );
 				return 0;
 			}
 			T* operator=( T* p ) {
@@ -418,12 +417,12 @@ inline bool ThreadInterlockedAssignIf( int volatile* p, int value, int comperand
 
 			bool operator!() const { return ( !Get() ); }
 			bool operator!=( int i ) const {
-				AssertMsg( i == 0, "Only NULL allowed on integer compare" );
-				return ( Get() != NULL );
+				AssertMsg( i == 0, "Only nullptr allowed on integer compare" );
+				return ( Get() != nullptr );
 			}
 			bool operator==( int i ) const {
-				AssertMsg( i == 0, "Only NULL allowed on integer compare" );
-				return ( Get() == NULL );
+				AssertMsg( i == 0, "Only nullptr allowed on integer compare" );
+				return ( Get() == nullptr );
 			}
 			bool operator==( const void* p ) const { return ( Get() == p ); }
 			bool operator!=( const void* p ) const { return ( Get() != p ); }
@@ -475,20 +474,26 @@ public:
 	bool operator==( T rhs ) const { return ( m_value == rhs ); }
 	bool operator!=( T rhs ) const { return ( m_value != rhs ); }
 
-	T operator++() { return (T) ThreadInterlockedIncrement( (long*) &m_value ); }
+	T operator++() { return (T) ThreadInterlockedIncrement( reinterpret_cast<volatile long*>( &m_value ) ); }
 	T operator++( int ) { return operator++() - 1; }
 
-	T operator--() { return (T) ThreadInterlockedDecrement( (long*) &m_value ); }
+	T operator--() { return (T) ThreadInterlockedDecrement( reinterpret_cast<volatile long*>( &m_value ) ); }
 	T operator--( int ) { return operator--() + 1; }
 
-	bool AssignIf( T conditionValue, T newValue ) { return ThreadInterlockedAssignIf( (long*) &m_value, (long) newValue, (long) conditionValue ); }
+	bool AssignIf( T conditionValue, T newValue ) {
+		return ThreadInterlockedAssignIf(
+			reinterpret_cast<volatile long*>( &m_value ),
+			static_cast<long>( newValue ),
+			static_cast<long>( conditionValue )
+		);
+	}
 
 	T operator=( T newValue ) {
-		ThreadInterlockedExchange( (long*) &m_value, newValue );
+		ThreadInterlockedExchange( static_cast<long*>( &m_value ), newValue );
 		return m_value;
 	}
 
-	void operator+=( T add ) { ThreadInterlockedExchangeAdd( (long*) &m_value, (long) add ); }
+	void operator+=( T add ) { ThreadInterlockedExchangeAdd( static_cast<long*>( &m_value ), static_cast<long>( add ) ); }
 	void operator-=( T subtract ) { operator+=( -subtract ); }
 	void operator*=( T multiplier ) {
 		T original, result;
@@ -584,7 +589,7 @@ class ReentrancyVerifier {
 public:
 	inline ReentrancyVerifier( CInterlockedInt* counter, int sleepTimeMS )
 		: mCounter( counter ) {
-		Assert( mCounter != NULL );
+		Assert( mCounter != nullptr );
 
 		if ( ++( *mCounter ) != 1 ) {
 			DebuggerBreakIfDebugging_StagingOnly();
@@ -699,11 +704,11 @@ private:
 			return TryLockInline( threadId );
 		}
 
-		PLATFORM_CLASS void Lock( const uint32 threadId, unsigned nSpinSleepTime ) volatile;
+		PLATFORM_CLASS void Lock( uint32 threadId, unsigned nSpinSleepTime ) volatile;
 
 	public:
 		bool TryLock() volatile {
-			#if defined( _DEBUG )
+			#if IsDebug()
 				if ( m_depth == INT_MAX )
 					DebuggerBreak();
 
@@ -713,7 +718,7 @@ private:
 			return TryLockInline( ThreadGetCurrentId() );
 		}
 
-		#if !defined( _DEBUG )
+		#if !IsDebug()
 			FORCEINLINE
 		#endif
 		void Lock( unsigned int nSpinSleepTime = 0 ) volatile {
@@ -723,7 +728,7 @@ private:
 				ThreadPause();
 				Lock( threadId, nSpinSleepTime );
 			}
-			#if defined( _DEBUG )
+			#if IsDebug()
 				if ( m_ownerID != ThreadGetCurrentId() )
 					DebuggerBreak();
 
@@ -735,11 +740,11 @@ private:
 			#endif
 		}
 
-		#if !defined( _DEBUG )
+		#if !IsDebug()
 			FORCEINLINE
 		#endif
 		void Unlock() volatile {
-			#if defined( _DEBUG )
+			#if IsDebug()
 				if ( m_ownerID != ThreadGetCurrentId() )
 					DebuggerBreak();
 
@@ -987,7 +992,7 @@ public:
 	//-----------------------------------------------------
 	// Wait for a signal from the object
 	//-----------------------------------------------------
-	bool Wait( uint32 dwTimeout = TT_INFINITE );
+	bool Wait( uint32 dwTimeoutMs = TT_INFINITE );
 
 protected:
 	CThreadSyncObject();
@@ -997,12 +1002,12 @@ protected:
 		HANDLE m_hSyncObject;
 		bool m_bCreatedHandle;
 	#elif IsPosix()
-		pthread_mutex_t m_Mutex;
-		pthread_cond_t m_Condition;
-		bool m_bInitalized;
-		int m_cSet;
-		bool m_bManualReset;
-		bool m_bWakeForEvent;
+		pthread_mutex_t m_Mutex{};
+		pthread_cond_t m_Condition{};
+		bool m_bInitalized{ false };
+		int m_cSet{ 0 };
+		bool m_bManualReset{ false };
+		bool m_bWakeForEvent{ false };
 	#else
 		#error "Implement me"
 	#endif
@@ -1034,7 +1039,7 @@ private:
 		// Increases the count of the semaphore object by a specified
 		// amount.  Wait() decreases the count by one on return.
 		//-----------------------------------------------------
-		bool Release( long releaseCount = 1, long* pPreviousCount = NULL );
+		bool Release( long releaseCount = 1, long* pPreviousCount = nullptr );
 
 	private:
 		CThreadSemaphore( const CThreadSemaphore& );
@@ -1050,7 +1055,7 @@ private:
 
 	class PLATFORM_CLASS CThreadFullMutex : public CThreadSyncObject {
 	public:
-		CThreadFullMutex( bool bEstablishInitialOwnership = false, const char* pszName = NULL );
+		CThreadFullMutex( bool bEstablishInitialOwnership = false, const char* pszName = nullptr );
 
 		//-----------------------------------------------------
 		// Release ownership of the mutex
@@ -1073,7 +1078,7 @@ private:
 
 class PLATFORM_CLASS CThreadEvent : public CThreadSyncObject {
 public:
-	CThreadEvent( bool fManualReset = false );
+	explicit CThreadEvent( bool fManualReset = false );
 	#if IsWindows()
 		CThreadEvent( HANDLE hHandle );
 	#endif
@@ -1169,7 +1174,7 @@ public:
 	CThreadSpinRWLock() {
 		static_assert( sizeof( LockInfo_t ) == sizeof( int64 ) );
 		Assert( (intp) this % 8 == 0 );
-		memset( this, 0, sizeof( *this ) );
+//		memset( this, 0, sizeof( *this ) );
 	}
 
 	bool TryLockForWrite();
@@ -1180,8 +1185,8 @@ public:
 	void LockForWrite();
 	void UnlockWrite();
 
-	bool TryLockForWrite() const { return const_cast<CThreadSpinRWLock*>( this )->TryLockForWrite(); }
-	bool TryLockForRead() const { return const_cast<CThreadSpinRWLock*>( this )->TryLockForRead(); }
+	[[nodiscard]] bool TryLockForWrite() const { return const_cast<CThreadSpinRWLock*>( this )->TryLockForWrite(); }
+	[[nodiscard]] bool TryLockForRead() const { return const_cast<CThreadSpinRWLock*>( this )->TryLockForRead(); }
 	void LockForRead() const { const_cast<CThreadSpinRWLock*>( this )->LockForRead(); }
 	void UnlockRead() const { const_cast<CThreadSpinRWLock*>( this )->UnlockRead(); }
 	void LockForWrite() const { const_cast<CThreadSpinRWLock*>( this )->LockForWrite(); }
@@ -1194,11 +1199,11 @@ private:
 	};
 
 	bool AssignIf( const LockInfo_t& newValue, const LockInfo_t& comperand );
-	bool TryLockForWrite( const uint32 threadId );
-	void SpinLockForWrite( const uint32 threadId );
+	bool TryLockForWrite( uint32 pThreadId );
+	void SpinLockForWrite( uint32 pThreadId );
 
-	volatile LockInfo_t m_lockInfo;
-	CInterlockedInt m_nWriters;
+	volatile LockInfo_t m_lockInfo{ 0, 0 };
+	CInterlockedInt m_nWriters{ 0 };
 } ALIGN8_POST;
 
 //-----------------------------------------------------------------------------
@@ -1285,7 +1290,7 @@ public:
 	//-----------------------------------------------------
 
 	// Get the Thread object that represents the current thread, if any.
-	// Can return NULL if the current thread was not created using
+	// Can return nullptr if the current thread was not created using
 	// CThread
 	static CThread* GetCurrentCThread();
 
@@ -1416,17 +1421,17 @@ public:
 	//-----------------------------------------------------
 
 	// Master: Signal the thread, and block for a response
-	int CallWorker( unsigned, unsigned timeout = TT_INFINITE, bool fBoostWorkerPriorityToMaster = true, CFunctor* pParamFunctor = NULL );
+	int CallWorker( unsigned, unsigned timeout = TT_INFINITE, bool fBoostWorkerPriorityToMaster = true, CFunctor* pParamFunctor = nullptr );
 
 	// Worker: Signal the thread, and block for a response
 	int CallMaster( unsigned, unsigned timeout = TT_INFINITE );
 
 	// Wait for the next request
-	bool WaitForCall( unsigned dwTimeout, unsigned* pResult = NULL );
-	bool WaitForCall( unsigned* pResult = NULL );
+	bool WaitForCall( unsigned dwTimeout, unsigned* pResult = nullptr );
+	bool WaitForCall( unsigned* pResult = nullptr );
 
 	// Is there a request?
-	bool PeekCall( unsigned* pParam = NULL, CFunctor** ppParamFunctor = NULL );
+	bool PeekCall( unsigned* pParam = nullptr, CFunctor** ppParamFunctor = nullptr );
 
 	// Reply to the request
 	void Reply( unsigned );
@@ -1438,7 +1443,7 @@ public:
 	// this handle in your wait list or you won't be responsive
 	CThreadEvent& GetCallHandle();
 	// Find out what the request was
-	unsigned GetCallParam( CFunctor** ppParamFunctor = NULL ) const;
+	unsigned GetCallParam( CFunctor** ppParamFunctor = nullptr ) const;
 
 	// Boost the worker thread to the master thread, if worker thread is lesser, return old priority
 	int BoostPriority();
@@ -1449,7 +1454,7 @@ protected:
 	#endif
 	typedef uint32( __stdcall* WaitFunc_t )( int nEvents, CThreadEvent* const* pEvents, int bWaitAll, uint32 timeout );
 
-	int Call( unsigned, unsigned timeout, bool fBoost, WaitFunc_t = NULL, CFunctor* pParamFunctor = NULL );
+	int Call( unsigned, unsigned timeout, bool fBoost, WaitFunc_t = nullptr, CFunctor* pParamFunctor = nullptr );
 	int WaitForReply( unsigned timeout, WaitFunc_t );
 
 private:
@@ -1483,13 +1488,13 @@ class CMessageQueue {
 	MsgNode* Tail;
 
 public:
-	CMessageQueue( void ) {
-		Head = Tail = NULL;
+	CMessageQueue() {
+		Head = Tail = nullptr;
 	}
 
 	// check for a message. not 100% reliable - someone could grab the message first
-	bool MessageWaiting( void ) {
-		return ( Head != NULL );
+	bool MessageWaiting() {
+		return ( Head != nullptr );
 	}
 
 	void WaitMessage( T* pMsg ) {
@@ -1506,7 +1511,7 @@ public:
 			MsgNode* remove_this = Head;
 			Head = Head->Next;
 			if ( !Head )// if empty, fix tail ptr
-				Tail = NULL;
+				Tail = nullptr;
 			QueueAccessMutex.Unlock();
 			delete remove_this;
 			break;
@@ -1516,7 +1521,7 @@ public:
 	void QueueMessage( T const& Msg ) {
 		MsgNode* new1 = new MsgNode;
 		new1->Data = Msg;
-		new1->Next = NULL;
+		new1->Next = nullptr;
 		QueueAccessMutex.Lock();
 		if ( Tail ) {
 			Tail->Next = new1;
@@ -1694,9 +1699,9 @@ inline bool CThreadSpinRWLock::TryLockForWrite( const uint32 threadId ) {
 		return false;
 	}
 
-	static const LockInfo_t oldValue = { 0, 0 };
-	LockInfo_t newValue = { threadId, 0 };
-	const bool bSuccess = AssignIf( newValue, oldValue );
+	static const LockInfo_t oldValue{ 0, 0 };
+	LockInfo_t newValue{ threadId, 0 };
+	const bool bSuccess{ AssignIf( newValue, oldValue ) };
 	return bSuccess;
 }
 
@@ -1714,15 +1719,16 @@ inline bool CThreadSpinRWLock::TryLockForRead() {
 		return false;
 	}
 	// In order to grab a write lock, the number of readers must not change and no thread can own the write
-	LockInfo_t oldValue;
-	LockInfo_t newValue;
+	LockInfo_t oldValue{
+		.m_writerId = 0,
+		.m_nReaders = m_lockInfo.m_nReaders,
+	};
+	LockInfo_t newValue{
+		.m_writerId = 0,
+		.m_nReaders = oldValue.m_nReaders + 1,
+	};
 
-	oldValue.m_nReaders = m_lockInfo.m_nReaders;
-	oldValue.m_writerId = 0;
-	newValue.m_nReaders = oldValue.m_nReaders + 1;
-	newValue.m_writerId = 0;
-
-	const bool bSuccess = AssignIf( newValue, oldValue );
+	const bool bSuccess{ AssignIf( newValue, oldValue ) };
 	return bSuccess;
 }
 
