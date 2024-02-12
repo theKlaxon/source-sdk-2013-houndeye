@@ -159,10 +159,148 @@ void Error( const tchar* pMsg, ... ) {
 	va_end( args );
 }
 
+// ---- Dev*
+// TODO: Actually implement these
+/* These looked at the "developer" group */
+void DevMsg( int level, const tchar* pMsg, ... ) {
+	va_list args;
+	va_start( args, pMsg );
+	putchar( 'M' );
+	putchar( '|' );
+	vprintf( pMsg, args );
+	va_end( args );
+}
+void DevWarning( int level, const tchar* pMsg, ... ) {
+	va_list args;
+	va_start( args, pMsg );
+	putchar( 'W' );
+	putchar( '|' );
+	vprintf( pMsg, args );
+	va_end( args );
+}
+void DevLog( int level, const tchar* pMsg, ... ) {
+	va_list args;
+	va_start( args, pMsg );
+	putchar( 'L' );
+	putchar( '|' );
+	vprintf( pMsg, args );
+	va_end( args );
+}
+
+/* default level versions (level 1) */
+void DevMsg( const tchar* pMsg, ... ) {
+	va_list args;
+	va_start( args, pMsg );
+	putchar( 'M' );
+	putchar( '|' );
+	vprintf( pMsg, args );
+	va_end( args );
+}
+void DevWarning( const tchar* pMsg, ... ) {
+	va_list args;
+	va_start( args, pMsg );
+	putchar( 'W' );
+	putchar( '|' );
+	vprintf( pMsg, args );
+	va_end( args );
+}
+void DevLog( const tchar* pMsg, ... ) {
+	va_list args;
+	va_start( args, pMsg );
+	putchar( 'L' );
+	putchar( '|' );
+	vprintf( pMsg, args );
+	va_end( args );
+}
+
+/* These looked at the "console" group */
+void ConColorMsg( int level, const Color& clr, const tchar* pMsg, ... ) {
+	va_list args;
+	va_start( args, pMsg );
+	putchar( 'M' );
+	putchar( '|' );
+	vprintf( pMsg, args );
+	va_end( args );
+}
+void ConMsg( int level, const tchar* pMsg, ... ) {
+	va_list args;
+	va_start( args, pMsg );
+	putchar( 'M' );
+	putchar( '|' );
+	vprintf( pMsg, args );
+	va_end( args );
+}
+void ConWarning( int level, const tchar* pMsg, ... ) {
+	va_list args;
+	va_start( args, pMsg );
+	putchar( 'W' );
+	putchar( '|' );
+	vprintf( pMsg, args );
+	va_end( args );
+}
+void ConLog( int level, const tchar* pMsg, ... ) {
+	va_list args;
+	va_start( args, pMsg );
+	putchar( 'L' );
+	putchar( '|' );
+	vprintf( pMsg, args );
+	va_end( args );
+}
+
+/* default console version (level 1) */
+void ConColorMsg( const Color& clr, const tchar* pMsg, ... ) {
+	va_list args;
+	va_start( args, pMsg );
+	putchar( 'M' );
+	putchar( '|' );
+	vprintf( pMsg, args );
+	va_end( args );
+}
+void ConMsg( const tchar* pMsg, ... ) {
+	va_list args;
+	va_start( args, pMsg );
+	putchar( 'M' );
+	putchar( '|' );
+	vprintf( pMsg, args );
+	va_end( args );
+}
+void ConWarning( const tchar* pMsg, ... ) {
+	va_list args;
+	va_start( args, pMsg );
+	putchar( 'W' );
+	putchar( '|' );
+	vprintf( pMsg, args );
+	va_end( args );
+}
+void ConLog( const tchar* pMsg, ... ) {
+	va_list args;
+	va_start( args, pMsg );
+	putchar( 'L' );
+	putchar( '|' );
+	vprintf( pMsg, args );
+	va_end( args );
+}
+
+/* developer console version (level 2) */
+void ConDColorMsg( const Color& clr, const tchar* pMsg, ... );
+void ConDMsg( const tchar* pMsg, ... );
+void ConDWarning( const tchar* pMsg, ... );
+void ConDLog( const tchar* pMsg, ... );
+
+/* These looked at the "network" group */
+void NetMsg( int level, const tchar* pMsg, ... );
+void NetWarning( int level, const tchar* pMsg, ... );
+void NetLog( int level, const tchar* pMsg, ... );
+
+// ---- ....
+//
+void ValidateSpew( class CValidator& validator );
+
 void COM_TimestampedLog( const char* fmt, ... ) {
 	AssertUnreachable();
 }
 
+// ---- Validity asserts
 // TODO: Figure out how to do these without crashing the engine
 void _AssertValidReadPtr( void* ptr, int count ) { }
 void _AssertValidWritePtr( void* ptr, int count ) { }

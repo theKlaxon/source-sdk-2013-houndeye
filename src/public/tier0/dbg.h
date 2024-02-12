@@ -496,12 +496,12 @@ DBG_INTERFACE void COM_TimestampedLog( PRINTF_FORMAT_STRING char const* fmt, ...
 #if !defined( _RETAIL )
 	class CScopeMsg {
 	public:
-		CScopeMsg( const char* pszScope ) {
-			m_pszScope = pszScope;
-			Msg( "%s { ", pszScope );
+		explicit CScopeMsg( const char* pszScope ) {
+			this->m_pszScope = pszScope;
+			Msg( "// REGION %s", pszScope );
 		}
 		~CScopeMsg() {
-			Msg( "} %s", m_pszScope );
+			Msg( "// ENDREGION %s", this->m_pszScope );
 		}
 		const char* m_pszScope;
 	};
@@ -553,13 +553,13 @@ DBG_INTERFACE void AssertValidStringPtr( const tchar* ptr, int maxchar = 0xFFFFF
 #if defined( _DEBUG )
 	class CReentryGuard {
 	public:
-		CReentryGuard( int* pSemaphore )
+		explicit CReentryGuard( int* pSemaphore )
 			: m_pSemaphore( pSemaphore ) {
-			++( *m_pSemaphore );
+			*this->m_pSemaphore += 1;
 		}
 
 		~CReentryGuard() {
-			--( *m_pSemaphore );
+			*this->m_pSemaphore -= 1;
 		}
 
 	private:
