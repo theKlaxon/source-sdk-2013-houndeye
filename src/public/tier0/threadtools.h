@@ -175,18 +175,18 @@ enum ThreadWaitResult_t {
 
 #if defined( USE_INTRINSIC_INTERLOCKED )
 	extern "C" {
-	long __cdecl _InterlockedIncrement( volatile long* );
-	long __cdecl _InterlockedDecrement( volatile long* );
-	long __cdecl _InterlockedExchange( volatile long*, long );
-	long __cdecl _InterlockedExchangeAdd( volatile long*, long );
-	long __cdecl _InterlockedCompareExchange( volatile long*, long, long );
+		long __cdecl _InterlockedIncrement( volatile long* );
+		long __cdecl _InterlockedDecrement( volatile long* );
+		long __cdecl _InterlockedExchange( volatile long*, long );
+		long __cdecl _InterlockedExchangeAdd( volatile long*, long );
+		long __cdecl _InterlockedCompareExchange( volatile long*, long, long );
 	}
 
-		#pragma intrinsic( _InterlockedCompareExchange )
-		#pragma intrinsic( _InterlockedDecrement )
-		#pragma intrinsic( _InterlockedExchange )
-		#pragma intrinsic( _InterlockedExchangeAdd )
-		#pragma intrinsic( _InterlockedIncrement )
+	#pragma intrinsic( _InterlockedCompareExchange )
+	#pragma intrinsic( _InterlockedDecrement )
+	#pragma intrinsic( _InterlockedExchange )
+	#pragma intrinsic( _InterlockedExchangeAdd )
+	#pragma intrinsic( _InterlockedIncrement )
 
 	inline long ThreadInterlockedIncrement( long volatile* p ) {
 		Assert( (size_t) p % 4 == 0 );
@@ -216,8 +216,8 @@ enum ThreadWaitResult_t {
 	PLATFORM_INTERFACE long ThreadInterlockedIncrement( long volatile* );
 	PLATFORM_INTERFACE long ThreadInterlockedDecrement( long volatile* );
 	PLATFORM_INTERFACE long ThreadInterlockedExchange( long volatile*, long value );
-	PLATFORM_INTERFACE long ThreadInterlockedExchangeAdd( long volatile*, long value );
-	PLATFORM_INTERFACE long ThreadInterlockedCompareExchange( long volatile*, long value, long comperand );
+	PLATFORM_INTERFACE long ThreadInterlockedExchangeAdd( long volatile*, long pValue );
+	PLATFORM_INTERFACE long ThreadInterlockedCompareExchange( long volatile*, long pValue, long comperand );
 	PLATFORM_INTERFACE bool ThreadInterlockedAssignIf( long volatile*, long value, long comperand );
 #endif
 
@@ -252,7 +252,7 @@ inline bool ThreadInterlockedAssignPointerToConstIf( void const* volatile* p, vo
 
 PLATFORM_INTERFACE int64 ThreadInterlockedIncrement64( int64 volatile* ) NOINLINE;
 PLATFORM_INTERFACE int64 ThreadInterlockedDecrement64( int64 volatile* ) NOINLINE;
-PLATFORM_INTERFACE int64 ThreadInterlockedCompareExchange64( int64 volatile*, int64 value, int64 comperand ) NOINLINE;
+PLATFORM_INTERFACE int64 ThreadInterlockedCompareExchange64( int64 volatile*, int64 pValue, int64 comperand ) NOINLINE;
 PLATFORM_INTERFACE int64 ThreadInterlockedExchange64( int64 volatile*, int64 value ) NOINLINE;
 PLATFORM_INTERFACE int64 ThreadInterlockedExchangeAdd64( int64 volatile*, int64 value ) NOINLINE;
 PLATFORM_INTERFACE bool ThreadInterlockedAssignIf64( volatile int64* pDest, int64 value, int64 comperand ) NOINLINE;

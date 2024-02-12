@@ -6,6 +6,7 @@
 	#include <processthreadsapi.h>
 #endif
 
+
 static ThreadedLoadLibraryFunc_t g_pThrLoadLibFunc;
 
 
@@ -46,16 +47,56 @@ void ThreadSetAffinity( ThreadHandle_t hThread, int nAffinityMask );
 #endif
 
 #if !defined( USE_INTRINSIC_INTERLOCKED )
-	long ThreadInterlockedIncrement( long volatile* ) { }
-	long ThreadInterlockedDecrement( long volatile* );
-	long ThreadInterlockedExchange( long volatile*, long value ) { }
-	long ThreadInterlockedExchangeAdd( long volatile*, long value );
-	long ThreadInterlockedCompareExchange( long volatile*, long value, long comperand );
-	bool ThreadInterlockedAssignIf( long volatile*, long value, long comperand ) { }
+	long ThreadInterlockedIncrement( long volatile* pIt ) { // NOLINT(*-non-const-parameter)
+		// type __atomic_add_fetch(type *ptr, type val, int memorder)
+		return __atomic_add_fetch( pIt, 1, __ATOMIC_ACQ_REL );
+	}
+	long ThreadInterlockedDecrement( long volatile* pIt ) { // NOLINT(*-non-const-parameter)
+		// type __atomic_sub_fetch(type *ptr, type val, int memorder)
+		return __atomic_sub_fetch( pIt, 1, __ATOMIC_ACQ_REL );
+	}
+	long ThreadInterlockedExchange( long volatile* pIt, long pValue ) { // NOLINT(*-non-const-parameter)
+		// type __atomic_exchange_n(type *ptr, type val, int memorder)
+		return __atomic_exchange_n( pIt, pValue, __ATOMIC_ACQ_REL );
+	}
+	long ThreadInterlockedExchangeAdd( long volatile* pIt, long pValue ) { // NOLINT(*-non-const-parameter)
+		// type __atomic_fetch_add(type *ptr, type val, int memorder)
+		return __atomic_fetch_add( pIt, pValue, __ATOMIC_ACQ_REL );
+	}
+	long ThreadInterlockedCompareExchange( long volatile* pIt, long pValue, long comperand ) { // NOLINT(*-non-const-parameter)
+		long last;
+		long expected = comperand;
+		do {
+			// void __atomic_load (type *ptr, type *ret, int memorder)
+			__atomic_load( pIt, &last, __ATOMIC_RELAXED );
+			// bool __atomic_compare_exchange_n(type *ptr, type *expected, type desired, bool weak, int success_memorder, int failure_memorder)
+		} while (! __atomic_compare_exchange_n( pIt, &expected, pValue, false, __ATOMIC_SEQ_CST, __ATOMIC_RELAXED ) );
+		return last;
+	}
+	bool ThreadInterlockedAssignIf( long volatile* pIt, long value, long comperand ) { // NOLINT(*-non-const-parameter)
+		// bool __atomic_compare_exchange_n(type *ptr, type *expected, type desired, bool weak, int success_memorder, int failure_memorder)
+		return __atomic_compare_exchange_n( pIt, &comperand, value, false, __ATOMIC_SEQ_CST, __ATOMIC_RELAXED );
+	}
 #endif
-int64 ThreadInterlockedIncrement64( int64 volatile* );
-int64 ThreadInterlockedDecrement64( int64 volatile* );
-int64 ThreadInterlockedCompareExchange64( int64 volatile*, int64 value, int64 comperand );
-int64 ThreadInterlockedExchange64( int64 volatile*, int64 value );
-int64 ThreadInterlockedExchangeAdd64( int64 volatile*, int64 value );
-bool ThreadInterlockedAssignIf64( volatile int64* pDest, int64 value, int64 comperand ) { }
+int64 ThreadInterlockedIncrement64( int64 volatile* pIt ) {// NOLINT(*-non-const-parameter)
+	return __atomic_add_fetch( pIt, 1, __ATOMIC_ACQ_REL );
+}
+int64 ThreadInterlockedDecrement64( int64 volatile* pIt ) {// NOLINT(*-non-const-parameter)
+	return __atomic_sub_fetch( pIt, 1, __ATOMIC_ACQ_REL );
+}
+int64 ThreadInterlockedCompareExchange64( int64 volatile* pIt, int64 pValue, int64 comperand ) {// NOLINT(*-non-const-parameter)
+	int64 last;
+	int64 expected = comperand;
+	do __atomic_load( pIt, &last, __ATOMIC_RELAXED );
+	while (! __atomic_compare_exchange_n( pIt, &expected, pValue, false, __ATOMIC_SEQ_CST, __ATOMIC_RELAXED ) );
+	return last;
+}
+int64 ThreadInterlockedExchange64( int64 volatile* pIt, int64 pValue ) {                        // NOLINT(*-non-const-parameter)
+	return __atomic_exchange_n( pIt, pValue, __ATOMIC_ACQ_REL );
+}
+int64 ThreadInterlockedExchangeAdd64( int64 volatile* pIt, int64 pValue ) {// NOLINT(*-non-const-parameter)
+	return __atomic_fetch_add( pIt, pValue, __ATOMIC_ACQ_REL );
+}
+bool ThreadInterlockedAssignIf64( volatile int64* pDest, int64 pValue, int64 comperand ) { // NOLINT(*-non-const-parameter)
+	return __atomic_compare_exchange_n( pDest, &comperand, pValue, false, __ATOMIC_SEQ_CST, __ATOMIC_RELAXED );
+}
