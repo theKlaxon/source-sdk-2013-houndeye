@@ -3,12 +3,15 @@
 //
 #include "tier0/platform.h"
 #include "tier0/dbg.h"
+#include <SDL2/SDL_cpuinfo.h>
 #include <cstdio>
 #include <ctime>
 #include <fstream>
 
 #if IsWindows()
 	#include <sysinfoapi.h>
+#elif IsPosix()
+	#include <cpuid.h>
 #endif
 
 double MonotonicTime() {
@@ -69,7 +72,52 @@ struct tm* Plat_localtime( const time_t* timep, struct tm* result ) {
 	return localtime_r( timep, result );
 }
 
-const CPUInformation* GetCPUInformation();
+const CPUInformation* GetCPUInformation() {
+	static char vendor[13] { 0 };
+	static CPUInformation info{
+		.m_Size   = sizeof( CPUInformation ),
+		.m_bRDTSC = false,
+		.m_bCMOV  = true,
+		.m_bFCMOV = false,
+		.m_bSSE   = true,   // NOTE: All x86 processors nowadays support this
+		.m_bSSE2  = true,   // NOTE: All x86 processors nowadays support this
+		.m_b3DNow = SDL_Has3DNow(),
+		.m_bMMX   = SDL_HasMMX(),
+		.m_bHT    = true,   // NOTE: All x86 processors nowadays support this
+
+		.m_nLogicalProcessors = SDL_GetCPUCount(),
+		.m_nPhysicalProcessors = SDL_GetCPUCount(),
+
+		.m_bSSE3  = SDL_HasSSE3(),
+		.m_bSSSE3 = true,   // NOTE: All x86 processors nowadays support this
+		.m_bSSE4a = false,
+		.m_bSSE41 = SDL_HasSSE41(),
+		.m_bSSE42 = SDL_HasSSE42(),
+
+		.m_Speed = 3'000'000'000,
+
+		.m_szProcessorID = vendor,
+
+		.m_nModel = 0,
+		.m_nFeatures = { 0, 0, 0 },
+	};
+
+	if (! info.m_szProcessorID[0] ) {
+		int regs[4] { 0 };
+		// get vendor
+		#if IsPosix()
+			__cpuid( 0, regs[0], regs[1], regs[2], regs[3] );
+		#elif IsWindows()
+			__cpuid( regs, 0 );
+		#endif
+		memcpy( vendor + 0, &regs[1], 4 );
+		memcpy( vendor + 4, &regs[3], 4 );
+		memcpy( vendor + 8, &regs[2], 4 );
+		// TODO?: get clock speed ( linux: https://gist.github.com/stevedoyle/1319053, win: ??? )
+	}
+
+	return &info;
+}
 
 float GetCPUUsage();
 

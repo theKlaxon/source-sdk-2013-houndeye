@@ -977,7 +977,7 @@ public:                                              \
 
 // Processor Information:
 struct CPUInformation {
-	int m_Size;// Size of this structure, for forward compatability.
+	int m_Size;       // Size of this structure, for forward compatability.
 
 	bool m_bRDTSC : 1,// Is RDTSC supported?
 		m_bCMOV : 1,  // Is CMOV supported?
@@ -997,14 +997,12 @@ struct CPUInformation {
 		m_bSSE41 : 1,
 		m_bSSE42 : 1;
 
-	int64 m_Speed;// In cycles per second.
+	int64 m_Speed;    // In cycles per second.
 
 	tchar* m_szProcessorID;// Processor vendor Identification.
 
 	uint32 m_nModel;
 	uint32 m_nFeatures[ 3 ];
-
-	CPUInformation() : m_Size( 0 ) {}
 };
 
 // Have to return a pointer, not a reference, because references are not compatible with the
