@@ -3,7 +3,7 @@
 //
 #include "tier0/platform.h"
 #include "tier0/dbg.h"
-#include <SDL2/SDL_cpuinfo.h>
+#include <SDL3/SDL_cpuinfo.h>
 #include <cstdio>
 #include <ctime>
 #include <fstream>
@@ -81,7 +81,7 @@ const CPUInformation* GetCPUInformation() {
 		.m_bFCMOV = false,
 		.m_bSSE   = true,   // NOTE: All x86 processors nowadays support this
 		.m_bSSE2  = true,   // NOTE: All x86 processors nowadays support this
-		.m_b3DNow = SDL_Has3DNow(),
+		.m_b3DNow = false,
 		.m_bMMX   = SDL_HasMMX(),
 		.m_bHT    = true,   // NOTE: All x86 processors nowadays support this
 
