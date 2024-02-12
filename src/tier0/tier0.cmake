@@ -35,10 +35,7 @@ set( TIER0_SOURCE_FILES
 	"${SRCDIR}/public/tier0/memdbgon.h"
 	"${SRCDIR}/public/tier0/memoverride.cpp"
 	"${SRCDIR}/public/tier0/minidump.h"
-	"${SRCDIR}/public/tier0/P4PerformanceCounters.h"
-	"${SRCDIR}/public/tier0/P5P6PerformanceCounters.h"
 	"${SRCDIR}/public/tier0/platform.h"
-	"${SRCDIR}/public/tier0/PMELib.h"
 	"${SRCDIR}/public/tier0/pointeroverride.asm"
 	"${SRCDIR}/public/tier0/progressbar.h"
 	"${SRCDIR}/public/tier0/protected_things.h"
@@ -62,6 +59,9 @@ set( TIER0_SOURCE_FILES
 add_library( tier02 SHARED ${TIER0_SOURCE_FILES} )
 target_compile_definitions( tier02
 	PRIVATE TIER0_DLL_EXPORT
+)
+target_link_libraries( tier02
+	PRIVATE SDL3-shared
 )
 link_to_bin( TARGET tier02 )
 declare_library( TARGET tier02 )
