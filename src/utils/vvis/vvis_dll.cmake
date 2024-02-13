@@ -70,12 +70,8 @@ set_target_properties( vvis_dll
 		PREFIX ""
 )
 
-
 target_include_directories( vvis_dll
 	PRIVATE "${SRCDIR}/utils/common"
-)
-target_link_directories( vvis_dll
-	PRIVATE "${GAMEDIR}/bin"
 )
 
 target_compile_definitions( vvis_dll
@@ -89,9 +85,9 @@ target_link_libraries( vvis_dll
 		$<${IS_WINDOWS}:ws2_32>
 
 		lzma
-		"${CMAKE_CURRENT_BINARY_DIR}/libtier02.so" # FIXME: Why is the full path needed?
+		${ASRC_tier02}
 		tier1
 		mathlib
-		"${CMAKE_CURRENT_BINARY_DIR}/libvstdlib2.so" # FIXME: Why is the full path needed?
+		${ASRC_vstdlib2}
 		tier2
 )

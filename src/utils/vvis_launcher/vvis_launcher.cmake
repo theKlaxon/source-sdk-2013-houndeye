@@ -29,9 +29,9 @@ endif ()
 
 target_link_libraries( vvis_launcher
 	PRIVATE
-		"${CMAKE_CURRENT_BINARY_DIR}/libtier02.so" # FIXME: Why is the full path needed?
+		${ASRC_tier02}
 		tier1
-		"${CMAKE_CURRENT_BINARY_DIR}/libvstdlib2.so" # FIXME: Why is the full path needed?
+		${ASRC_vstdlib2}
 		${CMAKE_DL_LIBS}
 )
 add_dependencies( vvis_launcher vvis_dll )
