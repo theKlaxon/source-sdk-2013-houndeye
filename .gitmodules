@@ -1,3 +1,6 @@
 [submodule "thirdparty/SDL"]
 	path = thirdparty/SDL
 	url = git@github.com:libsdl-org/SDL.git
+[submodule "thirdparty/VPKEdit"]
+	path = thirdparty/VPKEdit
+	url = git@github.com:craftablescience/VPKEdit.git
