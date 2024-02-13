@@ -44,9 +44,8 @@ void CKeyValuesSystem::InvalidateCacheForFile( const char* resourceName, const c
 }
 
 CKeyValuesSystem::~CKeyValuesSystem() {
-	auto val{ this->m_AllocMemory.load() };
-	if ( val )
-		Warning( "[CKeyValuesSystem] Some memory was leaked!! size: %llu bytes", val );
+	if (! this->m_LeakList.empty() )
+		Warning( "[CKeyValuesSystem] Some memory was leaked!!" );
 }
 
 static CKeyValuesSystem g_KeyValueSystem{};
