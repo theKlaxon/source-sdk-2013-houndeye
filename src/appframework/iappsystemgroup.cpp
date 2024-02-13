@@ -36,13 +36,13 @@ int CAppSystemGroup::Run() {
 	// Initialize
 	res = this->InitSystems();
 	// Run main
-	res = this->Main();
+	this->Main();
 	// Shutdown
-	res = this->ShutdownSystems();
+	this->ShutdownSystems();
 	// Disconnect
-	res = this->DisconnectSystems();
+	this->DisconnectSystems();
 	// Unload
-	res = this->UnloadAllModules();
+	this->UnloadAllModules();
 }
 
 int CAppSystemGroup::Startup() { }
