@@ -215,7 +215,11 @@ bool CThreadEvent::Set() {
 	return err == 0;
 }
 bool CThreadEvent::Reset() {
-	this->m_cSet = false;
+	pthread_mutex_lock( &this->m_Mutex );
+	auto wasSet{ this->m_cSet == 1 };
+	this->m_cSet = 0;
+	pthread_mutex_unlock( &this->m_Mutex );
+	return wasSet;
 }
 bool CThreadEvent::Check() {
 	pthread_mutex_lock( &this->m_Mutex );
