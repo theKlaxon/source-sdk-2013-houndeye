@@ -191,7 +191,7 @@ DBG_INTERFACE void SpewActivate( const tchar* pGroupName, int level );
 DBG_INTERFACE bool IsSpewActive( const tchar* pGroupName, int level );
 
 /* Used to display messages, should never be called directly. */
-DBG_INTERFACE void _SpewInfo( SpewType_t type, const tchar* pFile, int line );
+DBG_INTERFACE void _SpewInfo( SpewType_t pType, const tchar* pFile, int pLine );
 DBG_INTERFACE SpewRetval_t _SpewMessage( PRINTF_FORMAT_STRING const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
 DBG_INTERFACE SpewRetval_t _DSpewMessage( const tchar* pGroupName, int level, PRINTF_FORMAT_STRING const tchar* pMsg, ... ) FMTFUNCTION( 3, 4 );
 DBG_INTERFACE SpewRetval_t ColorSpewMessage( SpewType_t type, const Color* pColor, PRINTF_FORMAT_STRING const tchar* pMsg, ... ) FMTFUNCTION( 3, 4 );
