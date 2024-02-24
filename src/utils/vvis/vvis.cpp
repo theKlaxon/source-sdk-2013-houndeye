@@ -875,10 +875,9 @@ int RunVVis( int argc, char** argv ) {
 
 	verbose = false;
 
+	CmdLib_InitFileSystem( argv[ argc - 1 ] );
 	LoadCmdLineFromFile( argc, argv, source, "vvis" );
 	int i = ParseCommandLine( argc, argv );
-
-	CmdLib_InitFileSystem( argv[ argc - 1 ] );
 
 	// XXX(johns): Somewhat preserving legacy behavior here to avoid changing tool behavior, there's no specific rhyme
 	//             or reason to this. We get just the base name we were passed, discarding any directory or extension
