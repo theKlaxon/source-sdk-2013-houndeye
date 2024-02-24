@@ -34,4 +34,4 @@ target_link_libraries( vvis_launcher
 		${ASRC_vstdlib2}
 		${CMAKE_DL_LIBS}
 )
-add_dependencies( vvis_launcher vvis_dll )
+add_dependencies( vvis_launcher vvis_dll filesystem_stdio )

@@ -354,7 +354,7 @@ BEGIN_BYTESWAP_DATADESC( dgamelump_t )
 	DEFINE_FIELD( filelen, FIELD_INTEGER ),
 END_BYTESWAP_DATADESC()
 
-	// From gamebspfile.h
+// From gamebspfile.h
 BEGIN_BYTESWAP_DATADESC( StaticPropDictLump_t )
 	DEFINE_ARRAY( m_Name, FIELD_CHARACTER, STATIC_PROP_NAME_LENGTH ),
 END_BYTESWAP_DATADESC()
@@ -443,7 +443,7 @@ BEGIN_BYTESWAP_DATADESC( DetailPropLightstylesLump_t )
 	DEFINE_FIELD( m_Style, FIELD_CHARACTER ),
 END_BYTESWAP_DATADESC()
 
-	// From vradstaticprops.h
+// From vradstaticprops.h
 namespace HardwareVerts {
 	BEGIN_BYTESWAP_DATADESC( MeshHeader_t )
 		DEFINE_FIELD( m_nLod, FIELD_INTEGER ),
@@ -571,10 +571,10 @@ int numleafs;
 
 CUtlVector<dleafambientindex_t> g_LeafAmbientIndexLDR;
 CUtlVector<dleafambientindex_t> g_LeafAmbientIndexHDR;
-CUtlVector<dleafambientindex_t>* g_pLeafAmbientIndex = NULL;
+CUtlVector<dleafambientindex_t>* g_pLeafAmbientIndex = nullptr;
 CUtlVector<dleafambientlighting_t> g_LeafAmbientLightingLDR;
 CUtlVector<dleafambientlighting_t> g_LeafAmbientLightingHDR;
-CUtlVector<dleafambientlighting_t>* g_pLeafAmbientLighting = NULL;
+CUtlVector<dleafambientlighting_t>* g_pLeafAmbientLighting = nullptr;
 
 unsigned short g_LeafMinDistToWater[ MAX_MAP_LEAFS ];
 
@@ -681,11 +681,11 @@ dwateroverlay_t g_WaterOverlays[ MAX_MAP_WATEROVERLAYS ];
 CUtlVector<char> g_TexDataStringData;
 CUtlVector<int> g_TexDataStringTable;
 
-byte* g_pPhysCollide = NULL;
+byte* g_pPhysCollide = nullptr;
 int g_PhysCollideSize = 0;
 int g_MapRevision = 0;
 
-byte* g_pPhysDisp = NULL;
+byte* g_pPhysDisp = nullptr;
 int g_PhysDispSize = 0;
 
 CUtlVector<doccluderdata_t> g_OccluderData( 256, 256 );
@@ -1441,24 +1441,24 @@ struct swapmoppsurfaceheader_t : swapcollideheader_t {
 };
 
 BEGIN_BYTESWAP_DATADESC( swapcollideheader_t )
-DEFINE_FIELD( size, FIELD_INTEGER ),
+	DEFINE_FIELD( size, FIELD_INTEGER ),
 	DEFINE_FIELD( vphysicsID, FIELD_INTEGER ),
 	DEFINE_FIELD( version, FIELD_SHORT ),
 	DEFINE_FIELD( modelType, FIELD_SHORT ),
-	END_BYTESWAP_DATADESC()
+END_BYTESWAP_DATADESC()
 
-		BEGIN_BYTESWAP_DATADESC_( swapcompactsurfaceheader_t, swapcollideheader_t )
-			DEFINE_FIELD( surfaceSize, FIELD_INTEGER ),
+BEGIN_BYTESWAP_DATADESC_( swapcompactsurfaceheader_t, swapcollideheader_t )
+	DEFINE_FIELD( surfaceSize, FIELD_INTEGER ),
 	DEFINE_FIELD( dragAxisAreas, FIELD_VECTOR ),
 	DEFINE_FIELD( axisMapSize, FIELD_INTEGER ),
-	END_BYTESWAP_DATADESC()
+END_BYTESWAP_DATADESC()
 
-		BEGIN_BYTESWAP_DATADESC_( swapmoppsurfaceheader_t, swapcollideheader_t )
-			DEFINE_FIELD( moppSize, FIELD_INTEGER ),
-	END_BYTESWAP_DATADESC()
+BEGIN_BYTESWAP_DATADESC_( swapmoppsurfaceheader_t, swapcollideheader_t )
+	DEFINE_FIELD( moppSize, FIELD_INTEGER ),
+END_BYTESWAP_DATADESC()
 
 
-		static void SwapPhyscollideLump( byte* pDestBase, byte* pSrcBase, unsigned int& count ) {
+static void SwapPhyscollideLump( byte* pDestBase, byte* pSrcBase, unsigned int& count ) {
 	IPhysicsCollision* physcollision = NULL;
 	CSysModule* pPhysicsModule = g_pFullFileSystem->LoadModule( "vphysics" );
 	if ( pPhysicsModule ) {
