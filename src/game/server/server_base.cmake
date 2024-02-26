@@ -1,11 +1,9 @@
 # server_base.cmake
 
-include_guard(GLOBAL)
+include_guard( GLOBAL )
 
-set(SERVER_BASE_DIR ${CMAKE_CURRENT_LIST_DIR})
-set(
-	SERVER_BASE_SOURCE_FILES
-
+set( SERVER_BASE_DIR ${CMAKE_CURRENT_LIST_DIR} )
+set( SERVER_BASE_SOURCE_FILES
 	# Replay
 	"${SERVER_BASE_DIR}/gamedll_replay.cpp"
 	"${SRCDIR}/common/replay/ireplaysessionrecorder.h"
@@ -940,58 +938,58 @@ set_source_files_properties(
 	PROPERTIES SKIP_PRECOMPILE_HEADERS ON
 )
 
-function(target_use_server_base target EXCLUDE_SOURCES)
-	set(USED_SOURCES ${SERVER_BASE_SOURCE_FILES})
+function( target_use_server_base target EXCLUDE_SOURCES )
+	set( USED_SOURCES ${SERVER_BASE_SOURCE_FILES} )
 
-	if (${EXCLUDE_SOURCES})
-		list(REMOVE_ITEM USED_SOURCES ${${EXCLUDE_SOURCES}})
+	if ( ${EXCLUDE_SOURCES} )
+		list( REMOVE_ITEM USED_SOURCES ${${EXCLUDE_SOURCES}} )
 	endif()
 
 
-	target_sources(
-		${target} PRIVATE
-		${USED_SOURCES}
+	target_sources( ${target}
+		PRIVATE
+			${USED_SOURCES}
 	)
 
-	target_include_directories(
-		${target} PRIVATE
-		"${SERVER_BASE_DIR}"
-		"${SRCDIR}/game/shared"
-		"${SRCDIR}/utils/common"
-		"${SRCDIR}/game/shared/econ"
-		"${SRCDIR}/game/server/NextBot"
+	target_include_directories( ${target}
+		PRIVATE
+			"${SERVER_BASE_DIR}"
+			"${SRCDIR}/game/shared"
+			"${SRCDIR}/utils/common"
+			"${SRCDIR}/game/shared/econ"
+			"${SRCDIR}/game/server/NextBot"
 	)
 
-	target_compile_definitions(
-		${target} PRIVATE
-		GAME_DLL
-		VECTOR
-		VERSION_SAFE_STEAM_API_INTERFACES
-		PROTECTED_THINGS_ENABLE
-		sprintf=use_Q_snprintf_instead_of_sprintf
-		strncpy=use_Q_strncpy_instead
-		_snprintf=use_Q_snprintf_instead
-		$<${IS_POSIX}:SWDS>
-		$<${IS_WINDOWS}:fopen=dont_use_fopen>
+	target_compile_definitions( ${target}
+		PRIVATE
+			GAME_DLL
+			VECTOR
+			VERSION_SAFE_STEAM_API_INTERFACES
+			PROTECTED_THINGS_ENABLE
+			sprintf=use_Q_snprintf_instead_of_sprintf
+			strncpy=use_Q_strncpy_instead
+			_snprintf=use_Q_snprintf_instead
+			$<${IS_POSIX}:SWDS>
+			$<${IS_WINDOWS}:fopen=dont_use_fopen>
 	)
 
-	target_precompile_headers(
-		${target} PRIVATE
-		"${SERVER_BASE_DIR}/cbase.h"
+	target_precompile_headers( ${target}
+		PRIVATE
+			"${SERVER_BASE_DIR}/cbase.h"
 	)
 
-	target_link_libraries(
-		${target} PRIVATE
-		$<${IS_WINDOWS}:winmm>
+	target_link_libraries( ${target}
+		PRIVATE
+			$<${IS_WINDOWS}:winmm>
 
-		"${LIBPUBLIC}/choreoobjects${CMAKE_STATIC_LIBRARY_SUFFIX}"
-		"${LIBPUBLIC}/particles${CMAKE_STATIC_LIBRARY_SUFFIX}"
-		"${LIBPUBLIC}/dmxloader${CMAKE_STATIC_LIBRARY_SUFFIX}"
-		${ASRC_tier02}
-		mathlib
-		tier2
-		tier3
-		steam_api
+			"${LIBPUBLIC}/choreoobjects${CMAKE_STATIC_LIBRARY_SUFFIX}"
+			"${LIBPUBLIC}/particles${CMAKE_STATIC_LIBRARY_SUFFIX}"
+			"${LIBPUBLIC}/dmxloader${CMAKE_STATIC_LIBRARY_SUFFIX}"
+			${ASRC_tier02}
+			mathlib
+			tier2
+			tier3
+			steam_api
 	)
 
 endfunction()

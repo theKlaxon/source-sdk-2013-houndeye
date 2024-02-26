@@ -1,12 +1,11 @@
 # client_base.cmake
 
-include_guard(GLOBAL)
+include_guard( GLOBAL )
 
-set(CLIENT_BASE_DIR ${CMAKE_CURRENT_LIST_DIR})
+set( CLIENT_BASE_DIR ${CMAKE_CURRENT_LIST_DIR} )
 
 # Replay sources behind BUILD_REPLAY
-set(
-	REPLAY_SOURCE_FILES
+set( REPLAY_SOURCE_FILES
 	"${CLIENT_BASE_DIR}/replay/gamedefs.h"
 	"${CLIENT_BASE_DIR}/replay/gamedefs.cpp"
 	"${CLIENT_BASE_DIR}/replay/replay_ragdoll.cpp"
@@ -79,9 +78,7 @@ set(
 	"${SRCDIR}/public/movieobjects/timeutils.h"
 )
 
-set(
-	CLIENT_BASE_SOURCE_FILES
-
+set( CLIENT_BASE_SOURCE_FILES
 	# Replay
 	"${CLIENT_BASE_DIR}/replay/replaycamera.cpp"
 	"${CLIENT_BASE_DIR}/replay/replaycamera.h"
@@ -1148,80 +1145,79 @@ set_source_files_properties(
 	"${CLIENT_BASE_DIR}/mumble.cpp"
 	"${SRCDIR}/public/renamed_recvtable_compat.cpp"
 	"${CLIENT_BASE_DIR}/rendertexture.cpp"
-	PROPERTIES SKIP_PRECOMPILE_HEADERS ON
+	PROPERTIES
+		SKIP_PRECOMPILE_HEADERS ON
 )
 
-function(target_use_client_base target EXCLUDE_SOURCES)
-	set(USED_SOURCES ${CLIENT_BASE_SOURCE_FILES})
+function( target_use_client_base target EXCLUDE_SOURCES )
+	set( USED_SOURCES ${CLIENT_BASE_SOURCE_FILES} )
 
-	if (${EXCLUDE_SOURCES})
-		list(REMOVE_ITEM USED_SOURCES ${${EXCLUDE_SOURCES}})
+	if ( ${EXCLUDE_SOURCES} )
+		list( REMOVE_ITEM USED_SOURCES ${${EXCLUDE_SOURCES}} )
 	endif()
 
-	target_sources(
-		${target} PRIVATE
-		${USED_SOURCES}
+	target_sources( ${target}
+		PRIVATE
+			${USED_SOURCES}
 	)
 
-	target_include_directories(
-		${target} PRIVATE
-		"${CLIENT_BASE_DIR}"
-		"${SRCDIR}/vgui2/include"
-		"${SRCDIR}/vgui2/controls"
-		"${SRCDIR}/game/shared"
-		"${CLIENT_BASE_DIR}/game_controls"
-		"${SRCDIR}/thirdparty/sixensesdk/include"
+	target_include_directories( ${target}
+		PRIVATE
+			"${CLIENT_BASE_DIR}"
+			"${SRCDIR}/vgui2/include"
+			"${SRCDIR}/vgui2/controls"
+			"${SRCDIR}/game/shared"
+			"${CLIENT_BASE_DIR}/game_controls"
+			"${SRCDIR}/thirdparty/sixensesdk/include"
 	)
 
-	target_compile_definitions(
-		${target} PRIVATE
-		NO_STRING_T
-		CLIENT_DLL
-		VECTOR
-		VERSION_SAFE_STEAM_API_INTERFACES
-		PROTECTED_THINGS_ENABLE
-		strncpy=use_Q_strncpy_instead
-		_snprintf=use_Q_snprintf_instead
-		$<${IS_WINDOWS}:fopen=dont_use_fopen>
-		$<${IS_LINUX}:USE_WEBM_FOR_REPLAY>
-		$<$<AND:${IS_WINDOWS},${BUILD_REPLAY}>:CURL_STATICLIB>
+	target_compile_definitions( ${target}
+		PRIVATE
+			NO_STRING_T
+			CLIENT_DLL
+			VECTOR
+			VERSION_SAFE_STEAM_API_INTERFACES
+			PROTECTED_THINGS_ENABLE
+			strncpy=use_Q_strncpy_instead
+			_snprintf=use_Q_snprintf_instead
+			$<${IS_WINDOWS}:fopen=dont_use_fopen>
+			$<${IS_LINUX}:USE_WEBM_FOR_REPLAY>
+			$<$<AND:${IS_WINDOWS},${BUILD_REPLAY}>:CURL_STATICLIB>
 	)
 
-	target_precompile_headers(
-		${target} PRIVATE
-		"${CLIENT_BASE_DIR}/cbase.h"
+	target_precompile_headers( ${target}
+		PRIVATE
+			"${CLIENT_BASE_DIR}/cbase.h"
 	)
 
-	target_link_libraries(
-		${target} PRIVATE
+	target_link_libraries( ${target}
+		PRIVATE
+			$<${IS_LINUX}:rt>
+			$<${IS_WINDOWS}:winmm>
+			"$<$<AND:${IS_WINDOWS},${BUILD_REPLAY}>:wsock32;Ws2_32>"
+			"${LIBPUBLIC}/particles${CMAKE_STATIC_LIBRARY_SUFFIX}"
 
-		$<${IS_LINUX}:rt>
-		$<${IS_WINDOWS}:winmm>
-		"$<$<AND:${IS_WINDOWS},${BUILD_REPLAY}>:wsock32;Ws2_32>"
-		"${LIBPUBLIC}/particles${CMAKE_STATIC_LIBRARY_SUFFIX}"
+			"${LIBPUBLIC}/bitmap${CMAKE_STATIC_LIBRARY_SUFFIX}"
+			"${LIBPUBLIC}/choreoobjects${CMAKE_STATIC_LIBRARY_SUFFIX}"
+			"${LIBPUBLIC}/dmxloader${CMAKE_STATIC_LIBRARY_SUFFIX}"
+			${ASRC_tier02}
+			mathlib
+			"${LIBPUBLIC}/matsys_controls${CMAKE_STATIC_LIBRARY_SUFFIX}"
+			tier1
+			"${LIBPUBLIC}/tier2${CMAKE_STATIC_LIBRARY_SUFFIX}"
+			"${LIBPUBLIC}/tier3${CMAKE_STATIC_LIBRARY_SUFFIX}"
+			vgui_controls
+			"${LIBPUBLIC}/vtf${CMAKE_STATIC_LIBRARY_SUFFIX}"
+			steam_api
 
-		"${LIBPUBLIC}/bitmap${CMAKE_STATIC_LIBRARY_SUFFIX}"
-		"${LIBPUBLIC}/choreoobjects${CMAKE_STATIC_LIBRARY_SUFFIX}"
-		"${LIBPUBLIC}/dmxloader${CMAKE_STATIC_LIBRARY_SUFFIX}"
-		mathlib
-		"${LIBPUBLIC}/matsys_controls${CMAKE_STATIC_LIBRARY_SUFFIX}"
-		${ASRC_tier02}
-		tier1
-		"${LIBPUBLIC}/tier2${CMAKE_STATIC_LIBRARY_SUFFIX}"
-		"${LIBPUBLIC}/tier3${CMAKE_STATIC_LIBRARY_SUFFIX}"
-		vgui_controls
-		"${LIBPUBLIC}/vtf${CMAKE_STATIC_LIBRARY_SUFFIX}"
-		steam_api
+			#"$<${IS_POSIX}:${LIBCOMMON}/libcrypto${CMAKE_STATIC_LIBRARY_SUFFIX}>"
 
-		#"$<${IS_POSIX}:${LIBCOMMON}/libcrypto${CMAKE_STATIC_LIBRARY_SUFFIX}>"
+			#"$<${IS_WINDOWS}:${LIBCOMMON}/libcurl${CMAKE_STATIC_LIBRARY_SUFFIX}>"
+			"$<$<OR:${IS_WINDOWS},${IS_LINUX}>:${LIBPUBLIC}/libz${CMAKE_STATIC_LIBRARY_SUFFIX}>"
 
-		#"$<${IS_WINDOWS}:${LIBCOMMON}/libcurl${CMAKE_STATIC_LIBRARY_SUFFIX}>"
-		"$<$<OR:${IS_WINDOWS},${IS_LINUX}>:${LIBPUBLIC}/libz${CMAKE_STATIC_LIBRARY_SUFFIX}>"
+			#"$<${IS_LINUX}:${LIBCOMMON}/libcurl${CMAKE_STATIC_LIBRARY_SUFFIX}>"
+			#"$<${IS_LINUX}:${LIBCOMMON}/libcurlssl${CMAKE_STATIC_LIBRARY_SUFFIX}>"
 
-		#"$<${IS_LINUX}:${LIBCOMMON}/libcurl${CMAKE_STATIC_LIBRARY_SUFFIX}>"
-		#"$<${IS_LINUX}:${LIBCOMMON}/libcurlssl${CMAKE_STATIC_LIBRARY_SUFFIX}>"
-
-		#"$<${IS_LINUX}:${LIBCOMMON}/libssl${CMAKE_STATIC_LIBRARY_SUFFIX}>"
-
+			#"$<${IS_LINUX}:${LIBCOMMON}/libssl${CMAKE_STATIC_LIBRARY_SUFFIX}>"
 	)
 endfunction()
