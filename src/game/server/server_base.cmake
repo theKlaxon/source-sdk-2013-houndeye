@@ -987,6 +987,7 @@ function( target_use_server_base target EXCLUDE_SOURCES )
 			"${LIBPUBLIC}/dmxloader${CMAKE_STATIC_LIBRARY_SUFFIX}"
 			${ASRC_tier02}
 			mathlib
+			tier1
 			tier2
 			tier3
 			steam_api

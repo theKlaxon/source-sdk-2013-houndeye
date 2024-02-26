@@ -1204,8 +1204,8 @@ function( target_use_client_base target EXCLUDE_SOURCES )
 			mathlib
 			"${LIBPUBLIC}/matsys_controls${CMAKE_STATIC_LIBRARY_SUFFIX}"
 			tier1
-			"${LIBPUBLIC}/tier2${CMAKE_STATIC_LIBRARY_SUFFIX}"
-			"${LIBPUBLIC}/tier3${CMAKE_STATIC_LIBRARY_SUFFIX}"
+			tier2
+			tier3
 			vgui_controls
 			"${LIBPUBLIC}/vtf${CMAKE_STATIC_LIBRARY_SUFFIX}"
 			steam_api
