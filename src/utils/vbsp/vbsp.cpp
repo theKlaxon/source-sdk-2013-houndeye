@@ -56,6 +56,7 @@ bool		g_NodrawTriggers = false;
 bool		g_DisableWaterLighting = false;
 bool		g_bAllowDetailCracks = false;
 bool		g_bNoVirtualMesh = false;
+bool		g_bStrataCompat = false;
 
 float		g_defaultLuxelSize = DEFAULT_LUXEL_SIZE;
 float		g_luxelScale = 1.0f;
@@ -602,478 +603,7 @@ static void EmitOccluderBrushes()
 		sprintf (str, "%i", nOccluder);
 		SetKeyValue (&entities[entity_num], "occludernumber", str);
 
-		int nIndex = g_OccluderInfo.AddToTail();
-		g_OccluderInfo[nIndex].m_nOccluderEntityIndex = entity_num;
-		
-		sideList.RemoveAll();
-		GenerateOccluderSideList( entity_num, sideList );
-		for ( int i = faceList.Count(); --i >= 0; )
-		{
-			// Skip nodraw surfaces, but not triggers that have been marked as nodraw
-			face_t *f = faceList[i];
-			if ( ( texinfo[f->texinfo].flags & SURF_NODRAW ) &&
-				 (( texinfo[f->texinfo].flags & SURF_TRIGGER ) == 0 ) )
-				continue;
-
-			// Only emit faces that appear in the side list of the occluder
-			for ( int j = sideList.Count(); --j >= 0; )
-			{
-				if ( sideList[j] != f->originalface )
-					continue;
-
-				if ( f->numpoints < 3 )
-					continue;
-
-				// not a final face
-				Assert ( !f->merged && !f->split[0] && !f->split[1] );
-
-#ifdef _DEBUG
-				Assert( !pEmitted[i] );
-				pEmitted[i] = entity_num;
-#endif
-
-				int k = g_OccluderPolyData.AddToTail();
-				doccluderpolydata_t *pOccluderPoly = &g_OccluderPolyData[k];
-
-				pOccluderPoly->planenum = f->planenum;
-				pOccluderPoly->vertexcount = f->numpoints;
-				pOccluderPoly->firstvertexindex = g_OccluderVertexIndices.Count();
-				for( k = 0; k < f->numpoints; ++k )
-				{
-					g_OccluderVertexIndices.AddToTail( f->vertexnums[k] );
-
-					const Vector &p = dvertexes[f->vertexnums[k]].point; 
-					VectorMin( occluderData.mins, p, occluderData.mins );
-					VectorMax( occluderData.maxs, p, occluderData.maxs );
-				}
-
-				break;
-			}
-		}
-
-		occluderData.polycount = g_OccluderPolyData.Count() - occluderData.firstpoly;
-
-		// Mark this brush as not having brush geometry so it won't be re-emitted with a brush model
-		entities[entity_num].numbrushes = 0;
-	}
-
-	FreeTree( pOccluderTree );
-}
-
-
-//-----------------------------------------------------------------------------
-// Set occluder area
-//-----------------------------------------------------------------------------
-void SetOccluderArea( int nOccluder, int nArea, int nEntityNum )
-{
-	if ( g_OccluderData[nOccluder].area <= 0 )
-	{
-		g_OccluderData[nOccluder].area = nArea;
-	}
-	else if ( (nArea != 0) && (g_OccluderData[nOccluder].area != nArea) )
-	{
-		const char *pTargetName = ValueForKey( &entities[nEntityNum], "targetname" );
-		if (!pTargetName)
-		{
-			pTargetName = "<no name>";
-		}
-		Warning("Occluder \"%s\" straddles multiple areas. This is invalid!\n", pTargetName );
-	}
-}
-
-
-//-----------------------------------------------------------------------------
-// Assign occluder areas (must happen *after* the world model is processed)
-//-----------------------------------------------------------------------------
-void AssignAreaToOccluder( int nOccluder, tree_t *pTree, bool bCrossAreaPortals )
-{
-	int nFirstPoly = g_OccluderData[nOccluder].firstpoly;
-	int nEntityNum = g_OccluderInfo[nOccluder].m_nOccluderEntityIndex;
-	for ( int j = 0; j < g_OccluderData[nOccluder].polycount; ++j )
-	{
-		doccluderpolydata_t *pOccluderPoly = &g_OccluderPolyData[nFirstPoly + j];
-		int nFirstVertex = pOccluderPoly->firstvertexindex;
-		for ( int k = 0; k < pOccluderPoly->vertexcount; ++k )
-		{
-			int nVertexIndex = g_OccluderVertexIndices[nFirstVertex + k];
-			node_t *pNode = NodeForPoint( pTree->headnode, dvertexes[ nVertexIndex ].point );
-
-			SetOccluderArea( nOccluder, pNode->area, nEntityNum );
-
-			int nOtherSideIndex;
-			portal_t *pPortal;
-			for ( pPortal = pNode->portals; pPortal; pPortal = pPortal->next[!nOtherSideIndex] )
-			{
-				nOtherSideIndex = (pPortal->nodes[0] == pNode) ? 1 : 0;
-				if (!pPortal->onnode)
-					continue;		// edge of world
-
-				// Don't cross over area portals for the area check
-				if ((!bCrossAreaPortals) && pPortal->nodes[nOtherSideIndex]->contents & CONTENTS_AREAPORTAL)
-					continue;
-
-				int nAdjacentArea = pPortal->nodes[nOtherSideIndex] ? pPortal->nodes[nOtherSideIndex]->area : 0; 
-				SetOccluderArea( nOccluder, nAdjacentArea, nEntityNum );
-			}
-		}
-	}
-}
-
-
-//-----------------------------------------------------------------------------
-// Assign occluder areas (must happen *after* the world model is processed)
-//-----------------------------------------------------------------------------
-void AssignOccluderAreas( tree_t *pTree )
-{
-	for ( int i = 0; i < g_OccluderData.Count(); ++i )
-	{
-		AssignAreaToOccluder( i, pTree, false );
-
-		// This can only have happened if the only valid portal out leads into an areaportal
-		if ( g_OccluderData[i].area <= 0 )
-		{
-			AssignAreaToOccluder( i, pTree, true );
-		}
-	}
-}
-
-
-
-//-----------------------------------------------------------------------------
-// Make sure the func_occluders have the appropriate data set
-//-----------------------------------------------------------------------------
-void FixupOnlyEntsOccluderEntities()
-{
-	char str[64];
-	int nOccluder = 0;
-	for ( entity_num=1; entity_num < num_entities; ++entity_num )
-	{
-		if (!IsFuncOccluder(entity_num))
-			continue;
-
-		// NOTE: If you change the algorithm by which occluder numbers are allocated above,
-		// then you must also change this
-		sprintf (str, "%i", nOccluder);
-		SetKeyValue (&entities[entity_num], "occludernumber", str);
-		++nOccluder;
-	}
-}
-
-
-void MarkNoDynamicShadowSides()
-{
-	for ( int iSide=0; iSide < g_MainMap->nummapbrushsides; iSide++ )
-	{
-		g_MainMap->brushsides[iSide].m_bDynamicShadowsEnabled = true;
-	}
-
-	for ( int i=0; i < g_NoDynamicShadowSides.Count(); i++ )
-	{
-		int brushSideID = g_NoDynamicShadowSides[i];
-	
-		// Find the side with this ID.
-		for ( int iSide=0; iSide < g_MainMap->nummapbrushsides; iSide++ )
-		{
-			if ( g_MainMap->brushsides[iSide].id == brushSideID )
-				g_MainMap->brushsides[iSide].m_bDynamicShadowsEnabled = false;
-		}
-	}
-}
-
-//-----------------------------------------------------------------------------
-// Compute the 3D skybox areas
-//-----------------------------------------------------------------------------
-static void Compute3DSkyboxAreas( node_t *headnode, CUtlVector<int>& areas )
-{
-	for (int i = 0; i < g_MainMap->num_entities; ++i)
-	{
-		const char* pEntity = ValueForKey(&entities[i], "classname");
-		if (!strcmp(pEntity, "sky_camera"))
-		{
-			// Found a 3D skybox camera, get a leaf that lies in it
-			node_t *pLeaf = PointInLeaf( headnode, entities[i].origin );
-			if (pLeaf->contents & CONTENTS_SOLID)
-			{
-				Error ("Error! Entity sky_camera in solid volume! at %.1f %.1f %.1f\n", entities[i].origin.x, entities[i].origin.y, entities[i].origin.z);
-			}
-			areas.AddToTail( pLeaf->area );
-		}
-	}
-}
-
-bool Is3DSkyboxArea( int area )
-{
-	for ( int i = g_SkyAreas.Count(); --i >=0; )
-	{
-		if ( g_SkyAreas[i] == area )
-			return true;
-	}
-	return false;
-}
-
-		
-/*
-============
-ProcessModels
-============
-*/
-void ProcessModels()
-{
-	BeginBSPFile ();
-
-	// Mark sides that have no dynamic shadows.
-	MarkNoDynamicShadowSides();
-
-	// emit the displacement surfaces
-	EmitInitialDispInfos();
-
-	// Clip occluder brushes against each other, 
-	// Remove them from the list of models to process below
-	EmitOccluderBrushes( );
-
-	for ( entity_num=0; entity_num < num_entities; ++entity_num )
-	{
-		entity_t *pEntity = &entities[entity_num];
-		if ( !pEntity->numbrushes )
-			continue;
-
-		qprintf ("############### model %i ###############\n", nummodels);
-
-		BeginModel ();
-
-		if (entity_num == 0)
-		{
-			ProcessWorldModel();
-		}
-		else
-		{
-			ProcessSubModel( );
-		}
-
-		EndModel ();
-
-		if (!verboseentities)
-		{
-			verbose = false;	// don't bother printing submodels
-		}
-	}
-
-	// Turn the skybox into a cubemap in case we don't build env_cubemap textures.
-	Cubemap_CreateDefaultCubemaps();
-	EndBSPFile ();
-}
-
-
-void LoadPhysicsDLL() {
-	PhysicsDLLPath( "vphysics" DLL_EXT_STRING  );
-}
-
-
-void PrintCommandLine( int argc, char **argv )
-{
-	Warning( "Command line: " );
-	for ( int z=0; z < argc; z++ )
-	{
-		Warning( "\"%s\" ", argv[z] );
-	}
-	Warning( "\n\n" );
-}
-
-
-int RunVBSP( int argc, char **argv )
-{
-	int		i;
-	double		start, end;
-	char		path[1024];
-
-	CommandLine()->CreateCmdLine( argc, argv );
-	MathLib_Init( 2.2f, 2.2f, 0.0f, OVERBRIGHT, false, true, true, false );
-	FileSystem_Init(nullptr, 0, FSInitType_t::FS_INIT_COMPATIBILITY_MODE);
-	InstallSpewFunction();
-	SpewActivate( "developer", 1 );
-	
-	CmdLib_InitFileSystem( argv[ argc-1 ] );
-
-	Q_StripExtension( ExpandArg( argv[ argc-1 ] ), source, sizeof( source ) );
-	Q_FileBase( source, mapbase, sizeof( mapbase ) );
-	strlwr( mapbase );
-
-	// Maintaining legacy behavior here to avoid breaking tools: regardless of the extension we are passed, we strip it
-	// to get the "source" name, and append extensions as desired...
-	char		mapFile[1024];
-	V_strncpy( mapFile, source, sizeof( mapFile ) );
-	V_strncat( mapFile, ".bsp", sizeof( mapFile ) );
-
-	LoadCmdLineFromFile( argc, argv, mapbase, "vbsp" );
-
-	Msg( "Valve Software - AuroraSource - vbsp.exe ( " __DATE__ " )\n" );
-
-	for (i=1 ; i<argc ; i++)
-	{
-		if (!stricmp(argv[i],"-threads"))
-		{
-			numthreads = atoi (argv[i+1]);
-			i++;
-		}
-		else if (!Q_stricmp(argv[i],"-glview"))
-		{
-			glview = true;
-		}
-		else if ( !Q_stricmp(argv[i], "-v") || !Q_stricmp(argv[i], "-verbose") )
-		{
-			Msg("verbose = true\n");
-			verbose = true;
-		}
-		else if (!Q_stricmp(argv[i], "-noweld"))
-		{
-			Msg ("noweld = true\n");
-			noweld = true;
-		}
-		else if (!Q_stricmp(argv[i], "-nocsg"))
-		{
-			Msg ("nocsg = true\n");
-			nocsg = true;
-		}
-		else if (!Q_stricmp(argv[i], "-noshare"))
-		{
-			Msg ("noshare = true\n");
-			noshare = true;
-		}
-		else if (!Q_stricmp(argv[i], "-notjunc"))
-		{
-			Msg ("notjunc = true\n");
-			notjunc = true;
-		}
-		else if (!Q_stricmp(argv[i], "-nowater"))
-		{
-			Msg ("nowater = true\n");
-			nowater = true;
-		}
-		else if (!Q_stricmp(argv[i], "-noopt"))
-		{
-			Msg ("noopt = true\n");
-			noopt = true;
-		}
-		else if (!Q_stricmp(argv[i], "-noprune"))
-		{
-			Msg ("noprune = true\n");
-			noprune = true;
-		}
-		else if (!Q_stricmp(argv[i], "-nomerge"))
-		{
-			Msg ("nomerge = true\n");
-			nomerge = true;
-		}
-		else if (!Q_stricmp(argv[i], "-nomergewater"))
-		{
-			Msg ("nomergewater = true\n");
-			nomergewater = true;
-		}
-		else if (!Q_stricmp(argv[i], "-nosubdiv"))
-		{
-			Msg ("nosubdiv = true\n");
-			nosubdiv = true;
-		}
-		else if (!Q_stricmp(argv[i], "-nodetail"))
-		{
-			Msg ("nodetail = true\n");
-			nodetail = true;
-		}
-		else if (!Q_stricmp(argv[i], "-fulldetail"))
-		{
-			Msg ("fulldetail = true\n");
-			fulldetail = true;
-		}
-		else if (!Q_stricmp(argv[i], "-onlyents"))
-		{
-			Msg ("onlyents = true\n");
-			onlyents = true;
-		}
-		else if (!Q_stricmp(argv[i], "-onlyprops"))
-		{
-			Msg ("onlyprops = true\n");
-			onlyprops = true;
-		}
-		else if (!Q_stricmp(argv[i], "-micro"))
-		{
-			microvolume = atof(argv[i+1]);
-			Msg ("microvolume = %f\n", microvolume);
-			i++;
-		}
-		else if (!Q_stricmp(argv[i], "-leaktest"))
-		{
-			Msg ("leaktest = true\n");
-			leaktest = true;
-		}
-		else if (!Q_stricmp(argv[i], "-verboseentities"))
-		{
-			Msg ("verboseentities = true\n");
-			verboseentities = true;
-		}
-		else if (!Q_stricmp(argv[i], "-snapaxial"))
-		{
-			Msg ("snap axial = true\n");
-			g_snapAxialPlanes = true;
-		}
-#if 0
-		else if (!Q_stricmp(argv[i], "-maxlightmapdim"))
-		{
-			g_maxLightmapDimension = atof(argv[i+1]);
-			Msg ("g_maxLightmapDimension = %f\n", g_maxLightmapDimension);
-			i++;
-		}
-#endif
-		else if (!Q_stricmp(argv[i], "-block"))
-		{
-			block_xl = block_xh = atoi(argv[i+1]);
-			block_yl = block_yh = atoi(argv[i+2]);
-			Msg ("block: %i,%i\n", block_xl, block_yl);
-			i+=2;
-		}
-		else if (!Q_stricmp(argv[i], "-blocks"))
-		{
-			block_xl = atoi(argv[i+1]);
-			block_yl = atoi(argv[i+2]);
-			block_xh = atoi(argv[i+3]);
-			block_yh = atoi(argv[i+4]);
-			Msg ("blocks: %i,%i to %i,%i\n", 
-				block_xl, block_yl, block_xh, block_yh);
-			i+=4;
-		}
-		else if ( !Q_stricmp( argv[i], "-dumpcollide" ) )
-		{
-			Msg("Dumping collision models to collideXXX.txt\n" );
-			dumpcollide = true;
-		}
-		else if ( !Q_stricmp( argv[i], "-dumpstaticprop" ) )
-		{
-			Msg("Dumping static props to staticpropXXX.txt\n" );
-			g_DumpStaticProps = true;
-		}
-		else if ( !Q_stricmp( argv[i], "-forceskyvis" ) )
-		{
-			Msg("Enabled vis in 3d skybox\n" );
-			g_bSkyVis = true;
-		}
-		else if (!Q_stricmp (argv[i],"-tmpout"))
-		{
-			strcpy (outbase, "/tmp");
-		}
-#if 0
-		else if( !Q_stricmp( argv[i], "-defaultluxelsize" ) )
-		{
-			g_defaultLuxelSize = atof( argv[i+1] );
-			i++;
-		}
-#endif
-		else if( !Q_stricmp( argv[i], "-luxelscale" ) )
-		{
-			g_luxelScale = atof( argv[i+1] );
-			i++;
-		}
-		else if( !strcmp( argv[i], "-minluxelscale" ) )
-		{
-			g_minLuxelScale = atof( argv[i+1] );
+		int nIndex = g_OccluderInfo.AddToTail()e = atof( argv[i+1] );
 			if (g_minLuxelScale < 1)
 				g_minLuxelScale = 1;
 			i++;
@@ -1144,6 +674,10 @@ int RunVBSP( int argc, char **argv )
 			g_pFullFileSystem->AddSearchPath( g_szEmbedDir, "GAME", PATH_ADD_TO_TAIL );
 			g_pFullFileSystem->AddSearchPath( g_szEmbedDir, "MOD", PATH_ADD_TO_TAIL );
 		}
+		else if ( !Q_stricmp( argv[i], "-stratacompat" ) )
+		{
+			g_bStrataCompat = true;
+		}
 		else if (argv[i][0] == '-')
 		{
 			Warning("VBSP: Unknown option \"%s\"\n\n", argv[i]);
@@ -1167,16 +701,17 @@ int RunVBSP( int argc, char **argv )
 			"  -v (or -verbose): Turn on verbose output (also shows more command\n"
 			"                    line options).\n"
 			"\n"
-			"  -onlyents   : This option causes vbsp only import the entities from the .vmf\n"
-			"                file. -onlyents won't reimport brush models.\n"
-			"  -onlyprops  : Only update the static props and detail props.\n"
-			"  -glview     : Writes .gl files in the current directory that can be viewed\n"
-			"                with glview.exe. If you use -tmpout, it will write the files\n"
-			"                into the \\tmp folder.\n"
-			"  -nodetail   : Get rid of all detail geometry. The geometry left over is\n"
-			"                what affects visibility.\n"
-			"  -nowater    : Get rid of water brushes.\n"
-			"  -low        : Run as an idle-priority process.\n"
+			"  -onlyents     : This option causes vbsp only import the entities from the .vmf\n"
+			"                  file. -onlyents won't reimport brush models.\n"
+			"  -onlyprops    : Only update the static props and detail props.\n"
+			"  -glview       : Writes .gl files in the current directory that can be viewed\n"
+			"                  with glview.exe. If you use -tmpout, it will write the files\n"
+			"                  into the \\tmp folder.\n"
+			"  -nodetail     : Get rid of all detail geometry. The geometry left over is\n"
+			"                  what affects visibility.\n"
+			"  -nowater      : Get rid of water brushes.\n"
+			"  -low          : Run as an idle-priority process.\n"
+			"  -stratacompat : Additional support for Strata Source's `.vmf` files, (NOTE: this is temporary, it will become the default behavior).\n"
 			"  -embed <directory>  : Use <directory> as an additional search path for assets\n"
 			"                        and embed all assets in this directory into the compiled\n"
 			"                        map\n"
@@ -1225,7 +760,7 @@ int RunVBSP( int argc, char **argv )
 				"  -keepstalezip   : Keep the BSP's zip files intact but regenerate everything\n"
 				"                    else.\n"
 				"  -virtualdispphysics : Use virtual (not precomputed) displacement collision models\n"
-				"  -replacematerials : Substitute materials according to materialsub.txt in content\\maps\n"
+				"  -replacematerials   : Substitute materials according to materialsub.txt in content\\maps\n"
 				"  -FullMinidumps  : Write large minidumps on crash.\n"
 				);
 			}
@@ -1430,5 +965,4 @@ int main (int argc, char **argv)
 	SetupDefaultToolsMinidumpHandler();
 	return RunVBSP( argc, argv );
 }
-
 

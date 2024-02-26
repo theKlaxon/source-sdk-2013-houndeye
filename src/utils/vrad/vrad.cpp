@@ -14,6 +14,7 @@
 #include "physdll.h"
 #include "tier1/strtools.h"
 #include "tools_minidump.h"
+#include "tier0/icommandline.h"
 
 #define ALLOWDEBUGOPTIONS ( 0 || _DEBUG )
 
@@ -2438,10 +2439,13 @@ int RunVRAD( int argc, char** argv ) {
 		CmdLib_Exit( 1 );
 	}
 
+	const char* it;
+	CommandLine()->CheckParm("-game", &it);
+
 	// Initialize the filesystem, so additional commandline options can be loaded
 	Q_StripExtension( argv[ i ], source, sizeof( source ) );
 	CmdLib_InitFileSystem( argv[ i ] );
-	LoadCmdLineFromFile( argc, argv, source, "vrad" );// Don't do this if we're a VMPI worker..
+	LoadCmdLineFromFile( argc, argv, source, "vrad" );
 	Q_FileBase( source, source, sizeof( source ) );
 
 	VRAD_LoadBSP( argv[ i ] );

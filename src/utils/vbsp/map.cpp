@@ -2928,6 +2928,14 @@ ChunkFileResult_t CMapFile::LoadConnectionsKeyCallback(const char *szKey, const 
 	strcpy(pOutput->key, szKey);
 	strcpy(pOutput->value, szValue);
 
+	if ( g_mStataCompat ) {
+		// Strata Source's hammer uses `` to delimit outputs, not `,`, to better support vscript
+		for ( int i = 0; i < strlen( szValue ); i++ ) {
+			if ( pOutput->value[ i ] == '\u001B' )
+				pOutput->value[ i ] = ',';
+		}
+	}
+
 	m_ConnectionPairs = new CConnectionPairs( pOutput, m_ConnectionPairs );
 	
 	//
