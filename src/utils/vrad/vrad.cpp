@@ -2439,9 +2439,6 @@ int RunVRAD( int argc, char** argv ) {
 		CmdLib_Exit( 1 );
 	}
 
-	const char* it;
-	CommandLine()->CheckParm("-game", &it);
-
 	// Initialize the filesystem, so additional commandline options can be loaded
 	Q_StripExtension( argv[ i ], source, sizeof( source ) );
 	CmdLib_InitFileSystem( argv[ i ] );
