@@ -101,7 +101,7 @@ class GDclass
 		BOOL GetBoundBox(Vector& pfMins, Vector& pfMaxs);
 		bool HasBoundBox() const { return m_bGotSize; }
 
-		inline color32 GetColor();
+		inline Color GetColor();
 
 		//
 		// Interface to helper information:
@@ -129,7 +129,7 @@ class GDclass
 		bool ParseSpecifiers(TokenReader &tr);
 		bool ParseVariables(TokenReader &tr);
 
-		color32 m_rgbColor;					// Color of entity.
+		Color m_rgbColor;					// Color of entity.
 
 		bool m_bBase;						// Base only - not available to user.
 		bool m_bSolid;						// Tied to solids only.

@@ -1205,6 +1205,7 @@ function(target_use_client_base target EXCLUDE_SOURCES)
 		"${LIBPUBLIC}/dmxloader${CMAKE_STATIC_LIBRARY_SUFFIX}"
 		mathlib
 		"${LIBPUBLIC}/matsys_controls${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		${ASRC_tier02}
 		tier1
 		"${LIBPUBLIC}/tier2${CMAKE_STATIC_LIBRARY_SUFFIX}"
 		"${LIBPUBLIC}/tier3${CMAKE_STATIC_LIBRARY_SUFFIX}"

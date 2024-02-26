@@ -5,11 +5,7 @@
 // $NoKeywords: $
 //
 //=============================================================================//
-#if !defined ( DLIGHTH )
-#define DLIGHTH
-#ifdef _WIN32
 #pragma once
-#endif
 
 #include "mathlib/vector.h"
 
@@ -17,8 +13,7 @@
 // Dynamic light structure
 //-----------------------------------------------------------------------------
 
-enum
-{
+enum {
 	DLIGHT_NO_WORLD_ILLUMINATION = 0x1,
 	DLIGHT_NO_MODEL_ILLUMINATION = 0x2,
 
@@ -40,8 +35,7 @@ enum
 // light sources.
 //#define HL2_BROKEN_MIN_LIGHTING_VALUE (20.0f/256.0f)
 
-struct dlight_t
-{
+struct dlight_t {
 	int		flags;
 	Vector	origin;
 	float	radius;
@@ -59,26 +53,21 @@ struct dlight_t
 
 	// see comments above about HL2_BROKEN_MIN_LIGHTING_VALUE and MIN_LIGHTING_VALUE
 	// THIS SHOULD ONLY GET CALLED FROM THE ENGINE
-	float GetRadius() const
-	{
+	float GetRadius() const {
 //		return FastSqrt( radius * radius * ( HL2_BROKEN_MIN_LIGHTING_VALUE / MIN_LIGHTING_VALUE ) );
 		return radius;
 	}
 
 	// see comments above about HL2_BROKEN_MIN_LIGHTING_VALUE and MIN_LIGHTING_VALUE
 	// THIS SHOULD ONLY GET CALLED FROM THE ENGINE
-	float GetRadiusSquared() const
-	{
+	float GetRadiusSquared() const {
 //		return radius * radius * ( HL2_BROKEN_MIN_LIGHTING_VALUE / MIN_LIGHTING_VALUE );
 		return radius * radius;
 	}
 
 	// THIS SHOULD ONLY GET CALLED FROM THE ENGINE
-	float IsRadiusGreaterThanZero() const
-	{
+	float IsRadiusGreaterThanZero() const {
 		// don't bother calculating the new radius if you just want to know if it is greater than zero.
 		return radius > 0.0f;
 	}
 };
-
-#endif

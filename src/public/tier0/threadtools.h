@@ -489,7 +489,7 @@ public:
 	}
 
 	T operator=( T newValue ) {
-		ThreadInterlockedExchange( static_cast<long*>( &m_value ), newValue );
+		ThreadInterlockedExchange( (long*)( &m_value ), newValue );
 		return m_value;
 	}
 

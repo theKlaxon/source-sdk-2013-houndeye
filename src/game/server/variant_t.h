@@ -59,7 +59,6 @@ public:
 	void SetEntity( CBaseEntity *val );
 	void SetVector3D( const Vector &val ) { vecVal[0] = val[0]; vecVal[1] = val[1]; vecVal[2] = val[2]; fieldType = FIELD_VECTOR; }
 	void SetPositionVector3D( const Vector &val ) { vecVal[0] = val[0]; vecVal[1] = val[1]; vecVal[2] = val[2]; fieldType = FIELD_POSITION_VECTOR; }
-	[[deprecated( "Use the `Color` overload." )]] void SetColor32( color32 val ) { rgbaVal.SetRawColor( val ); fieldType = FIELD_COLOR32; }
 	void SetColor32( Color val ) { rgbaVal = val; fieldType = FIELD_COLOR32; }
 	void SetColor32( int r, int g, int b, int a ) { rgbaVal.SetColor( r, g, b, a ); fieldType = FIELD_COLOR32; }
 	void Set( fieldtype_t ftype, void *data );

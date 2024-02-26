@@ -83,7 +83,7 @@ bool CommentaryModeShouldSwallowInput( C_BasePlayer *pPlayer );
 extern ConVar default_fov;
 extern ConVar sensitivity;
 
-static C_BasePlayer *s_pLocalPlayer = NULL;
+static C_BasePlayer *s_pLocalPlayer = nullptr;
 
 static ConVar	cl_customsounds ( "cl_customsounds", "0", 0, "Enable customized player sound playback" );
 static ConVar	spec_track		( "spec_track", "0", 0, "Tracks an entity in spec mode" );
@@ -295,7 +295,7 @@ END_RECV_TABLE()
 		RecvPropString( RECVINFO(m_szLastPlaceName) ),
 
 #if defined USES_ECON_ITEMS
-		RecvPropUtlVector( RECVINFO_UTLVECTOR( m_hMyWearables ), MAX_WEARABLES_SENT_FROM_SERVER,	RecvPropEHandle(NULL, 0, 0) ),
+		RecvPropUtlVector( RECVINFO_UTLVECTOR( m_hMyWearables ), MAX_WEARABLES_SENT_FROM_SERVER,	RecvPropEHandle(nullptr, 0, 0) ),
 #endif
 
 	END_RECV_TABLE()
@@ -411,10 +411,10 @@ C_BasePlayer::C_BasePlayer() : m_iv_vecViewOffset( "C_BasePlayer::m_iv_vecViewOf
 	m_vecOldViewAngles.Init();
 #endif
 
-	m_pFlashlight = NULL;
+	m_pFlashlight = nullptr;
 
-	m_pCurrentVguiScreen = NULL;
-	m_pCurrentCommand = NULL;
+	m_pCurrentVguiScreen = nullptr;
+	m_pCurrentCommand = nullptr;
 
 	m_flPredictionErrorTime = -100;
 	m_StuckLast = 0;
@@ -428,7 +428,7 @@ C_BasePlayer::C_BasePlayer() : m_iv_vecViewOffset( "C_BasePlayer::m_iv_vecViewOf
 	m_flPredictionErrorTime = 0;
 
 	m_surfaceProps = 0;
-	m_pSurfaceData = NULL;
+	m_pSurfaceData = nullptr;
 	m_surfaceFriction = 1.0f;
 	m_chTextureType = 0;
 
@@ -450,7 +450,7 @@ C_BasePlayer::~C_BasePlayer()
 	DeactivateVguiScreen( m_pCurrentVguiScreen.Get() );
 	if ( this == s_pLocalPlayer )
 	{
-		s_pLocalPlayer = NULL;
+		s_pLocalPlayer = nullptr;
 	}
 
 	delete m_pFlashlight;
@@ -460,7 +460,7 @@ C_BasePlayer::~C_BasePlayer()
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void C_BasePlayer::Spawn( void )
+void C_BasePlayer::Spawn()
 {
 	// Clear all flags except for FL_FULLEDICT
 	ClearFlags();
@@ -475,7 +475,7 @@ void C_BasePlayer::Spawn( void )
 
 	Precache();
 
-	SetThink(NULL);
+	SetThink(nullptr);
 
 	SharedSpawn();
 
@@ -513,7 +513,7 @@ bool C_BasePlayer::IsReplay() const
 #endif
 }
 
-CBaseEntity	*C_BasePlayer::GetObserverTarget() const	// returns players target or NULL
+CBaseEntity	*C_BasePlayer::GetObserverTarget() const	// returns players target or nullptr
 {
 	if ( IsHLTV() )
 	{
@@ -528,7 +528,7 @@ CBaseEntity	*C_BasePlayer::GetObserverTarget() const	// returns players target o
 
 	if ( GetObserverMode() == OBS_MODE_ROAMING )
 	{
-		return NULL;	// no target in roaming mode
+		return nullptr;	// no target in roaming mode
 	}
 	else
 	{
@@ -564,15 +564,15 @@ CBaseEntity	*C_BasePlayer::GetObserverTarget() const	// returns players target o
 void C_BasePlayer::SetObserverTarget( EHANDLE hObserverTarget )
 {
 	// If the observer target is changing to an entity that the client doesn't know about yet,
-	// it can resolve to NULL.  If the client didn't have an observer target before, then
+	// it can resolve to nullptr.  If the client didn't have an observer target before, then
 	// comparing EHANDLEs directly will see them as equal, since it uses Get(), and compares
-	// NULL to NULL.  To combat this, we need to check against GetEntryIndex() and
+	// nullptr to nullptr.  To combat this, we need to check against GetEntryIndex() and
 	// GetSerialNumber().
 	if ( hObserverTarget.GetEntryIndex() != m_hObserverTarget.GetEntryIndex() ||
 		hObserverTarget.GetSerialNumber() != m_hObserverTarget.GetSerialNumber())
 	{
 		// Init based on the new handle's entry index and serial number, so that it's Get()
-		// has a chance to become non-NULL even if it currently resolves to NULL.
+		// has a chance to become non-nullptr even if it currently resolves to nullptr.
 		m_hObserverTarget.Init( hObserverTarget.GetEntryIndex(), hObserverTarget.GetSerialNumber() );
 
 		IGameEvent *event = gameeventmanager->CreateEvent( "spec_target_updated" );
@@ -652,12 +652,12 @@ int C_BasePlayer::GetObserverMode() const
 	return m_iObserverMode; 
 }
 
-bool C_BasePlayer::ViewModel_IsTransparent( void )
+bool C_BasePlayer::ViewModel_IsTransparent()
 {
 	return IsTransparent();
 }
 
-bool C_BasePlayer::ViewModel_IsUsingFBTexture( void )
+bool C_BasePlayer::ViewModel_IsUsingFBTexture()
 {
 	return UsesPowerOfTwoFrameBufferTexture();
 }
@@ -702,7 +702,7 @@ surfacedata_t* C_BasePlayer::GetGroundSurface()
 	UTIL_TraceRay( ray, MASK_PLAYERSOLID_BRUSHONLY, this, COLLISION_GROUP_PLAYER_MOVEMENT, &trace );
 
 	if ( trace.fraction == 1.0f )
-		return NULL;	// no ground
+		return nullptr;	// no ground
 	
 	return physprops->GetSurfaceData( trace.surface.surfaceProps );
 }
@@ -798,7 +798,7 @@ void C_BasePlayer::PostDataUpdate( DataUpdateType_t updateType )
 
 		if ( iLocalPlayerIndex == index )
 		{
-			Assert( s_pLocalPlayer == NULL );
+			Assert( s_pLocalPlayer == nullptr );
 			s_pLocalPlayer = this;
 
 			// Reset our sound mixed in case we were in a freeze cam when we
@@ -922,7 +922,7 @@ void C_BasePlayer::PostDataUpdate( DataUpdateType_t updateType )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-bool C_BasePlayer::CanSetSoundMixer( void )
+bool C_BasePlayer::CanSetSoundMixer()
 {
 	// Can't set sound mixers when we're in freezecam mode, since it has a code-enforced mixer
 	return (GetObserverMode() != OBS_MODE_FREEZECAM);
@@ -1032,7 +1032,7 @@ bool C_BasePlayer::JustEnteredVehicle()
 //-----------------------------------------------------------------------------
 bool C_BasePlayer::IsInVGuiInputMode() const
 {
-	return (m_pCurrentVguiScreen.Get() != NULL);
+	return (m_pCurrentVguiScreen.Get() != nullptr);
 }
 
 //-----------------------------------------------------------------------------
@@ -1060,7 +1060,7 @@ void C_BasePlayer::DetermineVguiInputMode( CUserCmd *pCmd )
 	if ( !IsAlive() )
 	{
 		DeactivateVguiScreen( m_pCurrentVguiScreen.Get() );
-		m_pCurrentVguiScreen.Set( NULL );
+		m_pCurrentVguiScreen.Set( nullptr );
 		return;
 	}
 
@@ -1084,7 +1084,7 @@ void C_BasePlayer::DetermineVguiInputMode( CUserCmd *pCmd )
 	if ( 0 )
 	{
 		DeactivateVguiScreen( m_pCurrentVguiScreen.Get() );
-		m_pCurrentVguiScreen.Set( NULL );
+		m_pCurrentVguiScreen.Set( nullptr );
 		return;
 	}
 
@@ -1106,7 +1106,7 @@ void C_BasePlayer::DetermineVguiInputMode( CUserCmd *pCmd )
 	if ( bAttacking || IsInAVehicle() )
 	{ 
 		DeactivateVguiScreen( m_pCurrentVguiScreen.Get() );
-		m_pCurrentVguiScreen.Set( NULL );
+		m_pCurrentVguiScreen.Set( nullptr );
 		return;
 	}
 
@@ -1114,7 +1114,7 @@ void C_BasePlayer::DetermineVguiInputMode( CUserCmd *pCmd )
 	if ( vgui::surface()->IsCursorVisible() )
 	{
 		DeactivateVguiScreen( m_pCurrentVguiScreen.Get() );
-		m_pCurrentVguiScreen.Set( NULL );
+		m_pCurrentVguiScreen.Set( nullptr );
 		return;
 	}
 
@@ -1237,7 +1237,7 @@ void C_BasePlayer::UpdateFlashlight()
 	{
 		// Turned off the flashlight; delete it.
 		delete m_pFlashlight;
-		m_pFlashlight = NULL;
+		m_pFlashlight = nullptr;
 	}
 }
 
@@ -1245,7 +1245,7 @@ void C_BasePlayer::UpdateFlashlight()
 //-----------------------------------------------------------------------------
 // Purpose: Creates player flashlight if it's ative
 //-----------------------------------------------------------------------------
-void C_BasePlayer::Flashlight( void )
+void C_BasePlayer::Flashlight()
 {
 	UpdateFlashlight();
 
@@ -1261,7 +1261,7 @@ void C_BasePlayer::Flashlight( void )
 //-----------------------------------------------------------------------------
 // Purpose: Engine is asking whether to add this player to the visible entities list
 //-----------------------------------------------------------------------------
-void C_BasePlayer::AddEntity( void )
+void C_BasePlayer::AddEntity()
 {
 	// FIXME/UNDONE:  Should the local player say yes to adding itself now 
 	// and then, when it ges time to render and it shouldn't still do the render with
@@ -1296,7 +1296,7 @@ extern float UTIL_WaterLevel( const Vector &position, float minz, float maxz );
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void C_BasePlayer::CreateWaterEffects( void )
+void C_BasePlayer::CreateWaterEffects()
 {
 	// Must be completely submerged to bother
 	if ( GetWaterLevel() < 3 )
@@ -1317,14 +1317,14 @@ void C_BasePlayer::CreateWaterEffects( void )
 	}
 
 	// Make sure the emitter is setup
-	if ( m_pWaterEmitter == NULL )
+	if ( m_pWaterEmitter == nullptr )
 	{
-		if ( ( m_pWaterEmitter = WaterDebrisEffect::Create( "splish" ) ) == NULL )
+		if ( ( m_pWaterEmitter = WaterDebrisEffect::Create( "splish" ) ) == nullptr )
 			return;
 	}
 
 	Vector vecVelocity;
-	GetVectors( &vecVelocity, NULL, NULL );
+	GetVectors( &vecVelocity, nullptr, nullptr );
 
 	Vector offset = WorldSpaceCenter();
 
@@ -1347,7 +1347,7 @@ void C_BasePlayer::CreateWaterEffects( void )
 
 		pParticle = (SimpleParticle *) m_pWaterEmitter->AddParticle( sizeof(SimpleParticle), g_Mat_Fleck_Cement[random->RandomInt(0,1)], offset );
 
-		if (pParticle == NULL)
+		if (pParticle == nullptr)
 			continue;
 
 		pParticle->m_flLifetime	= 0.0f;
@@ -1748,7 +1748,7 @@ float C_BasePlayer::GetDeathCamInterpolationTime()
 
 void C_BasePlayer::CalcDeathCamView(Vector& eyeOrigin, QAngle& eyeAngles, float& fov)
 {
-	CBaseEntity	* pKiller = NULL; 
+	CBaseEntity	* pKiller = nullptr;
 
 	if ( mp_forcecamera.GetInt() == OBS_ALLOW_ALL )
 	{
@@ -1807,7 +1807,7 @@ void C_BasePlayer::CalcDeathCamView(Vector& eyeOrigin, QAngle& eyeAngles, float&
 // Purpose: Return the weapon to have open the weapon selection on, based upon our currently active weapon
 //			Base class just uses the weapon that's currently active.
 //-----------------------------------------------------------------------------
-C_BaseCombatWeapon *C_BasePlayer::GetActiveWeaponForSelection( void )
+C_BaseCombatWeapon *C_BasePlayer::GetActiveWeaponForSelection()
 {
 	return GetActiveWeapon();
 }
@@ -1829,7 +1829,7 @@ C_BaseAnimating* C_BasePlayer::GetRenderedWeaponModel()
 // Purpose: Gets a pointer to the local player, if it exists yet.
 // Output : C_BasePlayer
 //-----------------------------------------------------------------------------
-C_BasePlayer *C_BasePlayer::GetLocalPlayer( void )
+C_BasePlayer *C_BasePlayer::GetLocalPlayer()
 {
 	return s_pLocalPlayer;
 }
@@ -1873,7 +1873,7 @@ void C_BasePlayer::ThirdPersonSwitch( bool bThirdperson )
 /*static*/ bool C_BasePlayer::LocalPlayerInFirstPersonView()
 {
 	C_BasePlayer *pLocalPlayer = C_BasePlayer::GetLocalPlayer();
-	if ( pLocalPlayer == NULL )
+	if ( pLocalPlayer == nullptr )
 	{
 		return false;
 	}
@@ -1914,7 +1914,7 @@ bool C_BasePlayer::InFirstPersonView()
 		return LocalPlayerInFirstPersonView();
 	}
 	C_BasePlayer *pLocalPlayer = C_BasePlayer::GetLocalPlayer();
-	if ( pLocalPlayer == NULL )
+	if ( pLocalPlayer == nullptr )
 	{
 		return false;
 	}
@@ -1957,12 +1957,12 @@ bool C_BasePlayer::ShouldDrawThisPlayer()
 // Purpose: 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool C_BasePlayer::IsLocalPlayer( void ) const
+bool C_BasePlayer::IsLocalPlayer() const
 {
 	return ( GetLocalPlayer() == this );
 }
 
-int	C_BasePlayer::GetUserID( void )
+int	C_BasePlayer::GetUserID()
 {
 	player_info_t pi;
 
@@ -1979,7 +1979,7 @@ void C_BasePlayer::SetAnimation( PLAYER_ANIM playerAnim )
 	// FIXME
 }
 
-void C_BasePlayer::UpdateClientData( void )
+void C_BasePlayer::UpdateClientData()
 {
 	// Update all the items
 	for ( int i = 0; i < WeaponCount(); i++ )
@@ -1990,7 +1990,7 @@ void C_BasePlayer::UpdateClientData( void )
 }
 
 // Prediction stuff
-void C_BasePlayer::PreThink( void )
+void C_BasePlayer::PreThink()
 {
 #if !defined( NO_ENTITY_PREDICTION )
 	ItemPreFrame();
@@ -2015,7 +2015,7 @@ void C_BasePlayer::PreThink( void )
 #endif
 }
 
-void C_BasePlayer::PostThink( void )
+void C_BasePlayer::PostThink()
 {
 #if !defined( NO_ENTITY_PREDICTION )
 	MDLCACHE_CRITICAL_SECTION();
@@ -2161,7 +2161,7 @@ C_BaseViewModel *C_BasePlayer::GetViewModel( int index /*= 0*/, bool bObserverOK
 	return vm;
 }
 
-C_BaseCombatWeapon	*C_BasePlayer::GetActiveWeapon( void ) const
+C_BaseCombatWeapon	*C_BasePlayer::GetActiveWeapon() const
 {
 	const C_BasePlayer *fromPlayer = this;
 
@@ -2248,7 +2248,7 @@ void C_BasePlayer::SetSuitUpdate(const char *name, int fgroup, int iNoRepeat)
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void C_BasePlayer::ResetAutoaim( void )
+void C_BasePlayer::ResetAutoaim()
 {
 #if 0
 	if (m_vecAutoAim.x != 0 || m_vecAutoAim.y != 0)
@@ -2260,7 +2260,7 @@ void C_BasePlayer::ResetAutoaim( void )
 	m_fOnTarget = false;
 }
 
-bool C_BasePlayer::ShouldPredict( void )
+bool C_BasePlayer::ShouldPredict()
 {
 #if !defined( NO_ENTITY_PREDICTION )
 	// Do this before calling into baseclass so prediction data block gets allocated
@@ -2276,7 +2276,7 @@ bool C_BasePlayer::ShouldPredict( void )
 // Purpose: Special processing for player simulation
 // NOTE: Don't chain to BaseClass!!!!
 //-----------------------------------------------------------------------------
-void C_BasePlayer::PhysicsSimulate( void )
+void C_BasePlayer::PhysicsSimulate()
 {
 #if !defined( NO_ENTITY_PREDICTION )
 	VPROF( "C_BasePlayer::PhysicsSimulate" );
@@ -2369,7 +2369,7 @@ bool C_BasePlayer::IsUseableEntity( CBaseEntity *pEntity, unsigned int requiredC
 // Purpose: 
 // Output : float
 //-----------------------------------------------------------------------------
-float C_BasePlayer::GetFOV( void )
+float C_BasePlayer::GetFOV()
 {
 	// Allow users to override the FOV during demo playback
 	bool bUseDemoOverrideFov = engine->IsPlayingDemo() && demo_fov_override.GetFloat() > 0.0f;
@@ -2517,9 +2517,9 @@ void RecvProxy_ObserverMode( const CRecvProxyData *pData, void *pStruct, void *p
 //-----------------------------------------------------------------------------
 // Purpose: Remove this player from a vehicle
 //-----------------------------------------------------------------------------
-void C_BasePlayer::LeaveVehicle( void )
+void C_BasePlayer::LeaveVehicle()
 {
-	if ( NULL == m_hVehicle.Get() )
+	if ( nullptr == m_hVehicle.Get() )
 		return;
 
 // Let server do this for now
@@ -2530,7 +2530,7 @@ void C_BasePlayer::LeaveVehicle( void )
 	int nRole = pVehicle->GetPassengerRole( this );
 	Assert( nRole != VEHICLE_ROLE_NONE );
 
-	SetParent( NULL );
+	SetParent( nullptr );
 
 	// Find the first non-blocked exit point:
 	Vector vNewPos = GetAbsOrigin();
@@ -2549,8 +2549,8 @@ void C_BasePlayer::LeaveVehicle( void )
 	qAngles[ROLL] = 0;
 	SnapEyeAngles( qAngles );
 
-	m_hVehicle = NULL;
-	pVehicle->SetPassenger(nRole, NULL);
+	m_hVehicle = nullptr;
+	pVehicle->SetPassenger(nRole, nullptr);
 
 	Weapon_Switch( m_hLastWeapon );
 #endif
@@ -2680,15 +2680,15 @@ IRagdoll* C_BasePlayer::GetRepresentativeRagdoll() const
 	return m_pRagdoll;
 }
 
-IMaterial *C_BasePlayer::GetHeadLabelMaterial( void )
+IMaterial *C_BasePlayer::GetHeadLabelMaterial()
 {
-	if ( GetClientVoiceMgr() == NULL )
-		return NULL;
+	if ( GetClientVoiceMgr() == nullptr )
+		return nullptr;
 
 	return GetClientVoiceMgr()->GetHeadLabelMaterial();
 }
 
-bool IsInFreezeCam( void )
+bool IsInFreezeCam()
 {
 	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
 	if ( pPlayer && pPlayer->GetObserverMode() == OBS_MODE_FREEZECAM )
@@ -2736,7 +2736,7 @@ void C_BasePlayer::FogControllerChanged( bool bSnap )
 //-----------------------------------------------------------------------------
 // Purpose: Check to see that the controllers data is up to date.
 //-----------------------------------------------------------------------------
-void C_BasePlayer::UpdateFogController( void )
+void C_BasePlayer::UpdateFogController()
 {
 	if ( m_Local.m_PlayerFog.m_hCtrl )
 	{
@@ -2775,7 +2775,7 @@ void C_BasePlayer::UpdateFogController( void )
 //-----------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------
-void C_BasePlayer::UpdateFogBlend( void )
+void C_BasePlayer::UpdateFogBlend()
 {
 	// Transition.
 	if ( m_Local.m_PlayerFog.m_flTransitionTime != -1 )
@@ -2784,18 +2784,18 @@ void C_BasePlayer::UpdateFogBlend( void )
 		if ( flTimeDelta < m_CurrentFog.duration )
 		{
 			float flScale = flTimeDelta / m_CurrentFog.duration;
-			m_CurrentFog.colorPrimary.SetR( ( m_Local.m_PlayerFog.m_NewColor.r * flScale ) + ( m_Local.m_PlayerFog.m_OldColor.r * ( 1.0f - flScale ) ) );
-			m_CurrentFog.colorPrimary.SetG( ( m_Local.m_PlayerFog.m_NewColor.g * flScale ) + ( m_Local.m_PlayerFog.m_OldColor.g * ( 1.0f - flScale ) ) );
-			m_CurrentFog.colorPrimary.SetB( ( m_Local.m_PlayerFog.m_NewColor.b * flScale ) + ( m_Local.m_PlayerFog.m_OldColor.b * ( 1.0f - flScale ) ) );
+			m_CurrentFog.colorPrimary.SetR( ( m_Local.m_PlayerFog.m_NewColor.r() * flScale ) + ( m_Local.m_PlayerFog.m_OldColor.r() * ( 1.0f - flScale ) ) );
+			m_CurrentFog.colorPrimary.SetG( ( m_Local.m_PlayerFog.m_NewColor.g() * flScale ) + ( m_Local.m_PlayerFog.m_OldColor.g() * ( 1.0f - flScale ) ) );
+			m_CurrentFog.colorPrimary.SetB( ( m_Local.m_PlayerFog.m_NewColor.b() * flScale ) + ( m_Local.m_PlayerFog.m_OldColor.b() * ( 1.0f - flScale ) ) );
 			m_CurrentFog.start.Set( ( m_Local.m_PlayerFog.m_flNewStart * flScale ) + ( ( m_Local.m_PlayerFog.m_flOldStart * ( 1.0f - flScale ) ) ) );
 			m_CurrentFog.end.Set( ( m_Local.m_PlayerFog.m_flNewEnd * flScale ) + ( ( m_Local.m_PlayerFog.m_flOldEnd * ( 1.0f - flScale ) ) ) );
 		}
 		else
 		{
 			// Slam the final fog values.
-			m_CurrentFog.colorPrimary.SetR( m_Local.m_PlayerFog.m_NewColor.r );
-			m_CurrentFog.colorPrimary.SetG( m_Local.m_PlayerFog.m_NewColor.g );
-			m_CurrentFog.colorPrimary.SetB( m_Local.m_PlayerFog.m_NewColor.b );
+			m_CurrentFog.colorPrimary.SetR( m_Local.m_PlayerFog.m_NewColor.r() );
+			m_CurrentFog.colorPrimary.SetG( m_Local.m_PlayerFog.m_NewColor.g() );
+			m_CurrentFog.colorPrimary.SetB( m_Local.m_PlayerFog.m_NewColor.b() );
 			m_CurrentFog.start.Set( m_Local.m_PlayerFog.m_flNewStart );
 			m_CurrentFog.end.Set( m_Local.m_PlayerFog.m_flNewEnd );
 			m_Local.m_PlayerFog.m_flTransitionTime = -1;
@@ -2842,7 +2842,7 @@ bool C_BasePlayer::GetSteamID( CSteamID *pID )
 //-----------------------------------------------------------------------------
 // Purpose: Update the visibility of our worn items.
 //-----------------------------------------------------------------------------
-void C_BasePlayer::UpdateWearables( void )
+void C_BasePlayer::UpdateWearables()
 {
 	for ( int i=0; i<m_hMyWearables.Count(); ++i )
 	{

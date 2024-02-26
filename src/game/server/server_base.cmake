@@ -987,6 +987,7 @@ function(target_use_server_base target EXCLUDE_SOURCES)
 		"${LIBPUBLIC}/choreoobjects${CMAKE_STATIC_LIBRARY_SUFFIX}"
 		"${LIBPUBLIC}/particles${CMAKE_STATIC_LIBRARY_SUFFIX}"
 		"${LIBPUBLIC}/dmxloader${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		${ASRC_tier02}
 		mathlib
 		tier2
 		tier3

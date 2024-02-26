@@ -1,12 +1,11 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
-
+#include "c_gib.h"
 #include "cbase.h"
 #include "vcollide_parse.h"
-#include "c_gib.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -15,46 +14,42 @@
 //			This is only a client-side version of gibs at the moment
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-C_Gib::~C_Gib( void )
-{
+C_Gib::~C_Gib() {
 	VPhysicsDestroyObject();
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pszModelName - 
-//			vecOrigin - 
-//			vecForceDir - 
-//			vecAngularImp - 
+// Purpose:
+// Input  : *pszModelName -
+//			vecOrigin -
+//			vecForceDir -
+//			vecAngularImp -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-C_Gib *C_Gib::CreateClientsideGib( const char *pszModelName, Vector vecOrigin, Vector vecForceDir, AngularImpulse vecAngularImp, float flLifetime )
-{
-	C_Gib *pGib = new C_Gib;
+C_Gib* C_Gib::CreateClientsideGib( const char* pszModelName, Vector vecOrigin, Vector vecForceDir, AngularImpulse vecAngularImp, float flLifetime ) {
+	C_Gib* pGib = new C_Gib;
 
-	if ( pGib == NULL )
-		return NULL;
+	if ( pGib == nullptr )
+		return nullptr;
 
 	if ( pGib->InitializeGib( pszModelName, vecOrigin, vecForceDir, vecAngularImp, flLifetime ) == false )
-		return NULL;
+		return nullptr;
 
 	return pGib;
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pszModelName - 
-//			vecOrigin - 
-//			vecForceDir - 
-//			vecAngularImp - 
+// Purpose:
+// Input  : *pszModelName -
+//			vecOrigin -
+//			vecForceDir -
+//			vecAngularImp -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool C_Gib::InitializeGib( const char *pszModelName, Vector vecOrigin, Vector vecForceDir, AngularImpulse vecAngularImp, float flLifetime )
-{
-	if ( InitializeAsClientEntity( pszModelName, RENDER_GROUP_OPAQUE_ENTITY ) == false )
-	{
+bool C_Gib::InitializeGib( const char* pszModelName, Vector vecOrigin, Vector vecForceDir, AngularImpulse vecAngularImp, float flLifetime ) {
+	if ( InitializeAsClientEntity( pszModelName, RENDER_GROUP_OPAQUE_ENTITY ) == false ) {
 		Release();
 		return false;
 	}
@@ -64,19 +59,16 @@ bool C_Gib::InitializeGib( const char *pszModelName, Vector vecOrigin, Vector ve
 
 	solid_t tmpSolid;
 	PhysModelParseSolid( tmpSolid, this, GetModelIndex() );
-	
+
 	m_pPhysicsObject = VPhysicsInitNormal( SOLID_VPHYSICS, 0, false, &tmpSolid );
-	
-	if ( m_pPhysicsObject )
-	{
+
+	if ( m_pPhysicsObject ) {
 		float flForce = m_pPhysicsObject->GetMass();
-		vecForceDir *= flForce;	
+		vecForceDir *= flForce;
 
 		m_pPhysicsObject->ApplyForceOffset( vecForceDir, GetAbsOrigin() );
 		m_pPhysicsObject->SetCallbackFlags( m_pPhysicsObject->GetCallbackFlags() | CALLBACK_GLOBAL_TOUCH | CALLBACK_GLOBAL_TOUCH_STATIC );
-	}
-	else
-	{
+	} else {
 		// failed to create a physics object
 		Release();
 		return false;
@@ -88,18 +80,16 @@ bool C_Gib::InitializeGib( const char *pszModelName, Vector vecOrigin, Vector ve
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-void C_Gib::ClientThink( void )
-{
+void C_Gib::ClientThink() {
 	SetRenderMode( kRenderTransAlpha );
-	m_nRenderFX		= kRenderFxFadeFast;
+	m_nRenderFX = kRenderFxFadeFast;
 
-	if ( m_clrRender->a == 0 )
-	{
-#ifdef HL2_CLIENT_DLL
-		s_AntlionGibManager.RemoveGib( this );
-#endif
+	if ( m_clrRender->a() == 0 ) {
+		#if defined( HL2_CLIENT_DLL )
+				s_AntlionGibManager.RemoveGib( this );
+		#endif
 		Release();
 		return;
 	}
@@ -108,14 +98,12 @@ void C_Gib::ClientThink( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pOther - 
+// Purpose:
+// Input  : *pOther -
 //-----------------------------------------------------------------------------
-void C_Gib::StartTouch( C_BaseEntity *pOther )
-{
+void C_Gib::StartTouch( C_BaseEntity* pOther ) {
 	// Limit the amount of times we can bounce
-	if ( m_flTouchDelta < gpGlobals->curtime )
-	{
+	if ( m_flTouchDelta < gpGlobals->curtime ) {
 		HitSurface( pOther );
 		m_flTouchDelta = gpGlobals->curtime + 0.1f;
 	}
@@ -124,10 +112,9 @@ void C_Gib::StartTouch( C_BaseEntity *pOther )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pOther - 
+// Purpose:
+// Input  : *pOther -
 //-----------------------------------------------------------------------------
-void C_Gib::HitSurface( C_BaseEntity *pOther )
-{
+void C_Gib::HitSurface( C_BaseEntity* pOther ) {
 	//TODO: Implement splatter or effects in child versions
 }

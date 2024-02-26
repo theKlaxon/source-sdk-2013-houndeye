@@ -162,7 +162,7 @@ END_RECV_TABLE()
 // ------------------------------------------------------------------------- //
 C_SmokeStack::C_SmokeStack()
 {
-	m_pParticleMgr = NULL;
+	m_pParticleMgr = nullptr;
 	m_MaterialHandle[0] = INVALID_MATERIAL_HANDLE;
 	m_iMaterialModel = -1;
 	
@@ -210,7 +210,7 @@ void C_SmokeStack::OnDataChanged(DataUpdateType_t updateType)
 
 	if(updateType == DATA_UPDATE_CREATED)
 	{
-		Start(ParticleMgr(), NULL);
+		Start(ParticleMgr(), nullptr);
 	}
 
 	// Recalulate lifetime in case length or speed changed.
@@ -386,10 +386,10 @@ void C_SmokeStack::StartRender( VMatrix &effectMatrix )
 
 void C_SmokeStack::QueueLightParametersInRenderer()
 {
-	m_Renderer.SetBaseColor( Vector( m_clrRender->r / 255.0f, m_clrRender->g / 255.0f, m_clrRender->b / 255.0f ) );
+	m_Renderer.SetBaseColor( Vector( m_clrRender->r() / 255.0f, m_clrRender->g() / 255.0f, m_clrRender->b() / 255.0f ) );
 	m_Renderer.SetAmbientLight( m_AmbientLight );
 	m_Renderer.SetDirectionalLight( m_DirLight );
-	m_flAlphaScale = (float)m_clrRender->a;
+	m_flAlphaScale = static_cast<float>( m_clrRender->a() );
 } 
 
 

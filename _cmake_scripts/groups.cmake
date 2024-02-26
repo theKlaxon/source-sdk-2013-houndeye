@@ -55,8 +55,8 @@ elseif (${BUILD_GROUP} STREQUAL "everything")
 	include("${SRCDIR}/vgui2/vgui_controls/vgui_controls.cmake")
 
 	# Declare additional dependencies
-    add_dependencies( "client_${BUILD_GAME}" bootstrap inputsystem launcher filesystem_stdio )
-    add_dependencies( "server_${BUILD_GAME}" bootstrap inputsystem launcher filesystem_stdio )
+    add_dependencies( "client_${BUILD_GAME}" bootstrap inputsystem launcher )
+    add_dependencies( "server_${BUILD_GAME}" bootstrap inputsystem launcher )
 
 elseif (${BUILD_GROUP} STREQUAL "compilers")
 	include("${SRCDIR}/tier0/tier0.cmake")

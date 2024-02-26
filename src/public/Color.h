@@ -50,10 +50,6 @@ public:
 		*reinterpret_cast<int*>( this ) = color32;
 	}
 
-	[[deprecated( "This shouldn't be used" )]] void SetRawColor( const color32 color32 ) {
-		*reinterpret_cast<int*>( this ) = *reinterpret_cast<const int*>( &color32 );
-	}
-
 	[[nodiscard]] int GetRawColor() const {
 		return *reinterpret_cast<const int*>( this );
 	}

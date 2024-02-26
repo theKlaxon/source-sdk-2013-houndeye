@@ -1,44 +1,37 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
-
-#ifndef SPRITETRAIL_H
-#define SPRITETRAIL_H
-#ifdef _WIN32
 #pragma once
-#endif
 
 #include "Sprite.h"
 
 #if defined( CLIENT_DLL )
-#define CSpriteTrail C_SpriteTrail
+	#define CSpriteTrail C_SpriteTrail
 #endif
 
 
 //-----------------------------------------------------------------------------
 // Sprite trail
 //-----------------------------------------------------------------------------
-struct TrailPoint_t
-{
+struct TrailPoint_t {
 	DECLARE_SIMPLE_DATADESC();
 
-	Vector	m_vecScreenPos;
-	float	m_flDieTime;
-	float	m_flTexCoord;
-	float	m_flWidthVariance;
+	Vector m_vecScreenPos;
+	float m_flDieTime;
+	float m_flTexCoord;
+	float m_flWidthVariance;
 };
 
-class CSpriteTrail : public CSprite
-{
+class CSpriteTrail : public CSprite {
 	DECLARE_CLASS( CSpriteTrail, CSprite );
 	DECLARE_DATADESC();
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
 
 public:
-	CSpriteTrail( void );
+	CSpriteTrail();
 
 	// Sets parameters of the sprite trail
 	void SetLifeTime( float time );
@@ -47,78 +40,73 @@ public:
 	void SetStartWidthVariance( float flStartWidthVariance );
 	void SetTextureResolution( float flTexelsPerInch );
 	void SetMinFadeLength( float flMinFadeLength );
-	void SetSkybox( const Vector &vecSkyboxOrigin, float flSkyboxScale );
+	void SetSkybox( const Vector& vecSkyboxOrigin, float flSkyboxScale );
 
 	// Is the trail in the skybox?
 	bool IsInSkybox() const;
-	void Spawn( void );
-	void Precache( void );
+	void Spawn();
+	void Precache();
 	void SetTransmit( bool bTransmit = true ) { m_bDrawForMoveParent = bTransmit; }
 
-#if defined( CLIENT_DLL ) 
-	// Client only code
-	virtual int DrawModel( int flags );
-	virtual const Vector &GetRenderOrigin( void );
-	virtual const QAngle &GetRenderAngles( void );
+	#if defined( CLIENT_DLL )
+		// Client only code
+		virtual int DrawModel( int flags );
+		virtual const Vector& GetRenderOrigin();
+		virtual const QAngle& GetRenderAngles();
 
-	// On data update
-	virtual void OnPreDataChanged( DataUpdateType_t updateType );
-	virtual void OnDataChanged( DataUpdateType_t updateType );
-	virtual void GetRenderBounds( Vector& mins, Vector& maxs );
-	virtual void ClientThink();
+		// On data update
+		virtual void OnPreDataChanged( DataUpdateType_t updateType );
+		virtual void OnDataChanged( DataUpdateType_t updateType );
+		virtual void GetRenderBounds( Vector& mins, Vector& maxs );
+		virtual void ClientThink();
 
-	virtual bool ValidateEntityAttachedToPlayer( bool &bShouldRetry );
+		virtual bool ValidateEntityAttachedToPlayer( bool& bShouldRetry );
+	#else
+		// Server only code
 
-#else
-	// Server only code
-
-	virtual int ShouldTransmit( const CCheckTransmitInfo *pInfo );
-	static CSpriteTrail *SpriteTrailCreate( const char *pSpriteName, const Vector &origin, bool animate );
-
-#endif
+		virtual int ShouldTransmit( const CCheckTransmitInfo* pInfo );
+		static CSpriteTrail* SpriteTrailCreate( const char* pSpriteName, const Vector& origin, bool animate );
+	#endif
 
 private:
-#if defined( CLIENT_DLL )
-	enum
-	{
-		// NOTE: # of points max must be a power of two!
-		MAX_SPRITE_TRAIL_POINTS	= 256,
-		MAX_SPRITE_TRAIL_MASK = MAX_SPRITE_TRAIL_POINTS - 1,
-	};
+	#if defined( CLIENT_DLL )
+		enum {
+			// NOTE: # of points max must be a power of two!
+			MAX_SPRITE_TRAIL_POINTS = 256,
+			MAX_SPRITE_TRAIL_MASK = MAX_SPRITE_TRAIL_POINTS - 1,
+		};
 
-	TrailPoint_t *GetTrailPoint( int n );
-	void	UpdateTrail( void );
-	void	ComputeScreenPosition( Vector *pScreenPos );
-	void	ConvertSkybox();
-	void	UpdateBoundingBox( void );
+		TrailPoint_t* GetTrailPoint( int n );
+		void UpdateTrail();
+		void ComputeScreenPosition( Vector* pScreenPos );
+		void ConvertSkybox();
+		void UpdateBoundingBox();
 
-	TrailPoint_t	m_vecSteps[MAX_SPRITE_TRAIL_POINTS];
-	int	m_nFirstStep;
-	int m_nStepCount;
-	float m_flUpdateTime;
-	Vector m_vecPrevSkyboxOrigin;
-	float m_flPrevSkyboxScale;
-	Vector m_vecRenderMins;
-	Vector m_vecRenderMaxs;
-#endif
+		TrailPoint_t m_vecSteps[ MAX_SPRITE_TRAIL_POINTS ];
+		int m_nFirstStep;
+		int m_nStepCount;
+		float m_flUpdateTime;
+		Vector m_vecPrevSkyboxOrigin;
+		float m_flPrevSkyboxScale;
+		Vector m_vecRenderMins;
+		Vector m_vecRenderMaxs;
+	#endif
 
-	CNetworkVar( float, m_flLifeTime );	// Amount of time before a new trail segment fades away
-	CNetworkVar( float, m_flStartWidth );	// The starting scale
-	CNetworkVar( float, m_flEndWidth );	// The ending scale
-	CNetworkVar( float, m_flStartWidthVariance );	// The starting scale
-	CNetworkVar( float, m_flTextureRes );	// Texture resolution along the trail
-	CNetworkVar( float, m_flMinFadeLength );	// The end of the trail must fade out for this many units
-	CNetworkVector( m_vecSkyboxOrigin );	// What's our skybox origin?
-	CNetworkVar( float, m_flSkyboxScale );	// What's our skybox scale?
+	CNetworkVar( float, m_flLifeTime );          // Amount of time before a new trail segment fades away
+	CNetworkVar( float, m_flStartWidth );        // The starting scale
+	CNetworkVar( float, m_flEndWidth );          // The ending scale
+	CNetworkVar( float, m_flStartWidthVariance );// The starting scale
+	CNetworkVar( float, m_flTextureRes );        // Texture resolution along the trail
+	CNetworkVar( float, m_flMinFadeLength );     // The end of the trail must fade out for this many units
+	CNetworkVector( m_vecSkyboxOrigin );         // What's our skybox origin?
+	CNetworkVar( float, m_flSkyboxScale );       // What's our skybox scale?
 
 	string_t m_iszSpriteName;
-	bool	m_bAnimate;
-	bool	m_bDrawForMoveParent;
+	bool m_bAnimate;
+	bool m_bDrawForMoveParent;
 
 #if defined( CLIENT_DLL )
-public:
-	void SetUpdateTime(float setTo){ m_flUpdateTime = setTo; }
+	public:
+		void SetUpdateTime( float setTo ) { m_flUpdateTime = setTo; }
 #endif
 };
-
-#endif // SPRITETRAIL_H
