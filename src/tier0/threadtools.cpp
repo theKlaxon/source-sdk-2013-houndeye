@@ -232,6 +232,58 @@ bool CThreadEvent::Wait( uint32 dwTimeout ) {
 	return CThreadSyncObject::Wait( dwTimeout );
 }
 
+// ----- CThread -----
+//
+CThread::CThread() {}
+CThread::~CThread() {}
 
+const char* CThread::GetName() {
+	return this->m_szName;
+}
+void CThread::SetName( const char* pName ) {}
 
+bool CThread::Start( unsigned nBytesStack ) { }
+
+bool CThread::IsAlive() { }
+
+bool CThread::Join( unsigned timeout ) { }
+
+#if IsWindows()
+	HANDLE CThread::GetThreadHandle() { }
+#endif
+uint CThread::GetThreadId() const {
+	return this->m_threadId;
+}
+int CThread::GetResult() const {
+	return this->m_result;
+}
+void CThread::Stop( int exitCode ) { }
+int CThread::GetPriority() const { }
+bool CThread::SetPriority( int ) { }
+void CThread::SuspendCooperative() { }
+void CThread::ResumeCooperative() { }
+void CThread::BWaitForThreadSuspendCooperative() { }
+#if !IsLinux()
+	// forcefully Suspend a thread
+	unsigned int CThread::Suspend() { }
+
+	// forcefully Resume a previously suspended thread
+	unsigned int CThread::Resume() { }
+#endif
+bool CThread::Terminate( int exitCode ) { }
+CThread* CThread::GetCurrentCThread() { }
+void CThread::Yield() {
+	#if IsWindows()
+		Sleep( 0 );
+	#elif IsPosix()
+		sched_yield();
+	#endif
+}
+void CThread::Sleep( unsigned duration ) { }
+bool CThread::Init() { }
+void CThread::OnExit() { }
+void CThread::Cleanup() { }
+bool CThread::WaitForCreateComplete( CThreadEvent* pEvent ) { }
+CThread::ThreadProc_t CThread::GetThreadProc() { }
+bool CThread::IsThreadRunning() { }
 

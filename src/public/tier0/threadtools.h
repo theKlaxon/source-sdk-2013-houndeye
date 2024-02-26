@@ -1241,14 +1241,12 @@ public:
 	#if IsWindows()
 		// Access the thread handle directly
 		HANDLE GetThreadHandle();
-		uint GetThreadId();
-	#elif IsLinux()
-		uint GetThreadId();
 	#endif
+	uint GetThreadId() const;
 
 	//-----------------------------------------------------
 
-	int GetResult();
+	int GetResult() const;
 
 	//-----------------------------------------------------
 	// Functions for both this, and maybe, and other threads
