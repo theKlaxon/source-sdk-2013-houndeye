@@ -65,8 +65,16 @@ const char* CCommandLine::GetCmdLine() const {
 }
 
 const char* CCommandLine::CheckParm( const char* psz, const char** ppszValue ) const {
-	AssertUnreachable();
-	return nullptr;
+	auto index{ this->FindParm( psz ) };
+	if ( ppszValue )
+		*ppszValue = nullptr;
+
+	if (! index )
+		return nullptr;
+
+	if ( ppszValue && index + 1 < this->m_Params.size() && this->m_Params[index + 1][0] != '-' )
+		*ppszValue = this->m_Params[index + 1].c_str();
+	return this->m_Params[index].c_str();
 }
 void CCommandLine::RemoveParm( const char* parm ) {
 	// remove `-key` and its `value`
