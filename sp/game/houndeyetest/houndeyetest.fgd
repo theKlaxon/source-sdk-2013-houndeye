@@ -1,0 +1,6 @@
+@include "base.fgd"
+
+@NPCClass base(BaseNPC) studio("models/houndeye.mdl") = npc_houndeye
+[
+    
+]
