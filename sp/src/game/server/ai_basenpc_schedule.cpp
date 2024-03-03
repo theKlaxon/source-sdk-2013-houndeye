@@ -1858,7 +1858,7 @@ void CAI_BaseNPC::StartTask( const Task_t *pTask )
 				float flRange = -1.0f;
 				if ( CapabilitiesGet() & (bits_CAP_INNATE_RANGE_ATTACK1|bits_CAP_INNATE_RANGE_ATTACK2) )
 				{
-					flRange = InnateRange1MaxRange();
+ 					flRange = InnateRange1MaxRange();
 				}
 				else if ( GetActiveWeapon() )
 				{

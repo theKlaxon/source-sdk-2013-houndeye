@@ -21,6 +21,7 @@ ipch
 *.vcxproj
 *.sln
 *.vcxproj.filters
+*.vcxproj.FileListAbsolute.txt
 /sp/src/.vs/
 /mp/src/.vs/
 
