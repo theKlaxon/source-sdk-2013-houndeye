@@ -13,6 +13,10 @@
 #include <string_view>
 #include <algorithm>
 
+#if IsWindows()
+	#include <rpcdce.h>
+#endif
+
 // Indices in the UUID string representation for each byte.
 static unsigned char encoded_pos[16] { 0, 2, 4, 6, 9, 11, 14, 16, 19, 21, 24, 26, 28, 30, 32, 34 };
 // Hex

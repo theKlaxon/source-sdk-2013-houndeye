@@ -6,8 +6,8 @@
 #if defined( _WIN32 )
 	#include <libloaderapi.h>
 	#include <errhandlingapi.h>
-	#include <winbase.h>
 	#include <windef.h>
+	#include <winbase.h>
 	#include <direct.h>// getcwd
 #elif POSIX
 	#include <dlfcn.h>
@@ -27,6 +27,7 @@
 #include "interface.h"
 #include "basetypes.h"
 #include "tier0/dbg.h"
+#include "tier0/icommandline.h"
 #include "tier0/threadtools.h"
 #include "tier1/strtools.h"
 #include <cstdio>

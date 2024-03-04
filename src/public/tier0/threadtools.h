@@ -92,11 +92,6 @@ typedef int ( *ThreadedLoadLibraryFunc_t )();
 PLATFORM_INTERFACE void SetThreadedLoadLibraryFunc( ThreadedLoadLibraryFunc_t func );
 PLATFORM_INTERFACE ThreadedLoadLibraryFunc_t GetThreadedLoadLibraryFunc();
 
-#if IsWindows() && !IsPlatform64Bits()
-	extern "C" unsigned long __declspec( dllimport ) __stdcall GetCurrentThreadId();
-	#define ThreadGetCurrentId GetCurrentThreadId
-#endif
-
 inline void ThreadPause() {
 	#if IsWindows() && IsPC()
 		// Intrinsic for __asm pause; from <intrin.h>
@@ -1232,7 +1227,7 @@ public:
 	virtual bool Start( unsigned nBytesStack = 0 );
 
 	// Returns true if thread has been created and hasn't yet exited
-	bool IsAlive();
+	bool IsAlive() const;
 
 	// This method causes the current thread to wait until this thread
 	// is no longer alive.
@@ -1357,15 +1352,15 @@ private:
 		HANDLE m_hThread;
 		ThreadId_t m_threadId;
 	#elif IsPosix()
-		pthread_t m_threadId;
+		pthread_t m_threadId{};
 	#endif
-	CInterlockedInt m_nSuspendCount;
-	CThreadEvent m_SuspendEvent;
-	CThreadEvent m_SuspendEventSignal;
-	int m_result;
+	CInterlockedInt m_nSuspendCount{ 0 };
+	CThreadEvent m_SuspendEvent{};
+	CThreadEvent m_SuspendEventSignal{};
+	int m_result{ -1 };
 	char m_szName[ 32 ];
-	void* m_pStackBase;
-	unsigned m_flags;
+	void* m_pStackBase{ nullptr };
+	unsigned m_flags{ 0 };
 };
 
 //-----------------------------------------------------------------------------

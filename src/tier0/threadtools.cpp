@@ -2,15 +2,18 @@
 // Created by ENDERZOMBI102 on 10/02/2024.
 //
 #include "threadtools.h"
+#include <unordered_set>
 #if IsWindows()
 	#include <synchapi.h>
 	#include <processthreadsapi.h>
 #elif IsPosix()
 	#include <sys/time.h>
+	#include <csignal>
 #endif
 
 
-static ThreadedLoadLibraryFunc_t g_pThrLoadLibFunc;
+static ThreadedLoadLibraryFunc_t g_pThrLoadLibFunc{ nullptr };
+static int g_MainThreadId{ -1 };
 
 // ----- SimpleThread_t -----
 //
@@ -34,16 +37,31 @@ uint ThreadGetCurrentId() {
 	#if IsWindows()
 		return static_cast<uint>( GetCurrentThreadId() );
 	#elif IsPosix()
+		// FIXME: This might be a problem, as the code might expect a SYSTEM UNIQUE id
 		return pthread_self();
 	#else
 		#error "ThreadSleep: Missing implementation!"
 	#endif
 }
-ThreadHandle_t ThreadGetCurrentHandle();
+ThreadHandle_t ThreadGetCurrentHandle() {
+	#if IsWindows()
+	#elif IsPosix()
+		return reinterpret_cast<ThreadHandle_t>( pthread_self() );
+	#endif
+}
 int ThreadGetPriority( ThreadHandle_t hThread );
 bool ThreadSetPriority( ThreadHandle_t hThread, int priority );
-bool ThreadInMainThread();
-void DeclareCurrentThreadIsMainThread();
+bool ThreadInMainThread() {
+#if IsWindows()
+	return g_MainThreadId == GetCurrentThreadId();
+#elif IsPosix()
+	pthread_
+	return pthread_equal( g_MainThreadId, pthread_self() );
+#endif
+}
+void DeclareCurrentThreadIsMainThread() {
+	g_MainThreadId = ThreadGetCurrentHandle();
+}
 
 void SetThreadedLoadLibraryFunc( ThreadedLoadLibraryFunc_t func ) {
 	g_pThrLoadLibFunc = func;
@@ -234,22 +252,37 @@ bool CThreadEvent::Wait( uint32 dwTimeout ) {
 
 // ----- CThread -----
 //
-CThread::CThread() {}
-CThread::~CThread() {}
+static thread_local CThread* g_hCurrentThread{ nullptr };
+CThread::CThread() { }
+CThread::~CThread() { }
 
 const char* CThread::GetName() {
 	return this->m_szName;
 }
-void CThread::SetName( const char* pName ) {}
+void CThread::SetName( const char* pName ) {
+	#if IsWindows()
+		SetThreadDescription( this->m_hThread, pName );
+	#elif IsPosix()
+		pthread_setname_np( this->m_threadId, pName );
+	#endif
+	strncpy( this->m_szName, pName, 31 );
+	this->m_szName[31] = '\0';
+}
 
-bool CThread::Start( unsigned nBytesStack ) { }
+bool CThread::Start( unsigned nBytesStack ) {
 
-bool CThread::IsAlive() { }
+}
+
+bool CThread::IsAlive() const {
+	return this->m_result != -1;
+}
 
 bool CThread::Join( unsigned timeout ) { }
 
 #if IsWindows()
-	HANDLE CThread::GetThreadHandle() { }
+	HANDLE CThread::GetThreadHandle() {
+		return this->m_hThread;
+	}
 #endif
 uint CThread::GetThreadId() const {
 	return this->m_threadId;
@@ -257,20 +290,46 @@ uint CThread::GetThreadId() const {
 int CThread::GetResult() const {
 	return this->m_result;
 }
-void CThread::Stop( int exitCode ) { }
-int CThread::GetPriority() const { }
-bool CThread::SetPriority( int ) { }
+void CThread::Stop( int exitCode ) {
+
+}
+int CThread::GetPriority() const {
+	#if IsWindows()
+		return GetThreadPriority( this->m_hThread );
+	#elif IsPosix()
+		int unused;
+		sched_param params{};
+		pthread_getschedparam( this->m_threadId, &unused, &params );
+		return params.sched_priority;
+	#endif
+}
+bool CThread::SetPriority( int pValue ) {
+	#if IsWindows()
+		return SetThreadPriority( this->m_hThread, pValue );
+	#elif IsPosix()
+		return pthread_setschedprio( this->m_threadId, pValue ) == 0;
+	#endif
+}
 void CThread::SuspendCooperative() { }
 void CThread::ResumeCooperative() { }
 void CThread::BWaitForThreadSuspendCooperative() { }
 #if !IsLinux()
-	// forcefully Suspend a thread
-	unsigned int CThread::Suspend() { }
+	unsigned int CThread::Suspend() {
+		SuspendThread( this->m_hThread );
+	}
 
-	// forcefully Resume a previously suspended thread
-	unsigned int CThread::Resume() { }
+	unsigned int CThread::Resume() {
+		ResumeThread( this->m_hThread );
+	}
 #endif
-bool CThread::Terminate( int exitCode ) { }
+bool CThread::Terminate( int exitCode ) {
+	this->m_result = exitCode;
+	#if IsWindows()
+		TerminateThread( this->m_hThread, exitCode );
+	#elif IsPosix()
+		return pthread_kill( this->m_threadId, SIGKILL ) == 0;
+	#endif
+}
 CThread* CThread::GetCurrentCThread() { }
 void CThread::Yield() {
 	#if IsWindows()
@@ -282,8 +341,18 @@ void CThread::Yield() {
 void CThread::Sleep( unsigned duration ) { }
 bool CThread::Init() { }
 void CThread::OnExit() { }
-void CThread::Cleanup() { }
+void CThread::Cleanup() {
+	this->m_result = 0;
+}
 bool CThread::WaitForCreateComplete( CThreadEvent* pEvent ) { }
-CThread::ThreadProc_t CThread::GetThreadProc() { }
-bool CThread::IsThreadRunning() { }
+CThread::ThreadProc_t CThread::GetThreadProc() {
+	#if IsWindows()
+		return GetThread;
+	#elif IsPosix()
+		return ThreadProc;
+	#endif
+}
+bool CThread::IsThreadRunning() {
+	return this->IsAlive();
+}
 

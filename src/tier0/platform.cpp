@@ -10,6 +10,7 @@
 
 #if IsWindows()
 	#include <sysinfoapi.h>
+	#include <profileapi.h>
 #elif IsPosix()
 	#include <cpuid.h>
 #endif
@@ -60,16 +61,35 @@ unsigned int Plat_MSTime() {
 	return static_cast<unsigned int>( ( MonotonicTime() - g_ModuleData.m_LoadTime ) * 1000 );
 }
 char* Plat_ctime( const time_t* timep, char* buf, size_t bufsize ) {
-	return ctime_r( timep, buf );  // TODO: Verify this doesn't exceed the buffer
+	#if IsWindows()
+		ctime_s( buf, bufsize, timep );
+		return buf;
+	#elif IsLinux()
+		return ctime_r( timep, buf );  // TODO: Verify this doesn't exceed the buffer
+	#endif
 }
 struct tm* Plat_gmtime( const time_t* timep, struct tm* result ) {
-	return gmtime_r( timep, result );
+	#if IsWindows()
+		gmtime_s( result, timep );
+		return result;
+	#elif IsLinux()
+		return gmtime_r( timep, result );
+	#endif
 }
 time_t Plat_timegm( struct tm* timeptr ) {
-	return timegm( timeptr );
+	#if IsWindows()
+		return _mkgmtime( timeptr );
+	#elif IsLinux()
+		return timegm( timeptr );
+	#endif
 }
 struct tm* Plat_localtime( const time_t* timep, struct tm* result ) {
-	return localtime_r( timep, result );
+	#if IsWindows()
+		localtime_s( result, timep );
+		return result;
+	#elif IsLinux()
+		return localtime_r( timep, result );
+	#endif
 }
 
 const CPUInformation* GetCPUInformation() {
