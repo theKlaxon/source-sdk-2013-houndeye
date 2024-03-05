@@ -230,7 +230,10 @@ void CNPC_Houndeye::Precache() {
 	PrecacheScriptSound("npc_houndeye.sonic");
 	PrecacheScriptSound("npc_houndeye.warn");
 
-	PrecacheParticleSystem("heye_aura_shockwave"); // re-purposed some ep2 particles for the shockwave
+	PrecacheParticleSystem("heye_aura_shockwave0"); // re-purposed some ep2 particles for the shockwave
+	PrecacheParticleSystem("heye_aura_shockwave1"); 
+	PrecacheParticleSystem("heye_aura_shockwave2"); 
+	PrecacheParticleSystem("heye_aura_shockwave3"); 
 }
 
 void CNPC_Houndeye::Spawn() {
@@ -566,7 +569,27 @@ void CNPC_Houndeye::FoundEnemySound() {
 void CNPC_Houndeye::DoShockwave() {
 
 	// do our fx
-	DispatchParticleEffect("heye_aura_shockwave", GetAbsOrigin(), QAngle());
+	if (m_pSquad) {
+		switch (m_pSquad->NumMembers()) {
+		case 1:
+			DispatchParticleEffect("heye_aura_shockwave0", GetAbsOrigin(), QAngle());
+			break;
+		case 2:
+			DispatchParticleEffect("heye_aura_shockwave1", GetAbsOrigin(), QAngle());
+			break;
+		case 3:
+			DispatchParticleEffect("heye_aura_shockwave2", GetAbsOrigin(), QAngle());
+			break;
+		case 4:
+		case 5:
+		default:
+			DispatchParticleEffect("heye_aura_shockwave3", GetAbsOrigin(), QAngle());
+			break;
+		}
+	}
+	else 
+		DispatchParticleEffect("heye_aura_shockwave0", GetAbsOrigin(), QAngle());
+
 	EmitSound("npc_houndeye.sonic");
 
 	// hurt things
