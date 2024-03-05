@@ -7,20 +7,29 @@ enum HoundeyePointBehavior_t {
 	HEYE_POINT_INSPECT_DEADGUY,
 };
 
-class CHoundeyeWaypoint : public CPointEntity {
-	DECLARE_CLASS(CHoundeyeWaypoint, CPointEntity)
+class CHoundeyePoint : public CPointEntity {
+	DECLARE_CLASS(CHoundeyePoint, CPointEntity)
 	DECLARE_DATADESC()
 public:
 
-	CHoundeyeWaypoint();
+	void Spawn();
+
+	void InputEnable(inputdata_t& inputdata);
+	void InputDisable(inputdata_t& inputdata);
 
 	HoundeyePointBehavior_t GetBehavior() { return m_nBehavior; }
 
-	bool IsInUse();
+	friend class CHoundeyePointManager;
+protected:
+	void SetId(int nId) { m_nManagedId = nId; }
+	int GetId() { return m_nManagedId; }
 
 private:
 
 	HoundeyePointBehavior_t m_nBehavior;
-	bool m_bDisabled;
+	COutputEvent m_outOnEnabled;
+	COutputEvent m_outOnDisabled;
 
+	bool m_bEnabled;
+	int m_nManagedId;
 };
