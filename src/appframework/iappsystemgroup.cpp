@@ -43,9 +43,11 @@ int CAppSystemGroup::Run() {
 	this->DisconnectSystems();
 	// Unload
 	this->UnloadAllModules();
+
+    return 0;
 }
 
-int CAppSystemGroup::Startup() { }
+int CAppSystemGroup::Startup() { return 0; }
 void CAppSystemGroup::Shutdown() { }
 
 CAppSystemGroup::AppSystemGroupStage_t CAppSystemGroup::GetErrorStage() const {
@@ -114,10 +116,12 @@ bool CAppSystemGroup::AddSystems( AppSystemInfo_t* pSystems ) {
 
 		i += 1;
 	}
+
+    return false; //TODO: fixme
 }
 
 void* CAppSystemGroup::FindSystem( const char* pInterfaceName ) {
-
+    return {};
 }
 
 CreateInterfaceFn CAppSystemGroup::GetFactory() {
@@ -125,23 +129,23 @@ CreateInterfaceFn CAppSystemGroup::GetFactory() {
 }
 
 // private
-int CAppSystemGroup::OnStartup() { }
+int CAppSystemGroup::OnStartup() { return {}; }
 void CAppSystemGroup::OnShutdown() { }
 
 void CAppSystemGroup::UnloadAllModules() { }
 void CAppSystemGroup::RemoveAllSystems() { }
 
-bool CAppSystemGroup::ConnectSystems() { }
+bool CAppSystemGroup::ConnectSystems() { return {}; }
 void CAppSystemGroup::DisconnectSystems() { }
 
-InitReturnVal_t CAppSystemGroup::InitSystems() { }
+InitReturnVal_t CAppSystemGroup::InitSystems() { return {}; }
 void CAppSystemGroup::ShutdownSystems() { }
 
 CAppSystemGroup* CAppSystemGroup::GetParent() {
 	return this->m_pParentAppSystem;
 }
 
-CSysModule* CAppSystemGroup::LoadModuleDLL( const char* pDLLName ) { }
+CSysModule* CAppSystemGroup::LoadModuleDLL( const char* pDLLName ) { return {}; }
 
 void CAppSystemGroup::ReportStartupFailure( int nErrorStage, int nSysIndex ) { }
 

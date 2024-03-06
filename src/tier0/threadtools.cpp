@@ -6,6 +6,8 @@
 #if IsWindows()
 	#include <synchapi.h>
 	#include <processthreadsapi.h>
+    #include <handleapi.h>
+
 #elif IsPosix()
 	#include <sys/time.h>
 	#include <csignal>
@@ -13,7 +15,7 @@
 
 
 static ThreadedLoadLibraryFunc_t g_pThrLoadLibFunc{ nullptr };
-static int g_MainThreadId{ -1 };
+static uint g_MainThreadId{ 0 };
 
 // ----- SimpleThread_t -----
 //
@@ -23,7 +25,7 @@ bool ReleaseThreadHandle( ThreadHandle_t pHandle );
 
 void ThreadSleep( unsigned pDurationMs ) {
 	#if IsWindows()
-		Sleep( pDuration );
+		Sleep( pDurationMs );
 	#elif IsLinux()
 		usleep( pDurationMs );
 	#elif IsPosix()
@@ -45,6 +47,7 @@ uint ThreadGetCurrentId() {
 }
 ThreadHandle_t ThreadGetCurrentHandle() {
 	#if IsWindows()
+        return static_cast<ThreadHandle_t>(GetCurrentThread());
 	#elif IsPosix()
 		return reinterpret_cast<ThreadHandle_t>( pthread_self() );
 	#endif
@@ -52,15 +55,10 @@ ThreadHandle_t ThreadGetCurrentHandle() {
 int ThreadGetPriority( ThreadHandle_t hThread );
 bool ThreadSetPriority( ThreadHandle_t hThread, int priority );
 bool ThreadInMainThread() {
-#if IsWindows()
-	return g_MainThreadId == GetCurrentThreadId();
-#elif IsPosix()
-	pthread_
-	return pthread_equal( g_MainThreadId, pthread_self() );
-#endif
+    return g_MainThreadId == ThreadGetCurrentId();
 }
 void DeclareCurrentThreadIsMainThread() {
-	g_MainThreadId = ThreadGetCurrentHandle();
+	g_MainThreadId = ThreadGetCurrentId();
 }
 
 void SetThreadedLoadLibraryFunc( ThreadedLoadLibraryFunc_t func ) {
@@ -116,26 +114,50 @@ void ThreadSetAffinity( ThreadHandle_t hThread, int nAffinityMask );
 	}
 #endif
 int64 ThreadInterlockedIncrement64( int64 volatile* pIt ) {// NOLINT(*-non-const-parameter)
-	return __atomic_add_fetch( pIt, 1, __ATOMIC_ACQ_REL );
+    #if IsWindows()
+        return _InlineInterlockedIncrement64(pIt);
+    #elif IsPosix()
+        return __atomic_add_fetch( pIt, 1, __ATOMIC_ACQ_REL );
+    #endif
 }
 int64 ThreadInterlockedDecrement64( int64 volatile* pIt ) {// NOLINT(*-non-const-parameter)
-	return __atomic_sub_fetch( pIt, 1, __ATOMIC_ACQ_REL );
+    #if IsWindows()
+        return _InlineInterlockedDecrement64(pIt);
+    #elif IsPosix()
+	    return __atomic_sub_fetch( pIt, 1, __ATOMIC_ACQ_REL );
+    #endif
 }
 int64 ThreadInterlockedCompareExchange64( int64 volatile* pIt, int64 pValue, int64 comperand ) {// NOLINT(*-non-const-parameter)
-	int64 last;
-	int64 expected = comperand;
-	do __atomic_load( pIt, &last, __ATOMIC_RELAXED );
-	while (! __atomic_compare_exchange_n( pIt, &expected, pValue, false, __ATOMIC_SEQ_CST, __ATOMIC_RELAXED ) );
-	return last;
+    #if IsWindows()
+        return _InterlockedCompareExchange64(pIt, pValue, comperand);
+    #elif IsPosix()
+	    int64 last;
+        int64 expected = comperand;
+        do __atomic_load( pIt, &last, __ATOMIC_RELAXED );
+        while (! __atomic_compare_exchange_n( pIt, &expected, pValue, false, __ATOMIC_SEQ_CST, __ATOMIC_RELAXED ) );
+        return last;
+    #endif
 }
 int64 ThreadInterlockedExchange64( int64 volatile* pIt, int64 pValue ) {                        // NOLINT(*-non-const-parameter)
-	return __atomic_exchange_n( pIt, pValue, __ATOMIC_ACQ_REL );
+    #if IsWindows()
+        return _InlineInterlockedExchange64(pIt, pValue);
+    #elif IsPosix()
+	    return __atomic_exchange_n( pIt, pValue, __ATOMIC_ACQ_REL );
+    #endif
 }
 int64 ThreadInterlockedExchangeAdd64( int64 volatile* pIt, int64 pValue ) {// NOLINT(*-non-const-parameter)
-	return __atomic_fetch_add( pIt, pValue, __ATOMIC_ACQ_REL );
+    #if IsWindows()
+        return _InlineInterlockedExchangeAdd64(pIt, pValue);
+    #elif IsPosix()
+	    return __atomic_fetch_add( pIt, pValue, __ATOMIC_ACQ_REL );
+    #endif
 }
 bool ThreadInterlockedAssignIf64( volatile int64* pDest, int64 pValue, int64 comperand ) { // NOLINT(*-non-const-parameter)
-	return __atomic_compare_exchange_n( pDest, &comperand, pValue, false, __ATOMIC_SEQ_CST, __ATOMIC_RELAXED );
+    #if IsWindows()
+        return _InterlockedCompareExchange64(pDest, pValue, comperand);
+    #elif IsPosix()
+	    return __atomic_compare_exchange_n( pDest, &comperand, pValue, false, __ATOMIC_SEQ_CST, __ATOMIC_RELAXED );
+    #endif
 }
 
 // ----- CThreadRWLock -----
@@ -188,63 +210,98 @@ void CThreadFastMutex::Lock( const uint32 pThreadId, unsigned nSpinSleepTime ) v
 // ----- CThreadSyncObject -----
 //
 CThreadSyncObject::CThreadSyncObject() {
-	pthread_mutex_init( &this->m_Mutex, nullptr );
-	pthread_cond_init( &this->m_Condition, nullptr );
-	this->m_bInitalized = true;
+    #if IsPosix()
+        pthread_mutex_init( &this->m_Mutex, nullptr );
+        pthread_cond_init( &this->m_Condition, nullptr );
+        this->m_bInitalized = true;
+    #endif
 }
 CThreadSyncObject::~CThreadSyncObject() {
-	if ( this->m_bInitalized ) {
-		pthread_cond_destroy( &this->m_Condition );
-		pthread_mutex_destroy( &this->m_Mutex );
-		this->m_bInitalized = false;
-	}
+    #if IsWindows()
+        if (this->m_hSyncObject != nullptr)
+            CloseHandle(this->m_hSyncObject);
+    #elif IsPosix()
+        if ( this->m_bInitalized ) {
+            pthread_cond_destroy( &this->m_Condition );
+            pthread_mutex_destroy( &this->m_Mutex );
+            this->m_bInitalized = false;
+        }
+    #endif
 }
 bool CThreadSyncObject::operator!() const {
-	return ! this->m_bInitalized;
+    #if IsWindows()
+        return ! this->m_bCreatedHandle;
+    #elif IsPosix()
+        return ! this->m_bInitalized;
+    #endif
 }
 bool CThreadSyncObject::Wait( uint32 dwTimeoutMs ) {
-	pthread_mutex_lock( &this->m_Mutex );
-	timeval val{};
-	gettimeofday( &val, nullptr );
-	timespec spec{
-		.tv_sec = val.tv_sec,
-		.tv_nsec = static_cast<long>( dwTimeoutMs * 1000 ) + val.tv_usec / 1000 // TODO: Verify this
-	};
-	pthread_cond_timedwait( &this->m_Condition, &this->m_Mutex, &spec );
-	pthread_mutex_unlock( &this->m_Mutex );
+    #if IsWindows()
+        WaitForSingleObject(this->m_hSyncObject, dwTimeoutMs);
+    #elif
+        pthread_mutex_lock( &this->m_Mutex );
+        timeval val{};
+        gettimeofday( &val, nullptr );
+        timespec spec{
+            .tv_sec = val.tv_sec,
+            .tv_nsec = static_cast<long>( dwTimeoutMs * 1000 ) + val.tv_usec / 1000 // TODO: Verify this
+        };
+        pthread_cond_timedwait( &this->m_Condition, &this->m_Mutex, &spec );
+        pthread_mutex_unlock( &this->m_Mutex );
+    #endif
 }
 void CThreadSyncObject::AssertUseable() {
 	#if IsDebug()
-		Assert( this->m_bInitalized ); // TODO: ????
+        #if IsWindows()
+            Assert ( this->m_bCreatedHandle );
+        #elif
+            Assert( this->m_bInitalized ); // TODO: ????
+        #endif
 	#endif
 }
 // ----- CThreadEvent -----
 //
 CThreadEvent::CThreadEvent( bool fManualReset ) {
 	this->m_bManualReset = fManualReset;
+    #if IsWindows()
+        this->m_hSyncObject = CreateEventA(nullptr, fManualReset, 0, nullptr);
+        this->m_bCreatedHandle = true;
+    #endif
 }
 bool CThreadEvent::Set() {
-	pthread_mutex_lock( &this->m_Mutex );
-	this->m_cSet = 1;
-	// wake up waiting threads
-	auto err{ pthread_cond_signal( &this->m_Condition ) };
-	pthread_mutex_unlock( &this->m_Mutex );
-	// true if no error occurred, false otherwise. TODO?: return the error code instead of just bool
-	return err == 0;
+    #if IsWindows()
+        return SetEvent(this->m_hSyncObject);
+    #elif IsPosix()
+        pthread_mutex_lock( &this->m_Mutex );
+        this->m_cSet = 1;
+        // wake up waiting threads
+        auto err{ pthread_cond_signal( &this->m_Condition ) };
+        pthread_mutex_unlock( &this->m_Mutex );
+        // true if no error occurred, false otherwise. TODO?: return the error code instead of just bool
+        return err == 0;
+    #endif
 }
 bool CThreadEvent::Reset() {
+#if IsWindows()
+    return ResetEvent(this->m_hSyncObject);
+#elif IsPosix()
 	pthread_mutex_lock( &this->m_Mutex );
 	auto wasSet{ this->m_cSet == 1 };
 	this->m_cSet = 0;
 	pthread_mutex_unlock( &this->m_Mutex );
 	return wasSet;
+#endif
 }
 bool CThreadEvent::Check() {
-	pthread_mutex_lock( &this->m_Mutex );
+#if IsWindows()
+    return this->Wait(0);
+#elif IsPosix()
+    pthread_mutex_lock( &this->m_Mutex );
 	auto isSet{ this->m_cSet == 1 };
 	pthread_mutex_unlock( &this->m_Mutex );
 
 	return isSet;
+#endif
 }
 bool CThreadEvent::Wait( uint32 dwTimeout ) {
 	return CThreadSyncObject::Wait( dwTimeout );
@@ -261,7 +318,11 @@ const char* CThread::GetName() {
 }
 void CThread::SetName( const char* pName ) {
 	#if IsWindows()
-		SetThreadDescription( this->m_hThread, pName );
+        size_t size { strlen(pName) + 1 };
+        wchar_t* pNameW { new wchar_t[size] };
+        mbstowcs(pNameW,pName,size);
+		SetThreadDescription( this->m_hThread, pNameW );
+        delete[] pNameW;
 	#elif IsPosix()
 		pthread_setname_np( this->m_threadId, pName );
 	#endif
@@ -346,11 +407,7 @@ void CThread::Cleanup() {
 }
 bool CThread::WaitForCreateComplete( CThreadEvent* pEvent ) { }
 CThread::ThreadProc_t CThread::GetThreadProc() {
-	#if IsWindows()
-		return GetThread;
-	#elif IsPosix()
-		return ThreadProc;
-	#endif
+    return ThreadProc;
 }
 bool CThread::IsThreadRunning() {
 	return this->IsAlive();

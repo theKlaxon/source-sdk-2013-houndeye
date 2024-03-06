@@ -15,6 +15,7 @@
 		#include <heapapi.h>
 		#include <memoryapi.h>
 		#include <libloaderapi.h>
+        #include <processthreadsapi.h>
 	#endif
 
 	#if defined( _WIN32 )
@@ -201,7 +202,7 @@
 				return pMem;
 			}
 
-			size_t _msize_base( void* pMem ) {
+			size_t _msize_base( void* pMem ) noexcept {
 				return g_pMemAlloc->GetSize( pMem );
 			}
 

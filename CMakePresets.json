@@ -20,6 +20,13 @@
                 "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/_cmake_scripts/toolchain/x86-windows-gnu.cmake",
                 "CUDAToolkit_ROOT":  "$ENV{CUDA_ROOT}"
             }
+        },
+        {
+            "name": "windows",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/_cmake_scripts/toolchain/x86-windows.cmake",
+                "CUDAToolkit_ROOT":  "$ENV{CUDA_ROOT}"
+            }
         }
     ]
 }

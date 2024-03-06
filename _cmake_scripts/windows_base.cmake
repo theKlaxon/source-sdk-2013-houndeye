@@ -5,6 +5,7 @@ add_compile_definitions(
 	WIN32
 	_WIN32
 	_WINDOWS
+	_X86_
 )
 
 if (MSVC)

@@ -11,6 +11,7 @@
 #if IsWindows()
 	#include <sysinfoapi.h>
 	#include <profileapi.h>
+    #include <intrin.h>
 #elif IsPosix()
 	#include <cpuid.h>
 #endif
@@ -102,17 +103,17 @@ const CPUInformation* GetCPUInformation() {
 		.m_bSSE   = true,   // NOTE: All x86 processors nowadays support this
 		.m_bSSE2  = true,   // NOTE: All x86 processors nowadays support this
 		.m_b3DNow = false,
-		.m_bMMX   = SDL_HasMMX(),
+		.m_bMMX   = SDL_HasMMX() != 0,
 		.m_bHT    = true,   // NOTE: All x86 processors nowadays support this
 
-		.m_nLogicalProcessors = SDL_GetCPUCount(),
-		.m_nPhysicalProcessors = SDL_GetCPUCount(),
+		.m_nLogicalProcessors = static_cast<uint8>(SDL_GetCPUCount()),
+		.m_nPhysicalProcessors = static_cast<uint8>(SDL_GetCPUCount()),
 
-		.m_bSSE3  = SDL_HasSSE3(),
+		.m_bSSE3  = SDL_HasSSE3() != 0,
 		.m_bSSSE3 = true,   // NOTE: All x86 processors nowadays support this
 		.m_bSSE4a = false,
-		.m_bSSE41 = SDL_HasSSE41(),
-		.m_bSSE42 = SDL_HasSSE42(),
+		.m_bSSE41 = SDL_HasSSE41() != 0,
+		.m_bSSE42 = SDL_HasSSE42() != 0,
 
 		.m_Speed = 3'000'000'000,
 

@@ -994,8 +994,10 @@ protected:
 	void AssertUseable();
 
 	#if IsWindows()
-		HANDLE m_hSyncObject;
-		bool m_bCreatedHandle;
+		HANDLE m_hSyncObject {};
+		bool m_bCreatedHandle {};
+        bool m_bManualReset{ false };
+        bool m_bWakeForEvent{ false };
 	#elif IsPosix()
 		pthread_mutex_t m_Mutex{};
 		pthread_cond_t m_Condition{};

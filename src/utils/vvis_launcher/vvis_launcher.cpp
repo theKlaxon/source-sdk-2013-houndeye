@@ -11,6 +11,9 @@
 #include "tier0/icommandline.h"
 #include "ilaunchabledll.h"
 #include "platform.h"
+#if IsWindows()
+    #include <cstdio>
+#endif
 
 
 int main( int argc, char* argv[] ) {

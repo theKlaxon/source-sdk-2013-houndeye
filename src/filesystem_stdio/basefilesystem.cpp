@@ -54,7 +54,11 @@ bool CBaseFileSystemStdio::SetFileWritable( char const* pFileName, bool writable
 long CBaseFileSystemStdio::GetFileTime( const char* pFileName, const char* pPathID ) {
 	struct stat stats{};
 	stat( pFileName, &stats );
-	return stats.st_mtim.tv_sec; // TODO: Verify accuracy of return
+    #if IsWindows()
+        return static_cast<long>( stats.st_mtime );
+    #elif IsLinux()
+    	return stats.st_mtim.tv_sec; // TODO: Verify accuracy of return
+    #endif
 }
 
 //--------------------------------------------------------

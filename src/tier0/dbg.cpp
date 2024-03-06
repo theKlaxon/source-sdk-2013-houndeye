@@ -64,8 +64,8 @@ SpewRetval_t DefaultSpewFuncAbortOnAsserts( SpewType_t pSpewType, const tchar* p
 }
 
 // TODO: Implement these
-const tchar* GetSpewOutputGroup() { AssertUnreachable(); }
-int GetSpewOutputLevel() { AssertUnreachable(); }
+const tchar* GetSpewOutputGroup() { AssertUnreachable(); return nullptr; }
+int GetSpewOutputLevel() { AssertUnreachable(); return 0; }
 const Color* GetSpewOutputColor() {
 	static Color spewColors[SpewType_t::SPEW_TYPE_COUNT] {
 		{ 0xB5, 0xB6, 0xE3, 0 },  // SPEW_MESSAGE
@@ -101,8 +101,8 @@ SpewRetval_t _SpewMessage( const tchar* pMsg, ... ) {
 
 	return g_pSpewOutFunction( g_sSpewInfo.m_eType, buffer );
 }
-SpewRetval_t _DSpewMessage( const tchar* pGroupName, int level, const tchar* pMsg, ... ) { assert( false ); }
-SpewRetval_t ColorSpewMessage( SpewType_t type, const Color* pColor, const tchar* pMsg, ... ) { assert( false ); }
+SpewRetval_t _DSpewMessage( const tchar* pGroupName, int level, const tchar* pMsg, ... ) { assert( false ); return {}; }
+SpewRetval_t ColorSpewMessage( SpewType_t type, const Color* pColor, const tchar* pMsg, ... ) { assert( false ); return {}; }
 void _ExitOnFatalAssert( const tchar* pFile, int line ) { assert( false ); }
 bool ShouldUseNewAssertDialog() { return true; }
 
