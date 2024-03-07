@@ -30,20 +30,30 @@ public:
 	int RangeAttack1Conditions(float flDot, float flDist);
 	int SelectSchedule();
 
+
+
 	void WakeSound();
 	void FoundEnemySound();
 	void DoShockwave();
-
+	
 	Class_T Classify() { return CLASS_HOUNDEYE; }
 	virtual float		InnateRange1MaxRange(void) override { return sk_heye_attack_range.GetFloat(); }
-	
+
+	virtual int			OnTakeDamage_Alive(const CTakeDamageInfo& info);
+	virtual int			OnTakeDamage_Dying(const CTakeDamageInfo& info);
+	virtual int			OnTakeDamage_Dead(const CTakeDamageInfo& info);
+
+	virtual void		Event_Killed(const CTakeDamageInfo& info);
+
+	void TraceAttack(const CTakeDamageInfo& info, const Vector& vecDir, trace_t* ptr, CDmgAccumulator* pAccumulator);
+
 	float m_flDistTooFar = 800.0f;
 
 private:
 	
 	int SelectFailSchedule(int failedSchedule, int failedTask, AI_TaskFailureCode_t taskFailCode);
 	int TranslateSchedule(int nType);
-
+	
 	// conditions
 	enum {
 		COND_HEYE_HEALTH_LOW = LAST_SHARED_CONDITION,
@@ -52,8 +62,7 @@ private:
 		COND_HEYE_LEADER_DEAD,
 		COND_HEYE_HAS_WAYPOINT,
 		COND_HEYE_ENEMY_TOO_FAR,
-		COND_HEYE_SQUAD_ALERT,
-		TASK_HEYE_CHECK_FOR_SQUAD,
+		COND_HEYE_SQUAD_ALERT,		
 	};
 
 	// tasks
@@ -66,10 +75,12 @@ private:
 		// attacking
 		TASK_HEYE_PLOT_ATTACK,
 		TASK_HEYE_DO_SHOCKWAVE,
+		TASK_HEYE_CHECK_FOR_SQUAD,
 
-		// waypoint tasks
-		TASK_HEYE_GET_POINT_TASK,
-		TASK_HEYE_SIT_AND_STAY
+		// waypoint tasks	
+		TASK_HEYE_SET_AT_POINT,
+		TASK_HEYE_ANIM_WATCH,
+		TASK_HEYE_ANIM_INSPECT,
 	};
 
 	// task fails
@@ -93,13 +104,14 @@ private:
 		SCHED_HEYE_MOVE_TO_WAYPOINT,	// move to the waypoint	
 		SCHED_HEYE_WATCH_WAPOINT,		// watching the TV
 		SCHED_HEYE_INSPECT_WAYPOINT,	// inspecting the body
+		SCHED_HEYE_DECIDE_WAYPOINT_TASK
 	};
 
 	// squad // goal is to have 2 attacking while the others run around
-	enum {
-		SQUADSLOT_HEYE_ATTACK1 = LAST_SHARED_SQUADSLOT,
-		SQUADSLOT_HEYE_ATTACK2,
-	};
+	//enum {
+	//	SQUADSLOT_HEYE_ATTACK1 = LAST_SHARED_SQUADSLOT,
+	//	SQUADSLOT_HEYE_ATTACK2,
+	//};
 
 	// blinking
 	enum {
@@ -117,7 +129,12 @@ private:
 	} m_nSleepState;
 
 	float m_flBlinkTime;
+	float m_flCooldownTime;
+
+	// TODO: make this into some flagss
+	bool m_bCanAttack;
 	bool m_bSitting;
+	bool m_bAtPoint;
 	bool m_bPlotting;
 
 	CHoundeyePoint* m_pWaypoint;

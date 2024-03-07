@@ -6,8 +6,8 @@ LINK_ENTITY_TO_CLASS(houndeye_point, CHoundeyePoint)
 
 BEGIN_DATADESC(CHoundeyePoint)
 	
-	DEFINE_KEYFIELD( m_nBehavior, FIELD_INTEGER, "Houndeye Task (0 = Watch TV, 1 = Inspect)"),
-	DEFINE_KEYFIELD( m_bEnabled, FIELD_BOOLEAN, "Is this waypoint Enabled?"),
+	DEFINE_KEYFIELD( m_nBehavior, FIELD_INTEGER, "HoundeyeTask"),
+	DEFINE_KEYFIELD( m_bEnabled, FIELD_BOOLEAN, "HoundeyePointEnabled"),
 
 	DEFINE_INPUTFUNC( FIELD_VOID, "Enable", InputEnable),
 	DEFINE_INPUTFUNC( FIELD_VOID, "Disable", InputDisable),

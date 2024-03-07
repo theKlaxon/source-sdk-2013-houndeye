@@ -8,16 +8,16 @@
 
 @PointClass base(Targetname, Parentname) iconsprite("editor/info_target.vmt") = houndeye_point : "Houndeye Point"
 [
-    HoundeyeTask(choices) : "Houndeye Task" : 0 =
+    HoundeyeTask(choices) : "Houndeye Task" : "Watch TV" =
     [
         0 : "Watch TV"
         1 : "Inspect"
     ]
 
-    HoundeyePointEnabled(choices) : "Is this waypoint Enabled?" : 1 =
+    HoundeyePointEnabled(choices) : "Is this waypoint Enabled?" : "Yes" =
     [
-        1 : "Yes"
         0 : "No"
+        1 : "Yes"
     ]
 
     input Enable(void) : "Enabled this waypoint."

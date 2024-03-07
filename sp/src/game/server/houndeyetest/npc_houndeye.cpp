@@ -25,6 +25,10 @@ static Color g_HeyeAttackColors[] = {
 	Color(),
 };
 
+// custom acts
+int ACT_INSPECT_WALL;
+int ACT_EAT;
+
 LINK_ENTITY_TO_CLASS(npc_houndeye, CNPC_Houndeye);
 
 BEGIN_DATADESC(CNPC_Houndeye)
@@ -47,10 +51,15 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 	DECLARE_TASK( TASK_HEYE_SPOOK_AWAKE )
 	DECLARE_TASK( TASK_HEYE_PLOT_ATTACK )
 	DECLARE_TASK( TASK_HEYE_DO_SHOCKWAVE )
-	DECLARE_TASK( TASK_HEYE_GET_POINT_TASK )
-	DECLARE_TASK( TASK_HEYE_SIT_AND_STAY )
 	DECLARE_TASK( TASK_HEYE_CHECK_FOR_SQUAD )
+	DECLARE_TASK( TASK_HEYE_ANIM_WATCH )
+	DECLARE_TASK( TASK_HEYE_ANIM_INSPECT )
+	DECLARE_TASK( TASK_HEYE_SET_AT_POINT )
 
+	// acts
+	DECLARE_ACTIVITY( ACT_INSPECT_WALL )
+	DECLARE_ACTIVITY( ACT_EAT )
+	
 	DEFINE_SCHEDULE // the chillin' state
 	(
 		SCHED_HEYE_SNOOZE,
@@ -90,9 +99,21 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		//"	TASK_STOP_MOVING		0"
 		"	TASK_HEYE_DO_SHOCKWAVE	0"
 		"	TASK_SET_SCHEDULE		SCHEDULE:SCHED_HEYE_HUNT"
+		//"	TASK_SET_SCHEDULE		SCHEDULE:SCHED_IDLE_WANDER"
 		"	"
 		"	Interrupts"
 		"	COND_HEYE_HEALTH_LOW"
+	)
+
+	DEFINE_SCHEDULE
+	(
+		SCHED_HEYE_SPOOKED_AWAKE,
+
+		"	Tasks"
+		"	TASK_HEYE_SPOOK_AWAKE	0"
+		"	TASK_SET_SCHEDULE		SCHEDULE:SCHED_HEYE_HUNT"
+		"	"
+		"	Interrupts"
 	)
 
 	DEFINE_SCHEDULE
@@ -111,8 +132,11 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		"	Interrupts"
 		"	COND_TASK_FAILED"
 		"	COND_TOO_FAR_TO_ATTACK"
+		"	COND_LOST_ENEMY"
+		"	COND_NO_ENEMY"
+		"	COND_HEYE_ENEMY_TOO_FAR"
 	)
-
+	
 	// schedules
 	DEFINE_SCHEDULE
 	(
@@ -135,18 +159,9 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		"	COND_TASK_FAILED"
 		"	COND_HEYE_HEALTH_LOW"
 		"	COND_LOST_ENEMY"
+		"	COND_NO_ENEMY"	
 		"	COND_HEYE_ENEMY_TOO_FAR"
-	)
-
-	DEFINE_SCHEDULE
-	(
-		SCHED_HEYE_SPOOKED_AWAKE,
-
-		"	Tasks"
-		"	TASK_HEYE_SPOOK_AWAKE	0"
-		"	TASK_SET_SCHEDULE		SCHEDULE:SCHED_HEYE_HUNT"
-		"	"
-		"	Interrupts"
+		//""
 	)
 
 	DEFINE_SCHEDULE
@@ -154,12 +169,14 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		SCHED_HEYE_MOVE_TO_WAYPOINT,
 
 		"	Tasks"
-
 		"	TASK_GET_PATH_TO_TARGET		0"
 		"	TASK_RUN_PATH				0"
 		"	TASK_WAIT_FOR_MOVEMENT		0"
+		"	TASK_GET_PATH_TO_RANDOM_NODE	48"
+		"	TASK_RUN_PATH					0"
+		"	TASK_WAIT_FOR_MOVEMENT			0"
 		"	TASK_STOP_MOVING			0"
-		"	TASK_HEYE_GET_POINT_TASK	0"	// this task intentionally fails to 
+		"	TASK_HEYE_SET_AT_POINT		0"	// this task intentionally fails to 
 											// make SelectFailSchedule do the work 
 											// of finding the heye_point's desired task schedule
 		"	"
@@ -177,12 +194,12 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		SCHED_HEYE_WATCH_WAPOINT,
 
 		"	Tasks"
-		"	TASK_SET_FAIL_SCHEDULE	SCHEDULE:SCHED_HEYE_HUNT"
-		"	TASK_FACE_TARGET		0"
-		"	TASK_STOP_MOVING		0"
-		"	TASK_RESET_ACTIVITY		0"
-		"	TASK_PLAY_SEQUENCE		ACTIVITY:ACT_IDLE_ANGRY"
-		"	TASK_SET_SCHEDULE		SCHEDULE:SCHED_HEYE_WATCH_WAPOINT"
+		"	TASK_SET_FAIL_SCHEDULE			SCHEDULE:SCHED_HEYE_HUNT"
+		"	TASK_FACE_TARGET				0"
+		
+		"	TASK_RESET_ACTIVITY				0"
+		"	TASK_HEYE_ANIM_WATCH			0"
+		"	TASK_SET_SCHEDULE				SCHEDULE:SCHED_HEYE_WATCH_WAPOINT"
 		"	"
 		"	Interrupts"
 		"	COND_HEYE_SQUAD_ALERT"
@@ -197,8 +214,15 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		SCHED_HEYE_INSPECT_WAYPOINT,
 
 		"	Tasks"
-		"	"
-		"	TASK_SET_SCHEDULE		SCHEDULE:SCHED_HEYE_INSPECT_WAYPOINT"
+		"	TASK_SET_FAIL_SCHEDULE			SCHEDULE:SCHED_HEYE_HUNT"
+		"	TASK_GET_PATH_TO_RANDOM_NODE	4"
+		"	TASK_WALK_PATH					0"
+		"	TASK_WAIT_FOR_MOVEMENT			0"
+		"	TASK_FACE_TARGET				0"
+		"	TASK_STOP_MOVING				0"
+		"	TASK_RESET_ACTIVITY				0"
+		"	TASK_HEYE_ANIM_INSPECT			0"
+		"	TASK_SET_SCHEDULE				SCHEDULE:SCHED_HEYE_INSPECT_WAYPOINT"
 		"	"
 		"	Interrupts"
 		"	COND_HEYE_SQUAD_ALERT"
@@ -211,7 +235,7 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 AI_END_CUSTOM_NPC()
 
 CNPC_Houndeye::CNPC_Houndeye() {
-	
+			
 }
 
 void CNPC_Houndeye::Precache() {
@@ -231,9 +255,9 @@ void CNPC_Houndeye::Precache() {
 	PrecacheScriptSound("npc_houndeye.warn");
 
 	PrecacheParticleSystem("heye_aura_shockwave0"); // re-purposed some ep2 particles for the shockwave
-	PrecacheParticleSystem("heye_aura_shockwave1"); 
-	PrecacheParticleSystem("heye_aura_shockwave2"); 
-	PrecacheParticleSystem("heye_aura_shockwave3"); 
+	PrecacheParticleSystem("heye_aura_shockwave1");
+	PrecacheParticleSystem("heye_aura_shockwave2");
+	PrecacheParticleSystem("heye_aura_shockwave3");
 }
 
 void CNPC_Houndeye::Spawn() {
@@ -252,22 +276,27 @@ void CNPC_Houndeye::Spawn() {
 	AddSolidFlags(FSOLID_NOT_STANDABLE);
 	SetMoveType(MOVETYPE_STEP);
 	
+	ClearEffects();
+
 	SetCollisionGroup(HL2COLLISION_GROUP_HOUNDEYE);
 	CapabilitiesClear();
 	CapabilitiesAdd(bits_CAP_MOVE_GROUND | bits_CAP_TURN_HEAD | bits_CAP_INNATE_RANGE_ATTACK1 | bits_CAP_SQUAD);
+	CapabilitiesAdd(bits_CAP_MOVE_JUMP);
 	
-	SetHealth(NPC_HEYE_HEALTH);
+	//SetHealth(NPC_HEYE_HEALTH);
 
 	m_flFieldOfView = 0.5f;
 	m_flBlinkTime = gpGlobals->curtime + sv_houndeye_blinkdelay.GetFloat();
 	m_nBlinkState = BLINK_WAITING;
 	m_nSleepState = SLEEP_NOT_SLEEPING;
 	m_NPCState = NPC_STATE_NONE;
-	m_takedamage = DAMAGE_YES;
+	m_iHealth = m_iMaxHealth = 20;
 
 	m_pWaypoint = nullptr;
 	m_bSitting = false;
 	m_bPlotting = false;
+	m_bAtPoint = false;
+	m_bCanAttack = false;
 
 	AddClassRelationship(CLASS_PLAYER, Disposition_t::D_HT, 0);
 
@@ -400,21 +429,20 @@ void CNPC_Houndeye::StartTask(const Task_t* pTask) {
 		m_bPlotting = false;
 		SetIdealActivity(ACT_RANGE_ATTACK1);
 		break;
-
-	case TASK_HEYE_GET_POINT_TASK:
-		m_NPCState = NPC_STATE_NONE;
-		m_bPlotting = false;
-		break;
-
-	case TASK_HEYE_SIT_AND_STAY:
-		m_bSitting = true;
-		m_bPlotting = false;
-		m_nSleepState = SLEEP_NOT_SLEEPING;
-		m_NPCState = NPC_STATE_IDLE;
-		SetIdealActivity(ACT_IDLE_ANGRY);
-		break;
-
+	
 	case TASK_HEYE_CHECK_FOR_SQUAD:
+		break;
+
+	case TASK_HEYE_ANIM_WATCH:
+		m_bAtPoint = false;
+		SetIdealActivity((Activity)ACT_INSPECT_WALL);
+		break;
+	case TASK_HEYE_ANIM_INSPECT:
+		m_bAtPoint = false;
+		SetIdealActivity((Activity)ACT_EAT);
+		break;
+
+	case TASK_HEYE_SET_AT_POINT:
 		break;
 
 	default:
@@ -498,22 +526,19 @@ void CNPC_Houndeye::RunTask(const Task_t* pTask) {
 
 		if (IsSequenceFinished()) {
 			DoShockwave();
+			VacateStrategySlot();
 			TaskComplete();
 			DevMsg("CNPC_Houndeye::RunTask : TASK_HEYE_DO_SHOCKWAVE FINISHED\n");
 		}
 		break;
-		
-	case TASK_HEYE_GET_POINT_TASK:
-		TaskFail(NO_TASK_FAILURE); // this fails on purpose to abuse the SelectFailSchedule's existence
-		break;
-	
-	case TASK_HEYE_SIT_AND_STAY:
 
-		if (IsSequenceFinished()) {
-			TaskComplete();
-		}
+	//case TASK_HEYE_SIT_AND_STAY:
 
-		break;
+	//	if (IsSequenceFinished()) {
+	//		TaskComplete();
+	//	}
+
+	//	break;
 
 	case TASK_HEYE_CHECK_FOR_SQUAD:
 
@@ -523,6 +548,18 @@ void CNPC_Houndeye::RunTask(const Task_t* pTask) {
 			TaskFail(FAIL_HEYE_NO_SQUAD);
 		break;
 
+	case TASK_HEYE_ANIM_WATCH:
+	case TASK_HEYE_ANIM_INSPECT:
+
+		if (IsSequenceFinished())
+			TaskComplete();
+		break;
+
+	case TASK_HEYE_SET_AT_POINT:
+		m_bAtPoint = true;
+		TaskComplete();
+		break;
+	
 	default:
 		BaseClass::RunTask(pTask);
 		break;
@@ -587,7 +624,7 @@ void CNPC_Houndeye::DoShockwave() {
 			break;
 		}
 	}
-	else 
+	else
 		DispatchParticleEffect("heye_aura_shockwave0", GetAbsOrigin(), QAngle());
 
 	EmitSound("npc_houndeye.sonic");
@@ -603,20 +640,17 @@ void CNPC_Houndeye::DoShockwave() {
 	float baseDmg = sv_houndeye_squadattackdmg.GetFloat();
 	float packDmg = baseDmg;
 	packDmg += baseDmg + (m_pSquad != nullptr ? m_pSquad->NumMembers() : 1) * sv_houndeye_squadattackbonus.GetFloat();
-	
+
 	for (int i = 0; i < cnt; i++) {
 
 		if (pEnts[i] == nullptr)
 			continue;
 
-		if (!V_strcmp(pEnts[i]->GetClassname(), "npc_houndeye") || pEnts[i]->m_takedamage == DAMAGE_NO) 
+		if (!V_strcmp(pEnts[i]->GetClassname(), "npc_houndeye") || pEnts[i]->m_takedamage == DAMAGE_NO)
 			continue;
 
 		CTakeDamageInfo dmg(this, this, packDmg, DMG_SONIC);
 		pEnts[i]->TakeDamage(dmg);
-
-		// TODO: Add knockback?
-
 	}
 }
 
@@ -636,16 +670,65 @@ int CNPC_Houndeye::SelectSchedule() {
 		HasCondition(COND_HEYE_LEADER_DEAD) &&
 		HasCondition(COND_SEE_ENEMY))
 		return SCHED_TAKE_COVER_FROM_ENEMY;
-
+	
 	if (m_bPlotting) {
 		if (m_pSquad) {
-			if (OccupyStrategySlot(SQUADSLOT_HEYE_ATTACK1) || OccupyStrategySlot(SQUADSLOT_HEYE_ATTACK2))
+			if (OccupyStrategySlotRange(SQUAD_SLOT_ATTACK1, SQUAD_SLOT_ATTACK2))
 				return SCHED_HEYE_ATTACK;
 			else
 				return SCHED_HEYE_PLOTTING;
 		}
 		else
-			return SCHED_HEYE_ATTACK;
+			return SCHED_HEYE_ATTACK; // if we're not part of a squad, we should just attack.
+	}
+
+	if (m_bAtPoint) {
+
+		if (m_pSquad) {
+
+			if (m_pSquad->IsLeader(this)) {
+				if (!m_pWaypoint)
+					return SCHED_IDLE_WANDER;
+
+				switch (m_pWaypoint->GetBehavior()) {
+				case HEYE_POINT_WATCH_TV:
+					return SCHED_HEYE_WATCH_WAPOINT;
+
+				case HEYE_POINT_INSPECT_DEADGUY:
+					return SCHED_HEYE_INSPECT_WAYPOINT;
+				}
+			}
+			else {
+
+				CHoundeyePoint* pPoint = static_cast<CHoundeyePoint*>(m_pSquad->GetLeader()->GetTarget());
+				if (pPoint) {
+					m_pWaypoint = pPoint;
+
+					switch (pPoint->GetBehavior()) {
+					case HEYE_POINT_WATCH_TV:
+						return SCHED_HEYE_WATCH_WAPOINT;
+
+					case HEYE_POINT_INSPECT_DEADGUY:
+						return SCHED_HEYE_INSPECT_WAYPOINT;
+					}
+				}
+			}
+
+		}
+		else {
+
+			if (!m_pWaypoint)
+				return SCHED_IDLE_WANDER;
+
+			switch (m_pWaypoint->GetBehavior()) {
+			case HEYE_POINT_WATCH_TV:
+				return SCHED_HEYE_WATCH_WAPOINT;
+
+			case HEYE_POINT_INSPECT_DEADGUY:
+				return SCHED_HEYE_INSPECT_WAYPOINT;
+			}
+		}
+
 	}
 
 
@@ -661,25 +744,11 @@ int CNPC_Houndeye::SelectSchedule() {
 int CNPC_Houndeye::SelectFailSchedule(int failedSchedule, int failedTask, AI_TaskFailureCode_t taskFailCode) {
 	
 	switch (failedTask) {
-	case TASK_HEYE_GET_POINT_TASK:
-
-		if (m_pWaypoint && taskFailCode == NO_TASK_FAILURE) {
-			switch (m_pWaypoint->GetBehavior()) {
-			case HEYE_POINT_WATCH_TV:
-				return SCHED_HEYE_WATCH_WAPOINT;
-
-			case HEYE_POINT_INSPECT_DEADGUY:
-				return SCHED_HEYE_INSPECT_WAYPOINT;
-			}
-		}
-		break;
-
-	case TASK_HEYE_PLOT_ATTACK:
-		
+	case TASK_HEYE_PLOT_ATTACK:		
 		break;
 
 	case TASK_HEYE_CHECK_FOR_SQUAD:
-		return SCHED_HEYE_ATTACK;
+		break;// return SCHED_HEYE_ATTACK;
 	}
 	
 	return SCHED_IDLE_WANDER;
@@ -693,9 +762,47 @@ int CNPC_Houndeye::TranslateSchedule(int nType) {
 	case SCHED_IDLE_WANDER:
 
 		// move to the waypoint if we have one
-		if (!HasCondition(COND_HEYE_SQUAD_ALERT)) {
-			CHoundeyePoint* pPoint = CHoundeyePointManager::GetInstance().GetPointClosestToPos(WorldSpaceCenter());
+		if (m_pSquad) {
 			
+			if (m_pSquad->IsLeader(this)) {
+
+				if (HasCondition(COND_SEE_ENEMY) || HasCondition(COND_HEAR_COMBAT) || HasCondition(COND_HEAR_DANGER)) {
+					m_bAtPoint = false;
+					return SCHED_HEYE_HUNT;
+				}
+				else {
+					CHoundeyePoint* pPoint = CHoundeyePointManager::GetInstance().GetPointClosestToPos(WorldSpaceCenter());
+
+					if (pPoint != nullptr) {
+						m_pWaypoint = pPoint;
+						SetTarget(m_pWaypoint);
+						return SCHED_HEYE_MOVE_TO_WAYPOINT;
+					}
+				}
+			}
+			else {
+
+				CAI_BaseNPC* pLeader = m_pSquad->GetLeader();
+				CHoundeyePoint* pLeaderTarg = dynamic_cast<CHoundeyePoint*>(pLeader->GetTarget());
+
+				if (pLeader->HasCondition(COND_SEE_ENEMY) || pLeader->HasCondition(COND_HEAR_COMBAT) || pLeader->HasCondition(COND_HEAR_DANGER)) {
+					m_bAtPoint = false;
+					return SCHED_HEYE_HUNT;
+				}
+
+				if (pLeaderTarg != nullptr) {
+					CBaseEntity* pTarg = pLeader->GetTarget();
+					if (pTarg != nullptr) {
+						SetTarget(pTarg);
+						return SCHED_HEYE_MOVE_TO_WAYPOINT;
+					}
+				}
+			}
+
+		}
+		else {
+			CHoundeyePoint* pPoint = CHoundeyePointManager::GetInstance().GetPointClosestToPos(WorldSpaceCenter());
+
 			if (pPoint != nullptr) {
 				m_pWaypoint = pPoint;
 				SetTarget(m_pWaypoint);
@@ -711,12 +818,49 @@ int CNPC_Houndeye::TranslateSchedule(int nType) {
 		break;
 
 	case SCHED_MOVE_TO_WEAPON_RANGE:
-		return SCHED_HEYE_HUNT;
+		//return SCHED_HEYE_HUNT; // fall (for now)
 
 	case SCHED_RANGE_ATTACK1:
-		return SCHED_HEYE_ATTACK;
+		return SCHED_HEYE_PLOTTING;
 
 	}	
 
 	return BaseClass::TranslateSchedule(nType);
+}
+
+int CNPC_Houndeye::OnTakeDamage_Alive(const CTakeDamageInfo& info) {
+
+	// dont ever take sonic dmaage, if we're ammune to sonic damage 
+	// from other houndeyes, things like thumpers shouldn't do
+	// any damage at all either.
+	if (info.GetDamageType() == DMG_SONIC)
+		return 0;
+
+	// TODO: flinch?
+
+	// take damage
+	float dmg = info.GetBaseDamage();
+
+	if (dmg > 0.0f) {
+		m_iHealth -= dmg;
+		return dmg;
+	}
+
+	return BaseClass::OnTakeDamage_Alive(info);
+}
+
+int CNPC_Houndeye::OnTakeDamage_Dying(const CTakeDamageInfo& info) {
+	return BaseClass::OnTakeDamage_Dying(info);
+}
+
+int CNPC_Houndeye::OnTakeDamage_Dead(const CTakeDamageInfo& info) {
+	return BaseClass::OnTakeDamage_Dead(info);
+}
+
+void CNPC_Houndeye::Event_Killed(const CTakeDamageInfo& info) {
+	return BaseClass::Event_Killed(info);
+}
+
+void CNPC_Houndeye::TraceAttack(const CTakeDamageInfo& info, const Vector& vecDir, trace_t* ptr, CDmgAccumulator* pAccumulator) {
+	BaseClass::TraceAttack(info, vecDir, ptr, pAccumulator);
 }

@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "6440"
-	"mapversion" "24"
+	"mapversion" "27"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "24"
+	"mapversion" "27"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -3998,13 +3998,157 @@ entity
 		"logicalpos" "[0 16000]"
 	}
 }
+entity
+{
+	"id" "1316"
+	"classname" "info_node"
+	"angles" "0 0 0"
+	"nodeid" "54"
+	"spawnflags" "0"
+	"origin" "-63.7388 713.533 -3.81469e-006"
+	editor
+	{
+		"color" "232 219 8"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "1318"
+	"classname" "info_node"
+	"angles" "0 0 0"
+	"nodeid" "55"
+	"spawnflags" "0"
+	"origin" "-1.23967 738.825 1.14441e-005"
+	editor
+	{
+		"color" "232 219 8"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "1320"
+	"classname" "info_node"
+	"angles" "0 0 0"
+	"nodeid" "56"
+	"spawnflags" "0"
+	"origin" "-4.56249 670.995 1.14441e-005"
+	editor
+	{
+		"color" "232 219 8"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "1324"
+	"classname" "info_node"
+	"angles" "0 0 0"
+	"nodeid" "58"
+	"spawnflags" "0"
+	"origin" "-21.7009 626.066 1.14441e-005"
+	editor
+	{
+		"color" "232 219 8"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "1326"
+	"classname" "info_node"
+	"angles" "0 0 0"
+	"nodeid" "59"
+	"spawnflags" "0"
+	"origin" "-130.277 613.993 1.14441e-005"
+	editor
+	{
+		"color" "232 219 8"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "1328"
+	"classname" "info_node"
+	"angles" "0 0 0"
+	"nodeid" "60"
+	"spawnflags" "0"
+	"origin" "-122.329 818.841 1.14441e-005"
+	editor
+	{
+		"color" "232 219 8"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "1330"
+	"classname" "info_node"
+	"angles" "0 0 0"
+	"nodeid" "61"
+	"spawnflags" "0"
+	"origin" "-49.0713 841.686 1.14441e-005"
+	editor
+	{
+		"color" "232 219 8"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "1332"
+	"classname" "info_node"
+	"angles" "0 0 0"
+	"nodeid" "62"
+	"spawnflags" "0"
+	"origin" "3.93549 810.051 1.14441e-005"
+	editor
+	{
+		"color" "232 219 8"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "1334"
+	"classname" "info_node"
+	"angles" "0 0 0"
+	"nodeid" "63"
+	"spawnflags" "0"
+	"origin" "-80 640 1.14441e-005"
+	editor
+	{
+		"color" "232 219 8"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
 cameras
 {
 	"activecamera" "0"
 	camera
 	{
-		"position" "[771.678 609.62 152.927]"
-		"look" "[755.525 796.95 48.989]"
+		"position" "[0.396531 553.933 165.891]"
+		"look" "[-107.158 720.006 82.1767]"
 	}
 }
 cordon

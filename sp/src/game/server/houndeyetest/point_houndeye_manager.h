@@ -12,7 +12,6 @@ public:
 
 	CHoundeyePoint* GetPointClosestToPos(Vector const vecPos);
 
-	CUtlVector<CHoundeyePoint*>* GetAllPoints();
 	static CHoundeyePointManager& GetInstance();
 
 private:
