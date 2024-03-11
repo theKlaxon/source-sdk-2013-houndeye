@@ -8,8 +8,20 @@
 #include "tier1/utldict.h"
 
 #undef AsyncRead
-class CFileSystemStdio : public CBaseFileSystemStdio, public IFileSystem {
-public:
+class CFileSystemStdio : public IFileSystem {
+public: // AppSystem
+	// Here's where the app systems get to learn about each other
+	 virtual bool Connect( CreateInterfaceFn factory ) override;
+	 virtual void Disconnect() override;
+
+	 // Here's where systems can access other interfaces implemented by this object
+	 // Returns NULL if it doesn't implement the requested interface
+	 virtual void* QueryInterface( const char* pInterfaceName ) override;
+
+	 // Init, shutdown
+	 virtual InitReturnVal_t Init() override;
+	 virtual void Shutdown() override;
+public: // IBaseFileSystem
 	int Read( void* pOutput, int size, FileHandle_t file ) override;
 	int Write( void const* pInput, int size, FileHandle_t file ) override;
 
@@ -37,7 +49,7 @@ public:
 	bool ReadFile( const char* pFileName, const char* pPath, CUtlBuffer& buf, int nMaxBytes = 0, int nStartingByte = 0, FSAllocFunc_t pfnAlloc = nullptr ) override;
 	bool WriteFile( const char* pFileName, const char* pPath, CUtlBuffer& buf ) override;
 	bool UnzipFile( const char* pFileName, const char* pPath, const char* pDestination ) override;
-public:
+public: // IFileSystem
 	//--------------------------------------------------------
 	// Steam operations
 	//--------------------------------------------------------
