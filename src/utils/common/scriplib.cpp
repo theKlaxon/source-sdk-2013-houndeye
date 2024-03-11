@@ -831,6 +831,7 @@ bool GetTokenizerStatus( char** pFilename, int* pLine ) {
 #endif
 #include "tier1/utlbuffer.h"
 #include <fcntl.h>
+#include <string>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <time.h>
@@ -950,16 +951,17 @@ int CScriptLib::CompareFileTime( const char* pFilenameA, const char* pFilenameB 
 //-----------------------------------------------------------------------------
 // Make a temporary filename
 //-----------------------------------------------------------------------------
-char* CScriptLib::MakeTemporaryFilename( char const* pchModPath, char* pPath, int pathSize ) {
-	char *pBuffer = _tempnam( pchModPath, "mgd_" );
-	if ( pBuffer[0] == '\\' ) {
-		pBuffer++;
-	}
-	if ( pBuffer[strlen( pBuffer )-1] == '.' ) {
-		pBuffer[strlen( pBuffer )-1] = '\0';
-	}
-	V_snprintf( pPath, pathSize, "%s.tmp", pBuffer );
+char* CScriptLib::MakeTemporaryFilename( const char* pchModPath, char* pPath, int pathSize ) {
+	const char* pEnv = getenv( "temp" );
+	if ( !pEnv )
+		pEnv = getenv( "tmp" );
 
+	const auto time{ static_cast<unsigned short>( Plat_MSTime() ) };
+	auto size{ strlen( pEnv ) + strlen( pchModPath ) + static_cast<int>( ceil( log10( time ) ) ) + 10 };
+	auto* pBuffer{ static_cast<char*>( malloc( size ) ) };
+	V_snprintf( pBuffer, static_cast<int>( size ), "%s/%s/mgd_%d.tmp", pEnv, pchModPath, time );
+
+	V_snprintf( pPath, pathSize, "%s.tmp", pBuffer );
 	free( pBuffer );
 
 	return pPath;
