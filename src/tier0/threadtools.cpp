@@ -40,7 +40,7 @@ uint ThreadGetCurrentId() {
 		return static_cast<uint>( GetCurrentThreadId() );
 	#elif IsPosix()
 		// FIXME: This might be a problem, as the code might expect a SYSTEM UNIQUE id
-		return pthread_self();
+		return static_cast<uint>( pthread_self() );
 	#else
 		#error "ThreadSleep: Missing implementation!"
 	#endif
@@ -238,7 +238,7 @@ bool CThreadSyncObject::operator!() const {
 bool CThreadSyncObject::Wait( uint32 dwTimeoutMs ) {
     #if IsWindows()
         WaitForSingleObject(this->m_hSyncObject, dwTimeoutMs);
-    #elif
+    #elif IsPosix()
         pthread_mutex_lock( &this->m_Mutex );
         timeval val{};
         gettimeofday( &val, nullptr );
@@ -254,7 +254,7 @@ void CThreadSyncObject::AssertUseable() {
 	#if IsDebug()
         #if IsWindows()
             Assert ( this->m_bCreatedHandle );
-        #elif
+        #elif IsPosix()
             Assert( this->m_bInitalized ); // TODO: ????
         #endif
 	#endif
@@ -312,6 +312,7 @@ bool CThreadEvent::Wait( uint32 dwTimeout ) {
 static thread_local CThread* g_hCurrentThread{ nullptr };
 CThread::CThread() { }
 CThread::~CThread() { }
+unsigned int CThread::ThreadProc( void* pv ) { }
 
 const char* CThread::GetName() {
 	return this->m_szName;
