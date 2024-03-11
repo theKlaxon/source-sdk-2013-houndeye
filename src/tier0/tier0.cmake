@@ -6,8 +6,10 @@ set( TIER0_SOURCE_FILES
 	"${TIER0_DIR}/commandline.cpp"
 	"${TIER0_DIR}/platform.cpp"
 	"${TIER0_DIR}/threadtools.cpp"
+	"${TIER0_DIR}/memalloc.cpp"
 
 	# Header files
+	"${TIER0_DIR}/memalloc.hpp"
 
 	# Private
 #	"${TIER0_DIR}/ccvarsystem.hpp"
