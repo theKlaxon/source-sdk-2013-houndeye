@@ -877,8 +877,6 @@ set( SERVER_BASE_SOURCE_FILES
 	"${SERVER_BASE_DIR}/variant_t.h"
 	"${SRCDIR}/public/vcollide.h"
 	"${SRCDIR}/public/vcollide_parse.h"
-	"${SRCDIR}/public/tier0/vcr_shared.h"
-	"${SRCDIR}/public/tier0/vcrmode.h"
 	"${SRCDIR}/public/mathlib/vector.h"
 	"${SRCDIR}/public/mathlib/vector2d.h"
 	"${SRCDIR}/public/mathlib/vector4d.h"

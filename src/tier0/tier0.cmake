@@ -49,8 +49,6 @@ set( TIER0_SOURCE_FILES
 	"${SRCDIR}/public/tier0/valobject.h"
 	"${SRCDIR}/public/tier0/valve_off.h"
 	"${SRCDIR}/public/tier0/valve_on.h"
-	"${SRCDIR}/public/tier0/vcr_shared.h"
-	"${SRCDIR}/public/tier0/vcrmode.h"
 	"${SRCDIR}/public/tier0/vprof.h"
 	"${SRCDIR}/public/tier0/vprof_telemetry.h"
 	"${SRCDIR}/public/tier0/wchartypes.h"

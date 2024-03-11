@@ -12,7 +12,6 @@
 
 #include "tier0/dbg.h"
 #include "tier0/platform.h"
-#include "tier0/vcrmode.h"
 
 #if IsWindows() && IsPC()
 	#include <intrin.h>
