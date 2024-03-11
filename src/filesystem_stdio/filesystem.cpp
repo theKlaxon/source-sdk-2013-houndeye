@@ -94,7 +94,17 @@ void CFileSystemStdio::RemoveAllSearchPaths() {
 	this->m_SearchPath.RemoveAll();
 }
 
-void CFileSystemStdio::RemoveSearchPaths( const char* szPathID ) { AssertUnreachable(); }
+void CFileSystemStdio::RemoveSearchPaths( const char* szPathID ) {
+	auto index{0};
+	for ( auto& system : this->m_SearchPath ) {
+		if ( strcmp( system->GetNativePath(), szPathID ) == 0 ) {
+			system->Shutdown();
+			this->m_SearchPath.Remove( index );
+			break;
+		}
+		index += 1;
+	}
+}
 
 void CFileSystemStdio::MarkPathIDByRequestOnly( const char* pPathID, bool bRequestOnly ) { AssertUnreachable(); }
 
