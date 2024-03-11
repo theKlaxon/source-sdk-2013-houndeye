@@ -331,7 +331,13 @@ void NetLog( int level, const tchar* pMsg, ... );
 void ValidateSpew( class CValidator& validator );
 
 void COM_TimestampedLog( const char* fmt, ... ) {
-	AssertUnreachable();
+	char buffer[1024] { 0 };
+
+	va_list args;
+	va_start( args, fmt );
+	vsprintf( buffer, fmt, args );
+	va_end( args );
+	Msg( "[TSMP LOG] %s\n", buffer );  // FIXME: Actually impl this or remove it
 }
 
 // ---- Validity asserts
