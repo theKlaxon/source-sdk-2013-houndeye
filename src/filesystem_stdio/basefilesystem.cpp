@@ -40,16 +40,16 @@ unsigned int CBaseFileSystemStdio::Size( FileHandle_t file ) {
 	fsetpos( handle, &pos );
 	return size;
 }
-unsigned int CBaseFileSystemStdio::Size( const char* pFileName, const char* pPathID ) { AssertUnreachable(); }
+unsigned int CBaseFileSystemStdio::Size( const char* pFileName, const char* pPathID ) { AssertUnreachable(); return {}; }
 
 void CBaseFileSystemStdio::Flush( FileHandle_t file ) {
 	fflush( static_cast<FILE*>( file ) );
 }
-bool CBaseFileSystemStdio::Precache( const char* pFileName, const char* pPathID ) { AssertUnreachable(); }
+bool CBaseFileSystemStdio::Precache( const char* pFileName, const char* pPathID ) { AssertUnreachable(); return {}; }
 
-bool CBaseFileSystemStdio::FileExists( const char* pFileName, const char* pPathID ) { AssertUnreachable(); }
-bool CBaseFileSystemStdio::IsFileWritable( char const* pFileName, const char* pPathID ) { AssertUnreachable(); }
-bool CBaseFileSystemStdio::SetFileWritable( char const* pFileName, bool writable, const char* pPathID ) { AssertUnreachable(); }
+bool CBaseFileSystemStdio::FileExists( const char* pFileName, const char* pPathID ) { AssertUnreachable(); return {}; }
+bool CBaseFileSystemStdio::IsFileWritable( char const* pFileName, const char* pPathID ) { AssertUnreachable(); return {}; }
+bool CBaseFileSystemStdio::SetFileWritable( char const* pFileName, bool writable, const char* pPathID ) { AssertUnreachable(); return {}; }
 
 long CBaseFileSystemStdio::GetFileTime( const char* pFileName, const char* pPathID ) {
 	struct stat stats{};
@@ -64,9 +64,9 @@ long CBaseFileSystemStdio::GetFileTime( const char* pFileName, const char* pPath
 //--------------------------------------------------------
 // Reads/writes files to utlbuffers. Use this for optimal read performance when doing open/read/close
 //--------------------------------------------------------
-bool CBaseFileSystemStdio::ReadFile( const char* pFileName, const char* pPath, CUtlBuffer& buf, int nMaxBytes, int nStartingByte, FSAllocFunc_t pfnAlloc ) { AssertUnreachable(); }
-bool CBaseFileSystemStdio::WriteFile( const char* pFileName, const char* pPath, CUtlBuffer& buf ) { AssertUnreachable(); }
-bool CBaseFileSystemStdio::UnzipFile( const char* pFileName, const char* pPath, const char* pDestination ) { AssertUnreachable(); }
+bool CBaseFileSystemStdio::ReadFile( const char* pFileName, const char* pPath, CUtlBuffer& buf, int nMaxBytes, int nStartingByte, FSAllocFunc_t pfnAlloc ) { AssertUnreachable(); return {}; }
+bool CBaseFileSystemStdio::WriteFile( const char* pFileName, const char* pPath, CUtlBuffer& buf ) { AssertUnreachable(); return {}; }
+bool CBaseFileSystemStdio::UnzipFile( const char* pFileName, const char* pPath, const char* pDestination ) { AssertUnreachable(); return {}; }
 
 static CBaseFileSystemStdio g_BaseFileSystemStdio{};
 

@@ -645,7 +645,7 @@ static FORCEINLINE double fsel( double fComparand, double fValGE, double fLT ) {
 //#define CHECK_FLOAT_EXCEPTIONS		1
 
 #if defined( _MSC_VER )
-	#if IIsWindows() && IsPC() && IsPlatform64Bits()
+	#if IsWindows() && IsPC() && IsPlatform64Bits()
 		inline void SetupFPUControlWord() {}
 	#else
 		inline void SetupFPUControlWordForceExceptions() {

@@ -104,7 +104,7 @@ unsigned int CBlockingUDPSocket::ReceiveSocketMessage( struct sockaddr_in *packe
 	struct sockaddr fromaddress;
 	int		fromlen = sizeof( fromaddress );
 
-	int packet_length = VCRHook_recvfrom
+	int packet_length = recvfrom
 		(
 		m_Socket, 
 		(char *)buf, 

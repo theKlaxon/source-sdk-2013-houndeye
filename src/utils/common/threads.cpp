@@ -146,14 +146,18 @@ void ThreadUnlock() {
 
 // This runs in the thread and dispatches a RunThreadsFn call.
 #if IsWindows()
-DWORD WINAPI InternalRunThreadsFn( LPVOID pParameter ) {
+    DWORD WINAPI InternalRunThreadsFn( LPVOID pParameter ) {
+        auto pData = static_cast<CRunThreadsData*>( pParameter );
+        pData->m_Fn( pData->m_iThread, pData->m_pUserData );
+        return {};
+    }
 #elif IsPosix()
-void* InternalRunThreadsFn( void* pParameter ) {
+    void* InternalRunThreadsFn( void* pParameter ) {
+        auto pData = static_cast<CRunThreadsData*>( pParameter );
+        pData->m_Fn( pData->m_iThread, pData->m_pUserData );
+        return nullptr;
+    }
 #endif
-	auto pData = static_cast<CRunThreadsData*>( pParameter );
-	pData->m_Fn( pData->m_iThread, pData->m_pUserData );
-	return nullptr;
-}
 
 
 void RunThreads_Start( RunThreadsFn fn, void* pUserData, ERunThreadsPriority ePriority ) {
