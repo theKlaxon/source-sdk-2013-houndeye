@@ -15,6 +15,8 @@
 
 #if IsWindows() && IsPC()
 	#include <intrin.h>
+    #undef min
+    #undef max
 #endif
 
 #if IsPosix()
@@ -1556,8 +1558,6 @@ public:
 			if ( m_bTrace && m_currentOwnerID && ( m_currentOwnerID != thisThreadID ) )
 				Msg( "Thread %u about to wait for lock %p owned by %u\n", ThreadGetCurrentId(), (CRITICAL_SECTION*) &m_CriticalSection, m_currentOwnerID );
 		#endif
-
-		VCRHook_EnterCriticalSection( (CRITICAL_SECTION*) &m_CriticalSection );
 
 		#if defined( THREAD_MUTEX_TRACING_ENABLED )
 			if ( m_lockCount == 0 ) {

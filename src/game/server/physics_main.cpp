@@ -916,8 +916,6 @@ void CBaseEntity::PhysicsDispatchThink( BASEPTR thinkFunc )
 	
 	// The thinkLimit stuff makes a LOT of calls to Sys_FloatTime, which winds up calling into
 	// VCR mode so much that the framerate becomes unusable.
-	if ( VCRGetMode() != VCR_Disabled )
-		thinkLimit = 0;
 
 	float startTime = 0.0;
 

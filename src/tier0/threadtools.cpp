@@ -237,7 +237,7 @@ bool CThreadSyncObject::operator!() const {
 }
 bool CThreadSyncObject::Wait( uint32 dwTimeoutMs ) {
     #if IsWindows()
-        WaitForSingleObject(this->m_hSyncObject, dwTimeoutMs);
+        return WaitForSingleObject(this->m_hSyncObject, dwTimeoutMs);
     #elif IsPosix()
         pthread_mutex_lock( &this->m_Mutex );
         timeval val{};
@@ -312,7 +312,7 @@ bool CThreadEvent::Wait( uint32 dwTimeout ) {
 static thread_local CThread* g_hCurrentThread{ nullptr };
 CThread::CThread() { }
 CThread::~CThread() { }
-unsigned int CThread::ThreadProc( void* pv ) { }
+unsigned int CThread::ThreadProc( void* pv ) { AssertUnreachable(); return {}; }
 
 const char* CThread::GetName() {
 	return this->m_szName;
@@ -331,15 +331,13 @@ void CThread::SetName( const char* pName ) {
 	this->m_szName[31] = '\0';
 }
 
-bool CThread::Start( unsigned nBytesStack ) {
-
-}
+bool CThread::Start( unsigned nBytesStack ) { AssertUnreachable(); return {}; }
 
 bool CThread::IsAlive() const {
 	return this->m_result != -1;
 }
 
-bool CThread::Join( unsigned timeout ) { }
+bool CThread::Join( unsigned timeout ) { AssertUnreachable(); return {}; }
 
 #if IsWindows()
 	HANDLE CThread::GetThreadHandle() {
@@ -352,9 +350,7 @@ uint CThread::GetThreadId() const {
 int CThread::GetResult() const {
 	return this->m_result;
 }
-void CThread::Stop( int exitCode ) {
-
-}
+void CThread::Stop( int exitCode ) { AssertUnreachable(); }
 int CThread::GetPriority() const {
 	#if IsWindows()
 		return GetThreadPriority( this->m_hThread );
@@ -377,22 +373,22 @@ void CThread::ResumeCooperative() { }
 void CThread::BWaitForThreadSuspendCooperative() { }
 #if !IsLinux()
 	unsigned int CThread::Suspend() {
-		SuspendThread( this->m_hThread );
+		return SuspendThread( this->m_hThread );
 	}
 
 	unsigned int CThread::Resume() {
-		ResumeThread( this->m_hThread );
+		return ResumeThread( this->m_hThread );
 	}
 #endif
 bool CThread::Terminate( int exitCode ) {
 	this->m_result = exitCode;
 	#if IsWindows()
-		TerminateThread( this->m_hThread, exitCode );
+		return TerminateThread( this->m_hThread, exitCode );
 	#elif IsPosix()
 		return pthread_kill( this->m_threadId, SIGKILL ) == 0;
 	#endif
 }
-CThread* CThread::GetCurrentCThread() { }
+CThread* CThread::GetCurrentCThread() { AssertUnreachable(); return {}; }
 void CThread::Yield() {
 	#if IsWindows()
 		Sleep( 0 );
@@ -401,12 +397,12 @@ void CThread::Yield() {
 	#endif
 }
 void CThread::Sleep( unsigned duration ) { }
-bool CThread::Init() { }
+bool CThread::Init() { AssertUnreachable(); return {}; }
 void CThread::OnExit() { }
 void CThread::Cleanup() {
 	this->m_result = 0;
 }
-bool CThread::WaitForCreateComplete( CThreadEvent* pEvent ) { }
+bool CThread::WaitForCreateComplete( CThreadEvent* pEvent ) { AssertUnreachable(); return {}; }
 CThread::ThreadProc_t CThread::GetThreadProc() {
     return ThreadProc;
 }

@@ -14,7 +14,10 @@
 #include <algorithm>
 
 #if IsWindows()
+    #include <rpc.h>
 	#include <rpcdce.h>
+    #undef min
+    #undef max
 #endif
 
 // Indices in the UUID string representation for each byte.
