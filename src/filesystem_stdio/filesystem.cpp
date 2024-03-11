@@ -7,11 +7,24 @@
 // ---------------
 // AppSystem
 // ---------------
-bool CFileSystemStdio::Connect( CreateInterfaceFn factory ) { AssertUnreachable(); return {}; }
-void CFileSystemStdio::Disconnect() { AssertUnreachable(); }
-void* CFileSystemStdio::QueryInterface( const char* pInterfaceName ) { AssertUnreachable(); return {}; }
-InitReturnVal_t CFileSystemStdio::Init() { AssertUnreachable(); return {}; }
-void CFileSystemStdio::Shutdown() { AssertUnreachable(); }
+bool CFileSystemStdio::Connect( CreateInterfaceFn factory ) {
+	AssertUnreachable();
+	return {};
+}
+void CFileSystemStdio::Disconnect() {
+	AssertUnreachable();
+}
+void* CFileSystemStdio::QueryInterface( const char* pInterfaceName ) {
+	AssertUnreachable();
+	return {};
+}
+InitReturnVal_t CFileSystemStdio::Init() {
+	AssertUnreachable();
+	return {};
+}
+void CFileSystemStdio::Shutdown() {
+	AssertUnreachable();
+}
 
 
 // ---------------
