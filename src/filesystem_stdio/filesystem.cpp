@@ -4,26 +4,31 @@
 #include "filesystem.hpp"
 #include "interface.h"
 
+static CFileSystemStdio g_FullFileSystem{};
+
 // ---------------
 // AppSystem
 // ---------------
 bool CFileSystemStdio::Connect( CreateInterfaceFn factory ) {
-	AssertUnreachable();
-	return {};
+//	AssertUnreachable();
+	return true;
 }
 void CFileSystemStdio::Disconnect() {
-	AssertUnreachable();
+	// AssertUnreachable();
 }
 void* CFileSystemStdio::QueryInterface( const char* pInterfaceName ) {
-	AssertUnreachable();
-	return {};
+	// AssertUnreachable();
+	if ( strcmp( pInterfaceName, FILESYSTEM_INTERFACE_VERSION ) == 0 )
+		return &g_FullFileSystem;
+
+	return nullptr;
 }
 InitReturnVal_t CFileSystemStdio::Init() {
-	AssertUnreachable();
-	return {};
+//	AssertUnreachable();
+	return InitReturnVal_t::INIT_OK;
 }
 void CFileSystemStdio::Shutdown() {
-	AssertUnreachable();
+//	AssertUnreachable();
 }
 
 
@@ -273,5 +278,4 @@ void CFileSystemStdio::NotifyFileUnloaded( const char* pszFilename, const char* 
 bool CFileSystemStdio::GetCaseCorrectFullPath_Ptr( const char* pFullPath, char* pDest, int maxLenInChars ) { AssertUnreachable(); return {}; }
 
 
-static CFileSystemStdio g_FullFileSystem{};
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CFileSystemStdio, IFileSystem, FILESYSTEM_INTERFACE_VERSION, g_FullFileSystem );
