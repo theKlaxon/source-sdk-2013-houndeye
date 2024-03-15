@@ -7,7 +7,7 @@
 #include "point_houndeye.h"
 
 // CAI_BlendingHost< CAI_BehaviorHost<CAI_BlendedNPC> >
-static ConVar sk_heye_attack_range("sk_heye_attack_range", "175.0f", FCVAR_DEVELOPMENTONLY);
+static ConVar sk_heye_attack_range("sk_heye_attack_range", "200.0f", FCVAR_DEVELOPMENTONLY); // TODO: redo name here to match the rest
 
 class CNPC_Houndeye : public CAI_BaseNPC {
 	DECLARE_CLASS(CNPC_Houndeye, CAI_BaseNPC)
@@ -29,9 +29,7 @@ public:
 
 	int RangeAttack1Conditions(float flDot, float flDist);
 	int SelectSchedule();
-
-
-
+	
 	void WakeSound();
 	void FoundEnemySound();
 	void DoShockwave();
@@ -81,6 +79,7 @@ private:
 		TASK_HEYE_SET_AT_POINT,
 		TASK_HEYE_ANIM_WATCH,
 		TASK_HEYE_ANIM_INSPECT,
+		TASK_HEYE_ANIM_COWER,
 	};
 
 	// task fails
@@ -99,6 +98,10 @@ private:
 		SCHED_HEYE_HUNT,
 		SCHED_HEYE_PLOTTING,
 		SCHED_HEYE_ATTACK,
+		SCHED_HEYE_CANCEL_ATTACK,
+		SCHED_HEYE_RETREAT,
+		SCHED_HEYE_COWER_CHECK_ENEMY_NEAR,
+		SCHED_HEYE_COWER,
 
 		// waypoint schedules
 		SCHED_HEYE_MOVE_TO_WAYPOINT,	// move to the waypoint	
@@ -106,13 +109,7 @@ private:
 		SCHED_HEYE_INSPECT_WAYPOINT,	// inspecting the body
 		SCHED_HEYE_DECIDE_WAYPOINT_TASK
 	};
-
-	// squad // goal is to have 2 attacking while the others run around
-	//enum {
-	//	SQUADSLOT_HEYE_ATTACK1 = LAST_SHARED_SQUADSLOT,
-	//	SQUADSLOT_HEYE_ATTACK2,
-	//};
-
+	
 	// blinking
 	enum {
 		BLINK_OPENING,
@@ -136,6 +133,7 @@ private:
 	bool m_bSitting;
 	bool m_bAtPoint;
 	bool m_bPlotting;
+	bool m_bIsCowering;
 
 	CHoundeyePoint* m_pWaypoint;
 };

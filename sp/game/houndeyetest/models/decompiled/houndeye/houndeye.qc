@@ -200,6 +200,7 @@ $Sequence "die_crumple" {
 
 $Sequence "walk_limp" {
 	"houndeye_anims\walk_limp.smd"
+	activity "ACT_LIMP" 1
 	fadein 0.2
 	fadeout 0.2
 	fps 30
@@ -339,6 +340,7 @@ $Sequence "wakefast" {
 
 $Sequence "whimper" {
 	"houndeye_anims\whimper.smd"
+	activity "ACT_COWER" 1
 	fadein 0.2
 	fadeout 0.2
 	fps 35
