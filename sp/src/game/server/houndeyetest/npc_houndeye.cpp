@@ -162,7 +162,7 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		"	"
 		"	Interrupts"
 		"	COND_TASK_FAILED"
-		//"	COND_TOO_FAR_TO_ATTACK"
+		"	COND_TOO_FAR_TO_ATTACK"
 		"	COND_LOST_ENEMY"
 		//"	COND_NO_HEAR_DANGER"
 		"	COND_ENEMY_WENT_NULL"
@@ -176,7 +176,7 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 
 		"	Tasks"
 		"	TASK_STORE_POSITION_IN_SAVEPOSITION		0"
-		"	TASK_SET_FAIL_SCHEDULE					SCHEDULE:SCHED_IDLE_WANDER"
+		//"	TASK_SET_FAIL_SCHEDULE					SCHEDULE:SCHED_IDLE_WANDER"
 		"	TASK_SET_TOLERANCE_DISTANCE				200"
 		"	TASK_GET_FLANK_ARC_PATH_TO_ENEMY_LOS	30"		// works great! keep!
 		//"	TASK_GET_FLANK_RADIUS_PATH_TO_ENEMY_LOS		0"	// mostly works
@@ -298,7 +298,8 @@ void CNPC_Houndeye::Spawn() {
 	
 	ClearEffects();
 
-	SetCollisionGroup(HL2COLLISION_GROUP_HOUNDEYE);
+	SetCollisionGroup(HL2COLLISION_GROUP_CROW);
+	//SetCollisionGroup(HL2COLLISION_GROUP_HOUNDEYE);
 	CapabilitiesClear();
 	CapabilitiesAdd(bits_CAP_MOVE_GROUND | bits_CAP_TURN_HEAD | bits_CAP_INNATE_RANGE_ATTACK1 | bits_CAP_SQUAD);
 	CapabilitiesAdd(bits_CAP_MOVE_JUMP);
@@ -580,7 +581,7 @@ void CNPC_Houndeye::RunTask(const Task_t* pTask) {
 		break;
 
 	case TASK_HEYE_CHECK_FOR_SQUAD:
-
+		
 		if (m_pSquad != nullptr)
 			TaskComplete();
 		else
@@ -706,7 +707,7 @@ void CNPC_Houndeye::DoShockwave() {
 int CNPC_Houndeye::RangeAttack1Conditions(float flDot, float flDist) {
 
 	// TODO: tweak this!
-	if (flDist > sk_heye_attack_range.GetFloat())
+	if (flDist < 200.0f)
 		return COND_TOO_FAR_TO_ATTACK;
 
 	return COND_CAN_RANGE_ATTACK1;
@@ -727,11 +728,11 @@ int CNPC_Houndeye::SelectSchedule() {
 	if (m_bPlotting) {
 
 		// if we're plotting our attack, and we're too far away, move closer
-		if (HasCondition(COND_HEYE_ENEMY_TOO_FAR)) {
-			//VacateStrategySlot();
-			Msg("CNPCHoundeye: Enemy too far! hunting again!\n");
-			return SCHED_HEYE_HUNT;
-		}
+		//if (HasCondition(COND_HEYE_ENEMY_TOO_FAR)) {
+		//	VacateStrategySlot();
+		//	Msg("CNPCHoundeye: Enemy too far! hunting again!\n");
+		//	return SCHED_HEYE_HUNT;
+		//}
 
 		if (m_pSquad) {
 			if (OccupyStrategySlotRange(SQUAD_SLOT_ATTACK1, SQUAD_SLOT_ATTACK2) || !m_pSquad->GetLeader()->IsAlive()) // to help with heyes acting erratic when leader dead
@@ -810,6 +811,8 @@ int CNPC_Houndeye::SelectFailSchedule(int failedSchedule, int failedTask, AI_Tas
 	case TASK_HEYE_CHECK_FOR_SQUAD:
 		return SCHED_HEYE_ATTACK;
 
+	case TASK_GET_FLANK_ARC_PATH_TO_ENEMY_LOS:
+		return SCHED_HEYE_PLOTTING;
 	//case TASK_HEYE_DO_SHOCKWAVE:
 	//	return SCHED_HEYE_HUNT;
 	}
@@ -873,7 +876,7 @@ int CNPC_Houndeye::TranslateSchedule(int nType) {
 			}
 		}
 		
-		if(m_nSleepState == SLEEP_NOT_SLEEPING)
+		if (m_nSleepState == SLEEP_NOT_SLEEPING)
 			return SCHED_HEYE_START_SNOOZE;
 		else
 			return SCHED_HEYE_SNOOZE;
