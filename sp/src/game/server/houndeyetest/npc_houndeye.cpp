@@ -169,6 +169,27 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		"	COND_HEYE_ENEMY_TOO_FAR"
 	)
 	
+	// almost like the plotting schedule, but only for when the heye can't flank
+	DEFINE_SCHEDULE
+	(
+		SCHED_HEYE_TAUNT,
+
+		"	Tasks"
+		"	"
+		"	TASK_SET_FAIL_SCHEDULE		SCHEDULE:SCHED_HEYE_HUNT"
+		"	TASK_WAIT_FOR_MOVEMENT		0"
+		"	TASK_STOP_MOVING			0"
+		"	TASK_RESET_ACTIVITY			0"
+		"	TASK_HEYE_PLOT_ATTACK		0"
+		"	TASK_SET_SCHEDULE			SCHEDULE:SCHED_HEYE_ATTACK"
+		"	Interrupts"
+		"	COND_TASK_FAILED"
+		"	COND_TOO_FAR_TO_ATTACK"
+		"	COND_LOST_ENEMY"
+		"	COND_ENEMY_WENT_NULL"
+		"	COND_HEYE_ENEMY_TOO_FAR"
+	)
+
 	// schedules
 	DEFINE_SCHEDULE
 	(
@@ -812,9 +833,7 @@ int CNPC_Houndeye::SelectFailSchedule(int failedSchedule, int failedTask, AI_Tas
 		return SCHED_HEYE_ATTACK;
 
 	case TASK_GET_FLANK_ARC_PATH_TO_ENEMY_LOS:
-		return SCHED_HEYE_PLOTTING;
-	//case TASK_HEYE_DO_SHOCKWAVE:
-	//	return SCHED_HEYE_HUNT;
+		return SCHED_HEYE_TAUNT;
 	}
 	
 	return SCHED_IDLE_WANDER;
