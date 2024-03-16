@@ -162,7 +162,7 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		"	"
 		"	Interrupts"
 		"	COND_TASK_FAILED"
-		"	COND_TOO_FAR_TO_ATTACK"
+		//"	COND_TOO_FAR_TO_ATTACK"
 		"	COND_LOST_ENEMY"
 		//"	COND_NO_HEAR_DANGER"
 		"	COND_ENEMY_WENT_NULL"
@@ -394,7 +394,7 @@ void CNPC_Houndeye::GatherConditions() {
 
 		if (m_pSquad->IsLeader(this))
 		{
-			if (HasCondition(COND_HEAR_DANGER) || HasCondition(COND_HEAR_COMBAT) || HasCondition(COND_SEE_ENEMY))
+			if (HasCondition(COND_HEAR_DANGER) || HasCondition(COND_HEAR_COMBAT) || HasCondition(COND_SEE_ENEMY) || HasCondition(COND_HEAR_PLAYER) || HasCondition(COND_HEYE_HEALTH_LOW))
 				SetCondition(COND_HEYE_SQUAD_ALERT);
 
 		}
@@ -412,7 +412,7 @@ void CNPC_Houndeye::GatherConditions() {
 	
 	// check enemy distance
 	if (GetEnemy()) {
-		if (EnemyDistance(GetEnemy()) > 600.0f)
+		if (EnemyDistance(GetEnemy()) > 400.0f)
 			SetCondition(COND_HEYE_ENEMY_TOO_FAR);
 		else
 			ClearCondition(COND_HEYE_ENEMY_TOO_FAR);
@@ -510,7 +510,6 @@ void CNPC_Houndeye::RunTask(const Task_t* pTask) {
 		if (IsSequenceFinished()) {
 			
 			m_nSleepState = SLEEP_NOT_SLEEPING;
-			//m_NPCState = NPC_STATE_COMBAT;
 			TaskComplete();
 		}
 		break;
@@ -810,6 +809,9 @@ int CNPC_Houndeye::SelectFailSchedule(int failedSchedule, int failedTask, AI_Tas
 
 	case TASK_HEYE_CHECK_FOR_SQUAD:
 		return SCHED_HEYE_ATTACK;
+
+	//case TASK_HEYE_DO_SHOCKWAVE:
+	//	return SCHED_HEYE_HUNT;
 	}
 	
 	return SCHED_IDLE_WANDER;
@@ -914,9 +916,19 @@ int CNPC_Houndeye::OnTakeDamage_Alive(const CTakeDamageInfo& info) {
 		return dmg;
 	}
 
-	if (m_nSleepState != SLEEP_NOT_SLEEPING) {
-
+	if (m_pSquad) {
+		SetCondition(COND_HEYE_SQUAD_ALERT);
+		m_pSquad->GetLeader()->SetCondition(COND_HEYE_SQUAD_ALERT);
+	}
+	
+	if (m_nSleepState != SLEEP_NOT_SLEEPING && !m_bAtPoint && !HasCondition(COND_HEYE_HEALTH_LOW)) {
 		SetSchedule(SCHED_HEYE_SPOOKED_AWAKE);
+
+		// ensure we wake all of the squad members, incase one of them doesnt hear the combat / danger
+		AISquadIter_t iter;
+		for (CAI_BaseNPC* pMember = m_pSquad->GetFirstMember(&iter); pMember != nullptr; pMember = m_pSquad->GetNextMember(&iter)) {
+			pMember->SetSchedule(SCHED_HEYE_SPOOKED_AWAKE);
+		}
 
 	}
 
