@@ -78,7 +78,14 @@
 	void CMemAlloc::GlobalMemoryStatus( size_t *pUsedMemory, size_t *pFreeMemory ) { AssertUnreachable(); }
 #endif
 
+#if IsPosix()
+	size_t ApproximateProcessMemoryUsage() {
+		unsigned long usage{};
 
-size_t ApproximateProcessMemoryUsage() {
+		auto file{ std::fopen( "/proc/self/stat", "r" ) };
+		std::fscanf( file, "%*d (%*[^)]%*[)] %*c %*d %*d %*d %*d %*d %*u %*lu %*lu %*lu %*lu %*lu %*lu %*ld %*ld %*ld %*ld %*ld %*ld %*llu %lu", &usage );
+		std::fclose( file );
 
-}
+		return usage;
+	}
+#endif
