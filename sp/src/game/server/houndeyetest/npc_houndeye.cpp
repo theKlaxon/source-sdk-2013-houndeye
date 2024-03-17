@@ -16,6 +16,7 @@ static ConVar sv_houndeye_blinkdelay("sv_houndeye_blinkdelay", "2", 0, "Time bet
 static ConVar sv_houndeye_squadattackdmg("sv_houndeye_squadattackdmg", "6.0f", 0, "The multiplier of houndeye attack damage per each pack member.");
 static ConVar sv_houndeye_squadattackbonus("sv_houndeye_squadattackbonus", "1.2f", 0, "The multiplier of houndeye attack damage per each pack member.");
 static ConVar sv_houndeye_huntrange("sv_houndeye_huntrange", "800.0f", FCVAR_CHEAT, "The range in which the houndeye will hunt down it's enemy.");
+static ConVar sv_houndeye_cowertime("sv_houndeye_cowertime", "4.0f", FCVAR_CHEAT, "The amount of time the houndeye will cower away from the player when first hitting low health.");
 
 // custom acts
 int ACT_INSPECT_WALL;
@@ -48,6 +49,7 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 	DECLARE_TASK( TASK_HEYE_ANIM_INSPECT )
 	DECLARE_TASK( TASK_HEYE_ANIM_COWER )
 	DECLARE_TASK( TASK_HEYE_SET_AT_POINT )
+	DECLARE_TASK( TASK_HEYE_RETREAT )
 
 	// acts
 	DECLARE_ACTIVITY( ACT_INSPECT_WALL )
@@ -112,8 +114,29 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		SCHED_HEYE_RETREAT,
 
 		"	Tasks"
-		"	TASK_FIND_BACKAWAY_FROM_SAVEPOSITION	1024" // give a large range of distances to choose from for retreat
+		
+		"	TASK_SET_FAIL_SCHEDULE			SCHEDULE:SCHED_HEYE_RETREAT_RANDOM"
+		"	TASK_FIND_COVER_FROM_ORIGIN		0"
+		"	TASK_HEYE_RETREAT				0"
+		"	TASK_HEYE_ANIM_COWER			0"
+		//"	TASK_RUN_PATH_FLEE				1024" // give a large range of distances to choose from for retreat
 		//"	TASK_GET_PATH_TO_RANDOM_NODE	4096" // give a large range of distances to choose from for retreat
+		//"	TASK_FIND_FAR_NODE_COVER_FROM_ENEMY	4096" // give a large range of distances to choose from for retreat
+		"	TASK_RUN_PATH					0"
+		"	TASK_WAIT_FOR_MOVEMENT			0"
+		"	TASK_STOP_MOVING				0"
+		"	TASK_SET_SCHEDULE				SCHEDULE:SCHED_HEYE_COWER"
+		"	"
+		"	Interrupts"
+	)
+
+	DEFINE_SCHEDULE
+	(
+		SCHED_HEYE_RETREAT_RANDOM,
+
+		"	Tasks"
+		//"	TASK_FIND_BACKAWAY_FROM_SAVEPOSITION	1024" // give a large range of distances to choose from for retreat
+		"	TASK_GET_PATH_TO_RANDOM_NODE	256" // give a large range of distances to choose from for retreat
 		//"	TASK_FIND_FAR_NODE_COVER_FROM_ENEMY	4096" // give a large range of distances to choose from for retreat
 		"	TASK_RUN_PATH					0"
 		"	TASK_WAIT_FOR_MOVEMENT			0"
@@ -332,12 +355,12 @@ void CNPC_Houndeye::Spawn() {
 	m_NPCState = NPC_STATE_NONE;
 	m_iHealth = sk_houndeye_health.GetFloat();
 
-	m_pWaypoint = nullptr;
-	m_bSitting = false;
-	m_bPlotting = false;
-	m_bAtPoint = false;
-	m_bCanAttack = false;
+	m_bIsPlotting = false;
+	m_bIsAtPoint = false;
+	m_bCanCower = true;
 	m_bIsCowering = false;
+
+	m_pWaypoint = nullptr;
 
 	AddClassRelationship(CLASS_PLAYER, Disposition_t::D_HT, 0);
 
@@ -406,9 +429,10 @@ void CNPC_Houndeye::GatherConditions() {
 	ClearConditions(nToClear, ARRAYSIZE(nToClear));
 
 	// check if we have critical damage (< 1/3rd max health)
-	if (m_iHealth < NPC_HEYE_HEALTH * 0.33f) {
+	// EXCEPTION: dont enable this condition if we can no longer cower. we need to keep attacking after that.
+	if (m_iHealth < NPC_HEYE_HEALTH * 0.33f && m_bCanCower) {
 		SetCondition(COND_HEYE_HEALTH_LOW);
-		m_NPCState = NPC_STATE_ALERT;
+		//m_NPCState = NPC_STATE_ALERT;
 	}
 
 	// stuff from the squad / leader takes priority (sorta)
@@ -420,8 +444,10 @@ void CNPC_Houndeye::GatherConditions() {
 				SetCondition(COND_HEYE_SQUAD_ALERT);
 
 		}
-		else if (m_pSquad->GetLeader()->HasCondition(COND_HEYE_SQUAD_ALERT)) {
-			SetCondition(COND_HEYE_SQUAD_ALERT);
+		else if (m_pSquad->GetLeader()) {
+
+			if (m_pSquad->GetLeader()->HasCondition(COND_HEYE_SQUAD_ALERT))
+				SetCondition(COND_HEYE_SQUAD_ALERT);
 		}
 
 	}
@@ -453,7 +479,7 @@ void CNPC_Houndeye::StartTask(const Task_t* pTask) {
 	case TASK_HEYE_START_SNOOZE:
 		m_nSleepState = SLEEP_STARTED_SLEEPING;
 		m_NPCState = NPC_STATE_IDLE;
-		m_bPlotting = false;
+		m_bIsPlotting = false;
 		SetIdealActivity(ACT_CROUCH);
 		break;
 
@@ -465,7 +491,7 @@ void CNPC_Houndeye::StartTask(const Task_t* pTask) {
 		break;
 
 	case TASK_HEYE_PLOT_ATTACK:
-		m_bPlotting = true;
+		m_bIsPlotting = true;
 		m_bIsCowering = false;
 		SetIdealActivity(ACT_IDLE_ANGRY);
 		break;
@@ -473,7 +499,7 @@ void CNPC_Houndeye::StartTask(const Task_t* pTask) {
 	case TASK_HEYE_DO_SHOCKWAVE:
 		DevMsg("CNPC_Houndeye::RunTask : TASK_HEYE_DO_SHOCKWAVE STARTED\n");
 
-		m_bPlotting = false;
+		m_bIsPlotting = false;
 		SetIdealActivity(ACT_RANGE_ATTACK1);
 
 		// do some attack charging particles
@@ -484,11 +510,11 @@ void CNPC_Houndeye::StartTask(const Task_t* pTask) {
 		break;
 
 	case TASK_HEYE_ANIM_WATCH:
-		m_bAtPoint = false;
+		m_bIsAtPoint = false;
 		SetIdealActivity((Activity)ACT_INSPECT_WALL);
 		break;
 	case TASK_HEYE_ANIM_INSPECT:
-		m_bAtPoint = false;
+		m_bIsAtPoint = false;
 		SetIdealActivity((Activity)ACT_EAT);
 		break;
 
@@ -496,12 +522,18 @@ void CNPC_Houndeye::StartTask(const Task_t* pTask) {
 		break;
 
 	case TASK_HEYE_ANIM_COWER:
-		m_bCanAttack = false;
-		m_bPlotting = false;
-		m_bAtPoint = false;
+		m_bIsPlotting = false;
+		m_bIsAtPoint = false;
 		m_bIsCowering = true;
 		m_nSleepState = SLEEP_NOT_SLEEPING;
+
 		SetIdealActivity(ACT_COWER);
+		break;
+
+	case TASK_HEYE_RETREAT:
+		m_flCowerTime = gpGlobals->curtime + sv_houndeye_cowertime.GetFloat();
+		StopSound("npc_houndeye.warn");
+		EmitSound("npc_houndeye.pain");
 		break;
 
 	default:
@@ -619,18 +651,29 @@ void CNPC_Houndeye::RunTask(const Task_t* pTask) {
 
 	case TASK_HEYE_SET_AT_POINT:
 
-		m_bAtPoint = true;
+		m_bIsAtPoint = true;
 		TaskComplete();
 
 		break;
 
 	case TASK_HEYE_ANIM_COWER:
 		
+		if (gpGlobals->curtime >= m_flCowerTime) {
+			m_bCanCower = false;
+			m_bIsCowering = false;
+			TaskComplete();
+			SetSchedule(SCHED_HEYE_HUNT);
+		}
+		
 		if (IsSequenceFinished())
 			TaskComplete();
 
 		break;
 	
+	case TASK_HEYE_RETREAT:
+		TaskComplete();
+		break;
+
 	default:
 		BaseClass::RunTask(pTask);
 		break;
@@ -739,14 +782,14 @@ int CNPC_Houndeye::SelectSchedule() {
 	// TODO: create fail conditions to make the cowering houndeye keep running from the player
 
 	if (HasCondition(COND_HEYE_HEALTH_LOW) && 
-		(HasCondition(COND_SEE_ENEMY) || HasCondition(COND_HEAR_COMBAT) || HasCondition(COND_HEAR_DANGER) || HasCondition(COND_HEAR_PLAYER) ))
+		(HasCondition(COND_SEE_ENEMY) || HasCondition(COND_HEAR_COMBAT) || HasCondition(COND_HEAR_DANGER) || HasCondition(COND_HEAR_PLAYER) ) && m_bCanCower)
 		return SCHED_HEYE_RETREAT;
 
 	// only cower if we dont see the enemy, and we have low health
-	if (m_bIsCowering)
-		return SCHED_HEYE_COWER;
+	if (m_bIsCowering && m_bCanCower)
+ 		return SCHED_HEYE_COWER;
 	
-	if (m_bPlotting) {
+	if (m_bIsPlotting) {
 
 		// if we're plotting our attack, and we're too far away, move closer
 		//if (HasCondition(COND_HEYE_ENEMY_TOO_FAR)) {
@@ -765,7 +808,7 @@ int CNPC_Houndeye::SelectSchedule() {
 			return SCHED_HEYE_ATTACK; // if we're not part of a squad, we should just attack.
 	}
 
-	if (m_bAtPoint) {
+	if (m_bIsAtPoint) {
 
 		if (m_pSquad) {
 
@@ -833,7 +876,14 @@ int CNPC_Houndeye::SelectFailSchedule(int failedSchedule, int failedTask, AI_Tas
 		return SCHED_HEYE_ATTACK;
 
 	case TASK_GET_FLANK_ARC_PATH_TO_ENEMY_LOS:
-		return SCHED_HEYE_TAUNT;
+
+		if(GetEnemy())
+			return SCHED_HEYE_TAUNT;
+		
+		return SCHED_IDLE_WANDER;
+
+	case TASK_FIND_BACKAWAY_FROM_SAVEPOSITION:
+		return SCHED_HEYE_RETREAT_RANDOM;
 	}
 	
 	return SCHED_IDLE_WANDER;
@@ -846,13 +896,22 @@ int CNPC_Houndeye::TranslateSchedule(int nType) {
 	case SCHED_IDLE_WALK:
 	case SCHED_IDLE_WANDER:
 
+		if (m_bIsCowering && m_bCanCower) {
+
+			//if (gpGlobals->curtime <= m_flCowerTime)
+				return SCHED_HEYE_COWER;
+
+			//m_bIsCowering = false;
+			//m_bCanCower = false;
+		}
+		
 		// move to the waypoint if we have one
 		if (m_pSquad) {
 			
 			if (m_pSquad->IsLeader(this)) {
 
 				if (HasCondition(COND_SEE_ENEMY) || HasCondition(COND_HEAR_COMBAT) || HasCondition(COND_HEAR_DANGER) || HasCondition(COND_SEE_PLAYER)) {
-					m_bAtPoint = false;
+					m_bIsAtPoint = false;
 					return SCHED_HEYE_HUNT;
 				}
 				else {
@@ -871,7 +930,7 @@ int CNPC_Houndeye::TranslateSchedule(int nType) {
 				CHoundeyePoint* pLeaderTarg = dynamic_cast<CHoundeyePoint*>(pLeader->GetTarget());
 
 				if (pLeader->HasCondition(COND_SEE_ENEMY) || pLeader->HasCondition(COND_HEAR_COMBAT) || pLeader->HasCondition(COND_HEAR_DANGER) || pLeader->HasCondition(COND_SEE_PLAYER)) {
-					m_bAtPoint = false;
+					m_bIsAtPoint = false;
 					return SCHED_HEYE_HUNT;
 				}
 
@@ -895,7 +954,7 @@ int CNPC_Houndeye::TranslateSchedule(int nType) {
 			}
 		}
 		
-		if (m_nSleepState == SLEEP_NOT_SLEEPING)
+		if (m_nSleepState == SLEEP_NOT_SLEEPING && !m_bIsCowering)
 			return SCHED_HEYE_START_SNOOZE;
 		else
 			return SCHED_HEYE_SNOOZE;
@@ -911,8 +970,8 @@ int CNPC_Houndeye::TranslateSchedule(int nType) {
 	case SCHED_COMBAT_FACE:
 
 		// only need to take this over in the cowering mode
-		if (m_bIsCowering)
-			return SCHED_HEYE_COWER;
+		//if (m_bIsCowering)
+		//	return SCHED_HEYE_COWER;
 
 		break;
 	}	
@@ -943,7 +1002,7 @@ int CNPC_Houndeye::OnTakeDamage_Alive(const CTakeDamageInfo& info) {
 		m_pSquad->GetLeader()->SetCondition(COND_HEYE_SQUAD_ALERT);
 	}
 	
-	if (m_nSleepState != SLEEP_NOT_SLEEPING && !m_bAtPoint && !HasCondition(COND_HEYE_HEALTH_LOW)) {
+	if (m_nSleepState != SLEEP_NOT_SLEEPING && !m_bIsAtPoint && !HasCondition(COND_HEYE_HEALTH_LOW)) {
 		SetSchedule(SCHED_HEYE_SPOOKED_AWAKE);
 
 		// ensure we wake all of the squad members, incase one of them doesnt hear the combat / danger

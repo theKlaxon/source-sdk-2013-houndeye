@@ -80,6 +80,7 @@ private:
 		TASK_HEYE_ANIM_WATCH,
 		TASK_HEYE_ANIM_INSPECT,
 		TASK_HEYE_ANIM_COWER,
+		TASK_HEYE_RETREAT,
 	};
 
 	// task fails
@@ -101,6 +102,7 @@ private:
 		SCHED_HEYE_ATTACK,
 		SCHED_HEYE_CANCEL_ATTACK,
 		SCHED_HEYE_RETREAT,
+		SCHED_HEYE_RETREAT_RANDOM, // used as a fallback for retreat, incase we cant find a path away from the enemy
 		SCHED_HEYE_COWER_CHECK_ENEMY_NEAR,
 		SCHED_HEYE_COWER,
 
@@ -127,13 +129,13 @@ private:
 	} m_nSleepState;
 
 	float m_flBlinkTime;
-	float m_flCooldownTime;
-
+	float m_flCowerTime;
+	
 	// TODO: make this into some flagss
-	bool m_bCanAttack;
-	bool m_bSitting;
-	bool m_bAtPoint;
-	bool m_bPlotting;
+	bool m_bIsAtPoint;
+	bool m_bIsPlotting;
+
+	bool m_bCanCower;
 	bool m_bIsCowering;
 
 	CHoundeyePoint* m_pWaypoint;
