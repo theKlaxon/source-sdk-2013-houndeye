@@ -230,7 +230,7 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		"	COND_HEYE_HEALTH_LOW"
 		"	COND_LOST_ENEMY"
 		"	COND_ENEMY_DEAD"
-		//"	COND_HEYE_ENEMY_TOO_FAR"
+		"	COND_HEYE_ENEMY_TOO_FAR"
 	)
 
 	DEFINE_SCHEDULE
@@ -413,7 +413,7 @@ void CNPC_Houndeye::GatherConditions() {
 		COND_HEYE_EEPY,
 		COND_HEYE_LEADER_DEAD,
 		COND_HEYE_HAS_WAYPOINT,
-		COND_HEYE_SQUAD_ALERT,
+		//COND_HEYE_SQUAD_ALERT, // dont clear this
 	};
 	ClearConditions(nToClear, ARRAYSIZE(nToClear));
 
@@ -423,6 +423,16 @@ void CNPC_Houndeye::GatherConditions() {
 		SetCondition(COND_HEYE_HEALTH_LOW);
 		//m_NPCState = NPC_STATE_ALERT;
 	}
+
+	// check enemy distance
+	if (GetEnemy()) {
+		if (EnemyDistance(GetEnemy()) > sv_houndeye_huntrange.GetFloat()) // was 400.0f
+			SetCondition(COND_HEYE_ENEMY_TOO_FAR);
+		else
+			ClearCondition(COND_HEYE_ENEMY_TOO_FAR);
+	}
+	else
+		ClearCondition(COND_HEYE_ENEMY_TOO_FAR);
 
 	// stuff from the squad / leader takes priority (sorta)
 	if (m_pSquad) {
@@ -438,13 +448,9 @@ void CNPC_Houndeye::GatherConditions() {
 			// if the leader is alerted, become alerted. if we sense an enemy, become alerted and alert the leader (who will alert the rest of the pack through here also)
 			if (m_pSquad->GetLeader()->HasCondition(COND_HEYE_SQUAD_ALERT))
 				SetCondition(COND_HEYE_SQUAD_ALERT);
-			else if (HasCondition(COND_HEAR_DANGER) || HasCondition(COND_HEAR_COMBAT) || HasCondition(COND_SEE_ENEMY) || HasCondition(COND_HEAR_PLAYER) || HasCondition(COND_HEYE_HEALTH_LOW)) {
-				m_pSquad->GetLeader()->SetCondition(COND_HEYE_SQUAD_ALERT);
-				SetCondition(COND_HEYE_SQUAD_ALERT); 
-			}
-
 		}
-
+		else
+			ClearCondition(COND_HEYE_SQUAD_ALERT);
 	}
 	else {
 
@@ -452,17 +458,6 @@ void CNPC_Houndeye::GatherConditions() {
 			SetCondition(COND_HEYE_SPOOKED);
 
 	}
-	
-	// check enemy distance
-	if (GetEnemy()) {
-		if (EnemyDistance(GetEnemy()) > sv_houndeye_huntrange.GetFloat()) // was 400.0f
-			SetCondition(COND_HEYE_ENEMY_TOO_FAR);
-		else
-			ClearCondition(COND_HEYE_ENEMY_TOO_FAR);
-	}
-	else
-		ClearCondition(COND_HEYE_ENEMY_TOO_FAR);
-
 }
 
 void CNPC_Houndeye::StartTask(const Task_t* pTask) {
