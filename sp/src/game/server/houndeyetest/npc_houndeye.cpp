@@ -193,13 +193,13 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		SCHED_HEYE_TAUNT,
 
 		"	Tasks"
-		"	"
 		"	TASK_SET_FAIL_SCHEDULE		SCHEDULE:SCHED_HEYE_HUNT"
 		"	TASK_WAIT_FOR_MOVEMENT		0"
 		"	TASK_STOP_MOVING			0"
 		"	TASK_RESET_ACTIVITY			0"
 		"	TASK_HEYE_PLOT_ATTACK		0"
 		"	TASK_SET_SCHEDULE			SCHEDULE:SCHED_HEYE_ATTACK"
+		"	"
 		"	Interrupts"
 		"	COND_TASK_FAILED"
 		"	COND_TOO_FAR_TO_ATTACK"
@@ -214,6 +214,7 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		SCHED_HEYE_HUNT,
 
 		"	Tasks"
+		"	TASK_CLEAR_MOVE_WAIT					0"
 		"	TASK_STORE_POSITION_IN_SAVEPOSITION		0"
 		"	TASK_HEYE_START_HUNT					0"
 		"	TASK_SET_TOLERANCE_DISTANCE				200"
@@ -272,11 +273,11 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 
 		"	Tasks"
 		"	TASK_SET_FAIL_SCHEDULE			SCHEDULE:SCHED_HEYE_HUNT"
-		"	TASK_GET_PATH_TO_RANDOM_NODE	4"
-		"	TASK_WALK_PATH					0"
-		"	TASK_WAIT_FOR_MOVEMENT			0"
+		//"	TASK_GET_PATH_TO_RANDOM_NODE	4"
+		//"	TASK_WALK_PATH					0"
+		//"	TASK_WAIT_FOR_MOVEMENT			0"
+		//"	TASK_STOP_MOVING				0"
 		"	TASK_FACE_TARGET				0"
-		"	TASK_STOP_MOVING				0"
 		"	TASK_RESET_ACTIVITY				0"
 		"	TASK_HEYE_ANIM_INSPECT			0"
 		"	TASK_SET_SCHEDULE				SCHEDULE:SCHED_HEYE_INSPECT_WAYPOINT"
@@ -434,8 +435,14 @@ void CNPC_Houndeye::GatherConditions() {
 		}
 		else if (m_pSquad->GetLeader()) {
 
+			// if the leader is alerted, become alerted. if we sense an enemy, become alerted and alert the leader (who will alert the rest of the pack through here also)
 			if (m_pSquad->GetLeader()->HasCondition(COND_HEYE_SQUAD_ALERT))
 				SetCondition(COND_HEYE_SQUAD_ALERT);
+			else if (HasCondition(COND_HEAR_DANGER) || HasCondition(COND_HEAR_COMBAT) || HasCondition(COND_SEE_ENEMY) || HasCondition(COND_HEAR_PLAYER) || HasCondition(COND_HEYE_HEALTH_LOW)) {
+				m_pSquad->GetLeader()->SetCondition(COND_HEYE_SQUAD_ALERT);
+				SetCondition(COND_HEYE_SQUAD_ALERT); 
+			}
+
 		}
 
 	}

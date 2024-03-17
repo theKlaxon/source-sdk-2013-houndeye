@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "6440"
-	"mapversion" "27"
+	"mapversion" "28"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "27"
+	"mapversion" "28"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -2977,7 +2977,7 @@ entity
 	"sleepstate" "0"
 	"spawnflags" "4612"
 	"squadname" "heye_squad0"
-	"targetname" "heye0"
+	"targetname" "heye4"
 	"wakeradius" "512"
 	"wakesquad" "0"
 	"origin" "704 832 8"
@@ -3873,6 +3873,7 @@ entity
 	"id" "1160"
 	"classname" "houndeye_point"
 	"HoundeyePointEnabled" "1"
+	"HoundeyeTask" "Watch TV"
 	"origin" "-104 704 69.5871"
 	editor
 	{
@@ -3899,7 +3900,7 @@ entity
 	"sleepstate" "0"
 	"spawnflags" "4612"
 	"squadname" "heye_squad0"
-	"targetname" "heye0"
+	"targetname" "heye3"
 	"wakeradius" "512"
 	"wakesquad" "0"
 	"origin" "762.179 702.893 1.70197"
@@ -3928,7 +3929,7 @@ entity
 	"sleepstate" "0"
 	"spawnflags" "4612"
 	"squadname" "heye_squad0"
-	"targetname" "heye0"
+	"targetname" "heye2"
 	"wakeradius" "512"
 	"wakesquad" "0"
 	"origin" "766.731 781.957 1.70197"
@@ -3957,7 +3958,7 @@ entity
 	"sleepstate" "0"
 	"spawnflags" "4612"
 	"squadname" "heye_squad0"
-	"targetname" "heye0"
+	"targetname" "heye1"
 	"wakeradius" "512"
 	"wakesquad" "0"
 	"origin" "787.081 915.008 1.70197"
@@ -4147,8 +4148,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[-8.5742 592.912 223.871]"
-		"look" "[-24.6292 717.76 49.7681]"
+		"position" "[626.527 800.715 200.957]"
+		"look" "[736.734 779.947 17.7105]"
 	}
 }
 cordon
