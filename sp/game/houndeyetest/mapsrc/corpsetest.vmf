@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "6440"
-	"mapversion" "41"
+	"mapversion" "43"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "41"
+	"mapversion" "43"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -1983,7 +1983,7 @@ entity
 	"id" "170"
 	"classname" "info_player_start"
 	"angles" "0 90 0"
-	"origin" "640 0 1"
+	"origin" "640 -256 0"
 	editor
 	{
 		"color" "0 255 0"
@@ -3242,8 +3242,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[561.669 784.376 130.676]"
-		"look" "[740.667 771.007 12.6199]"
+		"position" "[756.895 15.0416 234.498]"
+		"look" "[607.211 24.1207 80.6515]"
 	}
 }
 cordon
