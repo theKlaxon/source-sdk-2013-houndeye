@@ -75,12 +75,15 @@ private:
 		TASK_HEYE_DO_SHOCKWAVE,
 		TASK_HEYE_CHECK_FOR_SQUAD,
 
-		// waypoint tasks	
+		// waypoint tasks / anims
 		TASK_HEYE_SET_AT_POINT,
 		TASK_HEYE_ANIM_WATCH,
 		TASK_HEYE_ANIM_INSPECT,
 		TASK_HEYE_ANIM_COWER,
+
+		// misc.
 		TASK_HEYE_RETREAT,
+		TASK_HEYE_START_HUNT,
 	};
 
 	// task fails

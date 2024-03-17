@@ -50,6 +50,7 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 	DECLARE_TASK( TASK_HEYE_ANIM_COWER )
 	DECLARE_TASK( TASK_HEYE_SET_AT_POINT )
 	DECLARE_TASK( TASK_HEYE_RETREAT )
+	DECLARE_TASK( TASK_HEYE_START_HUNT )
 
 	// acts
 	DECLARE_ACTIVITY( ACT_INSPECT_WALL )
@@ -74,7 +75,6 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		"	Tasks"
 		"	TASK_SET_FAIL_SCHEDULE	SCHEDULE:SCHED_HEYE_SPOOKED_AWAKE"
 		"	TASK_STOP_MOVING		0"
-		
 		"	TASK_RESET_ACTIVITY		0"
 		"	TASK_HEYE_START_SNOOZE	0"
 		"	"
@@ -96,6 +96,7 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		"	"
 		"	Interrupts"
 		"	COND_HEYE_HEALTH_LOW"
+		"	COND_ENEMY_DEAD"
 	)
 
 	DEFINE_SCHEDULE
@@ -214,6 +215,7 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 
 		"	Tasks"
 		"	TASK_STORE_POSITION_IN_SAVEPOSITION		0"
+		"	TASK_HEYE_START_HUNT					0"
 		"	TASK_SET_TOLERANCE_DISTANCE				200"
 		"	TASK_GET_FLANK_ARC_PATH_TO_ENEMY_LOS	30"		// works great! keep!
 		"	TASK_RUN_PATH							0"
@@ -226,7 +228,8 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		"	COND_TASK_FAILED"
 		"	COND_HEYE_HEALTH_LOW"
 		"	COND_LOST_ENEMY"
-		"	COND_HEYE_ENEMY_TOO_FAR"
+		"	COND_ENEMY_DEAD"
+		//"	COND_HEYE_ENEMY_TOO_FAR"
 	)
 
 	DEFINE_SCHEDULE
@@ -234,14 +237,14 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		SCHED_HEYE_MOVE_TO_WAYPOINT,
 
 		"	Tasks"
-		"	TASK_GET_PATH_TO_TARGET		0"
-		"	TASK_RUN_PATH				0"
-		"	TASK_WAIT_FOR_MOVEMENT		0"
+		"	TASK_GET_PATH_TO_TARGET			0"
+		"	TASK_RUN_PATH					0"
+		"	TASK_WAIT_FOR_MOVEMENT			0"
 		"	TASK_GET_PATH_TO_RANDOM_NODE	48"
 		"	TASK_RUN_PATH					0"
 		"	TASK_WAIT_FOR_MOVEMENT			0"
-		"	TASK_STOP_MOVING			0"
-		"	TASK_HEYE_SET_AT_POINT		0"
+		"	TASK_STOP_MOVING				0"
+		"	TASK_HEYE_SET_AT_POINT			0"
 		"	"
 		"	Interrupts"
 		"	COND_TASK_FAILED"
@@ -255,7 +258,6 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		"	Tasks"
 		"	TASK_SET_FAIL_SCHEDULE			SCHEDULE:SCHED_HEYE_HUNT"
 		"	TASK_FACE_TARGET				0"
-		
 		"	TASK_RESET_ACTIVITY				0"
 		"	TASK_HEYE_ANIM_WATCH			0"
 		"	TASK_SET_SCHEDULE				SCHEDULE:SCHED_HEYE_WATCH_WAPOINT"
@@ -446,7 +448,7 @@ void CNPC_Houndeye::GatherConditions() {
 	
 	// check enemy distance
 	if (GetEnemy()) {
-		if (EnemyDistance(GetEnemy()) > 400.0f)
+		if (EnemyDistance(GetEnemy()) > sv_houndeye_huntrange.GetFloat()) // was 400.0f
 			SetCondition(COND_HEYE_ENEMY_TOO_FAR);
 		else
 			ClearCondition(COND_HEYE_ENEMY_TOO_FAR);
@@ -460,12 +462,20 @@ void CNPC_Houndeye::StartTask(const Task_t* pTask) {
 
 	switch (pTask->iTask) {
 	case TASK_HEYE_BEEP:
+		StopParticleEffects(this); // this task is run when we're cancelling an attack, so stop the charge particles.
+		EmitSound("npc_houndeye.alert");
 		break;
 
 	case TASK_HEYE_START_SNOOZE:
 		m_nSleepState = SLEEP_STARTED_SLEEPING;
 		m_NPCState = NPC_STATE_IDLE;
 		m_bIsPlotting = false;
+
+		// these are needed incase we get out of attk range and need to go to sleep.
+		// this case only really applies to houndeyes that aren't in a pack.
+		StopParticleEffects(this);
+		StopSound("npc_houndeye.warn");
+
 		SetIdealActivity(ACT_CROUCH);
 		break;
 
@@ -522,6 +532,9 @@ void CNPC_Houndeye::StartTask(const Task_t* pTask) {
 		EmitSound("npc_houndeye.pain");
 		break;
 
+	case TASK_HEYE_START_HUNT:
+		EmitSound("npc_houndeye.hunt");
+		break;
 	default:
 		BaseClass::StartTask(pTask);
 		break;
@@ -657,6 +670,10 @@ void CNPC_Houndeye::RunTask(const Task_t* pTask) {
 		break;
 	
 	case TASK_HEYE_RETREAT:
+		TaskComplete();
+		break;
+
+	case TASK_HEYE_START_HUNT:
 		TaskComplete();
 		break;
 
@@ -1005,6 +1022,9 @@ int CNPC_Houndeye::OnTakeDamage_Dead(const CTakeDamageInfo& info) {
 }
 
 void CNPC_Houndeye::Event_Killed(const CTakeDamageInfo& info) {
+
+	EmitSound("npc_houndeye.die");
+
 	return BaseClass::Event_Killed(info);
 }
 

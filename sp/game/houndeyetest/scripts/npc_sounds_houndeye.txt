@@ -58,7 +58,7 @@
 		"wave"		"houndeye/he_idle1.wav"
 		"wave"		"houndeye/he_idle2.wav"
 		"wave"		"houndeye/he_idle3.wav"
-
+		"wave"		"houndeye/he_idle4.wav"
 	}
 }
 
@@ -87,7 +87,7 @@
 	"rndwave"
 	{
 		"wave"		"houndeye/he_alert1.wav"
-		"wave"		"houndeye/he_alert2.wav"
+		//"wave"		"houndeye/he_alert2.wav" // i dont feel like this fits the quickness of the "spooked" animation
 		"wave"		"houndeye/he_alert3.wav"
 
 	}
@@ -112,10 +112,11 @@
 {
 	"channel"	"CHAN_VOICE"
 	"volume"	"VOL_NORM"
-	"soundlevel"	"SNDLVL_80db"
+	"soundlevel"	"SNDLVL_90db"
 	"pitch"		"PITCH_NORM"
 	"rndwave"
 	{
+		"wave"		"houndeye/he_pain2.wav"
 		"wave"		"houndeye/he_pain3.wav"
 		"wave"		"houndeye/he_pain4.wav"
 		"wave"		"houndeye/he_pain5.wav"
@@ -172,6 +173,7 @@
 	"rndwave"
 	{
 		"wave"		"houndeye/he_attack1.wav"
+		//"wave"		"houndeye/he_attack2.wav" // this one sounds cool, but it's too short :(
 		"wave"		"houndeye/he_attack3.wav"
 
 	}
