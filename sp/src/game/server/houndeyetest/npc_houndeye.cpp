@@ -119,9 +119,6 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		"	TASK_FIND_COVER_FROM_ORIGIN		0"
 		"	TASK_HEYE_RETREAT				0"
 		"	TASK_HEYE_ANIM_COWER			0"
-		//"	TASK_RUN_PATH_FLEE				1024" // give a large range of distances to choose from for retreat
-		//"	TASK_GET_PATH_TO_RANDOM_NODE	4096" // give a large range of distances to choose from for retreat
-		//"	TASK_FIND_FAR_NODE_COVER_FROM_ENEMY	4096" // give a large range of distances to choose from for retreat
 		"	TASK_RUN_PATH					0"
 		"	TASK_WAIT_FOR_MOVEMENT			0"
 		"	TASK_STOP_MOVING				0"
@@ -135,9 +132,7 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		SCHED_HEYE_RETREAT_RANDOM,
 
 		"	Tasks"
-		//"	TASK_FIND_BACKAWAY_FROM_SAVEPOSITION	1024" // give a large range of distances to choose from for retreat
 		"	TASK_GET_PATH_TO_RANDOM_NODE	256" // give a large range of distances to choose from for retreat
-		//"	TASK_FIND_FAR_NODE_COVER_FROM_ENEMY	4096" // give a large range of distances to choose from for retreat
 		"	TASK_RUN_PATH					0"
 		"	TASK_WAIT_FOR_MOVEMENT			0"
 		"	TASK_STOP_MOVING				0"
@@ -187,7 +182,6 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		"	COND_TASK_FAILED"
 		"	COND_TOO_FAR_TO_ATTACK"
 		"	COND_LOST_ENEMY"
-		//"	COND_NO_HEAR_DANGER"
 		"	COND_ENEMY_WENT_NULL"
 		"	COND_HEYE_ENEMY_TOO_FAR"
 	)
@@ -220,12 +214,8 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 
 		"	Tasks"
 		"	TASK_STORE_POSITION_IN_SAVEPOSITION		0"
-		//"	TASK_SET_FAIL_SCHEDULE					SCHEDULE:SCHED_IDLE_WANDER"
 		"	TASK_SET_TOLERANCE_DISTANCE				200"
 		"	TASK_GET_FLANK_ARC_PATH_TO_ENEMY_LOS	30"		// works great! keep!
-		//"	TASK_GET_FLANK_RADIUS_PATH_TO_ENEMY_LOS		0"	// mostly works
-		//"	TASK_GET_PATH_TO_RANGE_ENEMY_LKP_LOS		0" // works with this!
-
 		"	TASK_RUN_PATH							0"
 		"	TASK_WAIT_FOR_MOVEMENT					0"
 		"	TASK_STOP_MOVING						0"
@@ -251,9 +241,7 @@ AI_BEGIN_CUSTOM_NPC(npc_houndeye, CNPC_Houndeye)
 		"	TASK_RUN_PATH					0"
 		"	TASK_WAIT_FOR_MOVEMENT			0"
 		"	TASK_STOP_MOVING			0"
-		"	TASK_HEYE_SET_AT_POINT		0"	// this task intentionally fails to 
-											// make SelectFailSchedule do the work 
-											// of finding the heye_point's desired task schedule
+		"	TASK_HEYE_SET_AT_POINT		0"
 		"	"
 		"	Interrupts"
 		"	COND_TASK_FAILED"
