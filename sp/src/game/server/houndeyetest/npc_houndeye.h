@@ -35,17 +35,17 @@ public:
 	void DoShockwave();
 	
 	Class_T Classify() { return CLASS_HOUNDEYE; }
-	virtual float		InnateRange1MaxRange(void) override { return sk_heye_attack_range.GetFloat(); }
+	virtual float InnateRange1MaxRange(void) override { return sk_heye_attack_range.GetFloat(); }
 
-	virtual int			OnTakeDamage_Alive(const CTakeDamageInfo& info);
-	virtual int			OnTakeDamage_Dying(const CTakeDamageInfo& info);
-	virtual int			OnTakeDamage_Dead(const CTakeDamageInfo& info);
+	virtual int	OnTakeDamage_Alive(const CTakeDamageInfo& info);
+	virtual int	OnTakeDamage_Dying(const CTakeDamageInfo& info);
+	virtual int	OnTakeDamage_Dead(const CTakeDamageInfo& info);
 
-	virtual void		Event_Killed(const CTakeDamageInfo& info);
+	virtual void Event_Killed(const CTakeDamageInfo& info);
 
 	void TraceAttack(const CTakeDamageInfo& info, const Vector& vecDir, trace_t* ptr, CDmgAccumulator* pAccumulator);
 
-	float m_flDistTooFar = 800.0f;
+	//float m_flDistTooFar = 800.0f;
 
 private:
 	

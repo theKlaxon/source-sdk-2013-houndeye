@@ -333,19 +333,17 @@ void CNPC_Houndeye::Spawn() {
 	
 	SetHullType(HULL_WIDE_SHORT);
 	SetHullSizeNormal();
-
-	SetNavType(NAV_GROUND);
-
 	SetSolid(SOLID_BBOX);
-	AddSolidFlags(FSOLID_NOT_STANDABLE);
+	//AddSolidFlags(FSOLID_NOT_STANDABLE);
 	SetMoveType(MOVETYPE_STEP);
 	
+	SetNavType(NAV_GROUND);
+
 	ClearEffects();
 
-	SetCollisionGroup(HL2COLLISION_GROUP_CROW);
-	//SetCollisionGroup(HL2COLLISION_GROUP_HOUNDEYE);
+	SetCollisionGroup(HL2COLLISION_GROUP_HEADCRAB); // im using this as it works for what i need with the collision, and it fixes a bug that would cause the houndeyes to stop rendering their model.
 	CapabilitiesClear();
-	CapabilitiesAdd(bits_CAP_MOVE_GROUND | bits_CAP_TURN_HEAD | bits_CAP_INNATE_RANGE_ATTACK1 | bits_CAP_SQUAD);
+	CapabilitiesAdd(bits_CAP_MOVE_GROUND | bits_CAP_TURN_HEAD | bits_CAP_INNATE_RANGE_ATTACK1 | bits_CAP_SQUAD | bits_CAP_NO_HIT_PLAYER);
 	CapabilitiesAdd(bits_CAP_MOVE_JUMP);
 	
 	m_flFieldOfView = 0.5f;
@@ -748,7 +746,7 @@ void CNPC_Houndeye::DoShockwave() {
 	//		: if they're'nt houndeyes, apply damage,
 	//		: ensure that the pack number influences damage (just like hl1)
 
-	CBaseEntity* pEnts[20];
+	CBaseEntity* pEnts[64];
 	int cnt = UTIL_EntitiesInSphere(pEnts, 20, WorldSpaceCenter(), 200.0f, 0);
 
 	float baseDmg = sv_houndeye_squadattackdmg.GetFloat();
@@ -779,24 +777,18 @@ int CNPC_Houndeye::RangeAttack1Conditions(float flDot, float flDist) {
 
 int CNPC_Houndeye::SelectSchedule() {
 
-	// TODO: create fail conditions to make the cowering houndeye keep running from the player
-
+	// if we have low health, and we haven't cowered yet, then retreat
 	if (HasCondition(COND_HEYE_HEALTH_LOW) && 
 		(HasCondition(COND_SEE_ENEMY) || HasCondition(COND_HEAR_COMBAT) || HasCondition(COND_HEAR_DANGER) || HasCondition(COND_HEAR_PLAYER) ) && m_bCanCower)
 		return SCHED_HEYE_RETREAT;
 
-	// only cower if we dont see the enemy, and we have low health
+	// cower after we retreat, and only if we're still able to.
 	if (m_bIsCowering && m_bCanCower)
  		return SCHED_HEYE_COWER;
 	
+	// if we're plotting our attack, wait for an attack slot to become available to us. 
+	// if one is not available, plot again.
 	if (m_bIsPlotting) {
-
-		// if we're plotting our attack, and we're too far away, move closer
-		//if (HasCondition(COND_HEYE_ENEMY_TOO_FAR)) {
-		//	VacateStrategySlot();
-		//	Msg("CNPCHoundeye: Enemy too far! hunting again!\n");
-		//	return SCHED_HEYE_HUNT;
-		//}
 
 		if (m_pSquad) {
 			if (OccupyStrategySlotRange(SQUAD_SLOT_ATTACK1, SQUAD_SLOT_ATTACK2) || !m_pSquad->GetLeader()->IsAlive()) // to help with heyes acting erratic when leader dead
@@ -808,8 +800,10 @@ int CNPC_Houndeye::SelectSchedule() {
 			return SCHED_HEYE_ATTACK; // if we're not part of a squad, we should just attack.
 	}
 
+	// if we're at an heye point, get the task we need to perform.
 	if (m_bIsAtPoint) {
 
+		// for a squad, we wait until the leader says so to do our task.
 		if (m_pSquad) {
 
 			if (m_pSquad->IsLeader(this)) {
@@ -840,7 +834,7 @@ int CNPC_Houndeye::SelectSchedule() {
 				}
 			}
 
-		}
+		} // if we're not part of a squad, just grab our task and get to it.
 		else {
 
 			if (!m_pWaypoint)
@@ -854,12 +848,14 @@ int CNPC_Houndeye::SelectSchedule() {
 				return SCHED_HEYE_INSPECT_WAYPOINT;
 			}
 		}
-
 	}
 	
+	// if the enemy is too far away and we're not doing anything else, let the TranslateSchedule handle what we should do next.
 	if (HasCondition(COND_HEYE_ENEMY_TOO_FAR))
 		return SCHED_IDLE_WANDER;
 
+	// added the extra check for if we're sleeping or not due to an edge case that was
+	// happening with the hunting task failure. best to keep it here to help prevent spook loops.
 	if (HasCondition(COND_HEYE_SPOOKED) && m_nSleepState != SLEEP_NOT_SLEEPING)
 		return SCHED_HEYE_SPOOKED_AWAKE;
 	
@@ -875,7 +871,7 @@ int CNPC_Houndeye::SelectFailSchedule(int failedSchedule, int failedTask, AI_Tas
 	case TASK_HEYE_CHECK_FOR_SQUAD:
 		return SCHED_HEYE_ATTACK;
 
-	case TASK_GET_FLANK_ARC_PATH_TO_ENEMY_LOS:
+	case TASK_GET_FLANK_ARC_PATH_TO_ENEMY_LOS: // if this task fails, we need to fallback to something that wont make us loop.
 
 		if(GetEnemy())
 			return SCHED_HEYE_TAUNT;
@@ -886,7 +882,7 @@ int CNPC_Houndeye::SelectFailSchedule(int failedSchedule, int failedTask, AI_Tas
 		return SCHED_HEYE_RETREAT_RANDOM;
 	}
 	
-	return SCHED_IDLE_WANDER;
+	return SCHED_IDLE_WANDER; // by default, we should let TranslateSchedule handle our next move if our task fails.
 }
 
 int CNPC_Houndeye::TranslateSchedule(int nType) {
@@ -897,15 +893,11 @@ int CNPC_Houndeye::TranslateSchedule(int nType) {
 	case SCHED_IDLE_WANDER:
 
 		if (m_bIsCowering && m_bCanCower) {
-
-			//if (gpGlobals->curtime <= m_flCowerTime)
-				return SCHED_HEYE_COWER;
-
-			//m_bIsCowering = false;
-			//m_bCanCower = false;
+			return SCHED_HEYE_COWER;
 		}
 		
-		// move to the waypoint if we have one
+		// move to the waypoint if we have one, and as a squad 
+		// wait for the leader to decide when to go.
 		if (m_pSquad) {
 			
 			if (m_pSquad->IsLeader(this)) {
@@ -934,7 +926,7 @@ int CNPC_Houndeye::TranslateSchedule(int nType) {
 					return SCHED_HEYE_HUNT;
 				}
 
-				if (pLeaderTarg != nullptr) {
+				if (pLeaderTarg != nullptr ) {
 					CBaseEntity* pTarg = pLeader->GetTarget();
 					if (pTarg != nullptr) {
 						SetTarget(pTarg);
@@ -954,6 +946,7 @@ int CNPC_Houndeye::TranslateSchedule(int nType) {
 			}
 		}
 		
+		// here we make sure not to sleep when cowering!
 		if (m_nSleepState == SLEEP_NOT_SLEEPING && !m_bIsCowering)
 			return SCHED_HEYE_START_SNOOZE;
 		else
@@ -969,6 +962,7 @@ int CNPC_Houndeye::TranslateSchedule(int nType) {
 
 	case SCHED_COMBAT_FACE:
 
+		// deprecated fix.
 		// only need to take this over in the cowering mode
 		//if (m_bIsCowering)
 		//	return SCHED_HEYE_COWER;
@@ -981,13 +975,11 @@ int CNPC_Houndeye::TranslateSchedule(int nType) {
 
 int CNPC_Houndeye::OnTakeDamage_Alive(const CTakeDamageInfo& info) {
 
-	// dont ever take sonic dmaage, if we're ammune to sonic damage 
+	// dont ever take sonic dmaage, if we're immune to sonic damage 
 	// from other houndeyes, things like thumpers shouldn't do
 	// any damage at all either.
 	if (info.GetDamageType() == DMG_SONIC)
 		return 0;
-
-	// TODO: flinch?
 
 	// take damage
 	float dmg = info.GetBaseDamage();
