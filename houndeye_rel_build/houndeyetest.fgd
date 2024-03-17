@@ -1,0 +1,28 @@
+@include "base.fgd"
+@include "halflife2.fgd"
+
+@NPCClass base(BaseNPC) studio("models/houndeye.mdl") = npc_houndeye
+[
+    
+]
+
+@PointClass base(Targetname, Parentname) iconsprite("editor/info_target.vmt") = houndeye_point : "Houndeye Point"
+[
+    HoundeyeTask(choices) : "Houndeye Task" : "Watch TV" =
+    [
+        0 : "Watch TV"
+        1 : "Inspect"
+    ]
+
+    HoundeyePointEnabled(choices) : "Is this waypoint Enabled?" : "Yes" =
+    [
+        0 : "No"
+        1 : "Yes"
+    ]
+
+    input Enable(void) : "Enabled this waypoint."
+    input Disable(void) : "Enabled this waypoint."
+
+    output OnEnabled(void) : "Fires when this waypoint is Enabled."
+    output OnDisabled(void) : "Fires when this waypoint is Disabled."
+]
