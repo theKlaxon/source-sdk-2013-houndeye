@@ -25,7 +25,7 @@ function(link_to_bin)
 	add_custom_command(
 		TARGET ${CTB_TARGET}
 		POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E $<IF:$<BOOL:WIN32>,copy,create_symlink> $<TARGET_FILE:${CTB_TARGET}> ${GAMEDIR}/bin/$<TARGET_FILE_NAME:${CTB_TARGET}>
+			COMMAND ${CMAKE_COMMAND} -E $<IF:$<BOOL:${WIN32}>,copy,create_symlink> $<TARGET_FILE:${CTB_TARGET}> ${GAMEDIR}/bin/$<TARGET_FILE_NAME:${CTB_TARGET}>
 	)
 endfunction()
 
@@ -38,5 +38,5 @@ function(declare_library)
 		return()
 	endif ()
 
-	set( "ASRC_${DL_TARGET}" $<IF:$<BOOL:WIN32>,$<TARGET_NAME:${DL_TARGET}>,$<TARGET_FILE:${DL_TARGET}>> PARENT_SCOPE )
+	set( "ASRC_${DL_TARGET}" $<IF:$<BOOL:${WIN32}>,$<TARGET_NAME:${DL_TARGET}>,$<TARGET_FILE:${DL_TARGET}>> PARENT_SCOPE )
 endfunction()
