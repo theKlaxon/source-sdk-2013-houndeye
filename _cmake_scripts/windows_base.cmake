@@ -28,13 +28,13 @@ list( APPEND ADDITIONAL_SOURCES_LIB
 )
 
 list( APPEND ADDITIONAL_LINK_LIBRARIES_EXE
-	tier0
+	# tier0
 	tier1
-	vstdlib
+	# vstdlib
 )
 
 list( APPEND ADDITIONAL_LINK_LIBRARIES_DLL
-	tier0
+	# tier0
 	tier1
-	vstdlib
+	# vstdlib
 )
