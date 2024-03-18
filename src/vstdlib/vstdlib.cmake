@@ -3,6 +3,7 @@
 set( VSTDLIB_DIR ${CMAKE_CURRENT_LIST_DIR} )
 set( VSTDLIB_SOURCE_FILES
 	"${VSTDLIB_DIR}/cvarsystem.cpp"
+	"${VSTDLIB_DIR}/random.cpp"
 	"${VSTDLIB_DIR}/keyvaluessystem.cpp"
 
 	# Header files

@@ -38,27 +38,25 @@ public:
 
 //-----------------------------------------------------------------------------
 // The standard generator of uniformly distributed random numbers
+// NOTE: This was changed from the original, it now uses PCG
 //-----------------------------------------------------------------------------
 class VSTDLIB_CLASS CUniformRandomStream : public IUniformRandomStream {
 public:
 	CUniformRandomStream();
 
 	// Sets the seed of the random number generator
-	virtual void SetSeed( int iSeed );
+	void SetSeed( int iSeed ) override;
 
 	// Generates random numbers
-	virtual float RandomFloat( float flMinVal = 0.0f, float flMaxVal = 1.0f );
-	virtual int RandomInt( int iMinVal, int iMaxVal );
-	virtual float RandomFloatExp( float flMinVal = 0.0f, float flMaxVal = 1.0f, float flExponent = 1.0f );
+	float RandomFloat( float flMinVal = 0.0f, float flMaxVal = 1.0f ) override;
+	int RandomInt( int iMinVal, int iMaxVal ) override;
+	float RandomFloatExp( float flMinVal = 0.0f, float flMaxVal = 1.0f, float flExponent = 1.0f ) override;
 
 private:
 	int GenerateRandomNumber();
 
-	int m_idum;
-	int m_iy;
-	int m_iv[ NTAB ];
-
-	CThreadFastMutex m_mutex;
+	uint64_t m_liState{ 0xEBABEFF0C0f33173 };
+	CThreadFastMutex m_Mutex{};
 };
 
 
