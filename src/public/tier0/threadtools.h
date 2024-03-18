@@ -1552,6 +1552,19 @@ public:
 
 	//---------------------------------------------------------
 
+    inline CThreadMutex::CThreadMutex() {
+        InitializeCriticalSection(reinterpret_cast<CRITICAL_SECTION *>(this->m_CriticalSection));
+    }
+
+    inline CThreadMutex::~CThreadMutex() {
+        DeleteCriticalSection(reinterpret_cast<CRITICAL_SECTION *>(this->m_CriticalSection));
+    }
+
+    inline bool CThreadMutex::TryLock() {
+        EnterCriticalSection(reinterpret_cast<CRITICAL_SECTION *>(this->m_CriticalSection));
+        return true;
+    }
+
 	inline void CThreadMutex::Lock() {
 		#if defined( THREAD_MUTEX_TRACING_ENABLED )
 			uint thisThreadID = ThreadGetCurrentId();
