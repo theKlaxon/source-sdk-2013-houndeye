@@ -7,12 +7,11 @@
 //===========================================================================//
 #pragma once
 
+#include "pcgengine.hpp"
 #include "tier0/basetypes.h"
 #include "tier0/threadtools.h"
 #include "tier1/interface.h"
 #include "vstdlib/vstdlib.h"
-
-#define NTAB 32
 
 #if defined( _MSC_VER )
 	#pragma warning( push )
@@ -35,7 +34,6 @@ public:
 	virtual float RandomFloatExp( float flMinVal = 0.0f, float flMaxVal = 1.0f, float flExponent = 1.0f ) = 0;
 };
 
-
 //-----------------------------------------------------------------------------
 // The standard generator of uniformly distributed random numbers
 // NOTE: This was changed from the original, it now uses PCG
@@ -53,9 +51,9 @@ public:
 	float RandomFloatExp( float flMinVal = 0.0f, float flMaxVal = 1.0f, float flExponent = 1.0f ) override;
 
 private:
-	int GenerateRandomNumber();
+	friend class CGaussianRandomStream;
+	PcgEngine m_Engine;
 
-	uint64_t m_liState{ 0xEBABEFF0C0f33173 };
 	CThreadFastMutex m_Mutex{};
 };
 
@@ -67,18 +65,16 @@ class VSTDLIB_CLASS CGaussianRandomStream {
 public:
 	// Passing in NULL will cause the gaussian stream to use the
 	// installed global random number generator
-	CGaussianRandomStream( IUniformRandomStream* pUniformStream = NULL );
+	explicit CGaussianRandomStream( IUniformRandomStream* pUniformStream = nullptr );
 
 	// Attaches to a random uniform stream
-	void AttachToStream( IUniformRandomStream* pUniformStream = NULL );
+	void AttachToStream( IUniformRandomStream* pUniformStream = nullptr );
 
 	// Generates random numbers
 	float RandomFloat( float flMean = 0.0f, float flStdDev = 1.0f );
 
 private:
 	IUniformRandomStream* m_pUniformStream;
-	bool m_bHaveValue;
-	float m_flRandomValue;
 
 	CThreadFastMutex m_mutex;
 };
@@ -97,10 +93,10 @@ VSTDLIB_INTERFACE float RandomGaussianFloat( float flMean = 0.0f, float flStdDev
 //-----------------------------------------------------------------------------
 class VSTDLIB_CLASS CDefaultUniformRandomStream : public IUniformRandomStream {
 public:
-	virtual void SetSeed( int iSeed ) override { RandomSeed( iSeed ); }
-	virtual float RandomFloat( float flMinVal, float flMaxVal ) override { return ::RandomFloat( flMinVal, flMaxVal ); }
-	virtual int RandomInt( int iMinVal, int iMaxVal ) override { return ::RandomInt( iMinVal, iMaxVal ); }
-	virtual float RandomFloatExp( float flMinVal, float flMaxVal, float flExponent ) override { return ::RandomFloatExp( flMinVal, flMaxVal, flExponent ); }
+	void SetSeed( int iSeed ) override { RandomSeed( iSeed ); }
+	float RandomFloat( float flMinVal, float flMaxVal ) override { return ::RandomFloat( flMinVal, flMaxVal ); }
+	int RandomInt( int iMinVal, int iMaxVal ) override { return ::RandomInt( iMinVal, iMaxVal ); }
+	float RandomFloatExp( float flMinVal, float flMaxVal, float flExponent ) override { return ::RandomFloatExp( flMinVal, flMaxVal, flExponent ); }
 };
 
 //-----------------------------------------------------------------------------

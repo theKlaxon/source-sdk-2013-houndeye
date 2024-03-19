@@ -5,6 +5,7 @@ set( VSTDLIB_SOURCE_FILES
 	"${VSTDLIB_DIR}/cvarsystem.cpp"
 	"${VSTDLIB_DIR}/random.cpp"
 	"${VSTDLIB_DIR}/keyvaluessystem.cpp"
+	"${VSTDLIB_DIR}/pcgengine.cpp"
 
 	# Header files
 	"${VSTDLIB_DIR}/cvarsystem.hpp"
@@ -20,6 +21,7 @@ set( VSTDLIB_SOURCE_FILES
 	"${SRCDIR}/public/vstdlib/IKeyValuesSystem.h"
 	"${SRCDIR}/public/vstdlib/cvar.h"
 	"${SRCDIR}/public/vstdlib/coroutine.h"
+	"${SRCDIR}/public/vstdlib/pcgengine.hpp"
 )
 
 add_library( vstdlib2 SHARED ${VSTDLIB_SOURCE_FILES} )
