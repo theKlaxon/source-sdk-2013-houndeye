@@ -6,6 +6,7 @@
 #include "basefilesystem.hpp"
 #include "system/isystemclient.hpp"
 #include "tier1/utldict.h"
+#include <unordered_map>
 
 #undef AsyncRead
 class CFileSystemStdio : public IFileSystem {
@@ -401,5 +402,6 @@ public: // IFileSystem
 	// Prefer using the GetCaseCorrectFullPath template wrapper to calling this directly
 	bool GetCaseCorrectFullPath_Ptr( const char* pFullPath, OUT_Z_CAP( maxLenInChars ) char* pDest, int maxLenInChars ) override;
 private:
-	CUtlVector<ISystemClient*> m_SearchPath;
+	using SearchPathMap = CUtlMap<const char*, CUtlVector<ISystemClient*>>;
+	SearchPathMap m_SearchPaths{};
 };

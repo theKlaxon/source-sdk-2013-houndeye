@@ -78,10 +78,15 @@ void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, Sea
 
 }
 bool CFileSystemStdio::RemoveSearchPath( const char* pPath, const char* pathID ) {
-	for ( int i{0}; i < this->m_SearchPath.Count(); i += 1 ) {
-		if ( V_strcmp( this->m_SearchPath[i]->GetNativePath(), pPath ) == 0 ) {
-			this->m_SearchPath[i]->Shutdown();
-			this->m_SearchPath.Remove( i );
+	auto index{ this->m_SearchPaths.Find( pathID ) };
+	if ( index == SearchPathMap::InvalidIndex() )
+		return false;
+
+	auto& searchPath{ this->m_SearchPaths[index] };
+	for ( int i{0}; i < searchPath.Count(); i += 1 ) {
+		if ( V_strcmp( searchPath[i]->GetNativePath(), pPath ) == 0 ) {
+			searchPath[i]->Shutdown();
+			searchPath.Remove( i );
 			return true;
 		}
 	}
@@ -89,20 +94,25 @@ bool CFileSystemStdio::RemoveSearchPath( const char* pPath, const char* pathID )
 }
 
 void CFileSystemStdio::RemoveAllSearchPaths() {
-	for ( auto& system : this->m_SearchPath )
-		system->Shutdown();
-	this->m_SearchPath.RemoveAll();
+	for ( auto& [pathId, searchPath] : this->m_SearchPaths ) {
+		for ( auto& system : searchPath )
+			system->Shutdown();
+		searchPath.RemoveAll();
+	}
+	this->m_SearchPaths.RemoveAll();
 }
 
 void CFileSystemStdio::RemoveSearchPaths( const char* szPathID ) {
-	auto index{0};
-	for ( auto& system : this->m_SearchPath ) {
-		if ( strcmp( system->GetNativePath(), szPathID ) == 0 ) {
-			system->Shutdown();
-			this->m_SearchPath.Remove( index );
+	for ( auto& [pathId, searchPath] : this->m_SearchPaths ) {
+		if ( strcmp( pathId, szPathID ) == 0 ) {
+			// first shutdown and remove all systems
+			for ( auto& system: searchPath )
+				system->Shutdown();
+			searchPath.RemoveAll();
+			// then remove the path itself
+			this->m_SearchPaths.Remove( szPathID );
 			break;
 		}
-		index += 1;
 	}
 }
 
@@ -195,7 +205,15 @@ void CFileSystemStdio::GetLocalCopy( const char* pFileName ) { AssertUnreachable
 
 // ---- Debugging operations ----
 void CFileSystemStdio::PrintOpenedFiles() { AssertUnreachable(); }
-void CFileSystemStdio::PrintSearchPaths() { AssertUnreachable(); }
+void CFileSystemStdio::PrintSearchPaths() {
+	Log( "---- Search Path table ----\n" );
+	for ( const auto& [searchPathId, searchPath] : this->m_SearchPaths ) {
+		Log( "%s:\n", searchPathId );
+		for ( const auto& path: searchPath ) {
+			Log( "  - %s\n", path->GetNativePath() );
+		}
+	}
+}
 
 void CFileSystemStdio::SetWarningFunc( void ( *pfnWarning )( PRINTF_FORMAT_STRING const char* fmt, ... ) ) { AssertUnreachable(); }
 void CFileSystemStdio::SetWarningLevel( FileWarningLevel_t level ) { AssertUnreachable(); }
