@@ -24,10 +24,12 @@
 #if !defined( STATIC_TIER0 )
 	#if defined( TIER0_DLL_EXPORT )
 		#define DBG_INTERFACE DLL_EXPORT
+		#define DBG_INTERFACE_NORET DLL_EXPORT_NORET
 		#define DBG_OVERLOAD DLL_GLOBAL_EXPORT
 		#define DBG_CLASS DLL_CLASS_EXPORT
 	#else
 		#define DBG_INTERFACE DLL_IMPORT
+		#define DBG_INTERFACE_NORET DLL_IMPORT_NORET
 		#define DBG_OVERLOAD DLL_GLOBAL_IMPORT
 		#define DBG_CLASS DLL_CLASS_IMPORT
 	#endif
@@ -414,10 +416,10 @@ DBG_INTERFACE void LogV( PRINTF_FORMAT_STRING const tchar* pMsg, va_list arglist
 #if defined( Error )
 	// p4.cpp does a #define Error Warning and in that case the Error prototype needs to
 	// be consistent with the Warning prototype.
-	DBG_INTERFACE [[noreturn]] void Error( PRINTF_FORMAT_STRING const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
+	DBG_INTERFACE_NORET void Error( PRINTF_FORMAT_STRING const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
 #else
-	DBG_INTERFACE /*[[noreturn]]*/ void Error( PRINTF_FORMAT_STRING const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
-	DBG_INTERFACE /*[[noreturn]]*/ void ErrorV( PRINTF_FORMAT_STRING const tchar* pMsg, va_list arglist );
+	DBG_INTERFACE_NORET void Error( PRINTF_FORMAT_STRING const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
+	DBG_INTERFACE_NORET void ErrorV( PRINTF_FORMAT_STRING const tchar* pMsg, va_list arglist );
 #endif
 
 // You can use this macro like a runtime assert macro.

@@ -469,7 +469,9 @@ FIXME: Enable this when we no longer fear change =)
 #elif defined( GNUC ) || defined( __clang__ )
 	// Used for dll exporting and importing
 	#define DLL_EXPORT extern "C" [[gnu::visibility( "default" )]]
+	#define DLL_EXPORT_NORET extern "C" [[gnu::visibility( "default" ), noreturn]]
 	#define DLL_IMPORT extern "C"
+	#define DLL_IMPORT_NORET extern "C" [[noreturn]]
 
 	// Can't use extern "C" when DLL exporting a class
 	#define DLL_CLASS_EXPORT [[gnu::visibility( "default" )]]

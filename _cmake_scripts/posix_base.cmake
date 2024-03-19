@@ -10,6 +10,7 @@ add_compile_options(
 	-g
 	-m32
 	$<$<COMPILE_LANGUAGE:CXX>:-fpermissive>
+	-Werror=return-type
 	-fdiagnostics-color
 	-Wno-narrowing
 	$<$<COMPILE_LANGUAGE:CXX>:-Winvalid-offsetof>

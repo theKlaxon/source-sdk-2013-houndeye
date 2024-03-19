@@ -190,7 +190,9 @@ void Error( const tchar* pMsg, ... ) {
 	va_list args;
 	va_start( args, pMsg );
 	SpewInternal( SpewType_t::SPEW_ERROR, pMsg, args );
+	// NOTE: * DOES NOT RETURN *, BELLOW IS NOT NECESSARY
 	va_end( args );
+	exit(1);
 }
 
 // ---- Dev*
