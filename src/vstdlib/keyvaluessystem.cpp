@@ -6,7 +6,7 @@
 
 
 void CKeyValuesSystem::RegisterSizeofKeyValues( int size ) {
-
+	AssertUnreachable();
 }
 
 void* CKeyValuesSystem::AllocKeyValuesMemory( int size ) {
@@ -19,10 +19,15 @@ void CKeyValuesSystem::FreeKeyValuesMemory( void* pMem ) {
 }
 
 HKeySymbol CKeyValuesSystem::GetSymbolForString( const char* name, bool bCreate ) {
-	return 0;
+	auto idx{ this->m_SymbolTable.Find( name ) };
+
+	if ( bCreate && !idx.IsValid() )
+		idx = this->m_SymbolTable.AddString( name );
+
+	return idx;
 }
 const char* CKeyValuesSystem::GetStringForSymbol( HKeySymbol symbol ) {
-	return nullptr;
+	return this->m_SymbolTable.String( symbol );
 }
 
 void CKeyValuesSystem::AddKeyValuesToMemoryLeakList( void* pMem, HKeySymbol pName ) {
@@ -33,14 +38,17 @@ void CKeyValuesSystem::RemoveKeyValuesFromMemoryLeakList( void* pMem ) {
 }
 
 void CKeyValuesSystem::AddFileKeyValuesToCache( const KeyValues* _kv, const char* resourceName, const char* pathID ) {
-
+	AssertUnreachable();
 }
 bool CKeyValuesSystem::LoadFileKeyValuesFromCache( KeyValues* _outKv, const char* resourceName, const char* pathID, IBaseFileSystem* filesystem ) const {
+	AssertUnreachable();
 	return false;
 }
 void CKeyValuesSystem::InvalidateCache() {
+	AssertUnreachable();
 }
 void CKeyValuesSystem::InvalidateCacheForFile( const char* resourceName, const char* pathID ) {
+	AssertUnreachable();
 }
 
 CKeyValuesSystem::~CKeyValuesSystem() {

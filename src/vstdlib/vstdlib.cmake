@@ -26,7 +26,7 @@ set( VSTDLIB_SOURCE_FILES
 
 add_library( vstdlib2 SHARED ${VSTDLIB_SOURCE_FILES} )
 target_compile_definitions( vstdlib2 PRIVATE VSTDLIB_DLL_EXPORT )
-target_link_libraries( vstdlib2 PRIVATE ${ASRC_tier02} )
+target_link_libraries( vstdlib2 PRIVATE ${ASRC_tier02} tier1 )
 link_to_bin( TARGET vstdlib2 )
 declare_library( TARGET vstdlib2 )
 

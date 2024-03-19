@@ -3,6 +3,7 @@
 //
 #pragma once
 
+#include "tier1/utlsymbol.h"
 #include "vstdlib/IKeyValuesSystem.h"
 #include <unordered_map>
 
@@ -28,4 +29,5 @@ public:
 	~CKeyValuesSystem();
 private:
 	std::unordered_map<void*, HKeySymbol> m_LeakList{};
+	CUtlSymbolTableMT m_SymbolTable{};
 };
