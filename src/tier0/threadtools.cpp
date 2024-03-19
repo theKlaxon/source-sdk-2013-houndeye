@@ -2,12 +2,10 @@
 // Created by ENDERZOMBI102 on 10/02/2024.
 //
 #include "threadtools.h"
-#include <unordered_set>
 #if IsWindows()
 	#include <synchapi.h>
 	#include <processthreadsapi.h>
     #include <handleapi.h>
-
 #elif IsPosix()
 	#include <sys/time.h>
 	#include <csignal>
