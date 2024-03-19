@@ -2,7 +2,9 @@
 #include <random>
 #include <iostream>
 
-IUniformRandomStream* g_pUniformRandomStream;
+CUniformRandomStream g_UniformRandomStream{};
+IUniformRandomStream* g_pUniformRandomStream{ &g_UniformRandomStream };
+CGaussianRandomStream g_GaussianRandomStream{ &g_UniformRandomStream };
 
 // --- CUniformRandomStream ---
 CUniformRandomStream::CUniformRandomStream() = default;
@@ -47,16 +49,21 @@ void RandomSeed( int iSeed ) {
 	g_pUniformRandomStream->SetSeed( iSeed );
 }
 float RandomFloat( float flMinVal, float flMaxVal ) {
-	g_pUniformRandomStream->RandomFloat( flMinVal, flMaxVal );
+	return g_pUniformRandomStream->RandomFloat( flMinVal, flMaxVal );
 }
 float RandomFloatExp( float flMinVal, float flMaxVal, float flExponent ) {
-	g_pUniformRandomStream->RandomFloatExp( flMinVal, flMaxVal, flExponent );
+	return g_pUniformRandomStream->RandomFloatExp( flMinVal, flMaxVal, flExponent );
 }
 int RandomInt( int iMinVal, int iMaxVal ) {
-	g_pUniformRandomStream->RandomInt( iMinVal, iMaxVal );
+	return g_pUniformRandomStream->RandomInt( iMinVal, iMaxVal );
 }
-float RandomGaussianFloat( float flMean, float flStdDev );
+float RandomGaussianFloat( float flMean, float flStdDev ) {
+	return g_GaussianRandomStream.RandomFloat( flMean, flStdDev );
+}
 
 void InstallUniformRandomStream( IUniformRandomStream* pStream ) {
+	if (! pStream )
+		pStream = &g_UniformRandomStream;
 	g_pUniformRandomStream = pStream;
+	g_GaussianRandomStream.AttachToStream( pStream );
 }

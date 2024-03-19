@@ -235,6 +235,7 @@ bool CThreadSyncObject::operator!() const {
         return ! this->m_bInitalized;
     #endif
 }
+// TODO: Verify that this should return `true` when _not_ signaled
 bool CThreadSyncObject::Wait( uint32 dwTimeoutMs ) {
     #if IsWindows()
         return WaitForSingleObject(this->m_hSyncObject, dwTimeoutMs);
@@ -244,10 +245,11 @@ bool CThreadSyncObject::Wait( uint32 dwTimeoutMs ) {
         gettimeofday( &val, nullptr );
         timespec spec{
             .tv_sec = val.tv_sec,
-            .tv_nsec = static_cast<long>( dwTimeoutMs * 1000 ) + val.tv_usec / 1000 // TODO: Verify this
+            .tv_nsec = static_cast<long>( dwTimeoutMs * 1000 ) + val.tv_usec / 1000
         };
-        pthread_cond_timedwait( &this->m_Condition, &this->m_Mutex, &spec );
+        auto res{ pthread_cond_timedwait( &this->m_Condition, &this->m_Mutex, &spec ) };
         pthread_mutex_unlock( &this->m_Mutex );
+		return res;
     #endif
 }
 void CThreadSyncObject::AssertUseable() {
