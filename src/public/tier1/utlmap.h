@@ -62,12 +62,14 @@ public:
 	void EnsureCapacity( int num ) { m_Tree.EnsureCapacity( num ); }
 
 	// gets particular elements
-	ElemType_t& Element( IndexType_t i ) { return m_Tree.Element( i ).elem; }
-	const ElemType_t& Element( IndexType_t i ) const { return m_Tree.Element( i ).elem; }
-	ElemType_t& operator[]( IndexType_t i ) { return m_Tree.Element( i ).elem; }
-	const ElemType_t& operator[]( IndexType_t i ) const { return m_Tree.Element( i ).elem; }
-	KeyType_t& Key( IndexType_t i ) { return m_Tree.Element( i ).key; }
-	const KeyType_t& Key( IndexType_t i ) const { return m_Tree.Element( i ).key; }
+	ElemType_t& Element( IndexType_t i ) { return this->m_Tree.Element( i ).elem; }
+	const ElemType_t& Element( IndexType_t i ) const { return this->m_Tree.Element( i ).elem; }
+	ElemType_t& operator[]( IndexType_t i ) { return this->m_Tree.Element( i ).elem; }
+	const ElemType_t& operator[]( IndexType_t i ) const { return this->m_Tree.Element( i ).elem; }
+	ElemType_t& operator[]( KeyType_t k ) { return this->m_Tree.Element( this->Find( k ) ).elem; }
+	const ElemType_t& operator[]( KeyType_t k ) const { return this->m_Tree.Element( this->Find( k ) ).elem; }
+	KeyType_t& Key( IndexType_t i ) { return this->m_Tree.Element( i ).key; }
+	const KeyType_t& Key( IndexType_t i ) const { return this->m_Tree.Element( i ).key; }
 
 
 	// Num elements
@@ -85,9 +87,9 @@ public:
 	// Invalid index
 	static IndexType_t InvalidIndex() { return CTree::InvalidIndex(); }
 
-	/// ASRC_EDIT START
+	/// region ASRC_EDIT
 	struct Node_t {
-		Node_t() = default;
+		Node_t() { }; // NOLINT(*-use-equals-default), needed as it may be implicitly deleted...
 
 		Node_t( const Node_t& from )
 			: key( from.key ), elem( from.elem ) { }
@@ -183,8 +185,8 @@ public:
 		iterator() = default;
 
 		// Normal constructor.
-		iterator( const CUtlMap& list, IndexType_t index )
-			: const_iterator( list, index ) { }
+		iterator( const CUtlMap& pMap, IndexType_t index )
+			: const_iterator( pMap, index ) { }
 
 		// Pre-increment operator++. This is the most efficient increment
 		// operator so it should always be used.
@@ -251,7 +253,7 @@ public:
 	iterator end() {
 		return iterator( *this, InvalidIndex() );
 	}
-	/// ASRC_EDIT END
+	/// endregion ASRC_EDIT
 
 
 	// Sets the less func
