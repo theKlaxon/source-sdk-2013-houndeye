@@ -468,7 +468,7 @@
 	#define MEM_ALLOC_CREDIT_( tag ) ((void) 0)
 	#define MEM_ALLOC_CREDIT() MEM_ALLOC_CREDIT_( __FILE__ )
 	#define MEM_ALLOC_CREDIT_FUNCTION()
-	#define MEM_ALLOC_CREDIT_CLASS()
+	#define MEM_ALLOC_CREDIT_CLASS() ((void) 0)
 	#define MEM_ALLOC_CLASSNAME( type ) nullptr
 
 	#define MemAlloc_PushAllocDbgInfo( pszFile, line )
