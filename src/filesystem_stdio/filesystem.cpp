@@ -38,7 +38,7 @@ void CFileSystemStdio::Shutdown() {
 int CFileSystemStdio::Read( void* pOutput, int size, FileHandle_t file ) { AssertUnreachable(); return {}; }
 int CFileSystemStdio::Write( void const* pInput, int size, FileHandle_t file ) { AssertUnreachable(); return {}; }
 
-FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions, const char* pathID ) { AssertUnreachable(); return {}; }
+FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions, const char* pathID ) { AssertMsg( false, "Open: %s, %s, %s", pFileName, pOptions, pathID ); return {}; }
 void CFileSystemStdio::Close( FileHandle_t file ) { AssertUnreachable(); }
 
 void CFileSystemStdio::Seek( FileHandle_t file, int pos, FileSystemSeek_t seekType ) { AssertUnreachable(); }
@@ -75,18 +75,28 @@ FilesystemMountRetval_t CFileSystemStdio::MountSteamContent( int nExtraAppId ) {
 
 // ---- Search path manipulation ----
 void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, SearchPathAdd_t addType ) {
+	auto system{ ISystemClient::CreateFor( pPath ) };
+	if (! system )
+		return;
 
+	if ( this->m_SearchPaths.Find( pathID ) == CUtlMap<const char*, SearchPath>::InvalidIndex() )
+		this->m_SearchPaths.Insert( pathID );
+
+	if ( addType == SearchPathAdd_t::PATH_ADD_TO_HEAD )
+		this->m_SearchPaths[pathID].m_Clients.AddToHead( system );
+	else
+		this->m_SearchPaths[pathID].m_Clients.AddToTail( system );
 }
 bool CFileSystemStdio::RemoveSearchPath( const char* pPath, const char* pathID ) {
 	auto index{ this->m_SearchPaths.Find( pathID ) };
-	if ( index == SearchPathMap::InvalidIndex() )
+	if ( index == CUtlDict<SearchPath>::InvalidIndex() )
 		return false;
 
-	auto& searchPath{ this->m_SearchPaths[index] };
-	for ( int i{0}; i < searchPath.Count(); i += 1 ) {
-		if ( V_strcmp( searchPath[i]->GetNativePath(), pPath ) == 0 ) {
-			searchPath[i]->Shutdown();
-			searchPath.Remove( i );
+	auto& systems{ this->m_SearchPaths[index].m_Clients };
+	for ( int i{0}; i < systems.Count(); i += 1 ) {
+		if ( V_strcmp( systems[i]->GetNativePath(), pPath ) == 0 ) {
+			systems[i]->Shutdown();
+			systems.Remove( i );
 			return true;
 		}
 	}
@@ -95,20 +105,18 @@ bool CFileSystemStdio::RemoveSearchPath( const char* pPath, const char* pathID )
 
 void CFileSystemStdio::RemoveAllSearchPaths() {
 	for ( auto& [pathId, searchPath] : this->m_SearchPaths ) {
-		for ( auto& system : searchPath )
+		for ( auto& system : searchPath.m_Clients )
 			system->Shutdown();
-		searchPath.RemoveAll();
+		searchPath.m_Clients.Purge();
 	}
-	this->m_SearchPaths.RemoveAll();
+	this->m_SearchPaths.Purge();
 }
 
 void CFileSystemStdio::RemoveSearchPaths( const char* szPathID ) {
 	for ( auto& [pathId, searchPath] : this->m_SearchPaths ) {
 		if ( strcmp( pathId, szPathID ) == 0 ) {
 			// first shutdown and remove all systems
-			for ( auto& system: searchPath )
-				system->Shutdown();
-			searchPath.RemoveAll();
+			this->m_SearchPaths[ szPathID ];
 			// then remove the path itself
 			this->m_SearchPaths.Remove( szPathID );
 			break;
@@ -116,7 +124,10 @@ void CFileSystemStdio::RemoveSearchPaths( const char* szPathID ) {
 	}
 }
 
-void CFileSystemStdio::MarkPathIDByRequestOnly( const char* pPathID, bool bRequestOnly ) { AssertUnreachable(); }
+void CFileSystemStdio::MarkPathIDByRequestOnly( const char* pPathID, bool bRequestOnly ) {
+	if ( this->m_SearchPaths.HasElement( pPathID ) )
+		this->m_SearchPaths[pPathID].m_bRequestOnly = bRequestOnly;
+}
 
 const char* CFileSystemStdio::RelativePathToFullPath( const char* pFileName, const char* pPathID, char* pDest, int maxLenInChars, PathTypeFilter_t pathFilter, PathTypeQuery_t* pPathType ) { AssertUnreachable(); return {}; }
 
@@ -150,7 +161,7 @@ CSysModule* CFileSystemStdio::LoadModule( const char* pFileName, const char* pPa
 void CFileSystemStdio::UnloadModule( CSysModule * pModule ) { AssertUnreachable(); }
 
 // ---- File searching operations -----
-const char* CFileSystemStdio::FindFirst( const char* pWildCard, FileFindHandle_t* pHandle ) { AssertUnreachable(); return {}; }
+const char* CFileSystemStdio::FindFirst( const char* pWildCard, FileFindHandle_t* pHandle ) { AssertMsg( false, "FindFirst: %s, %p", pWildCard, pHandle ); return {}; }
 const char* CFileSystemStdio::FindNext( FileFindHandle_t handle ) { AssertUnreachable(); return {}; }
 bool CFileSystemStdio::FindIsDirectory( FileFindHandle_t handle ) { AssertUnreachable(); return {}; }
 void CFileSystemStdio::FindClose( FileFindHandle_t handle ) { AssertUnreachable(); }
@@ -162,7 +173,7 @@ const char* CFileSystemStdio::GetLocalPath( const char* pFileName, char* pDest, 
 
 bool CFileSystemStdio::FullPathToRelativePath( const char* pFullpath, char* pDest, int maxLenInChars ) { AssertUnreachable(); return {}; }
 
-bool CFileSystemStdio::GetCurrentDirectory( char* pDirectory, int maxlen ) { AssertUnreachable(); return {}; }
+bool CFileSystemStdio::GetCurrentDirectory( char* pDirectory, int maxlen ) { AssertMsg( false, "GetCurrentDirectory: %s, %d", pDirectory, maxlen ); return {}; }
 
 // ---- Filename dictionary operations ----
 FileNameHandle_t CFileSystemStdio::FindOrAddFileName( char const* pFileName ) { AssertUnreachable(); return {}; }
@@ -209,7 +220,7 @@ void CFileSystemStdio::PrintSearchPaths() {
 	Log( "---- Search Path table ----\n" );
 	for ( const auto& [searchPathId, searchPath] : this->m_SearchPaths ) {
 		Log( "%s:\n", searchPathId );
-		for ( const auto& path: searchPath ) {
+		for ( const auto& path : searchPath.m_Clients ) {
 			Log( "  - %s\n", path->GetNativePath() );
 		}
 	}
@@ -268,7 +279,9 @@ bool CFileSystemStdio::FullPathToRelativePathEx( const char* pFullpath, const ch
 int CFileSystemStdio::GetPathIndex( const FileNameHandle_t& handle ) { AssertUnreachable(); return {}; }
 long CFileSystemStdio::GetPathTime( const char* pPath, const char* pPathID ) { AssertUnreachable(); return {}; }
 
-DVDMode_t CFileSystemStdio::GetDVDMode() { AssertUnreachable(); return {}; }
+DVDMode_t CFileSystemStdio::GetDVDMode() {
+	return DVDMode_t::DVDMODE_OFF;
+}
 
 // ---- Whitelisting for pure servers. ----
 void CFileSystemStdio::EnableWhitelistFileTracking( bool bEnable, bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes ) { AssertUnreachable(); }

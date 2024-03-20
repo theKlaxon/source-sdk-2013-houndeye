@@ -6,6 +6,7 @@
 #include "basefilesystem.hpp"
 #include "system/isystemclient.hpp"
 #include "tier1/utldict.h"
+#include <memory>
 #include <unordered_map>
 
 #undef AsyncRead
@@ -402,6 +403,22 @@ public: // IFileSystem
 	// Prefer using the GetCaseCorrectFullPath template wrapper to calling this directly
 	bool GetCaseCorrectFullPath_Ptr( const char* pFullPath, OUT_Z_CAP( maxLenInChars ) char* pDest, int maxLenInChars ) override;
 private:
-	using SearchPathMap = CUtlMap<const char*, CUtlVector<ISystemClient*>>;
-	SearchPathMap m_SearchPaths{};
+	struct SearchPath {
+		SearchPath() = default;
+		SearchPath( const SearchPath& other ) {
+			this->m_Clients = other.m_Clients; // copy..?
+			this->m_bRequestOnly = other.m_bRequestOnly;
+		}
+
+		~SearchPath() {
+			for ( auto& system : this->m_Clients )
+				system->Shutdown();
+			this->m_Clients.Purge();
+		}
+
+		CUtlVector<std::shared_ptr<ISystemClient>> m_Clients{};
+		bool m_bRequestOnly{ false };
+	};
+
+	CUtlDict<SearchPath> m_SearchPaths{};
 };
