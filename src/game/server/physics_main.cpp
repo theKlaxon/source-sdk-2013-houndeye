@@ -914,7 +914,7 @@ void CBaseEntity::PhysicsDispatchThink( BASEPTR thinkFunc )
 
 	float thinkLimit = think_limit.GetFloat();
 	
-	// The thinkLimit stuff makes a LOT of calls to Sys_FloatTime, which winds up calling into
+	// The thinkLimit stuff makes a LOT of calls to Plat_FloatTime, which winds up calling into
 	// VCR mode so much that the framerate becomes unusable.
 
 	float startTime = 0.0;

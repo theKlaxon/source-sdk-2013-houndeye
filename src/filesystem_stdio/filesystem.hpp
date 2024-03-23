@@ -421,4 +421,5 @@ private:
 	};
 
 	CUtlDict<SearchPath> m_SearchPaths{};
+	bool m_bInitialized{ false };
 };

@@ -1466,7 +1466,7 @@ void Menu::OnTypeAhead(wchar_t unichar)
 		return;
 
 	// expire the type ahead buffer after 0.5 seconds
-	double tCurrentTime = Sys_FloatTime();
+	double tCurrentTime = Plat_FloatTime();
 	if ( (tCurrentTime - m_fLastTypeAheadTime) > 0.5f )
 	{
 		m_iNumTypeAheadChars = 0;

@@ -455,7 +455,9 @@ FIXME: Enable this when we no longer fear change =)
 #if defined( _WIN32 )
 	// Used for dll exporting and importing
 	#define DLL_EXPORT extern "C" __declspec( dllexport )
+	#define DLL_EXPORT_NORET extern "C" [[noreturn]]
 	#define DLL_IMPORT extern "C" __declspec( dllimport )
+	#define DLL_IMPORT_NORET extern "C" [[noreturn]]
 
 	// Can't use extern "C" when DLL exporting a class
 	#define DLL_CLASS_EXPORT __declspec( dllexport )
@@ -648,7 +650,7 @@ static FORCEINLINE double fsel( double fComparand, double fValGE, double fLT ) {
 
 #if defined( _MSC_VER )
 	#if IsWindows() && IsPC() && IsPlatform64Bits()
-		inline void SetupFPUControlWord() {}
+		inline void SetupFPUControlWord() { }
 	#else
 		inline void SetupFPUControlWordForceExceptions() {
 			// use local to get and store control word
@@ -979,16 +981,16 @@ public:                                              \
 
 // Processor Information:
 struct CPUInformation {
-	int m_Size;       // Size of this structure, for forward compatability.
+	int m_Size;        // Size of this structure, for forward compatability.
 
-	bool m_bRDTSC : 1,// Is RDTSC supported?
-		m_bCMOV : 1,  // Is CMOV supported?
-		m_bFCMOV : 1, // Is FCMOV supported?
-		m_bSSE : 1,   // Is SSE supported?
-		m_bSSE2 : 1,  // Is SSE2 Supported?
-		m_b3DNow : 1, // Is 3DNow! Supported?
-		m_bMMX : 1,   // Is MMX supported?
-		m_bHT : 1;    // Is HyperThreading supported?
+	bool m_bRDTSC : 1, // Is RDTSC supported?
+		m_bCMOV   : 1, // Is CMOV supported?
+		m_bFCMOV  : 1, // Is FCMOV supported?
+		m_bSSE    : 1, // Is SSE supported?
+		m_bSSE2   : 1, // Is SSE2 Supported?
+		m_b3DNow  : 1, // Is 3DNow! Supported?
+		m_bMMX    : 1, // Is MMX supported?
+		m_bHT     : 1; // Is HyperThreading supported?
 
 	uint8 m_nLogicalProcessors; // Number op logical processors.
 	uint8 m_nPhysicalProcessors;// Number of physical processors
@@ -1156,12 +1158,9 @@ inline void Destruct( T* pMemory ) {
 // "outer" class, this is a much more space efficient way to get at the outer
 // class than having the inner class store a pointer to it.
 //
-//	class COuter
-//	{
-//		class CInner // Note: this does not need to be a nested class to work
-//		{
-//			void PrintAddressOfOuter()
-//			{
+//	class COuter {
+//		class CInner { // Note: this does not need to be a nested class to work
+//			void PrintAddressOfOuter() {
 //				printf( "Outer is at 0x%x\n", GET_OUTER( COuter, m_Inner ) );
 //			}
 //		};
@@ -1186,8 +1185,7 @@ inline void Destruct( T* pMemory ) {
 
 	For example, using TEMPLATE_FUNCTION_TABLE, this:
 
-	TEMPLATE_FUNCTION_TABLE(int, Function, ( int blah, int blah ), 10)
-	{
+	TEMPLATE_FUNCTION_TABLE(int, Function, ( int blah, int blah ), 10) {
 		return argument * argument;
 	}
 
@@ -1198,26 +1196,22 @@ inline void Destruct( T* pMemory ) {
 	based on a constant.)
 
 	template<int argument>
-	class FunctionWrapper
-	{
+	class FunctionWrapper {
 	public:
-		int Function( int blah, int blah )
-		{
+		int Function( int blah, int blah ) {
 			return argument*argument;
 		}
 	}
 
 	typedef int (*FunctionType)( int blah, int blah );
 
-	class FunctionName
-	{
+	class FunctionName {
 	public:
 		enum { count = 10 };
 		FunctionType functions[10];
 	};
 
-	FunctionType FunctionName::functions[] =
-	{
+	FunctionType FunctionName::functions[] = {
 		FunctionWrapper<0>::Function,
 		FunctionWrapper<1>::Function,
 		FunctionWrapper<2>::Function,
@@ -1312,7 +1306,7 @@ PLATFORM_INTERFACE void Plat_BeginWatchdogTimer( int nSecs );
 PLATFORM_INTERFACE void Plat_EndWatchdogTimer();
 PLATFORM_INTERFACE int Plat_GetWatchdogTime();
 
-typedef void ( *Plat_WatchDogHandlerFunction_t )();
+using Plat_WatchDogHandlerFunction_t  = void(*)();
 PLATFORM_INTERFACE void Plat_SetWatchdogHandlerFunction( Plat_WatchDogHandlerFunction_t function );
 
 

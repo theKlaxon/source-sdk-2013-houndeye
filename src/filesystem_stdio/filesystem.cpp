@@ -10,26 +10,22 @@ static CFileSystemStdio g_FullFileSystem{};
 // AppSystem
 // ---------------
 bool CFileSystemStdio::Connect( CreateInterfaceFn factory ) {
-//	AssertUnreachable();
 	return true;
 }
-void CFileSystemStdio::Disconnect() {
-	// AssertUnreachable();
-}
+void CFileSystemStdio::Disconnect() { }
 void* CFileSystemStdio::QueryInterface( const char* pInterfaceName ) {
-	// AssertUnreachable();
 	if ( strcmp( pInterfaceName, FILESYSTEM_INTERFACE_VERSION ) == 0 )
 		return &g_FullFileSystem;
 
 	return nullptr;
 }
 InitReturnVal_t CFileSystemStdio::Init() {
-//	AssertUnreachable();
+	if ( this->m_bInitialized )
+		return InitReturnVal_t::INIT_OK;
+
 	return InitReturnVal_t::INIT_OK;
 }
-void CFileSystemStdio::Shutdown() {
-//	AssertUnreachable();
-}
+void CFileSystemStdio::Shutdown() { }
 
 
 // ---------------
@@ -38,7 +34,27 @@ void CFileSystemStdio::Shutdown() {
 int CFileSystemStdio::Read( void* pOutput, int size, FileHandle_t file ) { AssertUnreachable(); return {}; }
 int CFileSystemStdio::Write( void const* pInput, int size, FileHandle_t file ) { AssertUnreachable(); return {}; }
 
-FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions, const char* pathID ) { AssertMsg( false, "Open: %s, %s, %s", pFileName, pOptions, pathID ); return {}; }
+FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions, const char* pathID ) {
+	static auto convertMode = []( const char* pOptions ) -> openmode_t {
+		openmode_t mode{0};
+		for ( char c = *pOptions; c; c = *++pOptions ) {
+			switch ( c ) {
+				case 'r':
+					break;
+			}
+		}
+	};
+
+
+	if ( pathID != nullptr ) {
+		AssertMsg( this->m_SearchPaths.HasElement( pathID ), "Was given pathID not loaded" );
+
+		for ( auto& system : this->m_SearchPaths[pathID].m_Clients ) {
+			system->Open(  )
+		}
+	}
+	AssertMsg( false, "Open: %s, %s, %s", pFileName, pOptions, pathID ); return {};
+}
 void CFileSystemStdio::Close( FileHandle_t file ) { AssertUnreachable(); }
 
 void CFileSystemStdio::Seek( FileHandle_t file, int pos, FileSystemSeek_t seekType ) { AssertUnreachable(); }
@@ -173,7 +189,10 @@ const char* CFileSystemStdio::GetLocalPath( const char* pFileName, char* pDest, 
 
 bool CFileSystemStdio::FullPathToRelativePath( const char* pFullpath, char* pDest, int maxLenInChars ) { AssertUnreachable(); return {}; }
 
-bool CFileSystemStdio::GetCurrentDirectory( char* pDirectory, int maxlen ) { AssertMsg( false, "GetCurrentDirectory: %s, %d", pDirectory, maxlen ); return {}; }
+bool CFileSystemStdio::GetCurrentDirectory( char* pDirectory, int maxlen ) {
+	getcwd( pDirectory, maxlen );
+	return true;
+}
 
 // ---- Filename dictionary operations ----
 FileNameHandle_t CFileSystemStdio::FindOrAddFileName( char const* pFileName ) { AssertUnreachable(); return {}; }
