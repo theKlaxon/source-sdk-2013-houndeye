@@ -79,8 +79,8 @@
 	#define IsWindows() true
 
 	#define IS_WINDOWS_PC
-	#define PLATFORM_WINDOWS_PC 1// Windows PC
-	#ifdef _WIN64
+	#define PLATFORM_WINDOWS_PC 1  // Windows PC
+	#if defined( _WIN64 )
 		#define IsPlatformWindowsPC64() true
 		#define IsPlatformWindowsPC32() false
 		#define PLATFORM_WINDOWS_PC64 1
@@ -112,29 +112,28 @@
 typedef unsigned char uint8;
 typedef signed char int8;
 
-#if defined( _WIN32 )
-	typedef __int16 int16;
+#if IsWindows()
+	typedef   signed __int16  int16;
 	typedef unsigned __int16 uint16;
-	typedef __int32 int32;
+	typedef   signed __int32  int32;
 	typedef unsigned __int32 uint32;
-	typedef __int64 int64;
+	typedef   signed __int64  int64;
 	typedef unsigned __int64 uint64;
-
-	#ifdef PLATFORM_64BITS
-		typedef __int64 intp;          // intp is an integer that can accomodate a pointer
-		typedef unsigned __int64 uintp;// (ie, sizeof(intp) >= sizeof(int) && sizeof(intp) >= sizeof(void *)
+	#if IsPlatform64Bits()
+		typedef   signed __int64  intp;
+		typedef unsigned __int64 uintp;
 	#else
-		typedef __int32 intp;
+		typedef   signed __int32  intp;
 		typedef unsigned __int32 uintp;
 	#endif
-#elif defined( POSIX )
-	typedef short int16;
+#elif IsPosix()
+	typedef   signed short int16;
 	typedef unsigned short uint16;
-	typedef int int32;
+	typedef   signed int int32;
 	typedef unsigned int uint32;
-	typedef long long int64;
+	typedef   signed long long int64;
 	typedef unsigned long long uint64;
-	#ifdef PLATFORM_64BITS
+	#if IsPlatform64Bits()
 		typedef long long intp;
 		typedef unsigned long long uintp;
 	#else
@@ -144,8 +143,7 @@ typedef signed char int8;
 	typedef void* HWND;
 #endif
 
-// From steam/steamtypes.h
-// RTime32
+// From `steam/steamtypes.h`: RTime32
 // We use this 32 bit time representing real world time.
 // It offers 1 second resolution beginning on January 1, 1970 (Unix time)
 typedef uint32 RTime32;
@@ -156,8 +154,18 @@ typedef double float64;
 // for when we don't care about how many bits we use
 typedef unsigned int uint;
 
+// Check that the various sized types have the size we expect
+static_assert( sizeof(  int16 ) == 2 );
+static_assert( sizeof( uint16 ) == 2 );
+static_assert( sizeof(  int32 ) == 4 );
+static_assert( sizeof( uint32 ) == 4 );
+static_assert( sizeof(  int64 ) == 8 );
+static_assert( sizeof( uint64 ) == 8 );
+static_assert( sizeof(  intp ) == sizeof(void*) ); // intp is an integer that can accommodate a pointer
+static_assert( sizeof( uintp ) == sizeof(void*) ); //  ( ie, sizeof(intp) >= sizeof(int) && sizeof(intp) >= sizeof(void *) )
+
 // TODO: Verify if this is still needed, with most probability not.
-#if defined( _MSC_VER )
+#if defined( COMPILER_MSVC )
 	#pragma once
 	// Ensure that everybody has the right compiler version installed. The version
 	// number can be obtained by looking at the compiler output when you type 'cl'
@@ -179,7 +187,7 @@ typedef unsigned int uint;
 
 // This can be used to ensure the size of pointers to members when declaring
 // a pointer type for a class that has only been forward declared
-#if defined( _MSC_VER )
+#if defined( COMPILER_MSVC )
 	#define SINGLE_INHERITANCE __single_inheritance
 	#define MULTIPLE_INHERITANCE __multiple_inheritance
 #else
@@ -187,13 +195,13 @@ typedef unsigned int uint;
 	#define MULTIPLE_INHERITANCE
 #endif
 
-#if defined( _MSC_VER )
+#if defined( COMPILER_MSVC )
 	#define NO_VTABLE __declspec( novtable )
 #else
 	#define NO_VTABLE
 #endif
 
-#if defined( _MSC_VER )
+#if defined( COMPILER_MSVC )
 	// This indicates that a function never returns, which helps with
 	// generating accurate compiler warnings
 	#define NORETURN __declspec( noreturn )
@@ -264,18 +272,18 @@ FIXME: Enable this when we no longer fear change =)
 */
 
 // portability / compiler settings
-#if defined( _WIN32 ) && !defined( WINDED )
+#if IsWindows() && !defined( WINDED )
 	#if defined( _M_IX86 )
 		#define __i386__ 1
 	#endif
-#elif POSIX
+#elif IsPosix()
 	typedef unsigned int DWORD;
 	typedef unsigned short WORD;
 	typedef void* HINSTANCE;
-	#define _MAX_PATH PATH_MAX
-	#define __cdecl
-	#define __stdcall
-	#define __declspec
+	#define _MAX_PATH PATH_MAX // NOLINT(*-reserved-identifier)
+	#define __cdecl            // NOLINT(*-reserved-identifier)
+	#define __stdcall          // NOLINT(*-reserved-identifier)
+	#define __declspec         // NOLINT(*-reserved-identifier)
 #endif
 
 
@@ -284,20 +292,19 @@ FIXME: Enable this when we no longer fear change =)
 	#define MAX_PATH 260
 #endif
 
-#if defined( _WIN32 )
+#if IsWindows()
 	#define MAX_UNICODE_PATH 32767
 #else
 	#define MAX_UNICODE_PATH MAX_PATH
 #endif
 
-#define MAX_UNICODE_PATH_IN_UTF8 MAX_UNICODE_PATH * 4
+#define MAX_UNICODE_PATH_IN_UTF8 (MAX_UNICODE_PATH * 4)
 
-#if defined( GNUC )
-	#undef offsetof
+#undef offsetof
+#if defined( COMPILER_GCC )
 	//#define offsetof( type, var ) __builtin_offsetof( type, var )
 	#define offsetof( s, m ) ( size_t ) & ( ( (s*) 0 )->m )
 #else
-	#undef offsetof
 	#define offsetof( s, m ) ( size_t ) & ( ( (s*) 0 )->m )
 #endif
 
@@ -305,7 +312,7 @@ FIXME: Enable this when we no longer fear change =)
 #define ALIGN_VALUE( val, alignment ) ( ( val + alignment - 1 ) & ~( alignment - 1 ) )//  need macro for constant expression
 
 // Used to step into the debugger
-#if defined( _WIN32 )
+#if defined( COMPILER_MSVC )
 	#define DebuggerBreak() __debugbreak()
 #elif defined( COMPILER_GCC )
 	#define DebuggerBreak() __asm__ volatile( "int $0x03" )
@@ -331,38 +338,37 @@ FIXME: Enable this when we no longer fear change =)
 // Allows you to specify code that should only execute if we are in a staging build. Otherwise the code noops.
 #if defined( STAGING_ONLY )
 	#define STAGING_ONLY_EXEC( _exec ) \
-		do { _exec; } while ( 0 )
+		do { _exec; } while ( false )
 #else
 	#define STAGING_ONLY_EXEC( _exec ) \
-		do {                           \
-		} while ( 0 )
+		do ; while ( false )
 #endif
 
 // C functions for external declarations that call the appropriate C++ methods
 #if !defined( EXPORT )
-	#if defined( _WIN32 )
+	#if IsWindows()
 		#define EXPORT _declspec( dllexport )
 	#else
 		#define EXPORT /* */
 	#endif
 #endif
 
-#if defined __i386__ && !defined __linux__
+#if defined( __i386__ ) && !IsLinux()
 	#define id386 1
 #else
 	#define id386 0
 #endif// __i386__
 
 // decls for aligning data
-#if defined( _WIN32 )
+#if IsWindows()
 	#define DECL_ALIGN( x ) __declspec( align( x ) )
-#elif GNUC
+#elif defined( COMPILER_GCC )
 	#define DECL_ALIGN( x ) __attribute__( ( aligned( x ) ) )
 #else
 	#define DECL_ALIGN( x ) /* */
 #endif
 
-#if defined( _MSC_VER ) || defined( COMPILER_CLANG )
+#if defined( COMPILER_MSVC ) || defined( COMPILER_CLANG )
 	// MSVC has the align at the start of the struct
 	#define ALIGN4 DECL_ALIGN( 4 )
 	#define ALIGN8 DECL_ALIGN( 8 )
@@ -375,7 +381,7 @@ FIXME: Enable this when we no longer fear change =)
 	#define ALIGN16_POST
 	#define ALIGN32_POST
 	#define ALIGN128_POST
-#elif defined( GNUC )
+#elif defined( COMPILER_GCC )
 	// gnuc has the align decoration at the end
 	#define ALIGN4
 	#define ALIGN8
@@ -398,14 +404,14 @@ FIXME: Enable this when we no longer fear change =)
 //-----------------------------------------------------------------------------
 // Convert int<-->pointer, avoiding 32/64-bit compiler warnings:
 //-----------------------------------------------------------------------------
-#define INT_TO_POINTER( i ) (void*) ( ( i ) + (char*) NULL )
+#define INT_TO_POINTER( i ) ((void*) ( ( i ) + (char*) NULL ))
 #define POINTER_TO_INT( p ) ( (int) (uintp) ( p ) )
 
 
 //-----------------------------------------------------------------------------
 // Stack-based allocation related helpers
 //-----------------------------------------------------------------------------
-#if defined( GNUC ) || defined( __clang__ )
+#if defined( COMPILER_GCC ) || defined( COMPILER_CLANG )
 	#define stackalloc( _size ) alloca( ALIGN_VALUE( _size, 16 ) )
 	#if IsLinux()
 		#define mallocsize( _p ) ( malloc_usable_size( _p ) )
@@ -414,9 +420,11 @@ FIXME: Enable this when we no longer fear change =)
 	#else
 		#error "mallocsize: Unsupported platform, please implement!"
 	#endif
-#elif defined( _WIN32 )
+#elif defined( COMPILER_MSVC )
 	#define stackalloc( _size ) _alloca( ALIGN_VALUE( _size, 16 ) )
 	#define mallocsize( _p ) ( _msize( _p ) )
+#else
+	#error "stackalloc: Mising implementation"
 #endif
 
 #define stackfree( _p ) 0
@@ -429,14 +437,14 @@ FIXME: Enable this when we no longer fear change =)
 	#define CONSTRUCT_EARLY
 #endif
 
-#if defined( _MSC_VER )
+#if defined( COMPILER_MSVC )
 	#define SELECTANY __declspec( selectany )
 	#define RESTRICT __restrict
 	#define RESTRICT_FUNC __declspec( restrict )
 	#define FMTFUNCTION( a, b )
-#elif defined( GNUC )
+#elif defined( COMPILER_GCC )
 	#define SELECTANY __attribute__( ( weak ) )
-	#if defined( LINUX ) && !defined( DEDICATED )
+	#if IsLinux() && !defined( DEDICATED )
 		#define RESTRICT
 	#else
 		#define RESTRICT __restrict
@@ -452,7 +460,7 @@ FIXME: Enable this when we no longer fear change =)
 	#define FMTFUNCTION( a, b )
 #endif
 
-#if defined( _WIN32 )
+#if defined( COMPILER_MSVC )
 	// Used for dll exporting and importing
 	#define DLL_EXPORT extern "C" __declspec( dllexport )
 	#define DLL_EXPORT_NORET extern "C" [[noreturn]]
@@ -468,7 +476,7 @@ FIXME: Enable this when we no longer fear change =)
 	#define DLL_GLOBAL_IMPORT extern __declspec( dllimport )
 
 	#define DLL_LOCAL
-#elif defined( GNUC ) || defined( __clang__ )
+#elif defined( COMPILER_GCC ) || defined( COMPILER_CLANG )
 	// Used for dll exporting and importing
 	#define DLL_EXPORT extern "C" [[gnu::visibility( "default" )]]
 	#define DLL_EXPORT_NORET extern "C" [[gnu::visibility( "default" ), noreturn]]
@@ -485,18 +493,18 @@ FIXME: Enable this when we no longer fear change =)
 
 	#define DLL_LOCAL// is now the default
 #else
-	#error "Unsupported Platform."
+	#error "Unsupported compiler."
 #endif
 
 // Used for standard calling conventions
-#if defined( _WIN32 )
+#if defined( COMPILER_MSVC )
 	#define STDCALL __stdcall
 	#define FASTCALL __fastcall
 	#define FORCEINLINE __forceinline
 	// GCC 3.4.1 has a bug in supporting forced inline of templated functions
 	// this macro lets us not force inlining in that case
 	#define FORCEINLINE_TEMPLATE __forceinline
-#elif defined( GNUC ) || defined( __clang__ )
+#elif defined( COMPILER_GCC ) || defined( COMPILER_CLANG )
 	#define STDCALL
 	#define FASTCALL __attribute__( ( fastcall ) )
 	#define FORCEINLINE inline
@@ -516,7 +524,7 @@ FIXME: Enable this when we no longer fear change =)
 // that point in the compilation.  If '0' is passed, then the compiler assumes that
 // any subsequent code in the same 'basic block' is unreachable, and thus usually
 // removed.
-#if defined( _MSC_VER )
+#if defined( COMPILER_MSVC )
 	#define HINT( THE_HINT ) __assume( ( THE_HINT ) )
 #else
 	#define HINT( THE_HINT ) 0
@@ -537,35 +545,35 @@ FIXME: Enable this when we no longer fear change =)
 		UNREACHABLE();
 
 
-#if defined( _MSC_VER )
+#if defined( COMPILER_MSVC )
 	// Remove warnings from warning level 4.
-	#pragma warning( disable : 4514 )// warning C4514: 'acosl' : unreferenced inline function has been removed
-	#pragma warning( disable : 4100 )// warning C4100: 'hwnd' : unreferenced formal parameter
-	#pragma warning( disable : 4127 )// warning C4127: conditional expression is constant
-	#pragma warning( disable : 4512 )// warning C4512: 'InFileRIFF' : assignment operator could not be generated
-	#pragma warning( disable : 4611 )// warning C4611: interaction between '_setjmp' and C++ object destruction is non-portable
-	#pragma warning( disable : 4710 )// warning C4710: function 'x' not inlined
-	#pragma warning( disable : 4702 )// warning C4702: unreachable code
-	#pragma warning( disable : 4505 )// unreferenced local function has been removed
-	#pragma warning( disable : 4239 )// nonstandard extension used : 'argument' ( conversion from class Vector to class Vector& )
-	#pragma warning( disable : 4097 )// typedef-name 'BaseClass' used as synonym for class-name 'CFlexCycler::CBaseFlex'
-	#pragma warning( disable : 4324 )// Padding was added at the end of a structure
-	#pragma warning( disable : 4244 )// type conversion warning.
-	#pragma warning( disable : 4305 )// truncation from 'const double ' to 'float '
-	#pragma warning( disable : 4786 )// Disable warnings about long symbol names
-	#pragma warning( disable : 4250 )// 'X' : inherits 'Y::Z' via dominance
-	#pragma warning( disable : 4201 )// nonstandard extension used : nameless struct/union
-	#pragma warning( disable : 4481 )// warning C4481: nonstandard extension used: override specifier 'override'
-	#pragma warning( disable : 4748 )// warning C4748: /GS can not protect parameters and local variables from local buffer overrun because optimizations are disabled in function
+	#pragma warning( disable : 4514 )  // warning C4514: 'acosl' : unreferenced inline function has been removed
+	#pragma warning( disable : 4100 )  // warning C4100: 'hwnd' : unreferenced formal parameter
+	#pragma warning( disable : 4127 )  // warning C4127: conditional expression is constant
+	#pragma warning( disable : 4512 )  // warning C4512: 'InFileRIFF' : assignment operator could not be generated
+	#pragma warning( disable : 4611 )  // warning C4611: interaction between '_setjmp' and C++ object destruction is non-portable
+	#pragma warning( disable : 4710 )  // warning C4710: function 'x' not inlined
+	#pragma warning( disable : 4702 )  // warning C4702: unreachable code
+	#pragma warning( disable : 4505 )  // unreferenced local function has been removed
+	#pragma warning( disable : 4239 )  // nonstandard extension used : 'argument' ( conversion from class Vector to class Vector& )
+	#pragma warning( disable : 4097 )  // typedef-name 'BaseClass' used as synonym for class-name 'CFlexCycler::CBaseFlex'
+	#pragma warning( disable : 4324 )  // Padding was added at the end of a structure
+	#pragma warning( disable : 4244 )  // type conversion warning.
+	#pragma warning( disable : 4305 )  // truncation from 'const double ' to 'float '
+	#pragma warning( disable : 4786 )  // Disable warnings about long symbol names
+	#pragma warning( disable : 4250 )  // 'X' : inherits 'Y::Z' via dominance
+	#pragma warning( disable : 4201 )  // nonstandard extension used : nameless struct/union
+	#pragma warning( disable : 4481 )  // warning C4481: nonstandard extension used: override specifier 'override'
+	#pragma warning( disable : 4748 )  // warning C4748: /GS can not protect parameters and local variables from local buffer overrun because optimizations are disabled in function
 
 	#if _MSC_VER >= 1300
-		#pragma warning( disable : 4511 )// Disable warnings about private copy constructors
-		#pragma warning( disable : 4121 )// warning C4121: 'symbol' : alignment of a member was sensitive to packing
-		#pragma warning( disable : 4530 )// warning C4530: C++ exception handler used, but unwind semantics are not enabled. Specify /EHsc (disabled due to std headers having exception syntax)
+		#pragma warning( disable : 4511 )  // Disable warnings about private copy constructors
+		#pragma warning( disable : 4121 )  // warning C4121: 'symbol' : alignment of a member was sensitive to packing
+		#pragma warning( disable : 4530 )  // warning C4530: C++ exception handler used, but unwind semantics are not enabled. Specify /EHsc (disabled due to std headers having exception syntax)
 	#endif
 
 	#if _MSC_VER >= 1400
-		#pragma warning( disable : 4996 )// functions declared deprecated
+		#pragma warning( disable : 4996 )  // functions declared deprecated
 	#endif
 #endif
 
@@ -584,17 +592,17 @@ FIXME: Enable this when we no longer fear change =)
 #endif
 
 #if IsLinux()
-	#pragma GCC diagnostic ignored "-Wconversion-null"// passing NULL to non-pointer argument 1
-	#pragma GCC diagnostic ignored "-Wpointer-arith"  // NULL used in arithmetic. Ie, vpanel == NULL where VPANEL is uint.
-	#pragma GCC diagnostic ignored "-Wswitch"         // enumeration values not handled in switch
+	#pragma GCC diagnostic ignored "-Wconversion-null"  // passing NULL to non-pointer argument 1
+	#pragma GCC diagnostic ignored "-Wpointer-arith"    // NULL used in arithmetic. Ie, vpanel == NULL where VPANEL is uint.
+	#pragma GCC diagnostic ignored "-Wswitch"           // enumeration values not handled in switch
 #endif
 
 
 // When we port to 64 bit, we'll have to resolve the int, ptr vs size_t 32/64 bit problems...
-#if defined( _MSC_VER ) && !defined( _WIN64 )
-	#pragma warning( disable : 4267 )// conversion from 'size_t' to 'int', possible loss of data
-	#pragma warning( disable : 4311 )// pointer truncation from 'char *' to 'int'
-	#pragma warning( disable : 4312 )// conversion from 'unsigned int' to 'memhandle_t' of greater size
+#if defined( COMPILER_MSVC ) && !IsPlatform64Bits()
+	#pragma warning( disable : 4267 )  // conversion from 'size_t' to 'int', possible loss of data
+	#pragma warning( disable : 4311 )  // pointer truncation from 'char *' to 'int'
+	#pragma warning( disable : 4312 )  // conversion from 'unsigned int' to 'memhandle_t' of greater size
 #endif
 
 
@@ -648,7 +656,7 @@ static FORCEINLINE double fsel( double fComparand, double fValGE, double fLT ) {
 //-----------------------------------------------------------------------------
 //#define CHECK_FLOAT_EXCEPTIONS		1
 
-#if defined( _MSC_VER )
+#if defined( COMPILER_MSVC )
 	#if IsWindows() && IsPC() && IsPlatform64Bits()
 		inline void SetupFPUControlWord() { }
 	#else
@@ -689,7 +697,7 @@ static FORCEINLINE double fsel( double fComparand, double fValGE, double fLT ) {
 		__cw = __cw | 0x023F; // set 53-bit, no exceptions
 		__asm __volatile( "fldcw %0" : : "m"( __cw ) );
 	}
-#endif// _MSC_VER
+#endif// COMPILER_MSVC
 
 
 //-----------------------------------------------------------------------------
@@ -746,7 +754,7 @@ inline T QWordSwapC( T dw ) {
 //-------------------------------------
 // Fast swaps
 //-------------------------------------
-#if defined( _MSC_VER ) && !defined( PLATFORM_WINDOWS_PC64 )
+#if defined( COMPILER_MSVC ) && !IsPlatform64Bits()
 	#define WordSwap WordSwapAsm
 	#define DWordSwap DWordSwapAsm
 
@@ -933,16 +941,16 @@ PLATFORM_INTERFACE struct tm* Plat_gmtime( const time_t* timep, struct tm* resul
 PLATFORM_INTERFACE time_t Plat_timegm( struct tm* timeptr );
 PLATFORM_INTERFACE struct tm* Plat_localtime( const time_t* timep, struct tm* result );
 
-#if defined( _WIN32 ) && defined( _MSC_VER ) && ( _MSC_VER >= 1400 )
+#if IsWindows() && defined( COMPILER_MSVC ) && ( _MSC_VER >= 1400 )
 	extern "C" unsigned __int64 __rdtsc();
 	#pragma intrinsic( __rdtsc )
 #endif
 
 inline uint64 Plat_Rdtsc() {
-	#if defined( _WIN64 )
+	#if IsWindows() && IsPlatform64Bits()
 		return (uint64) __rdtsc();
-	#elif defined( _WIN32 )
-		#if defined( _MSC_VER ) && ( _MSC_VER >= 1400 )
+	#elif IsWindows()
+		#if defined( COMPILER_MSVC ) && ( _MSC_VER >= 1400 )
 			return static_cast<uint64>( __rdtsc() );
 		#else
 			__asm rdtsc;
