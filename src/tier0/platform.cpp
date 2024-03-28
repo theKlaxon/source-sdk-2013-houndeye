@@ -10,10 +10,14 @@
 
 #if IsWindows()
 	#include <sysinfoapi.h>
+	#include <libloaderapi.h>
 	#include <profileapi.h>
+	#include <processenv.h>
+    #include <intrin.h>
     #include <intrin.h>
 #elif IsPosix()
 	#include <cpuid.h>
+	#include <sys/utsname.h>
 #endif
 
 double MonotonicTime() {
@@ -158,31 +162,35 @@ void Plat_SetHardwareDataBreakpoint( const void* pAddress, int nWatchBytes, bool
 void Plat_ApplyHardwareDataBreakpointsToNewThread( unsigned long dwThreadID );
 
 const tchar* Plat_GetCommandLine() {
-	static tchar cmdline[2048] { 0 };
-	if ( cmdline[0] != '\0' )
+	#if IsWindows()
+		return GetCommandLine();
+	#elif IsPosix()
+		static tchar cmdline[2048] { 0 };
+		if ( cmdline[0] != '\0' )
+			return cmdline;
+
+		auto file{ std::fopen( "/proc/self/cmdline", "r" ) };
+		std::fread( cmdline, 1, sizeof( cmdline ) - 1, file );
+		std::fclose( file );
+
 		return cmdline;
-
-	auto file{ std::fopen( "/proc/self/cmdline", "r" ) };
-	std::fread( cmdline, 1, sizeof( cmdline ) - 1, file );
-	std::fclose( file );
-
-	return cmdline;
+	#else
+		#error "Plat_GetCommandLine: Missing implementation"
+	#endif
 }
 #if ! IsWindows()
 	void Plat_SetCommandLine( const char* cmdLine ) {
-	AssertUnreachable();
-}
+		AssertUnreachable();
+	}
 #endif
 const char* Plat_GetCommandLineA() {
-	static char cmdline[2048] { 0 };
-	if ( cmdline[0] != '\0' )
-		return cmdline;
-
-	auto file{ std::fopen( "/proc/self/cmdline", "r" ) };
-	std::fread( cmdline, 1, sizeof( cmdline ) - 1, file );
-	std::fclose( file );
-
-	return cmdline;
+	#if IsWindows()
+		return GetCommandLineA();
+	#elif IsPosix()
+		return Plat_GetCommandLine();
+	#else
+		#error "Plat_GetCommandLineA: Missing implementation"
+	#endif
 }
 
 bool Plat_VerifyHardwareKeyDriver();
@@ -195,7 +203,7 @@ bool Plat_FastVerifyHardwareKey();
 
 void* Plat_SimpleLog( const tchar* file, int line );
 
-#if IsWindows() || IsLinux()
+#if IsPC()
 	PLATFORM_INTERFACE bool Plat_IsInDebugSession() {
 		static char buffer[32] { 0 };
 		std::ifstream file{ "/proc/self/status" };
@@ -215,4 +223,21 @@ void* Plat_SimpleLog( const tchar* file, int line );
 	#define Plat_DebugString( s ) ( (void) 0 )
 #endif
 
-bool Is64BitOS();
+bool Is64BitOS() {
+	#if IsPlatform64Bits()
+		return true;
+	#elif IsWindows()
+		auto isWow64{ false };
+		static auto fnIsWow64Process{ static_cast<LPFN_ISWOW64PROCESS>( GetProcAddress( GetModuleHandle( "kernel32" ), "IsWow64Process" ) ) };
+
+		return fnIsWow64Process && fnIsWow64Process( GetCurrentProcess(), &isWow64 ) && isWow64;
+	#elif IsPosix()
+		utsname data{};
+		uname( &data );
+		// TODO: Check if this is correct for all posix impls
+		return strcmp( data.machine, "x86_64" ) == 0;
+	#else
+		#error "Is64BitOS: Not implemented"
+	#endif
+	return false;
+}
