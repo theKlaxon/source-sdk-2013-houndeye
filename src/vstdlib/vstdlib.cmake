@@ -6,10 +6,12 @@ set( VSTDLIB_SOURCE_FILES
 	"${VSTDLIB_DIR}/random.cpp"
 	"${VSTDLIB_DIR}/keyvaluessystem.cpp"
 	"${VSTDLIB_DIR}/pcgengine.cpp"
+	"${VSTDLIB_DIR}/jobthread.cpp"
 
 	# Header files
 	"${VSTDLIB_DIR}/cvarsystem.hpp"
 	"${VSTDLIB_DIR}/keyvaluessystem.hpp"
+	"${VSTDLIB_DIR}/jobthread.hpp"
 
 	# Public
 	"${SRCDIR}/public/vstdlib/vstdlib.h"
