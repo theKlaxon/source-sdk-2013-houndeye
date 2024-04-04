@@ -17,8 +17,31 @@ static uint g_MainThreadId{ 0 };
 
 // ----- SimpleThread_t -----
 //
-ThreadHandle_t CreateSimpleThread( ThreadFunc_t pHandle, void* pParam, ThreadId_t* pID, unsigned stackSize );
-ThreadHandle_t CreateSimpleThread( ThreadFunc_t pHandle, void* pParam, unsigned stackSize );
+ThreadHandle_t CreateSimpleThread( ThreadFunc_t pHandle, void* pParam, ThreadId_t* pID, unsigned stackSize ) {
+#if IsWindows()
+
+#elif IsPosix()
+	pthread_t handle;
+	pthread_attr_t attr;
+	pthread_attr_init( &attr );
+	pthread_create( &handle, &attr, reinterpret_cast<void*(*)(void*)>( pHandle ), pParam );
+	pthread_attr_destroy( &attr );
+
+	return reinterpret_cast<ThreadHandle_t>( handle );
+#endif
+}
+ThreadHandle_t CreateSimpleThread( ThreadFunc_t pHandle, void* pParam, unsigned stackSize ) {
+#if IsWindows()
+
+#elif IsPosix()
+	pthread_t handle;
+	pthread_attr_t attr;
+	pthread_attr_init( &attr );
+	pthread_create( &handle, &attr, reinterpret_cast<void*(*)(void*)>( pHandle ), pParam );
+	pthread_attr_destroy( &attr );
+	return reinterpret_cast<ThreadHandle_t>( handle );
+#endif
+}
 bool ReleaseThreadHandle( ThreadHandle_t pHandle );
 
 void ThreadSleep( unsigned pDurationMs ) {
