@@ -161,11 +161,11 @@ public:
 			return this->m_index != other.m_index;
 		}
 
-		const DictElementMap_t::Node_t& operator*() const {
+		const typename DictElementMap_t::Node_t& operator*() const {
 			return this->m_Dict->m_Elements.Element( this->m_index );
 		}
 
-		const DictElementMap_t::Node_t* operator->() const {
+		const typename DictElementMap_t::Node_t* operator->() const {
 			return ( &**this );
 		}
 

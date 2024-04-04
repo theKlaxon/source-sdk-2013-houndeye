@@ -30,7 +30,7 @@ bool CThreadPool::Stop( int timeout ) {
 		auto flag{ true };
 		// FIXME: Timeout is not accumulated!
 		for ( const auto& thread : this->m_Threads ) {
-			flag = ThreadJoin( thread, timeout ) && flag;
+//			flag = ThreadJoin( thread, timeout ) && flag;
 		}
 		return flag;
 	#endif
