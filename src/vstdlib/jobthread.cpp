@@ -2,6 +2,7 @@
 // Created by ENDERZOMBI102 on 28/03/2024.
 //   Heavily modified version of the SDK 2006 version of `jobthread.cpp`
 //
+#include <synchapi.h>
 #include "jobthread.hpp"
 
 CThreadPool::CThreadPool()

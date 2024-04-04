@@ -14,7 +14,9 @@
 	#include <profileapi.h>
 	#include <processenv.h>
     #include <intrin.h>
-    #include <intrin.h>
+    #include <wow64apiset.h>
+    #include <processthreadsapi.h>
+
 #elif IsPosix()
 	#include <cpuid.h>
 	#include <sys/utsname.h>
@@ -226,9 +228,10 @@ void* Plat_SimpleLog( const tchar* file, int line );
 bool Is64BitOS() {
 	#if IsPlatform64Bits()
 		return true;
-	#elif IsWindows()
-		auto isWow64{ false };
-		static auto fnIsWow64Process{ static_cast<LPFN_ISWOW64PROCESS>( GetProcAddress( GetModuleHandle( "kernel32" ), "IsWow64Process" ) ) };
+    #elif IsWindows()
+        using LPFN_ISWOW64PROCESS = BOOL (WINAPI *) (HANDLE, PBOOL);
+		auto isWow64{ FALSE };
+		static auto fnIsWow64Process{ reinterpret_cast<LPFN_ISWOW64PROCESS>( GetProcAddress( GetModuleHandle( "kernel32" ), "IsWow64Process" ) ) };
 
 		return fnIsWow64Process && fnIsWow64Process( GetCurrentProcess(), &isWow64 ) && isWow64;
 	#elif IsPosix()

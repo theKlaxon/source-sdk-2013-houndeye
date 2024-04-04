@@ -19,7 +19,8 @@ static uint g_MainThreadId{ 0 };
 //
 ThreadHandle_t CreateSimpleThread( ThreadFunc_t pHandle, void* pParam, ThreadId_t* pID, unsigned stackSize ) {
 #if IsWindows()
-
+    AssertUnreachable();
+    return {};
 #elif IsPosix()
 	pthread_t handle;
 	pthread_attr_t attr;
@@ -32,7 +33,8 @@ ThreadHandle_t CreateSimpleThread( ThreadFunc_t pHandle, void* pParam, ThreadId_
 }
 ThreadHandle_t CreateSimpleThread( ThreadFunc_t pHandle, void* pParam, unsigned stackSize ) {
 #if IsWindows()
-
+    AssertUnreachable();
+    return {};
 #elif IsPosix()
 	pthread_t handle;
 	pthread_attr_t attr;

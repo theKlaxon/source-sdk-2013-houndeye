@@ -1,6 +1,7 @@
 //
 // Created by ENDERZOMBI102 on 22/02/2024.
 //
+#include <direct.h>
 #include "filesystem.hpp"
 #include "interface.h"
 
@@ -50,7 +51,7 @@ FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions
 		AssertMsg( this->m_SearchPaths.HasElement( pathID ), "Was given pathID not loaded" );
 
 		for ( auto& system : this->m_SearchPaths[pathID].m_Clients ) {
-			system->Open(  )
+			system->Open(  );
 		}
 	}
 	AssertMsg( false, "Open: %s, %s, %s", pFileName, pOptions, pathID ); return {};
@@ -190,7 +191,11 @@ const char* CFileSystemStdio::GetLocalPath( const char* pFileName, char* pDest, 
 bool CFileSystemStdio::FullPathToRelativePath( const char* pFullpath, char* pDest, int maxLenInChars ) { AssertUnreachable(); return {}; }
 
 bool CFileSystemStdio::GetCurrentDirectory( char* pDirectory, int maxlen ) {
-	getcwd( pDirectory, maxlen );
+    #if IsWindows()
+        _getcwd(pDirectory, maxlen);
+    #else
+    	getcwd( pDirectory, maxlen );
+    #endif
 	return true;
 }
 
