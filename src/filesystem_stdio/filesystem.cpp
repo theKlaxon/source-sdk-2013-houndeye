@@ -1,9 +1,14 @@
 //
 // Created by ENDERZOMBI102 on 22/02/2024.
 //
-#include <direct.h>
+#include "platform.h"
+
+#if IsWindows()
+	#include <direct.h>
+#endif
 #include "filesystem.hpp"
 #include "interface.h"
+#include "system/plainsystemclient.hpp"
 
 static CFileSystemStdio g_FullFileSystem{};
 
@@ -36,22 +41,11 @@ int CFileSystemStdio::Read( void* pOutput, int size, FileHandle_t file ) { Asser
 int CFileSystemStdio::Write( void const* pInput, int size, FileHandle_t file ) { AssertUnreachable(); return {}; }
 
 FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions, const char* pathID ) {
-	static auto convertMode = []( const char* pOptions ) -> openmode_t {
-		openmode_t mode{0};
-		for ( char c = *pOptions; c; c = *++pOptions ) {
-			switch ( c ) {
-				case 'r':
-					break;
-			}
-		}
-	};
-
-
 	if ( pathID != nullptr ) {
 		AssertMsg( this->m_SearchPaths.HasElement( pathID ), "Was given pathID not loaded" );
 
 		for ( auto& system : this->m_SearchPaths[pathID].m_Clients ) {
-			system->Open(  );
+			system->Open( pOptions );
 		}
 	}
 	AssertMsg( false, "Open: %s, %s, %s", pFileName, pOptions, pathID ); return {};
@@ -92,9 +86,7 @@ FilesystemMountRetval_t CFileSystemStdio::MountSteamContent( int nExtraAppId ) {
 
 // ---- Search path manipulation ----
 void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, SearchPathAdd_t addType ) {
-	auto system{ ISystemClient::CreateFor( pPath ) };
-	if (! system )
-		return;
+	CPlainSystemClient system{ pPath };
 
 	if ( this->m_SearchPaths.Find( pathID ) == CUtlMap<const char*, SearchPath>::InvalidIndex() )
 		this->m_SearchPaths.Insert( pathID );

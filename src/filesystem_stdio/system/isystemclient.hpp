@@ -7,9 +7,6 @@
 #include <memory>
 
 using xerr_t = uint8_t;
-using qid_t = int;
-using stat_t = int;
-using xstr_t = int;
 
 enum dirmode_t : uint32_t {
 	// High byte is the same as qidtype_t
@@ -49,45 +46,56 @@ enum dirmode_t : uint32_t {
 	X9P_DM_PROTOCOL_MASK = X9P_DM_PERM_MASK | X9P_DM_DIR | X9P_DM_APPEND | X9P_DM_EXCL | X9P_DM_MOUNT | X9P_DM_AUTH | X9P_DM_TMP
 };
 
-enum openmode_t : uint8_t {
-	X9P_OPEN_READ,
-	X9P_OPEN_WRITE,
-	X9P_OPEN_READWRITE,
-	X9P_OPEN_EXEC,
-	X9P_OPEN_TRUNC = 0x10,
-	X9P_OPEN_CLOSE = 0x40,
+struct stat_t {
+	uint16_t size;    // Total bytes used by following data
 
-	X9P_OPEN_STATE_MASK = X9P_OPEN_READ | X9P_OPEN_WRITE | X9P_OPEN_READWRITE | X9P_OPEN_EXEC,
-	X9P_OPEN_PROTOCOL_MASK = X9P_OPEN_STATE_MASK | X9P_OPEN_TRUNC | X9P_OPEN_CLOSE,
+	dirmode_t mode;   // Permissions and flags
+	uint64_t atime;   // Access time (unix time)
+	uint64_t mtime;   // Modification time (unix time)
+	uint64_t length;  // File Length in bytes
 
-	// Bits not used by by 9P
-	X9P_OPEN_EX_INVALID = 128,
+	// File name
+	std::string name() { return {}; }
 };
 
 
+enum class openmode_t : uint8_t {
+	Read,
+	Write,
+	ReadWrite,
+	Exec,
+	Trunc = 0x10,
+	Close = 0x40,
+};
+
+struct qid_t { };
 
 
-typedef std::function<void( xerr_t err )> FlushCallback;
-typedef std::function<void( xerr_t err, uint16_t nwqid, qid_t* wqid )> WalkCallback;
-typedef std::function<void( xerr_t err, qid_t* qid, uint32_t iounit )> OpenCallback;
-typedef std::function<void( xerr_t err, qid_t* qid, uint32_t iounit )> CreateCallback;
-typedef std::function<void( xerr_t err, uint32_t count, void* data )> ReadCallback;
-typedef std::function<void( xerr_t err, uint32_t count )> WriteCallback;
-typedef std::function<void( xerr_t err )> RemoveCallback;
-typedef std::function<void( xerr_t err, stat_t* stat )> StatCallback;
+using FlushCallback  = std::function<void( xerr_t err )>;
+using WalkCallback   = std::function<void( xerr_t err, uint16_t nwqid, qid_t* wqid )>;
+using OpenCallback   = std::function<void( xerr_t err, qid_t* qid, uint32_t iounit )>;
+using CreateCallback = std::function<void( xerr_t err, qid_t* qid, uint32_t iounit )>;
+using ReadCallback   = std::function<void( xerr_t err, uint32_t count, void* data )>;
+using WriteCallback  = std::function<void( xerr_t err, uint32_t count )>;
+using RemoveCallback = std::function<void( xerr_t err )>;
+using StatCallback   = std::function<void( xerr_t err, stat_t* stat )>;
+
+
 
 abstract_class ISystemClient {
 public:
-	virtual auto Flush( FlushCallback callback ) -> void = 0;
-	virtual auto Walk( uint16_t nwname, xstr_t wname, WalkCallback callback ) -> void = 0;
-	virtual auto Open( openmode_t mode, OpenCallback callback ) -> void = 0;
-	virtual auto Create( xstr_t name, dirmode_t perm, openmode_t mode, CreateCallback callback ) -> void = 0;
-	virtual auto Read( uint64_t offset, uint32_t count, ReadCallback callback ) -> void = 0;
-	virtual auto Write( uint64_t offset, uint32_t count, void* data, WriteCallback callback ) -> void = 0;
-	virtual auto Remove( RemoveCallback callback ) -> void = 0;
-	virtual auto Stat( StatCallback callback ) -> void = 0;
 	virtual auto GetNativePath() -> const char* = 0;
 	virtual auto Shutdown() -> const char* = 0;
-
-	static auto CreateFor( const char* string ) -> std::shared_ptr<ISystemClient>;
+public:
+	using Handle = uint32_t;
+	virtual auto Flush ( Handle file ) -> void = 0;
+	virtual auto Walk  ( uint16_t nwname, const char* wname ) -> void = 0;
+	virtual auto Open  ( const char* path, const char* mode,  ) -> Handle = 0;
+	virtual auto Create( const char* name, dirmode_t perm, openmode_t mode,  ) -> Handle = 0;
+	virtual auto Read  ( Handle file, uint64_t offset, uint32_t count ) -> void = 0;
+	virtual auto Write ( Handle file, uint64_t offset, uint32_t count ) -> void = 0;
+	virtual auto Remove( Handle file ) -> void = 0;
+	virtual auto Stat  ( Handle file ) -> void = 0;
+protected:
+	using PHandle = struct { uint8_t m_uClientType; uint8_t m_uClientId; uint16_t m_uFileHandle; };
 };

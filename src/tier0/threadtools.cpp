@@ -62,7 +62,7 @@ uint ThreadGetCurrentId() {
 	#if IsWindows()
 		return static_cast<uint>( GetCurrentThreadId() );
 	#elif IsPosix()
-		// FIXME: This might be a problem, as the code might expect a SYSTEM UNIQUE id
+		// NOTE: This might be wrong, as the code might expect a SYSTEM UNIQUE id
 		return static_cast<uint>( pthread_self() );
 	#else
 		#error "ThreadSleep: Missing implementation!"
@@ -70,7 +70,7 @@ uint ThreadGetCurrentId() {
 }
 ThreadHandle_t ThreadGetCurrentHandle() {
 	#if IsWindows()
-        return static_cast<ThreadHandle_t>(GetCurrentThread());
+        return static_cast<ThreadHandle_t>( GetCurrentThread() );
 	#elif IsPosix()
 		return reinterpret_cast<ThreadHandle_t>( pthread_self() );
 	#endif
