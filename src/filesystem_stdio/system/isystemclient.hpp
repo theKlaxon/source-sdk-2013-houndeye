@@ -3,10 +3,12 @@
 //
 #pragma once
 #include "tier0/platform.h"
+#include "filesystem.h"
+
 #include <functional>
 #include <memory>
 
-using xerr_t = uint8_t;
+
 
 enum dirmode_t : uint32_t {
 	// High byte is the same as qidtype_t
@@ -68,34 +70,21 @@ enum class openmode_t : uint8_t {
 	Close = 0x40,
 };
 
-struct qid_t { };
-
-
-using FlushCallback  = std::function<void( xerr_t err )>;
-using WalkCallback   = std::function<void( xerr_t err, uint16_t nwqid, qid_t* wqid )>;
-using OpenCallback   = std::function<void( xerr_t err, qid_t* qid, uint32_t iounit )>;
-using CreateCallback = std::function<void( xerr_t err, qid_t* qid, uint32_t iounit )>;
-using ReadCallback   = std::function<void( xerr_t err, uint32_t count, void* data )>;
-using WriteCallback  = std::function<void( xerr_t err, uint32_t count )>;
-using RemoveCallback = std::function<void( xerr_t err )>;
-using StatCallback   = std::function<void( xerr_t err, stat_t* stat )>;
-
-
-
 abstract_class ISystemClient {
-public:
-	virtual auto GetNativePath() -> const char* = 0;
-	virtual auto Shutdown() -> const char* = 0;
-public:
-	using Handle = uint32_t;
-	virtual auto Flush ( Handle file ) -> void = 0;
+public: // metadata
+	[[nodiscard]] virtual auto GetNativePath() const -> const char* = 0;
+	[[nodiscard]] virtual auto GetNativeAbsolutePath() const -> const char* = 0;
+	[[nodiscard]] virtual auto GetIdentifier() const -> int = 0;
+	virtual auto Shutdown() -> void = 0;
+	auto operator==( ISystemClient& other ) const -> bool { return this == &other || this->GetIdentifier() == other.GetIdentifier(); }
+	auto operator==( const ISystemClient& other ) const -> bool { return this == &other || this->GetIdentifier() == other.GetIdentifier(); }
+public: // fs interactions
+	virtual auto Flush ( FileHandle_t file ) -> bool = 0;
 	virtual auto Walk  ( uint16_t nwname, const char* wname ) -> void = 0;
-	virtual auto Open  ( const char* path, const char* mode,  ) -> Handle = 0;
-	virtual auto Create( const char* name, dirmode_t perm, openmode_t mode,  ) -> Handle = 0;
-	virtual auto Read  ( Handle file, uint64_t offset, uint32_t count ) -> void = 0;
-	virtual auto Write ( Handle file, uint64_t offset, uint32_t count ) -> void = 0;
-	virtual auto Remove( Handle file ) -> void = 0;
-	virtual auto Stat  ( Handle file ) -> void = 0;
-protected:
-	using PHandle = struct { uint8_t m_uClientType; uint8_t m_uClientId; uint16_t m_uFileHandle; };
+	virtual auto Open  ( const char* path, const char* mode ) -> FileHandle_t = 0;
+	virtual auto Create( const char* name, dirmode_t perm, openmode_t mode ) -> FileHandle_t = 0;
+	virtual auto Read  ( FileHandle_t file, void* buffer, uint32_t count ) -> uint32_t = 0;
+	virtual auto Write ( FileHandle_t file, const void* buffer, uint32_t count ) -> uint32_t = 0;
+	virtual auto Remove( FileHandle_t file ) -> void = 0;
+	virtual auto Stat  ( FileHandle_t file ) -> void = 0;
 };

@@ -2,14 +2,14 @@
 // Created by ENDERZOMBI102 on 23/02/2024.
 //
 #pragma once
-
 #include "isystemclient.hpp"
+#include "vpkedit/PackFile.h"
 
-class CPlainSystemClient : public ISystemClient {
+class CPackSystemClient : public ISystemClient {
 public:
 	// NOTE: This is PRIVATE
-	CPlainSystemClient( int id, std::string absolute, const char* path );
-	static auto Open( int id, std::string absolute, const char* path ) -> std::shared_ptr<ISystemClient>;
+	CPackSystemClient( int id, const char* path, std::unique_ptr<vpkedit::PackFile> pack );
+	static auto Open( int id, const std::string& absolute, const char* path ) -> std::shared_ptr<ISystemClient>;
 	[[nodiscard]] auto GetNativePath() const -> const char* override;
 	[[nodiscard]] auto GetNativeAbsolutePath() const -> const char* override;
 	[[nodiscard]] auto GetIdentifier() const -> int override;
@@ -26,5 +26,5 @@ public: // FS interaction
 private:
 	int m_iId;
 	const char* m_szNativePath;
-	std::string m_szNativeAbsolutePath;
+	std::unique_ptr<vpkedit::PackFile> m_PackFile;
 };

@@ -420,6 +420,12 @@ private:
 		bool m_bRequestOnly{ false };
 	};
 
+	// The named search paths
 	CUtlDict<SearchPath> m_SearchPaths{};
+	// All open clients, used for fast-access during common FS operations (read, write, etc.)
+	CUtlVector<std::weak_ptr<ISystemClient>> m_Clients{};
+	// A handle-to-client-index map used to quickly access the client without searching for it
+	std::unordered_map<FileHandle_t, int> m_HandleClientsMap;
+	int m_iLastId{ 0 };
 	bool m_bInitialized{ false };
 };

@@ -8,6 +8,7 @@
 #endif
 #include "filesystem.hpp"
 #include "interface.h"
+#include "system/packsystemclient.hpp"
 #include "system/plainsystemclient.hpp"
 
 static CFileSystemStdio g_FullFileSystem{};
@@ -37,17 +38,69 @@ void CFileSystemStdio::Shutdown() { }
 // ---------------
 // IBaseFilesystem
 // ---------------
-int CFileSystemStdio::Read( void* pOutput, int size, FileHandle_t file ) { AssertUnreachable(); return {}; }
-int CFileSystemStdio::Write( void const* pInput, int size, FileHandle_t file ) { AssertUnreachable(); return {}; }
+int CFileSystemStdio::Read( void* pOutput, int size, FileHandle_t file ) {
+	auto maybeIndex{ this->m_HandleClientsMap.find( file ) };
+	if ( maybeIndex == this->m_HandleClientsMap.end() )
+		return -1;
+
+	auto index{ maybeIndex->second };
+	if ( not this->m_Clients.IsValidIndex( index ) )
+		return -1;
+
+	auto client{ this->m_Clients[ index ] };
+	if ( client.expired() )
+		return -1;
+
+	return static_cast<int>( client.lock()->Read( file, pOutput, size ) );
+}
+int CFileSystemStdio::Write( const void* pInput, int size, FileHandle_t file ) {
+	auto maybeIndex{ this->m_HandleClientsMap.find( file ) };
+	if ( maybeIndex == this->m_HandleClientsMap.end() )
+		return -1;
+
+	auto index{ maybeIndex->second };
+	if ( not this->m_Clients.IsValidIndex( index ) )
+		return -1;
+
+	auto client{ this->m_Clients[ index ] };
+	if ( client.expired() )
+		return -1;
+
+	return static_cast<int>( client.lock()->Write( file, pInput, size ) );
+}
 
 FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions, const char* pathID ) {
+	// if we got a pathID, only look into that SearchPath
 	if ( pathID != nullptr ) {
 		AssertMsg( this->m_SearchPaths.HasElement( pathID ), "Was given pathID not loaded" );
 
 		for ( auto& system : this->m_SearchPaths[pathID].m_Clients ) {
-			system->Open( pOptions );
+			auto handle{ system->Open( pFileName, pOptions ) };
+			if ( handle != nullptr ) {
+				// this seems too complex for what it does...
+				auto found{ false };
+				for ( auto index{0}; index < this->m_Clients.Count(); index += 1 ) {
+					if ( system == this->m_Clients[index].lock() ) {
+						this->m_HandleClientsMap[handle] = index;
+						found = true;
+						break;
+					}
+				}
+				AssertMsg( found, "`ISystemClient` impl for open handle was not found!!" );
+				return handle;
+			}
+		}
+	} else {
+		// else, look into all clients
+		for ( auto index{0}; index < this->m_Clients.Count(); index += 1 ) {
+			auto handle{ this->m_Clients[index].lock()->Open( pFileName, pOptions ) };
+			if ( handle != nullptr ) {
+				this->m_HandleClientsMap[handle] = index;
+				return handle;
+			}
 		}
 	}
+
 	AssertMsg( false, "Open: %s, %s, %s", pFileName, pOptions, pathID ); return {};
 }
 void CFileSystemStdio::Close( FileHandle_t file ) { AssertUnreachable(); }
@@ -86,15 +139,24 @@ FilesystemMountRetval_t CFileSystemStdio::MountSteamContent( int nExtraAppId ) {
 
 // ---- Search path manipulation ----
 void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, SearchPathAdd_t addType ) {
-	CPlainSystemClient system{ pPath };
+	AssertFatalMsg( pPath, "Was given an empty path!!" );
+
+	std::string absolute{};
+	this->m_iLastId += 1;
+
+	// try all possibilities
+	auto system{ CPlainSystemClient::Open( this->m_iLastId, absolute, pPath ) };
+	system = system ? system : CPackSystemClient::Open( this->m_iLastId, absolute, pPath );
+	AssertFatalMsg( system, "Unsupported path entry!!" );
 
 	if ( this->m_SearchPaths.Find( pathID ) == CUtlMap<const char*, SearchPath>::InvalidIndex() )
 		this->m_SearchPaths.Insert( pathID );
 
-	if ( addType == SearchPathAdd_t::PATH_ADD_TO_HEAD )
-		this->m_SearchPaths[pathID].m_Clients.AddToHead( system );
-	else
-		this->m_SearchPaths[pathID].m_Clients.AddToTail( system );
+	if ( addType == SearchPathAdd_t::PATH_ADD_TO_HEAD ) {
+		this->m_SearchPaths[ pathID ].m_Clients.AddToHead( system );
+	} else {
+		this->m_SearchPaths[ pathID ].m_Clients.AddToTail( system );
+	}
 }
 bool CFileSystemStdio::RemoveSearchPath( const char* pPath, const char* pathID ) {
 	auto index{ this->m_SearchPaths.Find( pathID ) };
@@ -114,10 +176,12 @@ bool CFileSystemStdio::RemoveSearchPath( const char* pPath, const char* pathID )
 
 void CFileSystemStdio::RemoveAllSearchPaths() {
 	for ( auto& [pathId, searchPath] : this->m_SearchPaths ) {
-		for ( auto& system : searchPath.m_Clients )
+		for ( auto& system : searchPath.m_Clients ) {
 			system->Shutdown();
+		}
 		searchPath.m_Clients.Purge();
 	}
+	this->m_HandleClientsMap.clear();
 	this->m_SearchPaths.Purge();
 }
 

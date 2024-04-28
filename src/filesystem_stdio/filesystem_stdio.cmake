@@ -4,14 +4,14 @@ set( FILESYSTEM_STDIO_DIR ${CMAKE_CURRENT_LIST_DIR} )
 set( FILESYSTEM_STDIO_SOURCE_FILES
 	"${FILESYSTEM_STDIO_DIR}/basefilesystem.cpp"
 	"${FILESYSTEM_STDIO_DIR}/filesystem.cpp"
-	"${FILESYSTEM_STDIO_DIR}/system/vpksystemclient.cpp"
+	"${FILESYSTEM_STDIO_DIR}/system/packsystemclient.cpp"
 	"${FILESYSTEM_STDIO_DIR}/system/plainsystemclient.cpp"
 
 	# Header files
 	"${FILESYSTEM_STDIO_DIR}/basefilesystem.hpp"
 	"${FILESYSTEM_STDIO_DIR}/filesystem.hpp"
 	"${FILESYSTEM_STDIO_DIR}/system/isystemclient.hpp"
-	"${FILESYSTEM_STDIO_DIR}/system/vpksystemclient.hpp"
+	"${FILESYSTEM_STDIO_DIR}/system/packsystemclient.hpp"
 	"${FILESYSTEM_STDIO_DIR}/system/plainsystemclient.hpp"
 
 	# Public
@@ -26,6 +26,7 @@ target_link_libraries( filesystem_stdio
 		appframework
 	PRIVATE
 		SDL3-shared
+		libvpkedit
 )
 set_target_properties( filesystem_stdio
 	PROPERTIES
