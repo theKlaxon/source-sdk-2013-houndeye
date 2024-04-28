@@ -103,15 +103,14 @@ SpewRetval_t _SpewMessage( const tchar* pMsg, ... ) {
 }
 SpewRetval_t _DSpewMessage( const tchar* pGroupName, int level, const tchar* pMsg, ... ) { assert( false ); return {}; }
 SpewRetval_t ColorSpewMessage( SpewType_t type, const Color* pColor, const tchar* pMsg, ... ) { assert( false ); return {}; }
-void _ExitOnFatalAssert( const tchar* pFile, int line ) { assert( false ); }
+void _ExitOnFatalAssert( const tchar* pFile, int line ) { exit( 1 ); }
 bool ShouldUseNewAssertDialog() { return true; }
 
 bool DoNewAssertDialog( const tchar* pFile, int line, const tchar* pExpression ) {
 	using namespace std::string_literals;
 	auto message{
 		"\n---- Assertion Failed ----"
-		"\nFile: "s + pFile +
-		"\nLine: " + std::to_string( line ) +
+		"\nWhere: "s + pFile + ":" + std::to_string( line ) +
 		"\nAssert: " + pExpression +
 		"\n--------------------------"
 	};
