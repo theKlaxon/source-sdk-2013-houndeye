@@ -44,7 +44,7 @@ auto CPlainSystemClient::Open( const char* path, const char* mode ) -> FileHandl
 	return reinterpret_cast<FileHandle_t>( fopen( path, mode ) );
 }
 auto CPlainSystemClient::Create( const char* name, dirmode_t perm, openmode_t mode ) -> FileHandle_t {
-	return 0;
+	return nullptr;
 }
 auto CPlainSystemClient::Read( FileHandle_t file, void* buffer, uint32_t count ) -> uint32_t {
 	AssertMsg( file, "Was given a `NULL` file handle!" );

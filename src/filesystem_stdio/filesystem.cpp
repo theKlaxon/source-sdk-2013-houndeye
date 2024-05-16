@@ -6,6 +6,7 @@
 #if IsWindows()
 	#include <direct.h>
 #endif
+#include "../tier0/commandline.hpp"
 #include "filesystem.hpp"
 #include "interface.h"
 #include "system/packsystemclient.hpp"
@@ -141,12 +142,10 @@ FilesystemMountRetval_t CFileSystemStdio::MountSteamContent( int nExtraAppId ) {
 void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, SearchPathAdd_t addType ) {
 	AssertFatalMsg( pPath, "Was given an empty path!!" );
 
-	std::string absolute{};
 	this->m_iLastId += 1;
 
 	// try all possibilities
 	auto system{ CPlainSystemClient::Open( this->m_iLastId, absolute, pPath ) };
-	system = system ? system : CPackSystemClient::Open( this->m_iLastId, absolute, pPath );
 	AssertFatalMsg( system, "Unsupported path entry!!" );
 
 	if ( this->m_SearchPaths.Find( pathID ) == CUtlMap<const char*, SearchPath>::InvalidIndex() )
