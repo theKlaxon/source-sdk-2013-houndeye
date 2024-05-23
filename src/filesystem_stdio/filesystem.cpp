@@ -144,6 +144,15 @@ void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, Sea
 
 	this->m_iLastId += 1;
 
+	// calculate base dir (current `-game` dir)
+	char absolute[1024];
+	if ( !_getcwd( absolute, sizeof(absolute) ) )
+		Error( "V_MakeAbsolutePath: _getcwd failed." );
+	V_ComposeFileName( absolute, CommandLine()->ParmValue( "-game", "" ), absolute, sizeof(absolute) );
+
+	// make absolute path of the thing
+	V_MakeAbsolutePath( absolute, 1024, pPath, absolute );
+
 	// try all possibilities
 	auto system{ CPlainSystemClient::Open( this->m_iLastId, absolute, pPath ) };
 	AssertFatalMsg( system, "Unsupported path entry!!" );
