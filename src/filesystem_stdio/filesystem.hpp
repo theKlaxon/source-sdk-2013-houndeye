@@ -7,6 +7,7 @@
 #include "system/isystemclient.hpp"
 #include "tier1/utldict.h"
 #include <memory>
+#include <optional>
 #include <unordered_map>
 
 #undef AsyncRead
@@ -403,6 +404,9 @@ public: // IFileSystem
 	// Prefer using the GetCaseCorrectFullPath template wrapper to calling this directly
 	bool GetCaseCorrectFullPath_Ptr( const char* pFullPath, OUT_Z_CAP( maxLenInChars ) char* pDest, int maxLenInChars ) override;
 private:
+	[[gnu::always_inline, clang::always_inline]]
+	auto findClientHelper( FileHandle_t file ) -> std::optional<std::weak_ptr<ISystemClient>>;
+private:
 	struct SearchPath {
 		SearchPath() = default;
 		SearchPath( const SearchPath& other ) {
@@ -421,7 +425,7 @@ private:
 	};
 
 	// The named search paths
-	CUtlDict<SearchPath> m_SearchPaths{};
+	std::unordered_map<const char*, SearchPath> m_SearchPaths{};
 	// All open clients, used for fast-access during common FS operations (read, write, etc.)
 	CUtlVector<std::weak_ptr<ISystemClient>> m_Clients{};
 	// A handle-to-client-index map used to quickly access the client without searching for it

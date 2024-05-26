@@ -43,6 +43,9 @@ auto CPlainSystemClient::Open( const char* path, const char* mode ) -> FileHandl
 	AssertMsg( mode, "Was given a `NULL` open mode!" );
 	return reinterpret_cast<FileHandle_t>( fopen( path, mode ) );
 }
+auto CPlainSystemClient::Close( FileHandle_t file ) -> void {
+
+}
 auto CPlainSystemClient::Create( const char* name, dirmode_t perm, openmode_t mode ) -> FileHandle_t {
 	return nullptr;
 }

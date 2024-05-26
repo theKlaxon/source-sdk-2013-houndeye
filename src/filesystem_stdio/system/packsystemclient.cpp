@@ -4,7 +4,7 @@
 #include "packsystemclient.hpp"
 
 
-CPackSystemClient::CPackSystemClient( int id, const char* path, std::unique_ptr<vpkedit::PackFile> pack ) {
+CPackSystemClient::CPackSystemClient( int id, const char* path, std::unique_ptr<vpkedit::PackFile>&& pack ) {
 	this->m_iId = id;
 	this->m_szNativePath = path;
 	this->m_PackFile = std::move( pack );
@@ -41,6 +41,9 @@ auto CPackSystemClient::Walk( uint16_t nwname, const char* wname ) -> void {
 }
 auto CPackSystemClient::Open( const char* path, const char* mode ) -> FileHandle_t {
 	return nullptr;
+}
+auto CPackSystemClient::Close( FileHandle_t file ) -> void {
+
 }
 auto CPackSystemClient::Create( const char* name, dirmode_t perm, openmode_t mode ) -> FileHandle_t {
 	return nullptr;

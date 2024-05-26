@@ -79,12 +79,15 @@ public: // metadata
 	auto operator==( ISystemClient& other ) const -> bool { return this == &other || this->GetIdentifier() == other.GetIdentifier(); }
 	auto operator==( const ISystemClient& other ) const -> bool { return this == &other || this->GetIdentifier() == other.GetIdentifier(); }
 public: // fs interactions
-	virtual auto Flush ( FileHandle_t file ) -> bool = 0;
-	virtual auto Walk  ( uint16_t nwname, const char* wname ) -> void = 0;
+	// file ops
 	virtual auto Open  ( const char* path, const char* mode ) -> FileHandle_t = 0;
-	virtual auto Create( const char* name, dirmode_t perm, openmode_t mode ) -> FileHandle_t = 0;
 	virtual auto Read  ( FileHandle_t file, void* buffer, uint32_t count ) -> uint32_t = 0;
 	virtual auto Write ( FileHandle_t file, const void* buffer, uint32_t count ) -> uint32_t = 0;
+	virtual auto Flush ( FileHandle_t file ) -> bool = 0;
+	virtual auto Close ( FileHandle_t file ) -> void;
+	// generic ops
+	virtual auto Walk  ( uint16_t nwname, const char* wname ) -> void = 0;
+	virtual auto Create( const char* name, dirmode_t perm, openmode_t mode ) -> FileHandle_t = 0;
 	virtual auto Remove( FileHandle_t file ) -> void = 0;
 	virtual auto Stat  ( FileHandle_t file ) -> void = 0;
 };

@@ -8,7 +8,7 @@
 class CPackSystemClient : public ISystemClient {
 public:
 	// NOTE: This is PRIVATE
-	CPackSystemClient( int id, const char* path, std::unique_ptr<vpkedit::PackFile> pack );
+	CPackSystemClient( int id, const char* path, std::unique_ptr<vpkedit::PackFile>&& pack );
 	static auto Open( int id, const std::string& absolute, const char* path ) -> std::shared_ptr<ISystemClient>;
 	[[nodiscard]] auto GetNativePath() const -> const char* override;
 	[[nodiscard]] auto GetNativeAbsolutePath() const -> const char* override;
@@ -18,6 +18,7 @@ public: // FS interaction
 	auto Flush ( FileHandle_t file ) -> bool override;
 	auto Walk  ( uint16_t nwname, const char* wname ) -> void override;
 	auto Open  ( const char* path, const char* mode ) -> FileHandle_t override;
+	auto Close ( FileHandle_t file ) -> void override;
 	auto Create( const char* name, dirmode_t perm, openmode_t mode ) -> FileHandle_t override;
 	auto Read  ( FileHandle_t file, void* buffer, uint32_t count ) -> uint32_t override;
 	auto Write ( FileHandle_t file, void const* buffer, uint32_t count ) -> uint32_t override;
