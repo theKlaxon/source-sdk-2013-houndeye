@@ -205,7 +205,7 @@ bool Plat_FastVerifyHardwareKey();
 
 void* Plat_SimpleLog( const tchar* file, int line );
 
-#if IsPC()
+#if IsLinux()
 	PLATFORM_INTERFACE bool Plat_IsInDebugSession() {
 		static char buffer[32] { 0 };
 		std::ifstream file{ "/proc/self/status" };
@@ -220,9 +220,13 @@ void* Plat_SimpleLog( const tchar* file, int line );
 		return false;
 	}
 	PLATFORM_INTERFACE void Plat_DebugString( const char* );
-#else
-	inline bool Plat_IsInDebugSession( bool bForceRecheck = false ) { return false; }
-	#define Plat_DebugString( s ) ( (void) 0 )
+#elif IsWindows()
+	PLATFORM_INTERFACE bool Plat_IsInDebugSession() {
+		return IsDebuggerPresent();
+	}
+	PLATFORM_INTERFACE void Plat_DebugString( const char* pString ) {
+		OutputDebugStringW( pString );
+	}
 #endif
 
 bool Is64BitOS() {
