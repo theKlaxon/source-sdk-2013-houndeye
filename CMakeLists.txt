@@ -25,9 +25,8 @@ if ("${CMAKE_BUILD_TYPE}" STREQUAL "")
 	set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
 endif()
 
-# Modern VS versions default to C++14 anyway, so make it consistent
-# But in the future we may want so support C++20
-set(CMAKE_CXX_STANDARD 20)
+# We use C++ 23
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 # Setup rpath
