@@ -1,36 +1,34 @@
-# Source SDK 2013 - CMake
-This project ports the buildsystem from VPC to CMake.
+# Aurora Source
+A "branch" of the source engine, forked off SDK 2013's codebase.
 
-The layout of the CMake projects should be similar to that of VPC. Hopefully it should feel familiar even if you have no experience with CMake. The base scripts are in _cmake_scripts. Each project has its own corresponding .cmake file similar to VPC. 
+This project aim to recreate the missing pieces of the engine, with completely custom code, using leaks is completely banned, they only hurt and help nothing.
 
-Example: src/tier1/tier1.vpc -> src/tier1/tier1.cmake
+Planned features include:
+- Faster compilers
+- Scripting (ala vscript)
+- Mapbase compatability
+- x64 port
+- VTF 7.6 compatability
 
-The batch and shell scripts to generate projects now call CMake instead and place project files in a created "build" directory. If you're comfortable with CMake, you don't have to rely on these at all and can use your favorite IDE's CMake integration.
-
-If your folder structure for SDK2013 is different, you should only have to modify SRCDIR and GAMEDIR in the CMakeLists.txt file if you need to move things around.
 
 ## Compiler Support
-
-## General
-By default, this targets C++14 since modern VS defaults to C++14 anyway. 
+By default, this targets C++23, so any compliant compiler should work fine. 
 
 ### Windows
-VS2019 and VS2022 are known to build, but this is untested with older versions.
+VS2022 is known to build, but this is untested with older versions.
 
 ### Linux
-GCC 5 or greater should also work fine. This repo should build out of the box with the Steam Runtime Soldier container. Scout will require a bit of tinkering to update CMake and switch to GCC 5 or higher.
+GCC 14 or greater is (probably) needed, haven't tested with older versions.   
+Clang is not yet fully tested, so might compile or might not.   
+Zig is the same story as clang, as it is used under hood.
 
 ### macOS
 Support for macOS was removed.
 
 ## Credits
-
-I'd like to thank JJL772, OzxyBox, and those behind the Source-PlusPlus repo which includes Joshua Ashton, SCell555, and Gocnak.
-
-The modified particles.lib that allows modern VS to build came from Source-PlusPlus: https://github.com/Joshua-Ashton/Source-PlusPlus
-
-JJL772 has a repo which helped me with the ABI difference issues on newer GCC versions: https://github.com/JJL772/source-sdk-2013
-
-OzxyBox has a Source SDK repo which supports VS2022 which I referenced for help a few times. This CMake port is not NEARLY as extensive as the changes here: https://github.com/ozxybox/source-mp13-vs2022
-
-The compiler can now compile on linux thanks to the patches made by Sortie: https://github.com/sortie/source-sdk-2013/tree/for-valve-posix-port-vbsp-vvis-vrad-v2-part1
+- [Spirrwell](https://github.com/Spirrwell), for making the [cmake port](https://github.com/Spirrwell/source-sdk-2013-cmake) and general adaptations this codebase is based upon.
+- [JJL772](https://github.com/JJL772), for his [repo](https://github.com/JJL772/source-sdk-2013) which helped me with the ABI difference issues on newer GCC versions, and his [archives of the Source SDKs](https://github.com/Source-SDK-Archives).
+- [OzxyBox](https://github.com/ozxybox), for general help during development, for his work on porting the [SDK to VS2022](https://github.com/ozxybox/source-mp13-vs2022), and for all the [examples and PoCs](https://github.com/Source-SDK-Resources) he has done which helped a lot to recreate some of the systems in the engine.
+- [Joshua Ashton](https://github.com/Joshua-Ashton), for his work on [VPhysics-Jolt](https://github.com/Joshua-Ashton/VPhysics-Jolt)
+- The contributors of the [Source PlusPlus](https://github.com/Joshua-Ashton/Source-PlusPlus) project (above + [SCell555] and [Gocnak]), for their modified `particles.lib`, which allows modern VS to build.
+- [Sortie](https://github.com/sortie), for [the patches](https://github.com/sortie/source-sdk-2013/tree/for-valve-posix-port-vbsp-vvis-vrad-v2-part1) I've referenced to get the compilers to work on linux.
