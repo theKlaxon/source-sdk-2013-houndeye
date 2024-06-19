@@ -516,8 +516,8 @@ FIXME: Enable this when we no longer fear change =)
 // Force a function call site -not- to inlined. (useful for profiling)
 #define DONT_INLINE( a ) ( ( (int) ( a ) + 1 ) ? ( a ) : ( a ) )
 
-// Pass hints to the compiler to prevent it from generating unnessecary / stupid code
-// in certain situations.  Several compilers other than MSVC also have an equivilent
+// Pass hints to the compiler to prevent it from generating unnecessary / stupid code
+// in certain situations.  Several compilers other than MSVC also have an equivalent
 // construct.
 //
 // Essentially the 'Hint' is that the condition specified is assumed to be true at
