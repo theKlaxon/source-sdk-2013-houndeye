@@ -4,6 +4,7 @@
 #include "plainsystemclient.hpp"
 
 #include <cstdio>
+#include <fcntl.h>
 #include <filesystem>
 
 #include "dbg.h"
@@ -38,23 +39,38 @@ auto CPlainSystemClient::Flush( FileHandle_t file ) -> bool {
 auto CPlainSystemClient::Walk( uint16_t nwname, const char* wname ) -> void {
 
 }
-auto CPlainSystemClient::Open( const char* path, const char* mode ) -> FileHandle_t {
+auto CPlainSystemClient::Open( const char* path, openmode::type mode ) -> FileHandle_t {
 	AssertMsg( path, "Was given a `NULL` file path!" );
 	AssertMsg( mode, "Was given a `NULL` open mode!" );
-	return reinterpret_cast<FileHandle_t>( fopen( path, mode ) );
+
+	int32_t mode2{0};
+
+	if ( (mode & openmode::Read) != 0 )
+		mode2 |= O_RDONLY;
+	if ( (mode & openmode::Write) != 0 )
+		mode2 |= O_WRONLY;
+	if ( (mode & openmode::ReadWrite) != 0 )
+		mode2 |= O_RDWR;
+	if ( (mode & openmode::Trunc) != 0 )
+		mode2 |= O_TRUNC;
+	if ( (mode & openmode::Close) != 0 )
+		mode2 |= O_CLOEXEC;
+
+	return reinterpret_cast<FileHandle_t>( open( path, static_cast<int>( mode ) ) );
 }
 auto CPlainSystemClient::Close( FileHandle_t file ) -> void {
 
 }
-auto CPlainSystemClient::Create( const char* name, dirmode_t perm, openmode_t mode ) -> FileHandle_t {
+auto CPlainSystemClient::Create( const char* path, dirmode_t perm, openmode::type mode ) -> FileHandle_t {
 	return nullptr;
 }
-auto CPlainSystemClient::Read( FileHandle_t file, void* buffer, uint32_t count ) -> uint32_t {
+auto CPlainSystemClient::Read( FileHandle_t file, uint64_t offset, void* buffer, uint32_t count ) -> uint32_t {
 	AssertMsg( file, "Was given a `NULL` file handle!" );
 	AssertMsg( buffer, "Was given a `NULL` buffer ptr!" );
+	pread64( reinterpret_cast<intptr_t>( file ), buffer, count, offset );
 	return fread( buffer, 1, count, reinterpret_cast<FILE*>( file ) ) == 0;
 }
-auto CPlainSystemClient::Write( FileHandle_t file, void const* buffer, uint32_t count ) -> uint32_t {
+auto CPlainSystemClient::Write( FileHandle_t file, uint64_t offset, void const* buffer, uint32_t count ) -> uint32_t {
 	AssertMsg( file, "Was given a `NULL` file handle!" );
 	AssertMsg( buffer, "Was given a `NULL` buffer ptr!" );
 	return fwrite( buffer, 1, count, reinterpret_cast<FILE*>( file ) ) == 0;

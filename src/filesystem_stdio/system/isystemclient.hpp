@@ -8,8 +8,6 @@
 #include <functional>
 #include <memory>
 
-
-
 enum dirmode_t : uint32_t {
 	// High byte is the same as qidtype_t
 	X9P_DM_DIR    = 0x80000000,	// Directory
@@ -61,14 +59,16 @@ struct stat_t {
 };
 
 
-enum class openmode_t : uint8_t {
-	Read,
-	Write,
-	ReadWrite,
-	Exec,
-	Trunc = 0x10,
-	Close = 0x40,
-};
+namespace openmode {
+	enum type : uint8_t {
+		Read,
+		Write,
+		ReadWrite,
+		Exec,
+		Trunc = 0x10,
+		Close = 0x40,
+	};
+}
 
 abstract_class ISystemClient {
 public: // metadata
@@ -80,14 +80,14 @@ public: // metadata
 	auto operator==( const ISystemClient& other ) const -> bool { return this == &other || this->GetIdentifier() == other.GetIdentifier(); }
 public: // fs interactions
 	// file ops
-	virtual auto Open  ( const char* path, const char* mode ) -> FileHandle_t = 0;
-	virtual auto Read  ( FileHandle_t file, void* buffer, uint32_t count ) -> uint32_t = 0;
-	virtual auto Write ( FileHandle_t file, const void* buffer, uint32_t count ) -> uint32_t = 0;
+	virtual auto Open  ( const char* path, openmode::type mode ) -> FileHandle_t = 0;
+	virtual auto Read  ( FileHandle_t file, uint64_t offset, void* buffer, uint32_t count ) -> uint32_t = 0;
+	virtual auto Write ( FileHandle_t file, uint64_t offset, const void* buffer, uint32_t count ) -> uint32_t = 0;
 	virtual auto Flush ( FileHandle_t file ) -> bool = 0;
-	virtual auto Close ( FileHandle_t file ) -> void;
+	virtual auto Close ( FileHandle_t file ) -> void = 0;
 	// generic ops
 	virtual auto Walk  ( uint16_t nwname, const char* wname ) -> void = 0;
-	virtual auto Create( const char* name, dirmode_t perm, openmode_t mode ) -> FileHandle_t = 0;
+	virtual auto Create( const char* path, dirmode_t perm, openmode::type mode ) -> FileHandle_t = 0;
 	virtual auto Remove( FileHandle_t file ) -> void = 0;
 	virtual auto Stat  ( FileHandle_t file ) -> void = 0;
 };
