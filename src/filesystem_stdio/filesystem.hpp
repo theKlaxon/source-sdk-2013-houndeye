@@ -10,6 +10,7 @@
 #include <optional>
 #include <unordered_map>
 
+
 #undef AsyncRead
 class CFileSystemStdio : public IFileSystem {
 public: // AppSystem
@@ -404,13 +405,11 @@ public: // IFileSystem
 	// Prefer using the GetCaseCorrectFullPath template wrapper to calling this directly
 	bool GetCaseCorrectFullPath_Ptr( const char* pFullPath, OUT_Z_CAP( maxLenInChars ) char* pDest, int maxLenInChars ) override;
 private:
-	[[gnu::always_inline, clang::always_inline]]
-	auto findClientHelper( FileHandle_t file ) -> std::optional<std::weak_ptr<ISystemClient>>;
-private:
 	struct SearchPath {
 		SearchPath() = default;
-		SearchPath( const SearchPath& other ) {
-			this->m_Clients = other.m_Clients; // copy..?
+		SearchPath( const SearchPath& other ) { // copy-constructor
+			this->m_Clients = other.m_Clients;
+			this->m_ClientIDs = other.m_ClientIDs;
 			this->m_bRequestOnly = other.m_bRequestOnly;
 		}
 
@@ -418,18 +417,18 @@ private:
 			for ( auto& system : this->m_Clients )
 				system->Shutdown();
 			this->m_Clients.Purge();
+			this->m_ClientIDs.Purge();
 		}
 
 		CUtlVector<std::shared_ptr<ISystemClient>> m_Clients{};
+		CUtlVector<int> m_ClientIDs{};
 		bool m_bRequestOnly{ false };
 	};
 
 	// The named search paths
 	std::unordered_map<const char*, SearchPath> m_SearchPaths{};
-	// All open clients, used for fast-access during common FS operations (read, write, etc.)
-	CUtlVector<std::weak_ptr<ISystemClient>> m_Clients{};
-	// A handle-to-client-index map used to quickly access the client without searching for it
-	std::unordered_map<FileHandle_t, int> m_HandleClientsMap;
+	// All open descriptors
+	CUtlVector<FileDescriptor*> m_Descriptors{ 10 };
 	int m_iLastId{ 0 };
 	bool m_bInitialized{ false };
 };

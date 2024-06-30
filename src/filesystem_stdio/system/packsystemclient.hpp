@@ -17,9 +17,9 @@ public:
 public: // FS interaction
 	auto Flush ( FileHandle_t file ) -> bool override;
 	auto Walk  ( uint16_t nwname, const char* wname ) -> void override;
-	auto Open  ( const char* path, openmode::type mode ) -> FileHandle_t override;
+	auto Open  ( const char* path, openmode::Type mode ) -> FileHandle_t override;
 	auto Close ( FileHandle_t file ) -> void override;
-	auto Create( const char* path, dirmode_t perm, openmode::type mode ) -> FileHandle_t override;
+	auto Create( const char* path, dirmode_t perm, openmode::Type mode ) -> FileHandle_t override;
 	auto Read  ( FileHandle_t file, uint64_t offset, void* buffer, uint32_t count ) -> uint32_t override;
 	auto Write ( FileHandle_t file, uint64_t offset, void const* buffer, uint32_t count ) -> uint32_t override;
 	auto Remove( FileHandle_t file ) -> void override;

@@ -4,6 +4,7 @@ set( FILESYSTEM_STDIO_DIR ${CMAKE_CURRENT_LIST_DIR} )
 set( FILESYSTEM_STDIO_SOURCE_FILES
 	"${FILESYSTEM_STDIO_DIR}/basefilesystem.cpp"
 	"${FILESYSTEM_STDIO_DIR}/filesystem.cpp"
+	"${FILESYSTEM_STDIO_DIR}/system/isystemclient.cpp"
 	"${FILESYSTEM_STDIO_DIR}/system/packsystemclient.cpp"
 	"${FILESYSTEM_STDIO_DIR}/system/plainsystemclient.cpp"
 

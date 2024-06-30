@@ -2,11 +2,15 @@
 // Created by ENDERZOMBI102 on 23/02/2024.
 //
 #pragma once
-#include "tier0/platform.h"
 #include "filesystem.h"
+#include "mempool.h"
+#include "tier0/platform.h"
 
 #include <functional>
 #include <memory>
+
+class ISystemClient;
+
 
 enum dirmode_t : uint32_t {
 	// High byte is the same as qidtype_t
@@ -60,34 +64,67 @@ struct stat_t {
 
 
 namespace openmode {
-	enum type : uint8_t {
+	enum Type : uint8_t {
 		Read,
 		Write,
 		ReadWrite,
 		Exec,
 		Trunc = 0x10,
 		Close = 0x40,
+
+		INVALID = 0xFF
 	};
 }
 
+/**
+ * Internal representation of an open file.
+ * Uses a memory arena to avoid sparse allocations.
+ */
+struct FileDescriptor {
+	std::weak_ptr<ISystemClient> m_System;
+	uintptr_t m_Handle;
+	size_t m_Offset{0};
+
+	/**
+	 * Allocates a new instance of a descriptor.
+	 * @return
+	 */
+	static auto Make() -> FileDescriptor*;
+	/**
+	 * Frees an existing descriptor.
+	 * @return
+	 */
+	static auto Free( FileDescriptor* ) -> void;
+	/**
+	 * Cleans the arena, removing all descriptors.
+	 * @return
+	 */
+	static auto CleanupArena() -> void;
+};
+using ClientFileHandle = const FileDescriptor*;
+
+
 abstract_class ISystemClient {
 public: // metadata
-	[[nodiscard]] virtual auto GetNativePath() const -> const char* = 0;
-	[[nodiscard]] virtual auto GetNativeAbsolutePath() const -> const char* = 0;
-	[[nodiscard]] virtual auto GetIdentifier() const -> int = 0;
+	[[nodiscard]]
+	virtual auto GetNativePath() const -> const char* = 0;
+	[[nodiscard]]
+	virtual auto GetNativeAbsolutePath() const -> const char* = 0;
+	[[nodiscard]]
+	virtual auto GetIdentifier() const -> int = 0;
 	virtual auto Shutdown() -> void = 0;
 	auto operator==( ISystemClient& other ) const -> bool { return this == &other || this->GetIdentifier() == other.GetIdentifier(); }
 	auto operator==( const ISystemClient& other ) const -> bool { return this == &other || this->GetIdentifier() == other.GetIdentifier(); }
 public: // fs interactions
 	// file ops
-	virtual auto Open  ( const char* path, openmode::type mode ) -> FileHandle_t = 0;
-	virtual auto Read  ( FileHandle_t file, uint64_t offset, void* buffer, uint32_t count ) -> uint32_t = 0;
-	virtual auto Write ( FileHandle_t file, uint64_t offset, const void* buffer, uint32_t count ) -> uint32_t = 0;
-	virtual auto Flush ( FileHandle_t file ) -> bool = 0;
-	virtual auto Close ( FileHandle_t file ) -> void = 0;
+	virtual auto Open  ( const char* path, openmode::Type mode ) -> FileDescriptor* = 0;
+	virtual auto Read  ( const FileDescriptor* desc, uint64_t offset, void* buffer, uint32_t count ) -> uint32_t = 0;
+	virtual auto Write ( const FileDescriptor* desc, uint64_t offset, const void* buffer, uint32_t count ) -> uint32_t = 0;
+	virtual auto Flush ( const FileDescriptor* desc ) -> bool = 0;
+	virtual auto Close ( const FileDescriptor* desc ) -> void = 0;
 	// generic ops
 	virtual auto Walk  ( uint16_t nwname, const char* wname ) -> void = 0;
-	virtual auto Create( const char* path, dirmode_t perm, openmode::type mode ) -> FileHandle_t = 0;
-	virtual auto Remove( FileHandle_t file ) -> void = 0;
-	virtual auto Stat  ( FileHandle_t file ) -> void = 0;
+	virtual auto Create( const char* path, dirmode_t perm, openmode::Type mode ) -> FileDescriptor* = 0;
+	virtual auto Remove( const FileDescriptor* desc ) -> void = 0;
+	virtual auto Stat  ( const FileDescriptor* desc ) -> void = 0;
 };

@@ -39,14 +39,14 @@ auto CPackSystemClient::Flush( FileHandle_t file ) -> bool {
 }
 auto CPackSystemClient::Walk( uint16_t nwname, const char* wname ) -> void {
 }
-auto CPackSystemClient::Open( const char* path, openmode::type mode ) -> FileHandle_t {
+auto CPackSystemClient::Open( const char* path, openmode::Type mode ) -> FileHandle_t {
 	{ this->m_PackFile->findEntry( path,  ) };
 	return nullptr;
 }
 auto CPackSystemClient::Close( FileHandle_t file ) -> void {
 
 }
-auto CPackSystemClient::Create( const char* path, dirmode_t perm, openmode::type mode ) -> FileHandle_t {
+auto CPackSystemClient::Create( const char* path, dirmode_t perm, openmode::Type mode ) -> FileHandle_t {
 	return nullptr;
 }
 auto CPackSystemClient::Read( FileHandle_t file, uint64_t offset, void* buffer, uint32_t count ) -> uint32_t {
