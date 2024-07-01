@@ -4,12 +4,12 @@
 //			by Cargill in C++ Report 1994.  Generates a 16-bit result.
 //
 //=============================================================================
-
-#include <stdlib.h>
+#include <cstdlib>
 #include "tier0/basetypes.h"
 #include "tier0/platform.h"
 #include "generichash.h"
-#include <ctype.h>
+#include <cctype>
+#include <utility>
 #include "tier0/dbg.h"
 
 // NOTE: This has to be the last file included!
@@ -22,43 +22,35 @@
 //
 //-----------------------------------------------------------------------------
 /*
-void MakeRandomValues()
-{
-	int i, j, r;
-	unsigned  t;
+void MakeRandomValues() {
 	srand( 0xdeadbeef );
 
-	for ( i = 0; i < 256; i++ )
-	{
-		g_nRandomValues[i] = (unsigned )i;
+	for ( int32 i = 0; i < 256; i += 1 ) {
+		g_nRandomValues[i] = (uint32 )i;
 	}
 
-	for (j = 0; j < 8; j++)
-	{
-		for (i = 0; i < 256; i++)
-		{
-			r = rand() & 0xff;
-			t = g_nRandomValues[i];
+	for ( int32 j = 0; j < 8; j += 1 ) {
+		for ( i = 0; i < 256; i += 1 ) {
+			int32 r = rand() & 0xff;
+			uint32 t = g_nRandomValues[i];
 			g_nRandomValues[i] = g_nRandomValues[r];
 			g_nRandomValues[r] = t;
 		}
 	}
 
-	printf("static unsigned g_nRandomValues[256] =\n{\n");
+	printf( "static uint32 g_nRandomValues[256] {\n" );
 
-	for (i = 0; i < 256; i += 16)
-	{
-		printf("\t");
-		for (j = 0; j < 16; j++)
-			printf(" %3d,", g_nRandomValues[i+j]);
-		printf("\n");
+	for ( int32 i = 0; i < 256; i += 16 ) {
+		printf( "\t" );
+		for ( int32 j = 0; j < 16; j += 1 )
+			printf( " %3d,", g_nRandomValues[i+j] );
+		printf( "\n" );
 	}
-	printf("};\n");
+	printf( "};\n" );
 }
 */
 
-static unsigned g_nRandomValues[256] =
-{
+static uint32 g_nRandomValues[256] {
 	238,	164,	191,	168,	115,	 16,	142,	 11,	213,	214,	 57,	151,	248,	252,	 26,	198,
 	 13,	105,	102,	 25,	 43,	 42,	227,	107,	210,	251,	 86,	 66,	 83,	193,	126,	108,
 	131,	  3,	 64,	186,	192,	 81,	 37,	158,	 39,	244,	 14,	254,	 75,	 30,	  2,	 88,
@@ -78,245 +70,217 @@ static unsigned g_nRandomValues[256] =
 };
 
 //-----------------------------------------------------------------------------
-// String 
+// String
 //-----------------------------------------------------------------------------
-unsigned FASTCALL HashString( const char *pszKey )
-{
-	const uint8 *k =   (const uint8 *)pszKey;
-	unsigned 	even = 0,
-				odd  = 0,
-				n;
+uint32 FASTCALL HashString( const char* pszKey ) {
+	const auto* k = reinterpret_cast<const uint8*>( pszKey );
+	uint32 even = 0, odd = 0, n;
 
-	while ((n = *k++) != 0)
-	{
-		even = g_nRandomValues[odd ^ n];
-		if ((n = *k++) != 0)
-			odd = g_nRandomValues[even ^ n];
+	while ( ( n = *k++ ) != 0 ) {
+		even = g_nRandomValues[ odd ^ n ];
+		if ( ( n = *k++ ) != 0 )
+			odd = g_nRandomValues[ even ^ n ];
 		else
 			break;
 	}
 
-	return (even << 8) | odd ;
+	return ( even << 8 ) | odd;
 }
 
 
 //-----------------------------------------------------------------------------
-// Case-insensitive string 
+// Case-insensitive string
 //-----------------------------------------------------------------------------
-unsigned FASTCALL HashStringCaseless( const char *pszKey )
-{
-	const uint8 *k = (const uint8 *) pszKey;
-	unsigned	even = 0,
-				odd  = 0,
-				n;
+uint32 FASTCALL HashStringCaseless( const char* pszKey ) {
+	const auto* k = reinterpret_cast<const uint8*>( pszKey );
+	uint32 even = 0, odd = 0, n;
 
-	while ((n = toupper(*k++)) != 0)
-	{
-		even = g_nRandomValues[odd ^ n];
-		if ((n = toupper(*k++)) != 0)
-			odd = g_nRandomValues[even ^ n];
+	while ( ( n = toupper( *k++ ) ) != 0 ) {
+		even = g_nRandomValues[ odd ^ n ];
+		if ( ( n = toupper( *k++ ) ) != 0 )
+			odd = g_nRandomValues[ even ^ n ];
 		else
 			break;
 	}
 
-	return (even << 8) | odd;
+	return ( even << 8 ) | odd;
 }
 
 //-----------------------------------------------------------------------------
-// 32 bit conventional case-insensitive string 
+// 32 bit conventional case-insensitive string
 //-----------------------------------------------------------------------------
-unsigned FASTCALL HashStringCaselessConventional( const char *pszKey )
-{
-	unsigned hash = 0xAAAAAAAA; // Alternating 1's and 0's to maximize the effect of the later multiply and add
+uint32 FASTCALL HashStringCaselessConventional( const char* pszKey ) {
+	uint32 hash = 0xAAAAAAAA;// Alternating 1's and 0's to maximize the effect of the later multiply and add
 
-	for( ; *pszKey ; pszKey++ )
-	{
-		hash = ( ( hash << 5 ) + hash ) + (uint8)tolower(*pszKey);
+	for ( ; *pszKey; pszKey++ ) {
+		hash = ( ( hash << 5 ) + hash ) + (uint8) tolower( *pszKey );
 	}
 
 	return hash;
 }
 
 //-----------------------------------------------------------------------------
-// int hash
+// int32 hash
 //-----------------------------------------------------------------------------
-unsigned FASTCALL HashInt( const int n )
-{
-	unsigned		even, odd;
-	even  = g_nRandomValues[n & 0xff];
-	odd   = g_nRandomValues[((n >> 8) & 0xff)];
+uint32 FASTCALL HashInt( const int32 n ) {
+	uint32 even, odd;
+	even = g_nRandomValues[ n & 0xff ];
+	odd = g_nRandomValues[ ( ( n >> 8 ) & 0xff ) ];
 
-	even  = g_nRandomValues[odd ^ (n >> 24)];
-	odd   = g_nRandomValues[even ^ ((n >> 16) & 0xff)];
-	even  = g_nRandomValues[odd ^ ((n >> 8) &  0xff)];
-	odd   = g_nRandomValues[even  ^ (n & 0xff)];
+	even = g_nRandomValues[ odd ^ ( n >> 24 ) ];
+	odd = g_nRandomValues[ even ^ ( ( n >> 16 ) & 0xff ) ];
+	even = g_nRandomValues[ odd ^ ( ( n >> 8 ) & 0xff ) ];
+	odd = g_nRandomValues[ even ^ ( n & 0xff ) ];
 
-	return (even << 8) | odd;
+	return ( even << 8 ) | odd;
 }
 
 //-----------------------------------------------------------------------------
 // 4-byte hash
 //-----------------------------------------------------------------------------
-unsigned FASTCALL Hash4( const void *pKey )
-{
-	const uint32 *	p = (const uint32 *) pKey;
-	unsigned		even,
-					odd,
-					n;
-	n     = *p;
-	even  = g_nRandomValues[n & 0xff];
-	odd   = g_nRandomValues[((n >> 8) & 0xff)];
+uint32 FASTCALL Hash4( const void* pKey ) {
+	const auto* p = reinterpret_cast<const uint32*>( pKey );
+	uint32 even, odd, n;
+	n = *p;
+	even = g_nRandomValues[ n & 0xff ];
+	odd = g_nRandomValues[ ( ( n >> 8 ) & 0xff ) ];
 
-	even  = g_nRandomValues[odd ^ (n >> 24)];
-	odd   = g_nRandomValues[even ^ ((n >> 16) & 0xff)];
-	even  = g_nRandomValues[odd ^ ((n >> 8) &  0xff)];
-	odd   = g_nRandomValues[even  ^ (n & 0xff)];
+	even = g_nRandomValues[ odd ^ ( n >> 24 ) ];
+	odd = g_nRandomValues[ even ^ ( ( n >> 16 ) & 0xff ) ];
+	even = g_nRandomValues[ odd ^ ( ( n >> 8 ) & 0xff ) ];
+	odd = g_nRandomValues[ even ^ ( n & 0xff ) ];
 
-	return (even << 8) | odd;
+	return ( even << 8 ) | odd;
 }
 
 
 //-----------------------------------------------------------------------------
 // 8-byte hash
 //-----------------------------------------------------------------------------
-unsigned FASTCALL Hash8( const void *pKey )
-{
-	const uint32 *	p = (const uint32 *) pKey;
-	unsigned		even,
-					odd,
-					n;
-	n     = *p;
-	even  = g_nRandomValues[n & 0xff];
-	odd   = g_nRandomValues[((n >> 8) & 0xff)];
+uint32 FASTCALL Hash8( const void* pKey ) {
+	const auto* p = reinterpret_cast<const uint32*>( pKey );
+	uint32 even, odd, n;
+	n = *p;
+	even = g_nRandomValues[ n & 0xff ];
+	odd = g_nRandomValues[ ( ( n >> 8 ) & 0xff ) ];
 
-	even  = g_nRandomValues[odd ^ (n >> 24)];
-	odd   = g_nRandomValues[even ^ ((n >> 16) & 0xff)];
-	even  = g_nRandomValues[odd ^ ((n >> 8) &  0xff)];
-	odd   = g_nRandomValues[even  ^ (n & 0xff)];
+	even = g_nRandomValues[ odd ^ ( n >> 24 ) ];
+	odd = g_nRandomValues[ even ^ ( ( n >> 16 ) & 0xff ) ];
+	even = g_nRandomValues[ odd ^ ( ( n >> 8 ) & 0xff ) ];
+	odd = g_nRandomValues[ even ^ ( n & 0xff ) ];
 
-	n     = *(p+1);
-	even  = g_nRandomValues[odd ^ (n >> 24)];
-	odd   = g_nRandomValues[even  ^ ((n >> 16) & 0xff)];
-	even  = g_nRandomValues[odd ^ ((n >> 8) &  0xff)];
-	odd   = g_nRandomValues[even  ^ (n & 0xff)];
+	n = *( p + 1 );
+	even = g_nRandomValues[ odd ^ ( n >> 24 ) ];
+	odd = g_nRandomValues[ even ^ ( ( n >> 16 ) & 0xff ) ];
+	even = g_nRandomValues[ odd ^ ( ( n >> 8 ) & 0xff ) ];
+	odd = g_nRandomValues[ even ^ ( n & 0xff ) ];
 
-	return (even << 8) | odd;
+	return ( even << 8 ) | odd;
 }
 
 
 //-----------------------------------------------------------------------------
 // 12-byte hash
 //-----------------------------------------------------------------------------
-unsigned FASTCALL Hash12( const void *pKey )
-{
-	const uint32 *	p = (const uint32 *) pKey;
-	unsigned		even,
-					odd,
-					n;
-	n     = *p;
-	even  = g_nRandomValues[n & 0xff];
-	odd   = g_nRandomValues[((n >> 8) & 0xff)];
+uint32 FASTCALL Hash12( const void* pKey ) {
+	const auto* p = reinterpret_cast<const uint32*>( pKey );
+	uint32 even, odd, n;
+	n = *p;
+	even = g_nRandomValues[ n & 0xff ];
+	odd = g_nRandomValues[ ( ( n >> 8 ) & 0xff ) ];
 
-	even  = g_nRandomValues[odd ^ (n >> 24)];
-	odd   = g_nRandomValues[even ^ ((n >> 16) & 0xff)];
-	even  = g_nRandomValues[odd ^ ((n >> 8) &  0xff)];
-	odd   = g_nRandomValues[even  ^ (n & 0xff)];
+	even = g_nRandomValues[ odd ^ ( n >> 24 ) ];
+	odd = g_nRandomValues[ even ^ ( ( n >> 16 ) & 0xff ) ];
+	even = g_nRandomValues[ odd ^ ( ( n >> 8 ) & 0xff ) ];
+	odd = g_nRandomValues[ even ^ ( n & 0xff ) ];
 
-	n     = *(p+1);
-	even  = g_nRandomValues[odd ^ (n >> 24)];
-	odd   = g_nRandomValues[even  ^ ((n >> 16) & 0xff)];
-	even  = g_nRandomValues[odd ^ ((n >> 8) &  0xff)];
-	odd   = g_nRandomValues[even  ^ (n & 0xff)];
+	n = *( p + 1 );
+	even = g_nRandomValues[ odd ^ ( n >> 24 ) ];
+	odd = g_nRandomValues[ even ^ ( ( n >> 16 ) & 0xff ) ];
+	even = g_nRandomValues[ odd ^ ( ( n >> 8 ) & 0xff ) ];
+	odd = g_nRandomValues[ even ^ ( n & 0xff ) ];
 
-	n     = *(p+2);
-	even  = g_nRandomValues[odd ^ (n >> 24)];
-	odd   = g_nRandomValues[even  ^ ((n >> 16) & 0xff)];
-	even  = g_nRandomValues[odd ^ ((n >> 8) &  0xff)];
-	odd   = g_nRandomValues[even  ^ (n & 0xff)];
+	n = *( p + 2 );
+	even = g_nRandomValues[ odd ^ ( n >> 24 ) ];
+	odd = g_nRandomValues[ even ^ ( ( n >> 16 ) & 0xff ) ];
+	even = g_nRandomValues[ odd ^ ( ( n >> 8 ) & 0xff ) ];
+	odd = g_nRandomValues[ even ^ ( n & 0xff ) ];
 
-	return (even << 8) | odd;
+	return ( even << 8 ) | odd;
 }
 
 
 //-----------------------------------------------------------------------------
 // 16-byte hash
 //-----------------------------------------------------------------------------
-unsigned FASTCALL Hash16( const void *pKey )
-{
-	const uint32 *	p = (const uint32 *) pKey;
-	unsigned		even,
-					odd,
-					n;
-	n     = *p;
-	even  = g_nRandomValues[n & 0xff];
-	odd   = g_nRandomValues[((n >> 8) & 0xff)];
+uint32 FASTCALL Hash16( const void* pKey ) {
+	const auto* p = reinterpret_cast<const uint32*>( pKey );
+	uint32 even, odd, n;
+	n = *p;
+	even = g_nRandomValues[ n & 0xff ];
+	odd = g_nRandomValues[ ( ( n >> 8 ) & 0xff ) ];
 
-	even  = g_nRandomValues[odd ^ (n >> 24)];
-	odd   = g_nRandomValues[even ^ ((n >> 16) & 0xff)];
-	even  = g_nRandomValues[odd ^ ((n >> 8) &  0xff)];
-	odd   = g_nRandomValues[even  ^ (n & 0xff)];
+	even = g_nRandomValues[ odd ^ ( n >> 24 ) ];
+	odd = g_nRandomValues[ even ^ ( ( n >> 16 ) & 0xff ) ];
+	even = g_nRandomValues[ odd ^ ( ( n >> 8 ) & 0xff ) ];
+	odd = g_nRandomValues[ even ^ ( n & 0xff ) ];
 
-	n     = *(p+1);
-	even  = g_nRandomValues[odd ^ (n >> 24)];
-	odd   = g_nRandomValues[even  ^ ((n >> 16) & 0xff)];
-	even  = g_nRandomValues[odd ^ ((n >> 8) &  0xff)];
-	odd   = g_nRandomValues[even  ^ (n & 0xff)];
+	n = *( p + 1 );
+	even = g_nRandomValues[ odd ^ ( n >> 24 ) ];
+	odd = g_nRandomValues[ even ^ ( ( n >> 16 ) & 0xff ) ];
+	even = g_nRandomValues[ odd ^ ( ( n >> 8 ) & 0xff ) ];
+	odd = g_nRandomValues[ even ^ ( n & 0xff ) ];
 
-	n     = *(p+2);
-	even  = g_nRandomValues[odd ^ (n >> 24)];
-	odd   = g_nRandomValues[even  ^ ((n >> 16) & 0xff)];
-	even  = g_nRandomValues[odd ^ ((n >> 8) &  0xff)];
-	odd   = g_nRandomValues[even  ^ (n & 0xff)];
+	n = *( p + 2 );
+	even = g_nRandomValues[ odd ^ ( n >> 24 ) ];
+	odd = g_nRandomValues[ even ^ ( ( n >> 16 ) & 0xff ) ];
+	even = g_nRandomValues[ odd ^ ( ( n >> 8 ) & 0xff ) ];
+	odd = g_nRandomValues[ even ^ ( n & 0xff ) ];
 
-	n     = *(p+3);
-	even  = g_nRandomValues[odd ^ (n >> 24)];
-	odd   = g_nRandomValues[even  ^ ((n >> 16) & 0xff)];
-	even  = g_nRandomValues[odd ^ ((n >> 8) &  0xff)];
-	odd   = g_nRandomValues[even  ^ (n & 0xff)];
+	n = *( p + 3 );
+	even = g_nRandomValues[ odd ^ ( n >> 24 ) ];
+	odd = g_nRandomValues[ even ^ ( ( n >> 16 ) & 0xff ) ];
+	even = g_nRandomValues[ odd ^ ( ( n >> 8 ) & 0xff ) ];
+	odd = g_nRandomValues[ even ^ ( n & 0xff ) ];
 
-	return (even << 8) | odd;
+	return ( even << 8 ) | odd;
 }
 
 
 //-----------------------------------------------------------------------------
 // Arbitrary fixed length hash
 //-----------------------------------------------------------------------------
-unsigned FASTCALL HashBlock( const void *pKey, unsigned size )
-{
-	const uint8 *	k    = (const uint8 *) pKey;
-	unsigned 		even = 0,
-					odd  = 0,
-					n;
+uint32 FASTCALL HashBlock( const void* pKey, uint32 size ) {
+	const auto* k = reinterpret_cast<const uint8*>( pKey );
+	uint32 even = 0,
+		   odd = 0,
+		   n;
 
-	while (size)
-	{
+	while ( size ) {
 		--size;
-		n    = *k++;
-		even = g_nRandomValues[odd ^ n];
-		if (size)
-		{
+		n = *k++;
+		even = g_nRandomValues[ odd ^ n ];
+		if ( size ) {
 			--size;
-			n   = *k++;
-			odd = g_nRandomValues[even ^ n];
-		}
-		else
+			n = *k++;
+			odd = g_nRandomValues[ even ^ n ];
+		} else
 			break;
 	}
 
-	return (even << 8) | odd;
+	return ( even << 8 ) | odd;
 }
 
 
 //-----------------------------------------------------------------------------
 // Murmur hash
 //-----------------------------------------------------------------------------
-uint32 MurmurHash2( const void * key, int len, uint32 seed )
-{
+uint32 MurmurHash2( const void* key, int32 len, uint32 seed ) {
 	// 'm' and 'r' are mixing constants generated offline.
 	// They're not really 'magic', they just happen to work well.
 
 	const uint32 m = 0x5bd1e995;
-	const int r = 24;
+	const int32 r = 24;
 
 	// Initialize the hash to a 'random' value
 
@@ -324,17 +288,16 @@ uint32 MurmurHash2( const void * key, int len, uint32 seed )
 
 	// Mix 4 bytes at a time into the hash
 
-	const unsigned char * data = (const unsigned char *)key;
+	const auto* data = reinterpret_cast<const uint8*>( key );
 
-	while(len >= 4)
-	{
-		uint32 k = LittleDWord( *(uint32 *)data );
+	while ( len >= 4 ) {
+		uint32 k = LittleDWord( *(uint32*) data );
 
-		k *= m; 
-		k ^= k >> r; 
-		k *= m; 
+		k *= m;
+		k ^= k >> r;
+		k *= m;
 
-		h *= m; 
+		h *= m;
 		h ^= k;
 
 		data += 4;
@@ -342,13 +305,14 @@ uint32 MurmurHash2( const void * key, int len, uint32 seed )
 	}
 
 	// Handle the last few bytes of the input array
-
-	switch(len)
-	{
-	case 3: h ^= data[2] << 16;
-	case 2: h ^= data[1] << 8;
-	case 1: h ^= data[0];
-		h *= m;
+	switch ( len ) { // NOLINT(*-multiway-paths-covered)
+		case 3:
+			h ^= data[ 2 ] << 16;
+		case 2:
+			h ^= data[ 1 ] << 8;
+		case 1:
+			h ^= data[ 0 ];
+			h *= m;
 	};
 
 	// Do a few final mixes of the hash to ensure the last few
@@ -361,29 +325,26 @@ uint32 MurmurHash2( const void * key, int len, uint32 seed )
 	return h;
 }
 
-#define TOLOWERU( c ) ( ( uint32 ) ( ( ( c >= 'A' ) && ( c <= 'Z' ) )? c + 32 : c ) )
-uint32 MurmurHash2LowerCase( char const *pString, uint32 nSeed )
-{
-	int nLen = ( int )strlen( pString );
-	char *p = ( char * ) stackalloc( nLen + 1 );
-	for( int i = 0; i < nLen ; i++ )
-	{
-		p[i] = TOLOWERU( pString[i] );
+#define TOLOWERU( c ) ( (uint32) ( ( ( c >= 'A' ) && ( c <= 'Z' ) ) ? c + 32 : c ) )
+uint32 MurmurHash2LowerCase( char const* pString, uint32 nSeed ) {
+	auto nLen = static_cast<int32>( strlen( pString ) );
+	char* p = (char*) stackalloc( nLen + 1 );
+	for ( int32 i = 0; i < nLen; i++ ) {
+		p[ i ] = TOLOWERU( pString[ i ] );
 	}
 	return MurmurHash2( p, nLen, nSeed );
 }
-
+#undef TOLOWERU
 
 //-----------------------------------------------------------------------------
 // Murmur hash, 64 bit- endian neutral
 //-----------------------------------------------------------------------------
-uint64 MurmurHash64( const void * key, int len, uint32 seed )
-{
+uint64 MurmurHash64( const void* key, int32 len, uint32 seed ) {
 	// 'm' and 'r' are mixing constants generated offline.
 	// They're not really 'magic', they just happen to work well.
 
 	const uint32 m = 0x5bd1e995;
-	const int r = 24;
+	const int32 r = 24;
 
 	// Initialize the hash to a 'random' value
 
@@ -392,46 +353,58 @@ uint64 MurmurHash64( const void * key, int len, uint32 seed )
 
 	// Mix 4 bytes at a time into the hash
 
-	const uint32 * data = (const uint32 *)key;
-	while ( len >= 8 )
-	{
+	const auto* data = reinterpret_cast<const uint32*>( key );
+	while ( len >= 8 ) {
 		uint32 k1 = LittleDWord( *data++ );
-		k1 *= m; k1 ^= k1 >> r; k1 *= m;
-		h1 *= m; h1 ^= k1;
+		k1 *= m;
+		k1 ^= k1 >> r;
+		k1 *= m;
+		h1 *= m;
+		h1 ^= k1;
 		len -= 4;
 
 		uint32 k2 = LittleDWord( *data++ );
-		k2 *= m; k2 ^= k2 >> r; k2 *= m;
-		h2 *= m; h2 ^= k2;
+		k2 *= m;
+		k2 ^= k2 >> r;
+		k2 *= m;
+		h2 *= m;
+		h2 ^= k2;
 		len -= 4;
 	}
 
-	if(len >= 4)
-	{
+	if ( len >= 4 ) {
 		uint32 k1 = LittleDWord( *data++ );
-		k1 *= m; k1 ^= k1 >> r; k1 *= m;
-		h1 *= m; h1 ^= k1;
+		k1 *= m;
+		k1 ^= k1 >> r;
+		k1 *= m;
+		h1 *= m;
+		h1 ^= k1;
 		len -= 4;
 	}
 
 	// Handle the last few bytes of the input array
-	switch(len)
-	{
-	case 3: h2 ^= ((uint8*)data)[2] << 16;
-	case 2: h2 ^= ((uint8*)data)[1] << 8;
-	case 1: h2 ^= ((uint8*)data)[0];
+	switch ( len ) { // NOLINT(*-multiway-paths-covered)
+		case 3:
+			h2 ^= ( (uint8*) data )[ 2 ] << 16;
+		case 2:
+			h2 ^= ( (uint8*) data )[ 1 ] << 8;
+		case 1:
+			h2 ^= ( (uint8*) data )[ 0 ];
 			h2 *= m;
 	};
 
-	h1 ^= h2 >> 18; h1 *= m;
-	h2 ^= h1 >> 22; h2 *= m;
-	h1 ^= h2 >> 17; h1 *= m;
-	h2 ^= h1 >> 19; h2 *= m;
+	h1 ^= h2 >> 18;
+	h1 *= m;
+	h2 ^= h1 >> 22;
+	h2 *= m;
+	h1 ^= h2 >> 17;
+	h1 *= m;
+	h2 ^= h1 >> 19;
+	h2 *= m;
 
 	uint64 h = h1;
 
-	h = (h << 32) | h2;
+	h = ( h << 32 ) | h2;
 
 	return h;
 }
-
