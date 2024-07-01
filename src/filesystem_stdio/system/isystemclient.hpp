@@ -58,9 +58,7 @@ struct StatData {
 	uint64_t length;  // File Length in bytes
 };
 
-
-
-struct [[gnu::packed]] OpenMode {
+struct OpenMode {
 	bool read     : 1 { false };
 	bool write    : 1 { false };
 	bool append   : 1 { false };
