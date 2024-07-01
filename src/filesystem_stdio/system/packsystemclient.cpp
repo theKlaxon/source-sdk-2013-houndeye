@@ -2,7 +2,7 @@
 // Created by ENDERZOMBI102 on 23/02/2024.
 //
 #include "packsystemclient.hpp"
-
+#include <utility>
 
 CPackSystemClient::CPackSystemClient( int id, const char* path, std::unique_ptr<vpkedit::PackFile>&& pack ) {
 	this->m_iId = id;
@@ -34,28 +34,38 @@ auto CPackSystemClient::GetIdentifier() const -> int {
 auto CPackSystemClient::Shutdown() -> void { }
 
 // FS interaction
-auto CPackSystemClient::Flush( FileHandle_t file ) -> bool {
-	return false;
+auto CPackSystemClient::Flush( const FileDescriptor* desc ) -> bool {
+	AssertFatalMsg( false, "Not supported!!" );
+	std::unreachable();
 }
 auto CPackSystemClient::Walk( uint16_t nwname, const char* wname ) -> void {
-}
-auto CPackSystemClient::Open( const char* path, openmode::Type mode ) -> FileHandle_t {
-	{ this->m_PackFile->findEntry( path,  ) };
-	return nullptr;
-}
-auto CPackSystemClient::Close( FileHandle_t file ) -> void {
 
 }
-auto CPackSystemClient::Create( const char* path, dirmode_t perm, openmode::Type mode ) -> FileHandle_t {
+auto CPackSystemClient::Open( const char* path, OpenMode mode ) -> FileDescriptor* {
+	AssertFatalMsg( path, "Was given a `NULL` file path!" );
+	AssertFatalMsg( mode, "Was given an empty open mode!" );
+
 	return nullptr;
 }
-auto CPackSystemClient::Read( FileHandle_t file, uint64_t offset, void* buffer, uint32_t count ) -> uint32_t {
-	return 0;
+auto CPackSystemClient::Close( const FileDescriptor* desc ) -> void { }
+auto CPackSystemClient::Create( const char* path, dirmode_t perm, OpenMode mode ) -> FileDescriptor* {
+	AssertFatalMsg( false, "Not supported!!" );
+	std::unreachable();
 }
-auto CPackSystemClient::Write( FileHandle_t file, uint64_t offset, const void* buffer, uint32_t count ) -> uint32_t {
-	return 0;
+auto CPackSystemClient::Read( const FileDescriptor* desc, void* buffer, uint32_t count ) -> int32_t {
+	AssertFatalMsg( desc, "Was given a `NULL` file handle!" );
+	AssertFatalMsg( buffer, "Was given a `NULL` buffer ptr!" );
+
+	return pread64( static_cast<int>( desc->m_Handle ), buffer, count, desc->m_Offset );
 }
-auto CPackSystemClient::Remove( FileHandle_t file ) -> void {
+auto CPackSystemClient::Write( const FileDescriptor* desc, void const* buffer, uint32_t count ) -> int32_t {
+	AssertFatalMsg( false, "Not supported!!" );
+	std::unreachable();
 }
-auto CPackSystemClient::Stat( FileHandle_t file ) -> void {
+auto CPackSystemClient::Remove( const FileDescriptor* desc ) -> void {
+	AssertFatalMsg( false, "Not supported!!" );
+	std::unreachable();
+}
+auto CPackSystemClient::Stat( const FileDescriptor* desc ) -> StatData {
+	return {};
 }

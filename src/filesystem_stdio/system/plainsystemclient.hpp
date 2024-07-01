@@ -25,7 +25,7 @@ public: // FS interaction
 	auto Read  ( const FileDescriptor* handle, void* buffer, uint32_t count ) -> int32_t override;
 	auto Write ( const FileDescriptor* handle, void const* buffer, uint32_t count ) -> int32_t override;
 	auto Remove( const FileDescriptor* handle ) -> void override;
-	auto Stat  ( const FileDescriptor* handle ) -> void override;
+	auto Stat  ( const FileDescriptor* handle ) -> StatData override;
 private:
 	int m_iId;
 	const char* m_szNativePath;

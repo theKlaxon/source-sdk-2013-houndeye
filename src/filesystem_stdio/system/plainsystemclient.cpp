@@ -95,6 +95,7 @@ auto CPlainSystemClient::Write( const FileDescriptor* desc, void const* buffer, 
 }
 auto CPlainSystemClient::Remove( const FileDescriptor* desc ) -> void {
 }
-auto CPlainSystemClient::Stat( const FileDescriptor* desc ) -> void {
+auto CPlainSystemClient::Stat( const FileDescriptor* desc ) -> StatData {
+	return {};
 }
 

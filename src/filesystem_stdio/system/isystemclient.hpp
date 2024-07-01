@@ -49,16 +49,13 @@ enum dirmode_t : uint32_t {
 	X9P_DM_PROTOCOL_MASK = X9P_DM_PERM_MASK | X9P_DM_DIR | X9P_DM_APPEND | X9P_DM_EXCL | X9P_DM_MOUNT | X9P_DM_AUTH | X9P_DM_TMP
 };
 
-struct Stat {
+struct StatData {
 	uint16_t size;    // Total bytes used by following data
 
 	dirmode_t mode;   // Permissions and flags
 	uint64_t atime;   // Access time (unix time)
 	uint64_t mtime;   // Modification time (unix time)
 	uint64_t length;  // File Length in bytes
-
-	// File name
-	std::string name() { return {}; }
 };
 
 
@@ -128,5 +125,5 @@ public: // fs interactions
 	virtual auto Walk  ( uint16_t nwname, const char* wname ) -> void = 0;
 	virtual auto Create( const char* path, dirmode_t perm, OpenMode mode ) -> FileDescriptor* = 0;
 	virtual auto Remove( const FileDescriptor* desc ) -> void = 0;
-	virtual auto Stat  ( const FileDescriptor* desc ) -> Stat = 0;
+	virtual auto Stat  ( const FileDescriptor* desc ) -> StatData = 0;
 };
