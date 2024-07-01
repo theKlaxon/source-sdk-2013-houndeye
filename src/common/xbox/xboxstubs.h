@@ -219,14 +219,14 @@ typedef struct {
 #define XNET_QOS_LISTEN_DISABLE				0
 #define XNET_QOS_LISTEN_SET_DATA			0
 
-FORCEINLINE void			XBX_ProcessEvents() {}
-FORCEINLINE unsigned int	XBX_GetSystemTime() { return 0; }
-FORCEINLINE	int				XBX_GetPrimaryUserId() { return 0; }
-FORCEINLINE	void			XBX_SetPrimaryUserId( DWORD idx ) {}
-FORCEINLINE	int				XBX_GetStorageDeviceId() { return 0; }
-FORCEINLINE	void			XBX_SetStorageDeviceId( DWORD idx ) {}
-FORCEINLINE const char		*XBX_GetLanguageString() { return ""; }
-FORCEINLINE bool			XBX_IsLocalized() { return false; }
+ALWAYS_INLINE void			XBX_ProcessEvents() {}
+ALWAYS_INLINE unsigned int	XBX_GetSystemTime() { return 0; }
+ALWAYS_INLINE	int				XBX_GetPrimaryUserId() { return 0; }
+ALWAYS_INLINE	void			XBX_SetPrimaryUserId( DWORD idx ) {}
+ALWAYS_INLINE	int				XBX_GetStorageDeviceId() { return 0; }
+ALWAYS_INLINE	void			XBX_SetStorageDeviceId( DWORD idx ) {}
+ALWAYS_INLINE const char		*XBX_GetLanguageString() { return ""; }
+ALWAYS_INLINE bool			XBX_IsLocalized() { return false; }
 
 #define XCONTENT_MAX_DISPLAYNAME_LENGTH	128
 #define XCONTENT_MAX_FILENAME_LENGTH	42

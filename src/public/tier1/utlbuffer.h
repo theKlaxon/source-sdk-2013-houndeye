@@ -156,7 +156,7 @@ public:
 	void			Swap( CUtlBuffer &buf );
 	void			Swap( CUtlMemory<uint8> &mem );
 
-	FORCEINLINE void ActivateByteSwappingIfBigEndian( void )
+	ALWAYS_INLINE void ActivateByteSwappingIfBigEndian( void )
 	{
 	}
 

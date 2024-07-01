@@ -280,7 +280,7 @@ bool IsPointInBox( const Vector& pt, const Vector& boxMin, const Vector& boxMax 
 
 
 // SIMD version
-FORCEINLINE bool IsPointInBox( const fltx4& pt, const fltx4& boxMin, const fltx4& boxMax )
+ALWAYS_INLINE bool IsPointInBox( const fltx4& pt, const fltx4& boxMin, const fltx4& boxMax )
 {
 	fltx4 greater = CmpGtSIMD( pt,boxMax );
 	fltx4 less = CmpLtSIMD( pt, boxMin );

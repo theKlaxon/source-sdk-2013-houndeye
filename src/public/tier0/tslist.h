@@ -325,7 +325,7 @@ public:
 	}
 
 	// omg windows sdk - why do you #define GetObject()?
-	FORCEINLINE T* Get() {
+	ALWAYS_INLINE T* Get() {
 		return GetObject();
 	}
 } TSLIST_HEAD_ALIGN_POST;

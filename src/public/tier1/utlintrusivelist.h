@@ -680,28 +680,28 @@ template<class T> class CUtlIntrusiveList
 public:
 	T *m_pHead;
 
-	FORCEINLINE T *Head( void ) const
+	ALWAYS_INLINE T *Head( void ) const
 	{
 		return m_pHead;
 	}
 	
-	FORCEINLINE CUtlIntrusiveList(void)
+	ALWAYS_INLINE CUtlIntrusiveList(void)
 	{
 		m_pHead = NULL;
 	}
 
 
-	FORCEINLINE void RemoveAll( void )
+	ALWAYS_INLINE void RemoveAll( void )
 	{
 		// empty list. doesn't touch nodes at all
 		m_pHead = NULL;
 	}
-	FORCEINLINE void AddToHead( T * node )
+	ALWAYS_INLINE void AddToHead( T * node )
 	{
 		IntrusiveList::AddToHead( m_pHead, node );
 	}
 
-	FORCEINLINE void AddToTail( T * node )
+	ALWAYS_INLINE void AddToTail( T * node )
 	{
 		IntrusiveList::AddToTail( m_pHead, node );
 	}
@@ -752,7 +752,7 @@ public:
 		return IntrusiveList::ListLength( m_pHead );
 	}
 
-	FORCEINLINE T * FindNamedNodeCaseSensitive( char const *pName ) const
+	ALWAYS_INLINE T * FindNamedNodeCaseSensitive( char const *pName ) const
 	{
 		return IntrusiveList::FindNamedNodeCaseSensitive( m_pHead, pName );
 
@@ -776,11 +776,11 @@ template<class T> class CUtlIntrusiveDList : public CUtlIntrusiveList<T>
 {
 public:
 
-	FORCEINLINE void AddToHead( T * node )
+	ALWAYS_INLINE void AddToHead( T * node )
 	{
 		IntrusiveList::AddToDHead( CUtlIntrusiveList<T>::m_pHead, node );
 	}
-	FORCEINLINE void AddToTail( T * node )
+	ALWAYS_INLINE void AddToTail( T * node )
 	{
 		IntrusiveList::AddToDTail( CUtlIntrusiveList<T>::m_pHead, node );
 	}
@@ -817,16 +817,16 @@ public:
 
 	T *m_pTailPtr;
 
-	FORCEINLINE CUtlIntrusiveDListWithTailPtr( void ) : CUtlIntrusiveDList<T>()
+	ALWAYS_INLINE CUtlIntrusiveDListWithTailPtr( void ) : CUtlIntrusiveDList<T>()
 	{
 		m_pTailPtr = NULL;
 	}
 
-	FORCEINLINE void AddToHead( T * node )
+	ALWAYS_INLINE void AddToHead( T * node )
 	{
 		IntrusiveList::AddToDHeadWithTailPtr( CUtlIntrusiveList<T>::m_pHead, node, m_pTailPtr );
 	}
-	FORCEINLINE void AddToTail( T * node )
+	ALWAYS_INLINE void AddToTail( T * node )
 	{
 		IntrusiveList::AddToDTailWithTailPtr( CUtlIntrusiveList<T>::m_pHead, node, m_pTailPtr );
 	}

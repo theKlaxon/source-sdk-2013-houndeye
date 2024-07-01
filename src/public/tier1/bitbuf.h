@@ -25,7 +25,7 @@
 #if _DEBUG
 #define BITBUF_INLINE inline
 #else
-#define BITBUF_INLINE FORCEINLINE
+#define BITBUF_INLINE ALWAYS_INLINE
 #endif
 
 //-----------------------------------------------------------------------------

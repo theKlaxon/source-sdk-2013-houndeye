@@ -19,13 +19,13 @@
 //-----------------------------------------------------------------------------
 // GL helpers
 //-----------------------------------------------------------------------------
-FORCEINLINE bool IsEmulatingGL()
+ALWAYS_INLINE bool IsEmulatingGL()
 {
 	static bool bIsEmulatingGL = ( Plat_GetCommandLineA() ) ? ( strstr( Plat_GetCommandLineA(), "-r_emulate_gl" ) != NULL ) : false;
 	return bIsEmulatingGL;
 }
 
-FORCEINLINE bool IsOpenGL( void )
+ALWAYS_INLINE bool IsOpenGL( void )
 {
 	return IsPlatformOpenGL() || IsEmulatingGL();
 }

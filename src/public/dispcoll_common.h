@@ -264,7 +264,7 @@ protected:
 	void AABBTree_TreeTrisRayTest( const Ray_t &ray, const Vector &vecInvDelta, int iNode, CBaseTrace *pTrace, bool bSide, CDispCollTri **pImpactTri );
 	void AABBTree_TreeTrisRayBarycentricTest( const Ray_t &ray, const Vector &vecInvDelta, int iNode, RayDispOutput_t &output, CDispCollTri **pImpactTri );
 
-	int FORCEINLINE BuildRayLeafList( int iNode, rayleaflist_t &list );
+	ALWAYS_INLINE int BuildRayLeafList( int iNode, rayleaflist_t &list );
 
 	struct AABBTree_TreeTrisSweepTest_Args_t
 	{
@@ -286,21 +286,21 @@ protected:
 	bool Cache_EdgeCrossAxisZ( const Vector &vecEdge, const Vector &vecOnEdge, const Vector &vecOffEdge, CDispCollTri *pTri, unsigned short &iPlane );
 
 	inline bool FacePlane( const Ray_t &ray, const Vector &rayDir, CDispCollTri *pTri, CDispCollHelper *pHelper );
-	bool FORCEINLINE AxisPlanesXYZ( const Ray_t &ray, CDispCollTri *pTri, CDispCollHelper *pHelper );
+	ALWAYS_INLINE bool AxisPlanesXYZ( const Ray_t &ray, CDispCollTri *pTri, CDispCollHelper *pHelper );
 	inline bool EdgeCrossAxisX( const Ray_t &ray, unsigned short iPlane, CDispCollHelper *pHelper );
 	inline bool EdgeCrossAxisY( const Ray_t &ray, unsigned short iPlane, CDispCollHelper *pHelper );
 	inline bool EdgeCrossAxisZ( const Ray_t &ray, unsigned short iPlane, CDispCollHelper *pHelper );
 
 	bool ResolveRayPlaneIntersect( float flStart, float flEnd, const Vector &vecNormal, float flDist, CDispCollHelper *pHelper );
-	template <int AXIS> bool FORCEINLINE TestOneAxisPlaneMin( const Ray_t &ray, CDispCollTri *pTri );
-	template <int AXIS> bool FORCEINLINE TestOneAxisPlaneMax( const Ray_t &ray, CDispCollTri *pTri );
+	template <int AXIS> ALWAYS_INLINE bool TestOneAxisPlaneMin( const Ray_t &ray, CDispCollTri *pTri );
+	template <int AXIS> ALWAYS_INLINE bool TestOneAxisPlaneMax( const Ray_t &ray, CDispCollTri *pTri );
 	template <int AXIS>	bool EdgeCrossAxis( const Ray_t &ray, unsigned short iPlane, CDispCollHelper *pHelper );
 
 	// Utility
 	inline void CalcClosestBoxPoint( const Vector &vecPlaneNormal, const Vector &vecBoxStart, const Vector &vecBoxExtents, Vector &vecBoxPoint );
 	inline void CalcClosestExtents( const Vector &vecPlaneNormal, const Vector &vecBoxExtents, Vector &vecBoxPoint );
 	int AddPlane( const Vector &vecNormal );
-	bool FORCEINLINE IsLeafNode(int iNode);
+	ALWAYS_INLINE bool IsLeafNode(int iNode);
 public:
 	Vector							m_mins;									// Bounding box of the displacement surface and base face
 	int								m_iCounter;
@@ -335,7 +335,7 @@ protected:
 
 };
 
-FORCEINLINE bool CDispCollTree::IsLeafNode(int iNode) 
+ALWAYS_INLINE bool CDispCollTree::IsLeafNode(int iNode)
 { 
 	return iNode >= m_nodes.Count() ? true : false; 
 }

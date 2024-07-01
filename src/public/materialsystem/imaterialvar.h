@@ -135,39 +135,39 @@ protected:
 	virtual int				VectorSizeInternal() const = 0;
 
 public:
-	FORCEINLINE MaterialVarType_t GetType( void ) const
+	ALWAYS_INLINE MaterialVarType_t GetType( void ) const
 	{
 		return ( MaterialVarType_t )m_Type;
 	}
 
-	FORCEINLINE bool IsTexture() const
+	ALWAYS_INLINE bool IsTexture() const
 	{
 		return m_Type == MATERIAL_VAR_TYPE_TEXTURE;
 	}
 
-	FORCEINLINE operator ITexture*()
+	ALWAYS_INLINE operator ITexture*()
 	{
 		return GetTextureValue();
 	}
 
 	// NOTE: Fast methods should only be called in thread-safe situations
-	FORCEINLINE int GetIntValueFast( void ) const
+	ALWAYS_INLINE int GetIntValueFast( void ) const
 	{
 		// Set methods for float and vector update this
 		return m_intVal;
 	}
 
-	FORCEINLINE float GetFloatValueFast( void ) const
+	ALWAYS_INLINE float GetFloatValueFast( void ) const
 	{
 		return m_VecVal[0];
 	}
 
-	FORCEINLINE float const* GetVecValueFast( ) const
+	ALWAYS_INLINE float const* GetVecValueFast( ) const
 	{
 		return m_VecVal.Base();
 	}
 
-	FORCEINLINE void GetVecValueFast( float *val, int numcomps ) const 
+	ALWAYS_INLINE void GetVecValueFast( float *val, int numcomps ) const
 	{
 		Assert( ( numcomps >0 ) && ( numcomps <= 4 ) );
 		for( int i=0 ; i < numcomps; i++ )
@@ -176,65 +176,65 @@ public:
 		}
 	}
 
-	FORCEINLINE int VectorSizeFast() const
+	ALWAYS_INLINE int VectorSizeFast() const
 	{
 		return m_nNumVectorComps;
 	}
 
 #ifdef FAST_MATERIALVAR_ACCESS
-	FORCEINLINE int GetIntValue( void ) const
+	ALWAYS_INLINE int GetIntValue( void ) const
 	{
 		return GetIntValueFast();
 	}
 
-	FORCEINLINE float GetFloatValue( void ) const
+	ALWAYS_INLINE float GetFloatValue( void ) const
 	{
 		return GetFloatValueFast();
 	}
 
-	FORCEINLINE float const* GetVecValue( ) const
+	ALWAYS_INLINE float const* GetVecValue( ) const
 	{
 		return GetVecValueFast();
 	}
 
-	FORCEINLINE void GetVecValue( float *val, int numcomps ) const 
+	ALWAYS_INLINE void GetVecValue( float *val, int numcomps ) const
 	{
 		GetVecValueFast( val, numcomps );
 	}
 
-	FORCEINLINE int VectorSize() const
+	ALWAYS_INLINE int VectorSize() const
 	{
 		return VectorSizeFast();
 	}
 #else // !FAST_MATERIALVAR_ACCESS
-	FORCEINLINE int GetIntValue( void ) const
+	ALWAYS_INLINE int GetIntValue( void ) const
 	{
 		return GetIntValueInternal();
 	}
 
-	FORCEINLINE float GetFloatValue( void ) const
+	ALWAYS_INLINE float GetFloatValue( void ) const
 	{
 		return GetFloatValueInternal();
 	}
 
-	FORCEINLINE float const* GetVecValue( ) const
+	ALWAYS_INLINE float const* GetVecValue( ) const
 	{
 		return GetVecValueInternal();
 	}
 
-	FORCEINLINE void GetVecValue( float *val, int numcomps ) const 
+	ALWAYS_INLINE void GetVecValue( float *val, int numcomps ) const
 	{
 		return GetVecValueInternal( val, numcomps );
 	}
 
-	FORCEINLINE int VectorSize() const
+	ALWAYS_INLINE int VectorSize() const
 	{
 		return VectorSizeInternal();
 	}
 #endif
 
 private:
-	FORCEINLINE void SetTempIndex( int nIndex )
+	ALWAYS_INLINE void SetTempIndex( int nIndex )
 	{
 		m_nTempIndex = nIndex;
 	}

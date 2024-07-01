@@ -1061,7 +1061,7 @@ inline void CVertexBuilder::SelectVertex( int nIndex )
 // Advances vertex after you're done writing to it.
 //-----------------------------------------------------------------------------
 
-template<int nFlags, int nNumTexCoords> FORCEINLINE void CVertexBuilder::AdvanceVertexF()
+template<int nFlags, int nNumTexCoords> ALWAYS_INLINE void CVertexBuilder::AdvanceVertexF()
 {
 	if ( ++m_nCurrentVertex > m_nVertexCount )
 	{
@@ -3455,7 +3455,7 @@ inline void CMeshBuilder::Reset()
 //-----------------------------------------------------------------------------
 // Selects the current Vertex and Index 
 //-----------------------------------------------------------------------------
-FORCEINLINE void CMeshBuilder::SelectVertex( int nIndex )
+ALWAYS_INLINE void CMeshBuilder::SelectVertex( int nIndex )
 {
 	m_VertexBuilder.SelectVertex( nIndex );
 }
@@ -3467,7 +3467,7 @@ inline void CMeshBuilder::SelectVertexFromIndex( int idx )
 	SelectVertex( vertIdx );
 }
 
-FORCEINLINE void CMeshBuilder::SelectIndex( int idx )
+ALWAYS_INLINE void CMeshBuilder::SelectIndex( int idx )
 {
 	m_IndexBuilder.SelectIndex( idx );
 }
@@ -3476,36 +3476,36 @@ FORCEINLINE void CMeshBuilder::SelectIndex( int idx )
 //-----------------------------------------------------------------------------
 // Advances the current vertex and index by one
 //-----------------------------------------------------------------------------
-template<int nFlags, int nNumTexCoords> FORCEINLINE void CMeshBuilder::AdvanceVertexF()
+template<int nFlags, int nNumTexCoords> ALWAYS_INLINE void CMeshBuilder::AdvanceVertexF()
 {
 	m_VertexBuilder.AdvanceVertexF<nFlags, nNumTexCoords>();
 }
-FORCEINLINE void CMeshBuilder::AdvanceVertex()
+ALWAYS_INLINE void CMeshBuilder::AdvanceVertex()
 {
 	m_VertexBuilder.AdvanceVertex();
 }
 
-FORCEINLINE void CMeshBuilder::AdvanceVertices( int nVertexCount )
+ALWAYS_INLINE void CMeshBuilder::AdvanceVertices( int nVertexCount )
 {
 	m_VertexBuilder.AdvanceVertices( nVertexCount );
 }
 
-FORCEINLINE void CMeshBuilder::AdvanceIndex()
+ALWAYS_INLINE void CMeshBuilder::AdvanceIndex()
 {
 	m_IndexBuilder.AdvanceIndex();
 }
 
-FORCEINLINE void CMeshBuilder::AdvanceIndices( int nIndices )
+ALWAYS_INLINE void CMeshBuilder::AdvanceIndices( int nIndices )
 {
 	m_IndexBuilder.AdvanceIndices( nIndices );
 }
 
-FORCEINLINE int CMeshBuilder::GetCurrentVertex()
+ALWAYS_INLINE int CMeshBuilder::GetCurrentVertex()
 {
 	return m_VertexBuilder.GetCurrentVertex();
 }
 
-FORCEINLINE int CMeshBuilder::GetCurrentIndex()
+ALWAYS_INLINE int CMeshBuilder::GetCurrentIndex()
 {
 	return m_IndexBuilder.GetCurrentIndex();
 }
@@ -3565,12 +3565,12 @@ inline void CMeshBuilder::DrawQuad( IMesh* pMesh, const float* v1, const float* 
 //-----------------------------------------------------------------------------
 // returns the number of indices and vertices
 //-----------------------------------------------------------------------------
-FORCEINLINE int CMeshBuilder::VertexCount() const
+ALWAYS_INLINE int CMeshBuilder::VertexCount() const
 {
 	return m_VertexBuilder.VertexCount();
 }
 
-FORCEINLINE int CMeshBuilder::IndexCount() const
+ALWAYS_INLINE int CMeshBuilder::IndexCount() const
 {
 	return m_IndexBuilder.IndexCount();
 }
@@ -3579,7 +3579,7 @@ FORCEINLINE int CMeshBuilder::IndexCount() const
 //-----------------------------------------------------------------------------
 // Returns the base vertex memory pointer
 //-----------------------------------------------------------------------------
-FORCEINLINE void* CMeshBuilder::BaseVertexData()
+ALWAYS_INLINE void* CMeshBuilder::BaseVertexData()
 {
 	return m_VertexBuilder.BaseVertexData();
 }
@@ -3587,57 +3587,57 @@ FORCEINLINE void* CMeshBuilder::BaseVertexData()
 //-----------------------------------------------------------------------------
 // Data retrieval...
 //-----------------------------------------------------------------------------
-FORCEINLINE const float* CMeshBuilder::Position() const
+ALWAYS_INLINE const float* CMeshBuilder::Position() const
 {
 	return m_VertexBuilder.Position();
 }
 
-FORCEINLINE const float* CMeshBuilder::Normal()	const
+ALWAYS_INLINE const float* CMeshBuilder::Normal()	const
 {
 	return m_VertexBuilder.Normal();
 }
 
-FORCEINLINE unsigned int CMeshBuilder::Color() const
+ALWAYS_INLINE unsigned int CMeshBuilder::Color() const
 {
 	return m_VertexBuilder.Color();
 }
 
-FORCEINLINE unsigned char *CMeshBuilder::Specular() const
+ALWAYS_INLINE unsigned char *CMeshBuilder::Specular() const
 {
 	return m_VertexBuilder.Specular();
 }
 
-FORCEINLINE const float* CMeshBuilder::TexCoord( int nStage ) const
+ALWAYS_INLINE const float* CMeshBuilder::TexCoord( int nStage ) const
 {
 	return m_VertexBuilder.TexCoord( nStage );
 }
 
-FORCEINLINE const float* CMeshBuilder::TangentS() const
+ALWAYS_INLINE const float* CMeshBuilder::TangentS() const
 {
 	return m_VertexBuilder.TangentS();
 }
 
-FORCEINLINE const float* CMeshBuilder::TangentT() const
+ALWAYS_INLINE const float* CMeshBuilder::TangentT() const
 {
 	return m_VertexBuilder.TangentT();
 }
 
-FORCEINLINE float CMeshBuilder::Wrinkle() const
+ALWAYS_INLINE float CMeshBuilder::Wrinkle() const
 {
 	return m_VertexBuilder.Wrinkle();
 }
 
-FORCEINLINE const float* CMeshBuilder::BoneWeight() const
+ALWAYS_INLINE const float* CMeshBuilder::BoneWeight() const
 {
 	return m_VertexBuilder.BoneWeight();
 }
 
-FORCEINLINE int CMeshBuilder::NumBoneWeights() const
+ALWAYS_INLINE int CMeshBuilder::NumBoneWeights() const
 {
 	return m_VertexBuilder.NumBoneWeights();
 }
 
-FORCEINLINE unsigned short const* CMeshBuilder::Index() const
+ALWAYS_INLINE unsigned short const* CMeshBuilder::Index() const
 {
 	return m_IndexBuilder.Index();
 }
@@ -3646,7 +3646,7 @@ FORCEINLINE unsigned short const* CMeshBuilder::Index() const
 //-----------------------------------------------------------------------------
 // Index
 //-----------------------------------------------------------------------------
-FORCEINLINE void CMeshBuilder::Index( unsigned short idx )
+ALWAYS_INLINE void CMeshBuilder::Index( unsigned short idx )
 {
 	m_IndexBuilder.Index( idx );
 }
@@ -3655,14 +3655,14 @@ FORCEINLINE void CMeshBuilder::Index( unsigned short idx )
 //-----------------------------------------------------------------------------
 // Fast Index! No need to call advance index
 //-----------------------------------------------------------------------------
-FORCEINLINE void CMeshBuilder::FastIndex( unsigned short idx )
+ALWAYS_INLINE void CMeshBuilder::FastIndex( unsigned short idx )
 {
 	m_IndexBuilder.FastIndex( idx );
 }
 
 // NOTE: Use this one to get write combining! Much faster than the other version of FastIndex
 // Fast Index! No need to call advance index, and no random access allowed
-FORCEINLINE void CMeshBuilder::FastIndex2( unsigned short nIndex1, unsigned short nIndex2 )
+ALWAYS_INLINE void CMeshBuilder::FastIndex2( unsigned short nIndex1, unsigned short nIndex2 )
 {
 	m_IndexBuilder.FastIndex2( nIndex1, nIndex2 );
 }
@@ -3670,7 +3670,7 @@ FORCEINLINE void CMeshBuilder::FastIndex2( unsigned short nIndex1, unsigned shor
 //-----------------------------------------------------------------------------
 // For use with the FastVertex methods, advances the current vertex by N
 //-----------------------------------------------------------------------------
-FORCEINLINE void CMeshBuilder::FastAdvanceNVertices( int nVertexCount )
+ALWAYS_INLINE void CMeshBuilder::FastAdvanceNVertices( int nVertexCount )
 {
 	m_VertexBuilder.FastAdvanceNVertices( nVertexCount );
 }
@@ -3679,29 +3679,29 @@ FORCEINLINE void CMeshBuilder::FastAdvanceNVertices( int nVertexCount )
 //-----------------------------------------------------------------------------
 // Fast Vertex! No need to call advance vertex, and no random access allowed
 //-----------------------------------------------------------------------------
-FORCEINLINE void CMeshBuilder::FastVertex( const ModelVertexDX7_t &vertex )
+ALWAYS_INLINE void CMeshBuilder::FastVertex( const ModelVertexDX7_t &vertex )
 {
 	m_VertexBuilder.FastVertex( vertex );
 }
 
-FORCEINLINE void CMeshBuilder::FastVertexSSE( const ModelVertexDX7_t &vertex )
+ALWAYS_INLINE void CMeshBuilder::FastVertexSSE( const ModelVertexDX7_t &vertex )
 {
 	m_VertexBuilder.FastVertexSSE( vertex );
 }
 
-FORCEINLINE void CMeshBuilder::Fast4VerticesSSE( 
+ALWAYS_INLINE void CMeshBuilder::Fast4VerticesSSE(
 	const ModelVertexDX7_t *vtx_a, const ModelVertexDX7_t *vtx_b,
 	const ModelVertexDX7_t *vtx_c, const ModelVertexDX7_t *vtx_d )
 {
 	m_VertexBuilder.Fast4VerticesSSE( vtx_a, vtx_b, vtx_c, vtx_d );
 }
 
-FORCEINLINE void CMeshBuilder::FastVertex( const ModelVertexDX8_t &vertex )
+ALWAYS_INLINE void CMeshBuilder::FastVertex( const ModelVertexDX8_t &vertex )
 {
 	m_VertexBuilder.FastVertex( vertex );
 }
 
-FORCEINLINE void CMeshBuilder::FastVertexSSE( const ModelVertexDX8_t &vertex )
+ALWAYS_INLINE void CMeshBuilder::FastVertexSSE( const ModelVertexDX8_t &vertex )
 {
 	m_VertexBuilder.FastVertexSSE( vertex );
 }
@@ -3709,207 +3709,207 @@ FORCEINLINE void CMeshBuilder::FastVertexSSE( const ModelVertexDX8_t &vertex )
 //-----------------------------------------------------------------------------
 // Vertex field setting methods
 //-----------------------------------------------------------------------------
-FORCEINLINE void CMeshBuilder::Position3f( float x, float y, float z )
+ALWAYS_INLINE void CMeshBuilder::Position3f( float x, float y, float z )
 {
 	m_VertexBuilder.Position3f( x, y, z );
 }
 
-FORCEINLINE void CMeshBuilder::Position3fv( const float *v )
+ALWAYS_INLINE void CMeshBuilder::Position3fv( const float *v )
 {
 	m_VertexBuilder.Position3fv( v );
 }
 
-FORCEINLINE void CMeshBuilder::Normal3f( float nx, float ny, float nz )
+ALWAYS_INLINE void CMeshBuilder::Normal3f( float nx, float ny, float nz )
 {
 	m_VertexBuilder.Normal3f( nx, ny, nz );
 }
 
-FORCEINLINE void CMeshBuilder::Normal3fv( const float *n )
+ALWAYS_INLINE void CMeshBuilder::Normal3fv( const float *n )
 {
 	m_VertexBuilder.Normal3fv( n );
 }
 
-FORCEINLINE void CMeshBuilder::NormalDelta3f( float nx, float ny, float nz )
+ALWAYS_INLINE void CMeshBuilder::NormalDelta3f( float nx, float ny, float nz )
 {
 	m_VertexBuilder.NormalDelta3f( nx, ny, nz );
 }
 
-FORCEINLINE void CMeshBuilder::NormalDelta3fv( const float *n )
+ALWAYS_INLINE void CMeshBuilder::NormalDelta3fv( const float *n )
 {
 	m_VertexBuilder.NormalDelta3fv( n );
 }
 
-FORCEINLINE void CMeshBuilder::Color3f( float r, float g, float b )
+ALWAYS_INLINE void CMeshBuilder::Color3f( float r, float g, float b )
 {
 	m_VertexBuilder.Color3f( r, g, b );
 }
 
-FORCEINLINE void CMeshBuilder::Color3fv( const float *rgb )
+ALWAYS_INLINE void CMeshBuilder::Color3fv( const float *rgb )
 {
 	m_VertexBuilder.Color3fv( rgb );
 }
 
-FORCEINLINE void CMeshBuilder::Color4f( float r, float g, float b, float a )
+ALWAYS_INLINE void CMeshBuilder::Color4f( float r, float g, float b, float a )
 {
 	m_VertexBuilder.Color4f( r, g ,b, a );
 }
 
-FORCEINLINE void CMeshBuilder::Color4fv( const float *rgba )
+ALWAYS_INLINE void CMeshBuilder::Color4fv( const float *rgba )
 {
 	m_VertexBuilder.Color4fv( rgba );
 }
 
-FORCEINLINE void CMeshBuilder::Color3ub( unsigned char r, unsigned char g, unsigned char b )
+ALWAYS_INLINE void CMeshBuilder::Color3ub( unsigned char r, unsigned char g, unsigned char b )
 {
 	m_VertexBuilder.Color3ub( r, g, b );
 }
 
-FORCEINLINE void CMeshBuilder::Color3ubv( unsigned char const* rgb )
+ALWAYS_INLINE void CMeshBuilder::Color3ubv( unsigned char const* rgb )
 {
 	m_VertexBuilder.Color3ubv( rgb );
 }
 
-FORCEINLINE void CMeshBuilder::Color4ub( unsigned char r, unsigned char g, unsigned char b, unsigned char a )
+ALWAYS_INLINE void CMeshBuilder::Color4ub( unsigned char r, unsigned char g, unsigned char b, unsigned char a )
 {
 	m_VertexBuilder.Color4ub( r, g, b, a );
 }
 
-FORCEINLINE void CMeshBuilder::Color4ubv( unsigned char const* rgba )
+ALWAYS_INLINE void CMeshBuilder::Color4ubv( unsigned char const* rgba )
 {
 	m_VertexBuilder.Color4ubv( rgba );
 }
 
-FORCEINLINE void CMeshBuilder::Specular3f( float r, float g, float b )
+ALWAYS_INLINE void CMeshBuilder::Specular3f( float r, float g, float b )
 {
 	m_VertexBuilder.Specular3f( r, g, b );
 }
 
-FORCEINLINE void CMeshBuilder::Specular3fv( const float *rgb )
+ALWAYS_INLINE void CMeshBuilder::Specular3fv( const float *rgb )
 {
 	m_VertexBuilder.Specular3fv( rgb );
 }
 
-FORCEINLINE void CMeshBuilder::Specular4f( float r, float g, float b, float a )
+ALWAYS_INLINE void CMeshBuilder::Specular4f( float r, float g, float b, float a )
 {
 	m_VertexBuilder.Specular4f( r, g, b, a );
 }
 
-FORCEINLINE void CMeshBuilder::Specular4fv( const float *rgba )
+ALWAYS_INLINE void CMeshBuilder::Specular4fv( const float *rgba )
 {
 	m_VertexBuilder.Specular4fv( rgba );
 }
 
-FORCEINLINE void CMeshBuilder::Specular3ub( unsigned char r, unsigned char g, unsigned char b )
+ALWAYS_INLINE void CMeshBuilder::Specular3ub( unsigned char r, unsigned char g, unsigned char b )
 {
 	m_VertexBuilder.Specular3ub( r, g, b );
 }
 
-FORCEINLINE void CMeshBuilder::Specular3ubv( unsigned char const *c )
+ALWAYS_INLINE void CMeshBuilder::Specular3ubv( unsigned char const *c )
 {
 	m_VertexBuilder.Specular3ubv( c );
 }
 
-FORCEINLINE void CMeshBuilder::Specular4ub( unsigned char r, unsigned char g, unsigned char b, unsigned char a )
+ALWAYS_INLINE void CMeshBuilder::Specular4ub( unsigned char r, unsigned char g, unsigned char b, unsigned char a )
 {
 	m_VertexBuilder.Specular4ub( r, g, b, a );
 }
 
-FORCEINLINE void CMeshBuilder::Specular4ubv( unsigned char const *c )
+ALWAYS_INLINE void CMeshBuilder::Specular4ubv( unsigned char const *c )
 {
 	m_VertexBuilder.Specular4ubv( c );
 }
 
-FORCEINLINE void CMeshBuilder::TexCoord1f( int nStage, float s )
+ALWAYS_INLINE void CMeshBuilder::TexCoord1f( int nStage, float s )
 {
 	m_VertexBuilder.TexCoord1f( nStage, s );
 }
 
-FORCEINLINE void CMeshBuilder::TexCoord2f( int nStage, float s, float t )
+ALWAYS_INLINE void CMeshBuilder::TexCoord2f( int nStage, float s, float t )
 {
 	m_VertexBuilder.TexCoord2f( nStage, s, t );
 }
 
-FORCEINLINE void CMeshBuilder::TexCoord2fv( int nStage, const float *st )
+ALWAYS_INLINE void CMeshBuilder::TexCoord2fv( int nStage, const float *st )
 {
 	m_VertexBuilder.TexCoord2fv( nStage, st );
 }
 
-FORCEINLINE void CMeshBuilder::TexCoord3f( int nStage, float s, float t, float u )
+ALWAYS_INLINE void CMeshBuilder::TexCoord3f( int nStage, float s, float t, float u )
 {
 	m_VertexBuilder.TexCoord3f( nStage, s, t, u );
 }
 
-FORCEINLINE void CMeshBuilder::TexCoord3fv( int nStage, const float *stu )
+ALWAYS_INLINE void CMeshBuilder::TexCoord3fv( int nStage, const float *stu )
 {
 	m_VertexBuilder.TexCoord3fv( nStage, stu );
 }
 
-FORCEINLINE void CMeshBuilder::TexCoord4f( int nStage, float s, float t, float u, float v )
+ALWAYS_INLINE void CMeshBuilder::TexCoord4f( int nStage, float s, float t, float u, float v )
 {
 	m_VertexBuilder.TexCoord4f( nStage, s, t, u, v );
 }
 
-FORCEINLINE void CMeshBuilder::TexCoord4fv( int nStage, const float *stuv )
+ALWAYS_INLINE void CMeshBuilder::TexCoord4fv( int nStage, const float *stuv )
 {
 	m_VertexBuilder.TexCoord4fv( nStage, stuv );
 }
 
-FORCEINLINE void CMeshBuilder::TexCoordSubRect2f( int nStage, float s, float t, float offsetS, float offsetT, float scaleS, float scaleT )
+ALWAYS_INLINE void CMeshBuilder::TexCoordSubRect2f( int nStage, float s, float t, float offsetS, float offsetT, float scaleS, float scaleT )
 {
 	m_VertexBuilder.TexCoordSubRect2f( nStage, s, t, offsetS, offsetT, scaleS, scaleT );
 }
 
-FORCEINLINE void CMeshBuilder::TexCoordSubRect2fv( int nStage, const float *st, const float *offset, const float *scale )
+ALWAYS_INLINE void CMeshBuilder::TexCoordSubRect2fv( int nStage, const float *st, const float *offset, const float *scale )
 {
 	m_VertexBuilder.TexCoordSubRect2fv( nStage, st, offset, scale );
 }
 
-FORCEINLINE void CMeshBuilder::TangentS3f( float sx, float sy, float sz )
+ALWAYS_INLINE void CMeshBuilder::TangentS3f( float sx, float sy, float sz )
 {
 	m_VertexBuilder.TangentS3f( sx, sy, sz );
 }
 
-FORCEINLINE void CMeshBuilder::TangentS3fv( const float* s )
+ALWAYS_INLINE void CMeshBuilder::TangentS3fv( const float* s )
 {
 	m_VertexBuilder.TangentS3fv( s );
 }
 
-FORCEINLINE void CMeshBuilder::TangentT3f( float tx, float ty, float tz )
+ALWAYS_INLINE void CMeshBuilder::TangentT3f( float tx, float ty, float tz )
 {
 	m_VertexBuilder.TangentT3f( tx, ty, tz );
 }
 
-FORCEINLINE void CMeshBuilder::TangentT3fv( const float* t )
+ALWAYS_INLINE void CMeshBuilder::TangentT3fv( const float* t )
 {
 	m_VertexBuilder.TangentT3fv( t );
 }
 
-FORCEINLINE void CMeshBuilder::Wrinkle1f( float flWrinkle )
+ALWAYS_INLINE void CMeshBuilder::Wrinkle1f( float flWrinkle )
 {
 	m_VertexBuilder.Wrinkle1f( flWrinkle );
 }
 
-FORCEINLINE void CMeshBuilder::BoneWeight( int nIndex, float flWeight )
+ALWAYS_INLINE void CMeshBuilder::BoneWeight( int nIndex, float flWeight )
 {
 	m_VertexBuilder.BoneWeight( nIndex, flWeight );
 }
 
-template <VertexCompressionType_t T> FORCEINLINE void CMeshBuilder::CompressedBoneWeight3fv( const float * pWeights )
+template <VertexCompressionType_t T> ALWAYS_INLINE void CMeshBuilder::CompressedBoneWeight3fv( const float * pWeights )
 {
 	m_VertexBuilder.CompressedBoneWeight3fv<T>( pWeights );
 }
 
-FORCEINLINE void CMeshBuilder::BoneMatrix( int nIndex, int nMatrixIdx )
+ALWAYS_INLINE void CMeshBuilder::BoneMatrix( int nIndex, int nMatrixIdx )
 {
 	m_VertexBuilder.BoneMatrix( nIndex, nMatrixIdx );
 }
 
-FORCEINLINE void CMeshBuilder::UserData( const float* pData )
+ALWAYS_INLINE void CMeshBuilder::UserData( const float* pData )
 {
 	m_VertexBuilder.UserData( pData );
 }
 
-template <VertexCompressionType_t T> FORCEINLINE void CMeshBuilder::CompressedUserData( const float* pData )
+template <VertexCompressionType_t T> ALWAYS_INLINE void CMeshBuilder::CompressedUserData( const float* pData )
 {
 	m_VertexBuilder.CompressedUserData<T>( pData );
 }
@@ -3918,12 +3918,12 @@ template <VertexCompressionType_t T> FORCEINLINE void CMeshBuilder::CompressedUs
 // Templatized vertex field setting methods which support compression
 //-----------------------------------------------------------------------------
 
-template <VertexCompressionType_t T> FORCEINLINE void CMeshBuilder::CompressedNormal3f( float nx, float ny, float nz )
+template <VertexCompressionType_t T> ALWAYS_INLINE void CMeshBuilder::CompressedNormal3f( float nx, float ny, float nz )
 {
 	m_VertexBuilder.CompressedNormal3f<T>( nx, ny, nz );
 }
 
-template <VertexCompressionType_t T> FORCEINLINE void CMeshBuilder::CompressedNormal3fv( const float *n )
+template <VertexCompressionType_t T> ALWAYS_INLINE void CMeshBuilder::CompressedNormal3fv( const float *n )
 {
 	m_VertexBuilder.CompressedNormal3fv<T>( n );
 }

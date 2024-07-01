@@ -14,7 +14,7 @@
 #endif
 
 #ifdef _WIN32
-#define FORCEINLINE_PIXEL FORCEINLINE
+#define FORCEINLINE_PIXEL ALWAYS_INLINE
 #elif POSIX
 #define FORCEINLINE_PIXEL inline
 #else
@@ -33,30 +33,30 @@
 class CPixelWriter
 {
 public:
-	FORCEINLINE void SetPixelMemory( ImageFormat format, void* pMemory, int stride );
-	FORCEINLINE void *GetPixelMemory() { return m_pBase; }
+	ALWAYS_INLINE void SetPixelMemory( ImageFormat format, void* pMemory, int stride );
+	ALWAYS_INLINE void *GetPixelMemory() { return m_pBase; }
 
-	FORCEINLINE void Seek( int x, int y );
-	FORCEINLINE void* SkipBytes( int n );
-	FORCEINLINE void SkipPixels( int n );	
-	FORCEINLINE void WritePixel( int r, int g, int b, int a = 255 );
-	FORCEINLINE void WritePixelNoAdvance( int r, int g, int b, int a = 255 );
-	FORCEINLINE void WritePixelSigned( int r, int g, int b, int a = 255 );
-	FORCEINLINE void WritePixelNoAdvanceSigned( int r, int g, int b, int a = 255 );
-	FORCEINLINE void ReadPixelNoAdvance( int &r, int &g, int &b, int &a );
+	ALWAYS_INLINE void Seek( int x, int y );
+	ALWAYS_INLINE void* SkipBytes( int n );
+	ALWAYS_INLINE void SkipPixels( int n );
+	ALWAYS_INLINE void WritePixel( int r, int g, int b, int a = 255 );
+	ALWAYS_INLINE void WritePixelNoAdvance( int r, int g, int b, int a = 255 );
+	ALWAYS_INLINE void WritePixelSigned( int r, int g, int b, int a = 255 );
+	ALWAYS_INLINE void WritePixelNoAdvanceSigned( int r, int g, int b, int a = 255 );
+	ALWAYS_INLINE void ReadPixelNoAdvance( int &r, int &g, int &b, int &a );
 
 	// Floating point formats
-	FORCEINLINE void WritePixelNoAdvanceF( float r, float g, float b, float a = 1.0f );
-	FORCEINLINE void WritePixelF( float r, float g, float b, float a = 1.0f );
+	ALWAYS_INLINE void WritePixelNoAdvanceF( float r, float g, float b, float a = 1.0f );
+	ALWAYS_INLINE void WritePixelF( float r, float g, float b, float a = 1.0f );
 
 	// SIMD formats
-	FORCEINLINE void WritePixel( FLTX4 rgba );
-	FORCEINLINE void WritePixelNoAdvance( FLTX4 rgba );
+	ALWAYS_INLINE void WritePixel( FLTX4 rgba );
+	ALWAYS_INLINE void WritePixelNoAdvance( FLTX4 rgba );
 
-	FORCEINLINE unsigned char GetPixelSize() { return m_Size; }	
+	ALWAYS_INLINE unsigned char GetPixelSize() { return m_Size; }
 
-	FORCEINLINE bool IsUsingFloatFormat() const;
-	FORCEINLINE unsigned char *GetCurrentPixel() { return m_pBits; }
+	ALWAYS_INLINE bool IsUsingFloatFormat() const;
+	ALWAYS_INLINE unsigned char *GetCurrentPixel() { return m_pBits; }
 
 private:
 	enum

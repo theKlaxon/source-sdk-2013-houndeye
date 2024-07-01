@@ -527,18 +527,18 @@ public:
 	float m_flTotalExecutionTime;
 	float m_flUncomittedTime;
 
-	FORCEINLINE void RecordExecutionTime( float flETime )
+	ALWAYS_INLINE void RecordExecutionTime( float flETime )
 	{
 		m_flUncomittedTime += flETime;
 		m_flMaxExecutionTime = MAX( m_flMaxExecutionTime, flETime );
 	}
 
-	FORCEINLINE float TotalRecordedExecutionTime( void ) const
+	ALWAYS_INLINE float TotalRecordedExecutionTime( void ) const
 	{
 		return m_flTotalExecutionTime;
 	}
 
-	FORCEINLINE float MaximumRecordedExecutionTime( void ) const
+	ALWAYS_INLINE float MaximumRecordedExecutionTime( void ) const
 	{
 		return m_flMaxExecutionTime;
 	}
@@ -997,7 +997,7 @@ struct CParticleSIMDTransformation
 	FourVectors m_v4Right;
 
 
-	FORCEINLINE void VectorRotate( FourVectors &InPnt )
+	ALWAYS_INLINE void VectorRotate( FourVectors &InPnt )
 	{
 		fltx4 fl4OutX = SubSIMD( AddSIMD( MulSIMD( InPnt.x, m_v4Fwd.x ), MulSIMD( InPnt.z, m_v4Up.x ) ), MulSIMD( InPnt.y, m_v4Right.x ) );
 		fltx4 fl4OutY = SubSIMD( AddSIMD( MulSIMD( InPnt.x, m_v4Fwd.y ), MulSIMD( InPnt.z, m_v4Up.y ) ), MulSIMD( InPnt.y, m_v4Right.y ) );
@@ -1006,7 +1006,7 @@ struct CParticleSIMDTransformation
 		InPnt.y = fl4OutY;
 	}
 
-	FORCEINLINE void VectorTransform( FourVectors &InPnt )
+	ALWAYS_INLINE void VectorTransform( FourVectors &InPnt )
 	{
 		VectorRotate( InPnt );
 		InPnt.x = AddSIMD( InPnt.x, m_v4Origin.x );
@@ -1390,7 +1390,7 @@ private:
 class CM128InitialAttributeIterator : public CStridedConstPtr<fltx4>
 {
 public:
-	FORCEINLINE CM128InitialAttributeIterator( int nAttribute, CParticleCollection *pParticles )
+	ALWAYS_INLINE CM128InitialAttributeIterator( int nAttribute, CParticleCollection *pParticles )
 	{
 		m_pData = pParticles->GetInitialM128AttributePtr( nAttribute, &m_nStride );
 	}
@@ -1400,7 +1400,7 @@ public:
 class CM128AttributeIterator : public CStridedConstPtr<fltx4>
 {
 public:
-	FORCEINLINE CM128AttributeIterator( int nAttribute, CParticleCollection *pParticles )
+	ALWAYS_INLINE CM128AttributeIterator( int nAttribute, CParticleCollection *pParticles )
 	{
 		m_pData = pParticles->GetM128AttributePtr( nAttribute, &m_nStride );
 	}
@@ -1409,7 +1409,7 @@ public:
 class C4IAttributeIterator : public CStridedConstPtr<FourInts>
 {
 public:
-	FORCEINLINE C4IAttributeIterator( int nAttribute, CParticleCollection *pParticles )
+	ALWAYS_INLINE C4IAttributeIterator( int nAttribute, CParticleCollection *pParticles )
 	{
 		m_pData = pParticles->Get4IAttributePtr( nAttribute, &m_nStride );
 	}
@@ -1418,14 +1418,14 @@ public:
 class CM128AttributeWriteIterator : public CStridedPtr<fltx4>
 {
 public:
-	FORCEINLINE CM128AttributeWriteIterator( void )
+	ALWAYS_INLINE CM128AttributeWriteIterator( void )
 	{
 	}
-	FORCEINLINE void Init ( int nAttribute, CParticleCollection *pParticles )
+	ALWAYS_INLINE void Init ( int nAttribute, CParticleCollection *pParticles )
 	{
 		m_pData = pParticles->GetM128AttributePtrForWrite( nAttribute, &m_nStride );
 	}
-	FORCEINLINE CM128AttributeWriteIterator( int nAttribute, CParticleCollection *pParticles )
+	ALWAYS_INLINE CM128AttributeWriteIterator( int nAttribute, CParticleCollection *pParticles )
 	{
 		Init( nAttribute, pParticles );
 	}
@@ -1434,7 +1434,7 @@ public:
 class C4VAttributeIterator : public CStridedConstPtr<FourVectors>
 {
 public:
-	FORCEINLINE C4VAttributeIterator( int nAttribute, CParticleCollection *pParticles )
+	ALWAYS_INLINE C4VAttributeIterator( int nAttribute, CParticleCollection *pParticles )
 	{
 		m_pData = pParticles->Get4VAttributePtr( nAttribute, &m_nStride );
 	}
@@ -1443,7 +1443,7 @@ public:
 class C4VInitialAttributeIterator : public CStridedConstPtr<FourVectors>
 {
 public:
-	FORCEINLINE C4VInitialAttributeIterator( int nAttribute, CParticleCollection *pParticles )
+	ALWAYS_INLINE C4VInitialAttributeIterator( int nAttribute, CParticleCollection *pParticles )
 	{
 		m_pData = pParticles->GetInitial4VAttributePtr( nAttribute, &m_nStride );
 	}
@@ -1452,7 +1452,7 @@ public:
 class C4VAttributeWriteIterator : public CStridedPtr<FourVectors>
 {
 public:
-	FORCEINLINE C4VAttributeWriteIterator( int nAttribute, CParticleCollection *pParticles )
+	ALWAYS_INLINE C4VAttributeWriteIterator( int nAttribute, CParticleCollection *pParticles )
 	{
 		m_pData = pParticles->Get4VAttributePtrForWrite( nAttribute, &m_nStride );
 	}
@@ -1868,7 +1868,7 @@ inline bool CParticleCollection::IsValidAttributePtr( int nAttribute, const void
 }
 
 
-FORCEINLINE void CParticleCollection::KillParticle( int nPidx )
+ALWAYS_INLINE void CParticleCollection::KillParticle( int nPidx )
 {
 	// add a particle to the sorted kill list. entries must be added in sorted order.
 	// within a particle operator, this is safe to call. Outside of one, you have to call
@@ -1903,21 +1903,21 @@ inline void CParticleCollection::FillAttributeWithConstant( int nAttribute, floa
 //-----------------------------------------------------------------------------
 // Helper to set vector attribute values
 //-----------------------------------------------------------------------------
-FORCEINLINE void SetVectorAttribute( float *pAttribute, float x, float y, float z )
+ALWAYS_INLINE void SetVectorAttribute( float *pAttribute, float x, float y, float z )
 {
 	pAttribute[0] = x;
 	pAttribute[4] = y;
 	pAttribute[8] = z;
 }
 
-FORCEINLINE void SetVectorAttribute( float *pAttribute, const Vector &v )
+ALWAYS_INLINE void SetVectorAttribute( float *pAttribute, const Vector &v )
 {
 	pAttribute[0] = v.x;
 	pAttribute[4] = v.y;
 	pAttribute[8] = v.z;
 }
 
-FORCEINLINE void SetVectorFromAttribute( Vector &v, const float *pAttribute )
+ALWAYS_INLINE void SetVectorFromAttribute( Vector &v, const float *pAttribute )
 {
 	v.x = pAttribute[0];
 	v.y = pAttribute[4];
@@ -1928,7 +1928,7 @@ FORCEINLINE void SetVectorFromAttribute( Vector &v, const float *pAttribute )
 //-----------------------------------------------------------------------------
 // Computes the sq distance to a particle position
 //-----------------------------------------------------------------------------
-FORCEINLINE float CParticleCollection::ComputeSqrDistanceToParticle( int hParticle, const Vector &vecPosition ) const
+ALWAYS_INLINE float CParticleCollection::ComputeSqrDistanceToParticle( int hParticle, const Vector &vecPosition ) const
 {
 	const float *xyz = GetFloatAttributePtr( PARTICLE_ATTRIBUTE_XYZ, hParticle );
 	Vector vecParticlePosition( xyz[0], xyz[4], xyz[8] );
@@ -1939,7 +1939,7 @@ FORCEINLINE float CParticleCollection::ComputeSqrDistanceToParticle( int hPartic
 //-----------------------------------------------------------------------------
 // Grows the dist sq range for all particles
 //-----------------------------------------------------------------------------
-FORCEINLINE void CParticleCollection::GrowDistSqrBounds( float flDistSqr )
+ALWAYS_INLINE void CParticleCollection::GrowDistSqrBounds( float flDistSqr )
 {
 	if ( m_flLastMinDistSqr > flDistSqr )
 	{
@@ -2226,14 +2226,14 @@ inline int CParticleCollection::GetGroupID( void ) const
 	return m_pDef->m_nGroupID;
 }
 
-FORCEINLINE const Vector& CParticleCollection::GetControlPointAtCurrentTime( int nControlPoint ) const
+ALWAYS_INLINE const Vector& CParticleCollection::GetControlPointAtCurrentTime( int nControlPoint ) const
 {
 	Assert( nControlPoint <= GetHighestControlPoint() );
 	Assert( m_pDef->ReadsControlPoint( nControlPoint ) );
 	return m_ControlPoints[nControlPoint].m_Position;
 }
 
-FORCEINLINE void CParticleCollection::GetControlPointOrientationAtCurrentTime( int nControlPoint, Vector *pForward, Vector *pRight, Vector *pUp ) const
+ALWAYS_INLINE void CParticleCollection::GetControlPointOrientationAtCurrentTime( int nControlPoint, Vector *pForward, Vector *pRight, Vector *pUp ) const
 {
 	Assert( nControlPoint <= GetHighestControlPoint() );
 	Assert( m_pDef->ReadsControlPoint( nControlPoint ) );
@@ -2244,14 +2244,14 @@ FORCEINLINE void CParticleCollection::GetControlPointOrientationAtCurrentTime( i
 	*pUp = m_ControlPoints[nControlPoint].m_UpVector;
 }
 
-FORCEINLINE int CParticleCollection::GetControlPointParent( int nControlPoint ) const
+ALWAYS_INLINE int CParticleCollection::GetControlPointParent( int nControlPoint ) const
 {
 	Assert( nControlPoint <= GetHighestControlPoint() );
 	Assert( m_pDef->ReadsControlPoint( nControlPoint ) );
 	return m_ControlPoints[nControlPoint].m_nParent;
 }
 
-FORCEINLINE bool CParticleCollection::IsValid( void ) const 
+ALWAYS_INLINE bool CParticleCollection::IsValid( void ) const
 { 
 	return ( m_pDef != static_cast<CUtlReference<CParticleSystemDefinition>>( nullptr ) && m_pDef->GetMaterial() );
 }

@@ -500,14 +500,14 @@ FIXME: Enable this when we no longer fear change =)
 #if defined( COMPILER_MSVC )
 	#define STDCALL __stdcall
 	#define FASTCALL __fastcall
-	#define FORCEINLINE __forceinline
+	#define ALWAYS_INLINE __forceinline
 	// GCC 3.4.1 has a bug in supporting forced inline of templated functions
 	// this macro lets us not force inlining in that case
 	#define FORCEINLINE_TEMPLATE __forceinline
 #elif defined( COMPILER_GCC ) || defined( COMPILER_CLANG )
 	#define STDCALL
 	#define FASTCALL __attribute__( ( fastcall ) )
-	#define FORCEINLINE inline
+	#define ALWAYS_INLINE [[gnu::always_inline]] inline
 	// GCC 3.4.1 has a bug in supporting forced inline of templated functions
 	// this macro lets us not force inlining in that case
 	#define FORCEINLINE_TEMPLATE inline
@@ -530,19 +530,13 @@ FIXME: Enable this when we no longer fear change =)
 	#define HINT( THE_HINT ) 0
 #endif
 
-// Marks the codepath from here until the next branch entry point as unreachable,
-// and asserts if any attempt is made to execute it.
-#define UNREACHABLE() \
-	{                 \
-		Assert( 0 );  \
-		HINT( 0 );    \
-	}
 
 // In cases where no default is present or appropriate, this causes MSVC to generate
 // as little code as possible, and throw an assertion in debug.
+// REQUIRES: `<utility>`
 #define NO_DEFAULT \
 	default:       \
-		UNREACHABLE();
+		std::unreachable();
 
 
 #if defined( COMPILER_MSVC )
@@ -643,10 +637,12 @@ FIXME: Enable this when we no longer fear change =)
 //-----------------------------------------------------------------------------
 // fsel
 //-----------------------------------------------------------------------------
-static FORCEINLINE float fsel( float fComparand, float fValGE, float fLT ) {
+ALWAYS_INLINE
+static float fsel( float fComparand, float fValGE, float fLT ) {
 	return fComparand >= 0 ? fValGE : fLT;
 }
-static FORCEINLINE double fsel( double fComparand, double fValGE, double fLT ) {
+ALWAYS_INLINE
+static double fsel( double fComparand, double fValGE, double fLT ) {
 	return fComparand >= 0 ? fValGE : fLT;
 }
 
@@ -897,11 +893,11 @@ inline T QWordSwapC( T dw ) {
 	inline void SwapFloat( float* pOut, const float* pIn ) { SafeSwapFloat( pOut, pIn ); }
 #endif
 
-FORCEINLINE unsigned long LoadLittleDWord( const unsigned long* base, unsigned int dwordIndex ) {
+ALWAYS_INLINE unsigned long LoadLittleDWord( const unsigned long* base, unsigned int dwordIndex ) {
 	return LittleDWord( base[ dwordIndex ] );
 }
 
-FORCEINLINE void StoreLittleDWord( unsigned long* base, unsigned int dwordIndex, unsigned long dword ) {
+ALWAYS_INLINE void StoreLittleDWord( unsigned long* base, unsigned int dwordIndex, unsigned long dword ) {
 	base[ dwordIndex ] = LittleDWord( dword );
 }
 

@@ -117,7 +117,7 @@ typedef enum
 		
 const char* GLMDecodeMask( GLMThing_t type, unsigned long value );	// decode a bitmask
 
-FORCEINLINE void GLMStop( void ) { DXABSTRACT_BREAK_ON_ERROR(); }
+ALWAYS_INLINE void GLMStop( void ) { DXABSTRACT_BREAK_ON_ERROR(); }
 
 void GLMEnableTrace( bool on );
 

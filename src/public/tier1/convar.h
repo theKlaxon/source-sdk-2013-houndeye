@@ -23,7 +23,7 @@
 #include "icvar.h"
 
 #ifdef _WIN32
-#define FORCEINLINE_CVAR FORCEINLINE
+#define FORCEINLINE_CVAR ALWAYS_INLINE
 #elif POSIX
 #define FORCEINLINE_CVAR inline
 #else

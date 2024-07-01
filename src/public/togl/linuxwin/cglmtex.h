@@ -268,12 +268,12 @@ struct GLMTexSamplingParams
 
 	uint32 m_borderColor;
 
-	FORCEINLINE bool operator== (const GLMTexSamplingParams& rhs ) const
+	ALWAYS_INLINE bool operator== (const GLMTexSamplingParams& rhs ) const
 	{
 		return ( m_bits == rhs.m_bits ) && ( m_borderColor == rhs.m_borderColor );
 	}
 
-	FORCEINLINE void SetToDefaults()
+	ALWAYS_INLINE void SetToDefaults()
 	{
 		m_bits = 0;
 		m_borderColor = 0;
@@ -288,7 +288,7 @@ struct GLMTexSamplingParams
 		m_packed.m_isValid = true;
 	}
 
-	FORCEINLINE void SetToSamplerObject( GLuint nSamplerObject ) const
+	ALWAYS_INLINE void SetToSamplerObject( GLuint nSamplerObject ) const
 	{
 		static const GLenum dxtogl_addressMode[] = { GL_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, (GLenum)-1 };
 		static const GLenum dxtogl_magFilter[4] = { GL_NEAREST,	GL_NEAREST,	GL_LINEAR, GL_LINEAR };

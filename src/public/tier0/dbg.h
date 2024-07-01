@@ -537,13 +537,13 @@ DBG_INTERFACE void _AssertValidReadWritePtr( void* ptr, int count = 1 );
 DBG_INTERFACE void AssertValidStringPtr( const tchar* ptr, int maxchar = 0xFFFFFF );
 
 #if defined( DBGFLAG_ASSERT )
-	FORCEINLINE void AssertValidReadPtr( const void* ptr, int count = 1 ) { _AssertValidReadPtr( (void*) ptr, count ); }
-	FORCEINLINE void AssertValidWritePtr( const void* ptr, int count = 1 ) { _AssertValidWritePtr( (void*) ptr, count ); }
-	FORCEINLINE void AssertValidReadWritePtr( const void* ptr, int count = 1 ) { _AssertValidReadWritePtr( (void*) ptr, count ); }
+	ALWAYS_INLINE void AssertValidReadPtr( const void* ptr, int count = 1 ) { _AssertValidReadPtr( (void*) ptr, count ); }
+	ALWAYS_INLINE void AssertValidWritePtr( const void* ptr, int count = 1 ) { _AssertValidWritePtr( (void*) ptr, count ); }
+	ALWAYS_INLINE void AssertValidReadWritePtr( const void* ptr, int count = 1 ) { _AssertValidReadWritePtr( (void*) ptr, count ); }
 #else
-	FORCEINLINE void AssertValidReadPtr( const void* ptr, int count = 1 ) {}
-	FORCEINLINE void AssertValidWritePtr( const void* ptr, int count = 1 ) {}
-	FORCEINLINE void AssertValidReadWritePtr( const void* ptr, int count = 1 ) {}
+	ALWAYS_INLINE void AssertValidReadPtr( const void* ptr, int count = 1 ) {}
+	ALWAYS_INLINE void AssertValidWritePtr( const void* ptr, int count = 1 ) {}
+	ALWAYS_INLINE void AssertValidReadWritePtr( const void* ptr, int count = 1 ) {}
 	#define AssertValidStringPtr AssertValidReadPtr
 #endif
 

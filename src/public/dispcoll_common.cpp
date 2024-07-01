@@ -149,7 +149,7 @@ void CDispCollTri::FindMinMax( CDispVector<Vector> &m_aVerts )
 
 
 // SIMD Routines for intersecting with the quad tree
-FORCEINLINE int IntersectRayWithFourBoxes( const FourVectors &rayStart, const FourVectors &invDelta, const FourVectors &rayExtents, const FourVectors &boxMins, const FourVectors &boxMaxs )
+ALWAYS_INLINE int IntersectRayWithFourBoxes( const FourVectors &rayStart, const FourVectors &invDelta, const FourVectors &rayExtents, const FourVectors &boxMins, const FourVectors &boxMaxs )
 {
 	// SIMD Test ray against all four boxes at once
 	// each node stores the bboxes of its four children
@@ -191,7 +191,7 @@ FORCEINLINE int IntersectRayWithFourBoxes( const FourVectors &rayStart, const Fo
 
 // This does 4 simultaneous box intersections
 // NOTE: This can be used as a 1 vs 4 test by replicating a single box into the one side
-FORCEINLINE int IntersectFourBoxPairs( const FourVectors &mins0, const FourVectors &maxs0, const FourVectors &mins1, const FourVectors &maxs1 )
+ALWAYS_INLINE int IntersectFourBoxPairs( const FourVectors &mins0, const FourVectors &maxs0, const FourVectors &mins1, const FourVectors &maxs1 )
 {
 	// find the max mins and min maxs in each dimension
 	FourVectors intersectMins = maximum(mins0,mins1);
@@ -212,7 +212,7 @@ FORCEINLINE int IntersectFourBoxPairs( const FourVectors &mins0, const FourVecto
 
 // This does 4 simultaneous box vs. sphere intersections
 // NOTE: This can be used as a 1 vs 4 test by replicating a single sphere/box into one side
-FORCEINLINE int IntersectFourBoxSpherePairs( const FourVectors &center, const fltx4 &radiusSq, const FourVectors &mins, const FourVectors &maxs )
+ALWAYS_INLINE int IntersectFourBoxSpherePairs( const FourVectors &center, const fltx4 &radiusSq, const FourVectors &mins, const FourVectors &maxs )
 {
 	// for each dimension of each box, compute the clamped distance from the mins side to the center (must be >= 0)
 	FourVectors minDist = mins;
@@ -244,7 +244,7 @@ FORCEINLINE int IntersectFourBoxSpherePairs( const FourVectors &center, const fl
 }
 
 
-int FORCEINLINE CDispCollTree::BuildRayLeafList( int iNode, rayleaflist_t &list )
+ALWAYS_INLINE int CDispCollTree::BuildRayLeafList( int iNode, rayleaflist_t &list )
 {
 	list.nodeList[0] = iNode;
 	int listIndex = 0;
@@ -993,7 +993,7 @@ inline bool CDispCollTree::FacePlane( const Ray_t &ray, const Vector &rayDir, CD
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-bool FORCEINLINE CDispCollTree::AxisPlanesXYZ( const Ray_t &ray, CDispCollTri *pTri, CDispCollHelper *pHelper )
+ALWAYS_INLINE bool CDispCollTree::AxisPlanesXYZ( const Ray_t &ray, CDispCollTri *pTri, CDispCollHelper *pHelper )
 {
 	static const TableVector g_ImpactNormalVecs[2][3] = 
 	{

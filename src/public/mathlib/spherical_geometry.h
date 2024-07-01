@@ -19,7 +19,7 @@
 // see http://mathworld.wolfram.com/SphericalTrigonometry.html
 
 // return the spherical distance, in radians, between 2 points on the unit sphere.
-FORCEINLINE float UnitSphereLineSegmentLength( Vector const &a, Vector const &b )
+ALWAYS_INLINE float UnitSphereLineSegmentLength( Vector const &a, Vector const &b )
 {
 	// check unit length
 	Assert( fabs( VectorLength( a ) - 1.0 ) < 1.0e-3 );
@@ -30,7 +30,7 @@ FORCEINLINE float UnitSphereLineSegmentLength( Vector const &a, Vector const &b 
 
 // given 3 points on the unit sphere, return the spherical area (in radians) of the triangle they form.
 // valid for "small" triangles.
-FORCEINLINE float UnitSphereTriangleArea( Vector const &a, Vector const &b , Vector const &c )
+ALWAYS_INLINE float UnitSphereTriangleArea( Vector const &a, Vector const &b , Vector const &c )
 {
 	float flLengthA = UnitSphereLineSegmentLength( b, c );
 	float flLengthB = UnitSphereLineSegmentLength( c, a );

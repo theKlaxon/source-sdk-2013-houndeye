@@ -95,7 +95,7 @@ private:
 
 
 #ifdef DEBUG  // stop crashing edit-and-continue
-FORCEINLINE float clamp( float val, float minVal, float maxVal )
+ALWAYS_INLINE float clamp( float val, float minVal, float maxVal )
 {
 	if ( maxVal < minVal )
 		return maxVal;
@@ -107,7 +107,7 @@ FORCEINLINE float clamp( float val, float minVal, float maxVal )
 		return val;
 }
 #else // DEBUG
-FORCEINLINE float clamp( float val, float minVal, float maxVal )
+ALWAYS_INLINE float clamp( float val, float minVal, float maxVal )
 {
 #if defined(__i386__) || defined(_M_IX86)
 	_mm_store_ss( &val,
@@ -321,44 +321,44 @@ extern	const int nanmask;
 
 #define	IS_NAN(x) (((*(int *)&x)&nanmask)==nanmask)
 
-FORCEINLINE vec_t DotProduct(const vec_t *v1, const vec_t *v2)
+ALWAYS_INLINE vec_t DotProduct(const vec_t *v1, const vec_t *v2)
 {
 	return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
 }
-FORCEINLINE void VectorSubtract(const vec_t *a, const vec_t *b, vec_t *c)
+ALWAYS_INLINE void VectorSubtract(const vec_t *a, const vec_t *b, vec_t *c)
 {
 	c[0]=a[0]-b[0];
 	c[1]=a[1]-b[1];
 	c[2]=a[2]-b[2];
 }
-FORCEINLINE void VectorAdd(const vec_t *a, const vec_t *b, vec_t *c)
+ALWAYS_INLINE void VectorAdd(const vec_t *a, const vec_t *b, vec_t *c)
 {
 	c[0]=a[0]+b[0];
 	c[1]=a[1]+b[1];
 	c[2]=a[2]+b[2];
 }
-FORCEINLINE void VectorCopy(const vec_t *a, vec_t *b)
+ALWAYS_INLINE void VectorCopy(const vec_t *a, vec_t *b)
 {
 	b[0]=a[0];
 	b[1]=a[1];
 	b[2]=a[2];
 }
-FORCEINLINE void VectorClear(vec_t *a)
+ALWAYS_INLINE void VectorClear(vec_t *a)
 {
 	a[0]=a[1]=a[2]=0;
 }
 
-FORCEINLINE float VectorMaximum(const vec_t *v)
+ALWAYS_INLINE float VectorMaximum(const vec_t *v)
 {
 	return std::max( v[0], std::max( v[1], v[2] ) );
 }
 
-FORCEINLINE float VectorMaximum(const Vector& v)
+ALWAYS_INLINE float VectorMaximum(const Vector& v)
 {
 	return std::max( v.x, std::max( v.y, v.z ) );
 }
 
-FORCEINLINE void VectorScale (const float* in, vec_t scale, float* out)
+ALWAYS_INLINE void VectorScale (const float* in, vec_t scale, float* out)
 {
 	out[0] = in[0]*scale;
 	out[1] = in[1]*scale;
@@ -393,26 +393,26 @@ inline void VectorNegate(vec_t *a)
 #define VECTOR_COPY( A, B ) do { (B)[0] = (A)[0]; (B)[1] = (A)[1]; (B)[2]=(A)[2]; } while(0)
 #define DOT_PRODUCT( A, B ) ( (A)[0]*(B)[0] + (A)[1]*(B)[1] + (A)[2]*(B)[2] )
 
-FORCEINLINE void VectorMAInline( const float* start, float scale, const float* direction, float* dest )
+ALWAYS_INLINE void VectorMAInline( const float* start, float scale, const float* direction, float* dest )
 {
 	dest[0]=start[0]+direction[0]*scale;
 	dest[1]=start[1]+direction[1]*scale;
 	dest[2]=start[2]+direction[2]*scale;
 }
 
-FORCEINLINE void VectorMAInline( const Vector& start, float scale, const Vector& direction, Vector& dest )
+ALWAYS_INLINE void VectorMAInline( const Vector& start, float scale, const Vector& direction, Vector& dest )
 {
 	dest.x=start.x+direction.x*scale;
 	dest.y=start.y+direction.y*scale;
 	dest.z=start.z+direction.z*scale;
 }
 
-FORCEINLINE void VectorMA( const Vector& start, float scale, const Vector& direction, Vector& dest )
+ALWAYS_INLINE void VectorMA( const Vector& start, float scale, const Vector& direction, Vector& dest )
 {
 	VectorMAInline(start, scale, direction, dest);
 }
 
-FORCEINLINE void VectorMA( const float * start, float scale, const float *direction, float *dest )
+ALWAYS_INLINE void VectorMA( const float * start, float scale, const float *direction, float *dest )
 {
 	VectorMAInline(start, scale, direction, dest);
 }
@@ -494,7 +494,7 @@ inline float TableSin( float theta )
 }
 
 template<class T>
-FORCEINLINE T Square( T const &a )
+ALWAYS_INLINE T Square( T const &a )
 {
 	return a * a;
 }
@@ -504,7 +504,7 @@ FORCEINLINE T Square( T const &a )
 // returns 0 if x == 0 or x > 0x80000000 (ie numbers that would be negative if x was signed)
 // NOTE: the old code took an int, and if you pass in an int of 0x80000000 casted to a uint,
 //       you'll get 0x80000000, which is correct for uints, instead of 0, which was correct for ints
-FORCEINLINE uint SmallestPowerOfTwoGreaterOrEqual( uint x )
+ALWAYS_INLINE uint SmallestPowerOfTwoGreaterOrEqual( uint x )
 {
 	x -= 1;
 	x |= x >> 1;
@@ -516,7 +516,7 @@ FORCEINLINE uint SmallestPowerOfTwoGreaterOrEqual( uint x )
 }
 
 // return the largest power of two <= x. Will return 0 if passed 0
-FORCEINLINE uint LargestPowerOfTwoLessThanOrEqual( uint x )
+ALWAYS_INLINE uint LargestPowerOfTwoLessThanOrEqual( uint x )
 {
 	if ( x >= 0x80000000 )
 		return 0x80000000;
@@ -656,12 +656,12 @@ inline float RemapValClamped( float val, float A, float B, float C, float D)
 // Returns A + (B-A)*flPercent.
 // float Lerp( float flPercent, float A, float B );
 template <class T>
-FORCEINLINE T Lerp( float flPercent, T const &A, T const &B )
+ALWAYS_INLINE T Lerp( float flPercent, T const &A, T const &B )
 {
 	return A + (B - A) * flPercent;
 }
 
-FORCEINLINE float Sqr( float f )
+ALWAYS_INLINE float Sqr( float f )
 {
 	return f*f;
 }
@@ -685,7 +685,7 @@ static inline float FLerp(float f1, float f2, float i1, float i2, float x)
 #ifndef VECTOR_NO_SLOW_OPERATIONS
 
 // YWB:  Specialization for interpolating euler angles via quaternions...
-template<> FORCEINLINE QAngle Lerp<QAngle>( float flPercent, const QAngle& q1, const QAngle& q2 )
+template<> ALWAYS_INLINE QAngle Lerp<QAngle>( float flPercent, const QAngle& q1, const QAngle& q2 )
 {
 	// Avoid precision errors
 	if ( q1 == q2 )
@@ -713,7 +713,7 @@ template<> FORCEINLINE QAngle Lerp<QAngle>( float flPercent, const QAngle& q1, c
 #pragma error
 
 // NOTE NOTE: I haven't tested this!! It may not work! Check out interpolatedvar.cpp in the client dll to try it
-template<> FORCEINLINE QAngleByValue Lerp<QAngleByValue>( float flPercent, const QAngleByValue& q1, const QAngleByValue& q2 )
+template<> ALWAYS_INLINE QAngleByValue Lerp<QAngleByValue>( float flPercent, const QAngleByValue& q1, const QAngleByValue& q2 )
 {
 	// Avoid precision errors
 	if ( q1 == q2 )
@@ -741,14 +741,14 @@ template<> FORCEINLINE QAngleByValue Lerp<QAngleByValue>( float flPercent, const
 
 /// Same as swap(), but won't cause problems with std::swap
 template <class T> 
-FORCEINLINE void V_swap( T& x, T& y )
+ALWAYS_INLINE void V_swap( T& x, T& y )
 {
 	T temp = x;
 	x = y;
 	y = temp;
 }
 
-template <class T> FORCEINLINE T AVG(T a, T b)
+template <class T> ALWAYS_INLINE T AVG(T a, T b)
 {
 	return (a+b)/2;
 }
@@ -1199,14 +1199,14 @@ inline float SimpleSplineRemapValClamped( float val, float A, float B, float C, 
 	return C + (D - C) * SimpleSpline( cVal );
 }
 
-FORCEINLINE int RoundFloatToInt(float f)
+ALWAYS_INLINE int RoundFloatToInt(float f)
 {
 #if defined(__i386__) || defined(_M_IX86) || defined( PLATFORM_WINDOWS_PC64 ) || defined(__x86_64__)
 	return _mm_cvtss_si32(_mm_load_ss(&f));
 #endif
 }
 
-FORCEINLINE unsigned char RoundFloatToByte(float f)
+ALWAYS_INLINE unsigned char RoundFloatToByte(float f)
 {
 	int nResult = RoundFloatToInt(f);
 #ifdef Assert
@@ -1215,7 +1215,7 @@ FORCEINLINE unsigned char RoundFloatToByte(float f)
 	return (unsigned char) nResult;
 }
 
-FORCEINLINE unsigned long RoundFloatToUnsignedLong(float f)
+ALWAYS_INLINE unsigned long RoundFloatToUnsignedLong(float f)
 {
 #if defined( PLATFORM_WINDOWS_PC64 )
 	uint nRet = ( uint ) f;
@@ -1252,13 +1252,13 @@ FORCEINLINE unsigned long RoundFloatToUnsignedLong(float f)
 #endif // PLATFORM_WINDOWS_PC64
 }
 
-FORCEINLINE bool IsIntegralValue( float flValue, float flTolerance = 0.001f )
+ALWAYS_INLINE bool IsIntegralValue( float flValue, float flTolerance = 0.001f )
 {
 	return fabs( RoundFloatToInt( flValue ) - flValue ) < flTolerance;
 }
 
 // Fast, accurate ftol:
-FORCEINLINE int Float2Int( float a )
+ALWAYS_INLINE int Float2Int( float a )
 {
     // Rely on compiler to generate CVTTSS2SI on x86
     return (int) a;
@@ -1283,7 +1283,7 @@ inline int Floor2Int( float a )
 //-----------------------------------------------------------------------------
 // Fast color conversion from float to unsigned char
 //-----------------------------------------------------------------------------
-FORCEINLINE unsigned int FastFToC( float c )
+ALWAYS_INLINE unsigned int FastFToC( float c )
 {
 #if defined( __i386__ )
 	// IEEE float bit manipulation works for values between [0, 1<<23)
@@ -1298,7 +1298,7 @@ FORCEINLINE unsigned int FastFToC( float c )
 //-----------------------------------------------------------------------------
 // Fast conversion from float to integer with magnitude less than 2**22
 //-----------------------------------------------------------------------------
-FORCEINLINE int FastFloatToSmallInt( float c )
+ALWAYS_INLINE int FastFloatToSmallInt( float c )
 {
 #if defined( __i386__ )
 	// IEEE float bit manipulation works for values between [-1<<22, 1<<22)
@@ -1404,7 +1404,7 @@ extern float SrgbGammaToLinear( float flSrgbGammaValue );
 extern float SrgbLinearToGamma( float flLinearValue );
 
 // linear (0..4) to screen corrected vertex space (0..1?)
-FORCEINLINE float LinearToVertexLight( float f )
+ALWAYS_INLINE float LinearToVertexLight( float f )
 {
 	extern float lineartovertex[4096];	
 
@@ -1425,7 +1425,7 @@ FORCEINLINE float LinearToVertexLight( float f )
 }
 
 
-FORCEINLINE unsigned char LinearToLightmap( float f )
+ALWAYS_INLINE unsigned char LinearToLightmap( float f )
 {
 	extern unsigned char lineartolightmap[4096];	
 
@@ -1444,7 +1444,7 @@ FORCEINLINE unsigned char LinearToLightmap( float f )
 	return lineartolightmap[i];
 }
 
-FORCEINLINE void ColorClamp( Vector& color )
+ALWAYS_INLINE void ColorClamp( Vector& color )
 {
 	float maxc = std::max( color.x, std::max( color.y, color.z ) );
 	if ( maxc > 1.0f )
@@ -1673,7 +1673,7 @@ void Parabolic_Spline_NormalizeX(
 
 // quintic interpolating polynomial from Perlin.
 // 0->0, 1->1, smooth-in between with smooth tangents
-FORCEINLINE float QuinticInterpolatingPolynomial(float t)
+ALWAYS_INLINE float QuinticInterpolatingPolynomial(float t)
 {
 	// 6t^5-15t^4+10t^3
 	return t * t * t *( t * ( t* 6.0 - 15.0 ) + 10.0 );
@@ -1831,7 +1831,7 @@ inline void MatrixITransformPlane( const matrix3x4_t &src, const cplane_t &inPla
 int CeilPow2( int in );
 int FloorPow2( int in );
 
-FORCEINLINE float * UnpackNormal_HEND3N( const unsigned int *pPackedNormal, float *pNormal )
+ALWAYS_INLINE float * UnpackNormal_HEND3N( const unsigned int *pPackedNormal, float *pNormal )
 {
 	int temp[3];
 	temp[0] = ((*pPackedNormal >> 0L) & 0x7ff);
@@ -1855,7 +1855,7 @@ FORCEINLINE float * UnpackNormal_HEND3N( const unsigned int *pPackedNormal, floa
 	return pNormal;
 }
 
-FORCEINLINE unsigned int * PackNormal_HEND3N( const float *pNormal, unsigned int *pPackedNormal )
+ALWAYS_INLINE unsigned int * PackNormal_HEND3N( const float *pNormal, unsigned int *pPackedNormal )
 {
 	int temp[3];
 
@@ -1875,7 +1875,7 @@ FORCEINLINE unsigned int * PackNormal_HEND3N( const float *pNormal, unsigned int
 	return pPackedNormal;
 }
 
-FORCEINLINE unsigned int * PackNormal_HEND3N( float nx, float ny, float nz, unsigned int *pPackedNormal )
+ALWAYS_INLINE unsigned int * PackNormal_HEND3N( float nx, float ny, float nz, unsigned int *pPackedNormal )
 {
 	int temp[3];
 
@@ -1895,7 +1895,7 @@ FORCEINLINE unsigned int * PackNormal_HEND3N( float nx, float ny, float nz, unsi
 	return pPackedNormal;
 }
 
-FORCEINLINE float * UnpackNormal_SHORT2( const unsigned int *pPackedNormal, float *pNormal, bool bIsTangent = FALSE )
+ALWAYS_INLINE float * UnpackNormal_SHORT2( const unsigned int *pPackedNormal, float *pNormal, bool bIsTangent = FALSE )
 {
 	// Unpacks from Jason's 2-short format (fills in a 4th binormal-sign (+1/-1) value, if this is a tangent vector)
 
@@ -1927,7 +1927,7 @@ FORCEINLINE float * UnpackNormal_SHORT2( const unsigned int *pPackedNormal, floa
 	return pNormal;
 }
 
-FORCEINLINE unsigned int * PackNormal_SHORT2( float nx, float ny, float nz, unsigned int *pPackedNormal, float binormalSign = +1.0f )
+ALWAYS_INLINE unsigned int * PackNormal_SHORT2( float nx, float ny, float nz, unsigned int *pPackedNormal, float binormalSign = +1.0f )
 {
 	// Pack a vector (ASSUMED TO BE NORMALIZED) into Jason's 4-byte (SHORT2) format.
 	// This simply reconstructs Z from X & Y. It uses the sign bits of the X & Y coords
@@ -1961,13 +1961,13 @@ FORCEINLINE unsigned int * PackNormal_SHORT2( float nx, float ny, float nz, unsi
 	return pPackedNormal;
 }
 
-FORCEINLINE unsigned int * PackNormal_SHORT2( const float *pNormal, unsigned int *pPackedNormal, float binormalSign = +1.0f )
+ALWAYS_INLINE unsigned int * PackNormal_SHORT2( const float *pNormal, unsigned int *pPackedNormal, float binormalSign = +1.0f )
 {
 	return PackNormal_SHORT2( pNormal[0], pNormal[1], pNormal[2], pPackedNormal, binormalSign );
 }
 
 // Unpacks a UBYTE4 normal (for a tangent, the result's fourth component receives the binormal 'sign')
-FORCEINLINE float * UnpackNormal_UBYTE4( const unsigned int *pPackedNormal, float *pNormal, bool bIsTangent = FALSE )
+ALWAYS_INLINE float * UnpackNormal_UBYTE4( const unsigned int *pPackedNormal, float *pNormal, bool bIsTangent = FALSE )
 {
 	unsigned char cX, cY;
 	if ( bIsTangent )
@@ -2032,7 +2032,7 @@ FORCEINLINE float * UnpackNormal_UBYTE4( const unsigned int *pPackedNormal, floa
 // bIsTangent is used to specify which WORD of the output to store the data
 // The expected usage is to call once with the normal and once with
 // the tangent and binormal sign flag, bitwise OR'ing the returned DWORDs
-FORCEINLINE unsigned int * PackNormal_UBYTE4( float nx, float ny, float nz, unsigned int *pPackedNormal, bool bIsTangent = false, float binormalSign = +1.0f )
+ALWAYS_INLINE unsigned int * PackNormal_UBYTE4( float nx, float ny, float nz, unsigned int *pPackedNormal, bool bIsTangent = false, float binormalSign = +1.0f )
 {
 	float xSign = nx < 0.0f ? -1.0f : 1.0f;			// -1 or 1 sign
 	float ySign = ny < 0.0f ? -1.0f : 1.0f;
@@ -2077,7 +2077,7 @@ FORCEINLINE unsigned int * PackNormal_UBYTE4( float nx, float ny, float nz, unsi
 	return pPackedNormal;
 }
 
-FORCEINLINE unsigned int * PackNormal_UBYTE4( const float *pNormal, unsigned int *pPackedNormal, bool bIsTangent = false, float binormalSign = +1.0f )
+ALWAYS_INLINE unsigned int * PackNormal_UBYTE4( const float *pNormal, unsigned int *pPackedNormal, bool bIsTangent = false, float binormalSign = +1.0f )
 {
 	return PackNormal_UBYTE4( pNormal[0], pNormal[1], pNormal[2], pPackedNormal, bIsTangent, binormalSign );
 }

@@ -1173,7 +1173,7 @@ void QuaternionSM( float s, const Quaternion &p, const Quaternion &q, Quaternion
 }
 
 #if ALLOW_SIMD_QUATERNION_MATH
-FORCEINLINE fltx4 QuaternionSMSIMD( float s, const fltx4 &p, const fltx4 &q )
+ALWAYS_INLINE fltx4 QuaternionSMSIMD( float s, const fltx4 &p, const fltx4 &q )
 {
 	fltx4 p1, q1, result;
 	p1 = QuaternionScaleSIMD( p, s );
@@ -1200,7 +1200,7 @@ void QuaternionMA( const Quaternion &p, float s, const Quaternion &q, Quaternion
 }
 
 #if ALLOW_SIMD_QUATERNION_MATH
-FORCEINLINE fltx4 QuaternionMASIMD( const fltx4 &p, float s, const fltx4 &q )
+ALWAYS_INLINE fltx4 QuaternionMASIMD( const fltx4 &p, float s, const fltx4 &q )
 {
 	fltx4 p1, q1, result;
 	q1 = QuaternionScaleSIMD( q, s );
@@ -1226,7 +1226,7 @@ void QuaternionAccumulate( const Quaternion &p, float s, const Quaternion &q, Qu
 }
 
 #if ALLOW_SIMD_QUATERNION_MATH
-FORCEINLINE fltx4 QuaternionAccumulateSIMD( const fltx4 &p, float s, const fltx4 &q )
+ALWAYS_INLINE fltx4 QuaternionAccumulateSIMD( const fltx4 &p, float s, const fltx4 &q )
 {
 	fltx4 q2, s4, result;
 	q2 = QuaternionAlignSIMD( p, q );

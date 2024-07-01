@@ -34,24 +34,24 @@
 template<class T> class CUtlReference
 {
 public:
-	FORCEINLINE CUtlReference(void)
+	ALWAYS_INLINE CUtlReference(void)
 	{
 		m_pNext = m_pPrev = NULL;
 		m_pObject = NULL;
 	}
   
-	FORCEINLINE CUtlReference(T *pObj)
+	ALWAYS_INLINE CUtlReference(T *pObj)
 	{
 		m_pNext = m_pPrev = NULL;
 		AddRef( pObj );
 	}
 
-	FORCEINLINE ~CUtlReference(void)
+	ALWAYS_INLINE ~CUtlReference(void)
 	{
 		KillRef();
 	}
   
-	FORCEINLINE void Set(T *pObj)
+	ALWAYS_INLINE void Set(T *pObj)
 	{
 		if ( m_pObject != pObj )
 		{
@@ -60,45 +60,45 @@ public:
 		}
 	}
   
-	FORCEINLINE T * operator()(void) const
+	ALWAYS_INLINE T * operator()(void) const
 	{
 		return m_pObject;
 	}
 
-	FORCEINLINE operator T*()
+	ALWAYS_INLINE operator T*()
 	{
 		return m_pObject;
 	}
 
-	FORCEINLINE operator const T*() const
+	ALWAYS_INLINE operator const T*() const
 	{
 		return m_pObject;
 	}
 
-	FORCEINLINE T* operator->()
+	ALWAYS_INLINE T* operator->()
 	{ 
 		return m_pObject; 
 	}
 
-	FORCEINLINE const T* operator->() const
+	ALWAYS_INLINE const T* operator->() const
 	{ 
 		return m_pObject; 
 	}
 
-	FORCEINLINE CUtlReference &operator=( const CUtlReference& otherRef )
+	ALWAYS_INLINE CUtlReference &operator=( const CUtlReference& otherRef )
 	{
 		Set( otherRef.m_pObject );
 		return *this;
 	}
 
-	FORCEINLINE CUtlReference &operator=( T *pObj )
+	ALWAYS_INLINE CUtlReference &operator=( T *pObj )
 	{
 		Set( pObj );
 		return *this;
 	}
 
 
-	FORCEINLINE bool operator==( const CUtlReference& o ) const
+	ALWAYS_INLINE bool operator==( const CUtlReference& o ) const
 	{
 		return ( o.m_pObject == m_pObject );
 	}	
@@ -109,7 +109,7 @@ public:
 
 	T *m_pObject;
 
-	FORCEINLINE void AddRef( T *pObj )
+	ALWAYS_INLINE void AddRef( T *pObj )
 	{
 		m_pObject = pObj;
 		if ( pObj )
@@ -118,7 +118,7 @@ public:
 		}
 	}
 
-	FORCEINLINE void KillRef(void)
+	ALWAYS_INLINE void KillRef(void)
 	{
 		if ( m_pObject )
 		{

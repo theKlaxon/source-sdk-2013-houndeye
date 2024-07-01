@@ -32,7 +32,7 @@ public:
 	size_t m_nNumBytesRemaining;
 #endif
 	
-	FORCEINLINE CFixedCommandStorageBuffer( void )
+	ALWAYS_INLINE CFixedCommandStorageBuffer( void )
 	{
 		m_pDataOut = m_Data;
 #ifdef DBGFLAG_ASSERT
@@ -41,12 +41,12 @@ public:
 
 	}
 
-	FORCEINLINE void EnsureCapacity( size_t sz )
+	ALWAYS_INLINE void EnsureCapacity( size_t sz )
 	{
 		Assert( m_nNumBytesRemaining >= sz );
 	}
 
-	template<class T> FORCEINLINE void Put( T const &nValue )
+	template<class T> ALWAYS_INLINE void Put( T const &nValue )
 	{
 		EnsureCapacity( sizeof( T ) );
 		*( reinterpret_cast<T *>( m_pDataOut ) ) = nValue;
@@ -56,34 +56,34 @@ public:
 #endif
 	}
 
-	FORCEINLINE void PutInt( int nValue )
+	ALWAYS_INLINE void PutInt( int nValue )
 	{
 		Put( nValue );
 	}
 
-	FORCEINLINE void PutFloat( float nValue )
+	ALWAYS_INLINE void PutFloat( float nValue )
 	{
 		Put( nValue );
 	}
 
-	FORCEINLINE void PutPtr( void * pPtr )
+	ALWAYS_INLINE void PutPtr( void * pPtr )
 	{
 		Put( pPtr );
 	}
 
-	FORCEINLINE void PutMemory( const void *pMemory, size_t nBytes )
+	ALWAYS_INLINE void PutMemory( const void *pMemory, size_t nBytes )
 	{
 		EnsureCapacity( nBytes );
 		memcpy( m_pDataOut, pMemory, nBytes );
 		m_pDataOut += nBytes;
 	}
 
-	FORCEINLINE uint8 *Base( void )
+	ALWAYS_INLINE uint8 *Base( void )
 	{
 		return m_Data;
 	}
 
-	FORCEINLINE void Reset( void )
+	ALWAYS_INLINE void Reset( void )
 	{
 		m_pDataOut = m_Data;
 #ifdef DBGFLAG_ASSERT
@@ -91,7 +91,7 @@ public:
 #endif
 	}
 
-	FORCEINLINE size_t Size( void ) const
+	ALWAYS_INLINE size_t Size( void ) const
 	{
 		return m_pDataOut - m_Data;
 	}
@@ -103,25 +103,25 @@ template<class S> class CCommandBufferBuilder
 public:
 	S m_Storage;
 
-	FORCEINLINE void End( void )
+	ALWAYS_INLINE void End( void )
 	{
 		m_Storage.PutInt( CBCMD_END );
 	}
 
 
-	FORCEINLINE IMaterialVar *Param( int nVar ) const
+	ALWAYS_INLINE IMaterialVar *Param( int nVar ) const
 	{
 		return CBaseShader::s_ppParams[nVar];
 	}
 
-	FORCEINLINE void SetPixelShaderConstants( int nFirstConstant, int nConstants )
+	ALWAYS_INLINE void SetPixelShaderConstants( int nFirstConstant, int nConstants )
 	{
 		m_Storage.PutInt( CBCMD_SET_PIXEL_SHADER_FLOAT_CONST );
 		m_Storage.PutInt( nFirstConstant );
 		m_Storage.PutInt( nConstants );
 	}
 
-	FORCEINLINE void OutputConstantData( float const *pSrcData )
+	ALWAYS_INLINE void OutputConstantData( float const *pSrcData )
 	{
 		m_Storage.PutFloat( pSrcData[0] );
 		m_Storage.PutFloat( pSrcData[1] );
@@ -129,7 +129,7 @@ public:
 		m_Storage.PutFloat( pSrcData[3] );
 	}
 
-	FORCEINLINE void OutputConstantData4( float flVal0, float flVal1, float flVal2, float flVal3 )
+	ALWAYS_INLINE void OutputConstantData4( float flVal0, float flVal1, float flVal2, float flVal3 )
 	{
 		m_Storage.PutFloat( flVal0 );
 		m_Storage.PutFloat( flVal1 );
@@ -137,13 +137,13 @@ public:
 		m_Storage.PutFloat( flVal3 );
 	}
 
-	FORCEINLINE void SetPixelShaderConstant( int nFirstConstant, float const *pSrcData, int nNumConstantsToSet )
+	ALWAYS_INLINE void SetPixelShaderConstant( int nFirstConstant, float const *pSrcData, int nNumConstantsToSet )
 	{
 		SetPixelShaderConstants( nFirstConstant, nNumConstantsToSet );
 		m_Storage.PutMemory( pSrcData, 4 * sizeof( float ) * nNumConstantsToSet );
 	}
 
-	FORCEINLINE void SetPixelShaderConstant( int nFirstConstant, int nVar )
+	ALWAYS_INLINE void SetPixelShaderConstant( int nFirstConstant, int nVar )
 	{
 		SetPixelShaderConstant( nFirstConstant, Param( nVar )->GetVecValue() );
 	}
@@ -159,19 +159,19 @@ public:
 		SetPixelShaderConstant( pixelReg, val );
 	}
 
-	FORCEINLINE void SetPixelShaderConstant( int nFirstConstant, float const *pSrcData )
+	ALWAYS_INLINE void SetPixelShaderConstant( int nFirstConstant, float const *pSrcData )
 	{
 		SetPixelShaderConstants( nFirstConstant, 1 );
 		OutputConstantData( pSrcData );
 	}
 
-	FORCEINLINE void SetPixelShaderConstant4( int nFirstConstant, float flVal0, float flVal1, float flVal2, float flVal3 )
+	ALWAYS_INLINE void SetPixelShaderConstant4( int nFirstConstant, float flVal0, float flVal1, float flVal2, float flVal3 )
 	{
 		SetPixelShaderConstants( nFirstConstant, 1 );
 		OutputConstantData4( flVal0, flVal1, flVal2, flVal3 );
 	}
 
-	FORCEINLINE void SetPixelShaderConstant_W( int pixelReg, int constantVar, float fWValue )
+	ALWAYS_INLINE void SetPixelShaderConstant_W( int pixelReg, int constantVar, float fWValue )
 	{
 		if ( constantVar != -1 )
 		{
@@ -181,7 +181,7 @@ public:
 		}
 	}
 
-	FORCEINLINE void SetVertexShaderConstant( int nFirstConstant, float const *pSrcData )
+	ALWAYS_INLINE void SetVertexShaderConstant( int nFirstConstant, float const *pSrcData )
 	{
 		m_Storage.PutInt( CBCMD_SET_VERTEX_SHADER_FLOAT_CONST );
 		m_Storage.PutInt( nFirstConstant );
@@ -189,7 +189,7 @@ public:
 		OutputConstantData( pSrcData );
 	}
 
-	FORCEINLINE void SetVertexShaderConstant( int nFirstConstant, float const *pSrcData, int nConsts )
+	ALWAYS_INLINE void SetVertexShaderConstant( int nFirstConstant, float const *pSrcData, int nConsts )
 	{
 		m_Storage.PutInt( CBCMD_SET_VERTEX_SHADER_FLOAT_CONST );
 		m_Storage.PutInt( nFirstConstant );
@@ -198,7 +198,7 @@ public:
 	}
 
 
-	FORCEINLINE void SetVertexShaderConstant4( int nFirstConstant, float flVal0, float flVal1, float flVal2, float flVal3 )
+	ALWAYS_INLINE void SetVertexShaderConstant4( int nFirstConstant, float flVal0, float flVal1, float flVal2, float flVal3 )
 	{
 		m_Storage.PutInt( CBCMD_SET_VERTEX_SHADER_FLOAT_CONST );
 		m_Storage.PutInt( nFirstConstant );
@@ -264,7 +264,7 @@ public:
 		SetVertexShaderConstant( vertexReg, transformation[0].Base(), 2 ); 
 	}
 
-	FORCEINLINE void SetEnvMapTintPixelShaderDynamicState( int pixelReg, int tintVar )
+	ALWAYS_INLINE void SetEnvMapTintPixelShaderDynamicState( int pixelReg, int tintVar )
 	{
 		if( g_pConfig->bShowSpecular && my_mat_fullbright.GetInt() != 2 )
 		{
@@ -276,7 +276,7 @@ public:
 		}
 	}
 
-	FORCEINLINE void SetEnvMapTintPixelShaderDynamicStateGammaToLinear( int pixelReg, int tintVar, float flAlphaValue = 1.0 )
+	ALWAYS_INLINE void SetEnvMapTintPixelShaderDynamicStateGammaToLinear( int pixelReg, int tintVar, float flAlphaValue = 1.0 )
 	{
 		if( ( tintVar != -1 ) && g_pConfig->bShowSpecular && my_mat_fullbright.GetInt() != 2 )
 		{
@@ -291,36 +291,36 @@ public:
 		}
 	}
 
-	FORCEINLINE void StoreEyePosInPixelShaderConstant( int nConst )
+	ALWAYS_INLINE void StoreEyePosInPixelShaderConstant( int nConst )
 	{
 		m_Storage.PutInt( CBCMD_STORE_EYE_POS_IN_PSCONST );
 		m_Storage.PutInt( nConst );
 	}
 
-	FORCEINLINE void CommitPixelShaderLighting( int nConst )
+	ALWAYS_INLINE void CommitPixelShaderLighting( int nConst )
 	{
 		m_Storage.PutInt( CBCMD_COMMITPIXELSHADERLIGHTING );
 		m_Storage.PutInt( nConst );
 	}
 
-	FORCEINLINE void SetPixelShaderStateAmbientLightCube( int nConst )
+	ALWAYS_INLINE void SetPixelShaderStateAmbientLightCube( int nConst )
 	{
 		m_Storage.PutInt( CBCMD_SETPIXELSHADERSTATEAMBIENTLIGHTCUBE );
 		m_Storage.PutInt( nConst );
 	}
 
-	FORCEINLINE void SetAmbientCubeDynamicStateVertexShader( void )
+	ALWAYS_INLINE void SetAmbientCubeDynamicStateVertexShader( void )
 	{
 		m_Storage.PutInt( CBCMD_SETAMBIENTCUBEDYNAMICSTATEVERTEXSHADER );
 	}
 
-	FORCEINLINE void SetPixelShaderFogParams( int nReg )
+	ALWAYS_INLINE void SetPixelShaderFogParams( int nReg )
 	{
 		m_Storage.PutInt( CBCMD_SETPIXELSHADERFOGPARAMS );
 		m_Storage.PutInt( nReg );
 	}
 
-	FORCEINLINE void BindStandardTexture( Sampler_t nSampler, StandardTextureId_t nTextureId )
+	ALWAYS_INLINE void BindStandardTexture( Sampler_t nSampler, StandardTextureId_t nTextureId )
 	{
 		m_Storage.PutInt( CBCMD_BIND_STANDARD_TEXTURE );
 		m_Storage.PutInt( nSampler );
@@ -328,7 +328,7 @@ public:
 	}
 
 
-	FORCEINLINE void BindTexture( Sampler_t nSampler, ShaderAPITextureHandle_t hTexture )
+	ALWAYS_INLINE void BindTexture( Sampler_t nSampler, ShaderAPITextureHandle_t hTexture )
 	{
 		Assert( hTexture != INVALID_SHADERAPI_TEXTURE_HANDLE );
 		if ( hTexture != INVALID_SHADERAPI_TEXTURE_HANDLE )
@@ -339,13 +339,13 @@ public:
 		}
 	}
 
-	FORCEINLINE void BindTexture( CBaseVSShader *pShader, Sampler_t nSampler, int nTextureVar, int nFrameVar )
+	ALWAYS_INLINE void BindTexture( CBaseVSShader *pShader, Sampler_t nSampler, int nTextureVar, int nFrameVar )
 	{
 		ShaderAPITextureHandle_t hTexture = pShader->GetShaderAPITextureBindHandle( nTextureVar, nFrameVar );
 		BindTexture( nSampler, hTexture );
 	}
 
-	FORCEINLINE void BindMultiTexture( CBaseVSShader *pShader, Sampler_t nSampler1, Sampler_t nSampler2, int nTextureVar, int nFrameVar )
+	ALWAYS_INLINE void BindMultiTexture( CBaseVSShader *pShader, Sampler_t nSampler1, Sampler_t nSampler2, int nTextureVar, int nFrameVar )
 	{
 		ShaderAPITextureHandle_t hTexture = pShader->GetShaderAPITextureBindHandle( nTextureVar, nFrameVar, 0 );
 		BindTexture( nSampler1, hTexture );
@@ -353,48 +353,48 @@ public:
 		BindTexture( nSampler2, hTexture );
 	}
 
-	FORCEINLINE void SetPixelShaderIndex( int nIndex )
+	ALWAYS_INLINE void SetPixelShaderIndex( int nIndex )
 	{
 		m_Storage.PutInt( CBCMD_SET_PSHINDEX );
 		m_Storage.PutInt( nIndex );
 	}
 
-	FORCEINLINE void SetVertexShaderIndex( int nIndex )
+	ALWAYS_INLINE void SetVertexShaderIndex( int nIndex )
 	{
 		m_Storage.PutInt( CBCMD_SET_VSHINDEX );
 		m_Storage.PutInt( nIndex );
 	}
 
-	FORCEINLINE void SetDepthFeatheringPixelShaderConstant( int iConstant, float fDepthBlendScale )
+	ALWAYS_INLINE void SetDepthFeatheringPixelShaderConstant( int iConstant, float fDepthBlendScale )
 	{
 		m_Storage.PutInt( CBCMD_SET_DEPTH_FEATHERING_CONST );
 		m_Storage.PutInt( iConstant );
 		m_Storage.PutFloat( fDepthBlendScale );
 	}
 
-	FORCEINLINE void Goto( uint8 *pCmdBuf )
+	ALWAYS_INLINE void Goto( uint8 *pCmdBuf )
 	{
 		m_Storage.PutInt( CBCMD_JUMP );
 		m_Storage.PutPtr( pCmdBuf );
 	}
 
-	FORCEINLINE void Call( uint8 *pCmdBuf )
+	ALWAYS_INLINE void Call( uint8 *pCmdBuf )
 	{
 		m_Storage.PutInt( CBCMD_JSR );
 		m_Storage.PutPtr( pCmdBuf );
 	}
 
-	FORCEINLINE void Reset( void )
+	ALWAYS_INLINE void Reset( void )
 	{
 		m_Storage.Reset();
 	}
 
-	FORCEINLINE size_t Size( void ) const
+	ALWAYS_INLINE size_t Size( void ) const
 	{
 		return m_Storage.Size();
 	}
 
-	FORCEINLINE uint8 *Base( void )
+	ALWAYS_INLINE uint8 *Base( void )
 	{
 		return m_Storage.Base();
 	}

@@ -311,7 +311,7 @@ public:
 	void SetExternalBuffer( T* pMemory, int numElements )	{ Assert( 0 ); }
 
 	// Size
-	FORCEINLINE void RememberAllocSize( size_t sz )
+	ALWAYS_INLINE void RememberAllocSize( size_t sz )
 	{
 #ifdef REMEMBER_ALLOC_SIZE_FOR_VALGRIND
 		m_nCurAllocSize = sz;
@@ -336,7 +336,7 @@ public:
 		return NumAllocated();
 	}
 
-	FORCEINLINE void ReAlloc( size_t sz )
+	ALWAYS_INLINE void ReAlloc( size_t sz )
 	{
 		m_pMemory = (T*)realloc( m_pMemory, sz );
 		RememberAllocSize( sz );

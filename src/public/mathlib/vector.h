@@ -102,14 +102,14 @@ public:
 	bool operator!=(const Vector& v) const;	
 
 	// arithmetic operations
-	FORCEINLINE Vector&	operator+=(const Vector &v);			
-	FORCEINLINE Vector&	operator-=(const Vector &v);		
-	FORCEINLINE Vector&	operator*=(const Vector &v);			
-	FORCEINLINE Vector&	operator*=(float s);
-	FORCEINLINE Vector&	operator/=(const Vector &v);		
-	FORCEINLINE Vector&	operator/=(float s);	
-	FORCEINLINE Vector&	operator+=(float fl) ; ///< broadcast add
-	FORCEINLINE Vector&	operator-=(float fl) ; ///< broadcast sub			
+	ALWAYS_INLINE Vector& operator+=(const Vector &v);
+	ALWAYS_INLINE Vector& operator-=(const Vector &v);
+	ALWAYS_INLINE Vector& operator*=(const Vector &v);
+	ALWAYS_INLINE Vector& operator*=(float s);
+	ALWAYS_INLINE Vector& operator/=(const Vector &v);
+	ALWAYS_INLINE Vector& operator/=(float s);
+	ALWAYS_INLINE Vector& operator+=(float fl) ; ///< broadcast add
+	ALWAYS_INLINE Vector& operator-=(float fl) ; ///< broadcast sub
 
 // negate the vector components
 	void	Negate(); 
@@ -118,7 +118,7 @@ public:
 	inline vec_t	Length() const;
 
 	// Get the vector's magnitude squared.
-	FORCEINLINE vec_t LengthSqr(void) const
+	ALWAYS_INLINE vec_t LengthSqr(void) const
 	{ 
 		CHECK_VALID(*this);
 		return (x*x + y*y + z*z);		
@@ -138,7 +138,7 @@ public:
 	bool	IsLengthLessThan( float val ) const;
 
 	// check if a vector is within the box defined by two other vectors
-	FORCEINLINE bool WithinAABox( Vector const &boxmin, Vector const &boxmax);
+	ALWAYS_INLINE bool WithinAABox( Vector const &boxmin, Vector const &boxmax);
  
 	// Get the distance from this vector to the other one.
 	vec_t	DistTo(const Vector &vOther) const;
@@ -146,7 +146,7 @@ public:
 	// Get the distance from this vector to the other one squared.
 	// NJS: note, VC wasn't inlining it correctly in several deeply nested inlines due to being an 'out of line' inline.  
 	// may be able to tidy this up after switching to VC7
-	FORCEINLINE vec_t DistToSqr(const Vector &vOther) const
+	ALWAYS_INLINE vec_t DistToSqr(const Vector &vOther) const
 	{
 		Vector delta;
 
@@ -207,7 +207,7 @@ private:
 #endif
 };
 
-FORCEINLINE void NetworkVarConstruct( Vector &v ) { v.Zero(); }
+ALWAYS_INLINE void NetworkVarConstruct( Vector &v ) { v.Zero(); }
 
 #define USE_M64S 1
 
@@ -248,13 +248,13 @@ public:
 	bool operator!=(const ShortVector& v) const;	
 
 	// Arithmetic operations
-	FORCEINLINE ShortVector& operator+=(const ShortVector &v);			
-	FORCEINLINE ShortVector& operator-=(const ShortVector &v);		
-	FORCEINLINE ShortVector& operator*=(const ShortVector &v);			
-	FORCEINLINE ShortVector& operator*=(float s);
-	FORCEINLINE ShortVector& operator/=(const ShortVector &v);		
-	FORCEINLINE ShortVector& operator/=(float s);					
-	FORCEINLINE ShortVector operator*(float fl) const;
+	ALWAYS_INLINE ShortVector& operator+=(const ShortVector &v);
+	ALWAYS_INLINE ShortVector& operator-=(const ShortVector &v);
+	ALWAYS_INLINE ShortVector& operator*=(const ShortVector &v);
+	ALWAYS_INLINE ShortVector& operator*=(float s);
+	ALWAYS_INLINE ShortVector& operator/=(const ShortVector &v);
+	ALWAYS_INLINE ShortVector& operator/=(float s);
+	ALWAYS_INLINE ShortVector operator*(float fl) const;
 
 private:
 
@@ -305,13 +305,13 @@ public:
 	bool operator!=(const IntVector4D& v) const;	
 
 	// Arithmetic operations
-	FORCEINLINE IntVector4D& operator+=(const IntVector4D &v);			
-	FORCEINLINE IntVector4D& operator-=(const IntVector4D &v);		
-	FORCEINLINE IntVector4D& operator*=(const IntVector4D &v);			
-	FORCEINLINE IntVector4D& operator*=(float s);
-	FORCEINLINE IntVector4D& operator/=(const IntVector4D &v);		
-	FORCEINLINE IntVector4D& operator/=(float s);					
-	FORCEINLINE IntVector4D operator*(float fl) const;
+	ALWAYS_INLINE IntVector4D& operator+=(const IntVector4D &v);
+	ALWAYS_INLINE IntVector4D& operator-=(const IntVector4D &v);
+	ALWAYS_INLINE IntVector4D& operator*=(const IntVector4D &v);
+	ALWAYS_INLINE IntVector4D& operator*=(float s);
+	ALWAYS_INLINE IntVector4D& operator/=(const IntVector4D &v);
+	ALWAYS_INLINE IntVector4D& operator/=(float s);
+	ALWAYS_INLINE IntVector4D operator*(float fl) const;
 
 private:
 
@@ -407,18 +407,18 @@ public:
 //-----------------------------------------------------------------------------
 
 // Vector clear
-FORCEINLINE void VectorClear( Vector& a );
+ALWAYS_INLINE void VectorClear( Vector& a );
 
 // Copy
-FORCEINLINE void VectorCopy( const Vector& src, Vector& dst );
+ALWAYS_INLINE void VectorCopy( const Vector& src, Vector& dst );
 
 // Vector arithmetic
-FORCEINLINE void VectorAdd( const Vector& a, const Vector& b, Vector& result );
-FORCEINLINE void VectorSubtract( const Vector& a, const Vector& b, Vector& result );
-FORCEINLINE void VectorMultiply( const Vector& a, vec_t b, Vector& result );
-FORCEINLINE void VectorMultiply( const Vector& a, const Vector& b, Vector& result );
-FORCEINLINE void VectorDivide( const Vector& a, vec_t b, Vector& result );
-FORCEINLINE void VectorDivide( const Vector& a, const Vector& b, Vector& result );
+ALWAYS_INLINE void VectorAdd( const Vector& a, const Vector& b, Vector& result );
+ALWAYS_INLINE void VectorSubtract( const Vector& a, const Vector& b, Vector& result );
+ALWAYS_INLINE void VectorMultiply( const Vector& a, vec_t b, Vector& result );
+ALWAYS_INLINE void VectorMultiply( const Vector& a, const Vector& b, Vector& result );
+ALWAYS_INLINE void VectorDivide( const Vector& a, vec_t b, Vector& result );
+ALWAYS_INLINE void VectorDivide( const Vector& a, const Vector& b, Vector& result );
 inline void VectorScale ( const Vector& in, vec_t scale, Vector& result );
 // Don't mark this as inline in its function declaration. That's only necessary on its
 // definition, and 'inline' here leads to gcc warnings.
@@ -438,7 +438,7 @@ bool VectorsAreEqual( const Vector& src1, const Vector& src2, float tolerance = 
 inline vec_t VectorLength( const Vector& v );
 
 // Dot Product
-FORCEINLINE vec_t DotProduct(const Vector& a, const Vector& b);
+ALWAYS_INLINE vec_t DotProduct(const Vector& a, const Vector& b);
 
 // Cross product
 void CrossProduct(const Vector& a, const Vector& b, Vector& result );
@@ -451,13 +451,13 @@ void VectorMax( const Vector &a, const Vector &b, Vector &result );
 void VectorLerp(const Vector& src1, const Vector& src2, vec_t t, Vector& dest );
 Vector VectorLerp(const Vector& src1, const Vector& src2, vec_t t );
 
-FORCEINLINE Vector ReplicateToVector( float x )
+ALWAYS_INLINE Vector ReplicateToVector( float x )
 {
 	return Vector( x, x, x );
 }
 
 // check if a point is in the field of a view of an object. supports up to 180 degree fov.
-FORCEINLINE bool PointWithinViewAngle( Vector const &vecSrcPosition, 
+ALWAYS_INLINE bool PointWithinViewAngle( Vector const &vecSrcPosition,
 									   Vector const &vecTargetPosition, 
 									   Vector const &vecLookDirection, float flCosHalfFOV )
 {
@@ -669,7 +669,7 @@ inline bool Vector::operator!=( const Vector& src ) const
 // Copy
 //-----------------------------------------------------------------------------
 
-FORCEINLINE void VectorCopy( const Vector& src, Vector& dst )
+ALWAYS_INLINE void VectorCopy( const Vector& src, Vector& dst )
 {
 	CHECK_VALID(src);
 	dst.x = src.x;
@@ -695,7 +695,7 @@ inline void Vector::Negate()
 	x = -x; y = -y; z = -z; 
 } 
 
-FORCEINLINE  Vector& Vector::operator+=(const Vector& v)	
+ALWAYS_INLINE  Vector& Vector::operator+=(const Vector& v)
 { 
 	CHECK_VALID(*this);
 	CHECK_VALID(v);
@@ -703,7 +703,7 @@ FORCEINLINE  Vector& Vector::operator+=(const Vector& v)
 	return *this;
 }
 
-FORCEINLINE  Vector& Vector::operator-=(const Vector& v)	
+ALWAYS_INLINE  Vector& Vector::operator-=(const Vector& v)
 { 
 	CHECK_VALID(*this);
 	CHECK_VALID(v);
@@ -711,7 +711,7 @@ FORCEINLINE  Vector& Vector::operator-=(const Vector& v)
 	return *this;
 }
 
-FORCEINLINE  Vector& Vector::operator*=(float fl)	
+ALWAYS_INLINE  Vector& Vector::operator*=(float fl)
 {
 	x *= fl;
 	y *= fl;
@@ -720,7 +720,7 @@ FORCEINLINE  Vector& Vector::operator*=(float fl)
 	return *this;
 }
 
-FORCEINLINE  Vector& Vector::operator*=(const Vector& v)	
+ALWAYS_INLINE  Vector& Vector::operator*=(const Vector& v)
 { 
 	CHECK_VALID(v);
 	x *= v.x;
@@ -731,7 +731,7 @@ FORCEINLINE  Vector& Vector::operator*=(const Vector& v)
 }
 
 // this ought to be an opcode.
-FORCEINLINE Vector&	Vector::operator+=(float fl) 
+ALWAYS_INLINE Vector&	Vector::operator+=(float fl)
 {
 	x += fl;
 	y += fl;
@@ -740,7 +740,7 @@ FORCEINLINE Vector&	Vector::operator+=(float fl)
 	return *this;
 }
 
-FORCEINLINE Vector&	Vector::operator-=(float fl) 
+ALWAYS_INLINE Vector&	Vector::operator-=(float fl)
 {
 	x -= fl;
 	y -= fl;
@@ -751,7 +751,7 @@ FORCEINLINE Vector&	Vector::operator-=(float fl)
 
 
 
-FORCEINLINE  Vector& Vector::operator/=(float fl)	
+ALWAYS_INLINE  Vector& Vector::operator/=(float fl)
 {
 	Assert( fl != 0.0f );
 	float oofl = 1.0f / fl;
@@ -762,7 +762,7 @@ FORCEINLINE  Vector& Vector::operator/=(float fl)
 	return *this;
 }
 
-FORCEINLINE  Vector& Vector::operator/=(const Vector& v)	
+ALWAYS_INLINE  Vector& Vector::operator/=(const Vector& v)
 { 
 	CHECK_VALID(v);
 	Assert( v.x != 0.0f && v.y != 0.0f && v.z != 0.0f );
@@ -787,7 +787,7 @@ inline void ShortVector::Init( short ix, short iy, short iz, short iw )
 	x = ix; y = iy; z = iz; w = iw;
 }
 
-FORCEINLINE void ShortVector::Set( const ShortVector& vOther )
+ALWAYS_INLINE void ShortVector::Set( const ShortVector& vOther )
 {
    x = vOther.x;
    y = vOther.y;
@@ -795,7 +795,7 @@ FORCEINLINE void ShortVector::Set( const ShortVector& vOther )
    w = vOther.w;
 }
 
-FORCEINLINE void ShortVector::Set( const short ix, const short iy, const short iz, const short iw )
+ALWAYS_INLINE void ShortVector::Set( const short ix, const short iy, const short iz, const short iw )
 {
    x = ix;
    y = iy;
@@ -853,19 +853,19 @@ inline bool ShortVector::operator!=( const ShortVector& src ) const
 // standard math operations
 //-----------------------------------------------------------------------------
 
-FORCEINLINE  ShortVector& ShortVector::operator+=(const ShortVector& v)	
+ALWAYS_INLINE  ShortVector& ShortVector::operator+=(const ShortVector& v)
 { 
 	x+=v.x; y+=v.y; z += v.z; w += v.w;
 	return *this;
 }
 
-FORCEINLINE  ShortVector& ShortVector::operator-=(const ShortVector& v)	
+ALWAYS_INLINE  ShortVector& ShortVector::operator-=(const ShortVector& v)
 { 
 	x-=v.x; y-=v.y; z -= v.z; w -= v.w;
 	return *this;
 }
 
-FORCEINLINE  ShortVector& ShortVector::operator*=(float fl)	
+ALWAYS_INLINE  ShortVector& ShortVector::operator*=(float fl)
 {
 	x *= fl;
 	y *= fl;
@@ -874,7 +874,7 @@ FORCEINLINE  ShortVector& ShortVector::operator*=(float fl)
 	return *this;
 }
 
-FORCEINLINE  ShortVector& ShortVector::operator*=(const ShortVector& v)	
+ALWAYS_INLINE  ShortVector& ShortVector::operator*=(const ShortVector& v)
 { 
 	x *= v.x;
 	y *= v.y;
@@ -883,7 +883,7 @@ FORCEINLINE  ShortVector& ShortVector::operator*=(const ShortVector& v)
 	return *this;
 }
 
-FORCEINLINE  ShortVector& ShortVector::operator/=(float fl)	
+ALWAYS_INLINE  ShortVector& ShortVector::operator/=(float fl)
 {
 	Assert( fl != 0.0f );
 	float oofl = 1.0f / fl;
@@ -894,7 +894,7 @@ FORCEINLINE  ShortVector& ShortVector::operator/=(float fl)
 	return *this;
 }
 
-FORCEINLINE  ShortVector& ShortVector::operator/=(const ShortVector& v)	
+ALWAYS_INLINE  ShortVector& ShortVector::operator/=(const ShortVector& v)
 { 
 	Assert( v.x != 0 && v.y != 0 && v.z != 0 && v.w != 0 );
 	x /= v.x;
@@ -904,7 +904,7 @@ FORCEINLINE  ShortVector& ShortVector::operator/=(const ShortVector& v)
 	return *this;
 }
 
-FORCEINLINE void ShortVectorMultiply( const ShortVector& src, float fl, ShortVector& res )
+ALWAYS_INLINE void ShortVectorMultiply( const ShortVector& src, float fl, ShortVector& res )
 {
 	Assert( IsFinite(fl) );
 	res.x = src.x * fl;
@@ -913,7 +913,7 @@ FORCEINLINE void ShortVectorMultiply( const ShortVector& src, float fl, ShortVec
 	res.w = src.w * fl;
 }
 
-FORCEINLINE ShortVector ShortVector::operator*(float fl) const
+ALWAYS_INLINE ShortVector ShortVector::operator*(float fl) const
 { 
 	ShortVector res;
 	ShortVectorMultiply( *this, fl, res );
@@ -937,7 +937,7 @@ inline void IntVector4D::Init( int ix, int iy, int iz, int iw )
 	x = ix; y = iy; z = iz; w = iw;
 }
 
-FORCEINLINE void IntVector4D::Set( const IntVector4D& vOther )
+ALWAYS_INLINE void IntVector4D::Set( const IntVector4D& vOther )
 {
 	x = vOther.x;
 	y = vOther.y;
@@ -945,7 +945,7 @@ FORCEINLINE void IntVector4D::Set( const IntVector4D& vOther )
 	w = vOther.w;
 }
 
-FORCEINLINE void IntVector4D::Set( const int ix, const int iy, const int iz, const int iw )
+ALWAYS_INLINE void IntVector4D::Set( const int ix, const int iy, const int iz, const int iw )
 {
 	x = ix;
 	y = iy;
@@ -1003,19 +1003,19 @@ inline bool IntVector4D::operator!=( const IntVector4D& src ) const
 // standard math operations
 //-----------------------------------------------------------------------------
 
-FORCEINLINE  IntVector4D& IntVector4D::operator+=(const IntVector4D& v)	
+ALWAYS_INLINE  IntVector4D& IntVector4D::operator+=(const IntVector4D& v)
 { 
 	x+=v.x; y+=v.y; z += v.z; w += v.w;
 	return *this;
 }
 
-FORCEINLINE  IntVector4D& IntVector4D::operator-=(const IntVector4D& v)	
+ALWAYS_INLINE  IntVector4D& IntVector4D::operator-=(const IntVector4D& v)
 { 
 	x-=v.x; y-=v.y; z -= v.z; w -= v.w;
 	return *this;
 }
 
-FORCEINLINE  IntVector4D& IntVector4D::operator*=(float fl)	
+ALWAYS_INLINE  IntVector4D& IntVector4D::operator*=(float fl)
 {
 	x *= fl;
 	y *= fl;
@@ -1024,7 +1024,7 @@ FORCEINLINE  IntVector4D& IntVector4D::operator*=(float fl)
 	return *this;
 }
 
-FORCEINLINE  IntVector4D& IntVector4D::operator*=(const IntVector4D& v)	
+ALWAYS_INLINE  IntVector4D& IntVector4D::operator*=(const IntVector4D& v)
 { 
 	x *= v.x;
 	y *= v.y;
@@ -1033,7 +1033,7 @@ FORCEINLINE  IntVector4D& IntVector4D::operator*=(const IntVector4D& v)
 	return *this;
 }
 
-FORCEINLINE  IntVector4D& IntVector4D::operator/=(float fl)	
+ALWAYS_INLINE  IntVector4D& IntVector4D::operator/=(float fl)
 {
 	Assert( fl != 0.0f );
 	float oofl = 1.0f / fl;
@@ -1044,7 +1044,7 @@ FORCEINLINE  IntVector4D& IntVector4D::operator/=(float fl)
 	return *this;
 }
 
-FORCEINLINE  IntVector4D& IntVector4D::operator/=(const IntVector4D& v)	
+ALWAYS_INLINE  IntVector4D& IntVector4D::operator/=(const IntVector4D& v)
 { 
 	Assert( v.x != 0 && v.y != 0 && v.z != 0 && v.w != 0 );
 	x /= v.x;
@@ -1054,7 +1054,7 @@ FORCEINLINE  IntVector4D& IntVector4D::operator/=(const IntVector4D& v)
 	return *this;
 }
 
-FORCEINLINE void IntVector4DMultiply( const IntVector4D& src, float fl, IntVector4D& res )
+ALWAYS_INLINE void IntVector4DMultiply( const IntVector4D& src, float fl, IntVector4D& res )
 {
 	Assert( IsFinite(fl) );
 	res.x = src.x * fl;
@@ -1063,7 +1063,7 @@ FORCEINLINE void IntVector4DMultiply( const IntVector4D& src, float fl, IntVecto
 	res.w = src.w * fl;
 }
 
-FORCEINLINE IntVector4D IntVector4D::operator*(float fl) const
+ALWAYS_INLINE IntVector4D IntVector4D::operator*(float fl) const
 { 
 	IntVector4D res;
 	IntVector4DMultiply( *this, fl, res );
@@ -1075,7 +1075,7 @@ FORCEINLINE IntVector4D IntVector4D::operator*(float fl) const
 // =======================
 
 
-FORCEINLINE void VectorAdd( const Vector& a, const Vector& b, Vector& c )
+ALWAYS_INLINE void VectorAdd( const Vector& a, const Vector& b, Vector& c )
 {
 	CHECK_VALID(a);
 	CHECK_VALID(b);
@@ -1084,7 +1084,7 @@ FORCEINLINE void VectorAdd( const Vector& a, const Vector& b, Vector& c )
 	c.z = a.z + b.z;
 }
 
-FORCEINLINE void VectorSubtract( const Vector& a, const Vector& b, Vector& c )
+ALWAYS_INLINE void VectorSubtract( const Vector& a, const Vector& b, Vector& c )
 {
 	CHECK_VALID(a);
 	CHECK_VALID(b);
@@ -1093,7 +1093,7 @@ FORCEINLINE void VectorSubtract( const Vector& a, const Vector& b, Vector& c )
 	c.z = a.z - b.z;
 }
 
-FORCEINLINE void VectorMultiply( const Vector& a, vec_t b, Vector& c )
+ALWAYS_INLINE void VectorMultiply( const Vector& a, vec_t b, Vector& c )
 {
 	CHECK_VALID(a);
 	Assert( IsFinite(b) );
@@ -1102,7 +1102,7 @@ FORCEINLINE void VectorMultiply( const Vector& a, vec_t b, Vector& c )
 	c.z = a.z * b;
 }
 
-FORCEINLINE void VectorMultiply( const Vector& a, const Vector& b, Vector& c )
+ALWAYS_INLINE void VectorMultiply( const Vector& a, const Vector& b, Vector& c )
 {
 	CHECK_VALID(a);
 	CHECK_VALID(b);
@@ -1118,7 +1118,7 @@ inline void VectorScale ( const Vector& in, vec_t scale, Vector& result )
 }
 
 
-FORCEINLINE void VectorDivide( const Vector& a, vec_t b, Vector& c )
+ALWAYS_INLINE void VectorDivide( const Vector& a, vec_t b, Vector& c )
 {
 	CHECK_VALID(a);
 	Assert( b != 0.0f );
@@ -1128,7 +1128,7 @@ FORCEINLINE void VectorDivide( const Vector& a, vec_t b, Vector& c )
 	c.z = a.z * oob;
 }
 
-FORCEINLINE void VectorDivide( const Vector& a, const Vector& b, Vector& c )
+ALWAYS_INLINE void VectorDivide( const Vector& a, const Vector& b, Vector& c )
 {
 	CHECK_VALID(a);
 	CHECK_VALID(b);
@@ -1193,7 +1193,7 @@ inline Vector &AllocTempVector()
 //-----------------------------------------------------------------------------
 // dot, cross
 //-----------------------------------------------------------------------------
-FORCEINLINE vec_t DotProduct(const Vector& a, const Vector& b) 
+ALWAYS_INLINE vec_t DotProduct(const Vector& a, const Vector& b)
 { 
 	CHECK_VALID(a);
 	CHECK_VALID(b);
@@ -1684,7 +1684,7 @@ public:
 extern void AngleQuaternion( RadianEuler const &angles, Quaternion &qt );
 extern void QuaternionAngles( Quaternion const &q, RadianEuler &angles );
 
-FORCEINLINE void NetworkVarConstruct( Quaternion &q ) { q.x = q.y = q.z = q.w = 0.0f; }
+ALWAYS_INLINE void NetworkVarConstruct( Quaternion &q ) { q.x = q.y = q.z = q.w = 0.0f; }
 
 inline Quaternion::Quaternion(RadianEuler const &angle)
 {
@@ -1833,7 +1833,7 @@ private:
 #endif
 };
 
-FORCEINLINE void NetworkVarConstruct( QAngle &q ) { q.x = q.y = q.z = 0.0f; }
+ALWAYS_INLINE void NetworkVarConstruct( QAngle &q ) { q.x = q.y = q.z = 0.0f; }
 
 //-----------------------------------------------------------------------------
 // Allows us to specifically pass the vector by value when we need to
@@ -2172,7 +2172,7 @@ inline void AngularImpulseToQAngle( const AngularImpulse &impulse, QAngle &angle
 	angles.z = impulse.x;
 }
 
-FORCEINLINE vec_t InvRSquared( float const *v )
+ALWAYS_INLINE vec_t InvRSquared( float const *v )
 {
 #if defined(__i386__) || defined(_M_IX86)
 	float sqrlen = v[0]*v[0]+v[1]*v[1]+v[2]*v[2] + 1.0e-10f, result;
@@ -2183,7 +2183,7 @@ FORCEINLINE vec_t InvRSquared( float const *v )
 #endif
 }
 
-FORCEINLINE vec_t InvRSquared( const Vector &v )
+ALWAYS_INLINE vec_t InvRSquared( const Vector &v )
 {
 	return InvRSquared(&v.x);
 }
@@ -2204,7 +2204,7 @@ inline void _SSE_RSqrtInline( float a, float* out )
 #endif
 
 // FIXME: Change this back to a #define once we get rid of the vec_t version
-FORCEINLINE float VectorNormalize( Vector& vec )
+ALWAYS_INLINE float VectorNormalize( Vector& vec )
 {
 #ifndef DEBUG // stop crashing my edit-and-continue!
 	#if defined(__i386__) || defined(_M_IX86)
@@ -2227,12 +2227,12 @@ FORCEINLINE float VectorNormalize( Vector& vec )
 }
 
 // FIXME: Obsolete version of VectorNormalize, once we remove all the friggin float*s
-FORCEINLINE float VectorNormalize( float * v )
+ALWAYS_INLINE float VectorNormalize( float * v )
 {
 	return VectorNormalize(*(reinterpret_cast<Vector *>(v)));
 }
 
-FORCEINLINE void VectorNormalizeFast( Vector &vec )
+ALWAYS_INLINE void VectorNormalizeFast( Vector &vec )
 {
 	VectorNormalize(vec);
 }

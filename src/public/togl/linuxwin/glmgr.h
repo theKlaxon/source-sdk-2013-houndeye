@@ -53,8 +53,8 @@
 #include "dxabstract_types.h"
 #include "tier0/icommandline.h"
 
-#undef FORCEINLINE
-#define FORCEINLINE inline
+#undef ALWAYS_INLINE
+#define ALWAYS_INLINE inline
 
 //===============================================================================
 
@@ -169,7 +169,7 @@ protected:
 //===========================================================================//
 
 // helper function to do enable or disable in one step
-FORCEINLINE void glSetEnable( GLenum which, bool enable )
+ALWAYS_INLINE void glSetEnable( GLenum which, bool enable )
 {
 	if (enable)
 		gGL->glEnable(which);
@@ -178,7 +178,7 @@ FORCEINLINE void glSetEnable( GLenum which, bool enable )
 }
 
 // helper function for int vs enum clarity
-FORCEINLINE void glGetEnumv( GLenum which, GLenum *dst )
+ALWAYS_INLINE void glGetEnumv( GLenum which, GLenum *dst )
 {
 	gGL->glGetIntegerv( which, (int*)dst );
 }
@@ -304,103 +304,103 @@ template<typename T>	void GLContextGetDefaultIndexed( T *dst, int index );
 // template specializations for each type of state
 
 //                                                                      --- GLAlphaTestEnable ---
-FORCEINLINE void GLContextSet( GLAlphaTestEnable_t *src )
+ALWAYS_INLINE void GLContextSet( GLAlphaTestEnable_t *src )
 {
 	glSetEnable( GL_ALPHA_TEST, src->enable != 0 );
 }
 
-FORCEINLINE void GLContextGet( GLAlphaTestEnable_t *dst )
+ALWAYS_INLINE void GLContextGet( GLAlphaTestEnable_t *dst )
 {
 	dst->enable = gGL->glIsEnabled( GL_ALPHA_TEST );
 }
 
-FORCEINLINE void GLContextGetDefault( GLAlphaTestEnable_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLAlphaTestEnable_t *dst )
 {
 	dst->enable = GL_FALSE;	
 }
 
 //                                                                      --- GLAlphaTestFunc ---
-FORCEINLINE void GLContextSet( GLAlphaTestFunc_t *src )
+ALWAYS_INLINE void GLContextSet( GLAlphaTestFunc_t *src )
 {
 	gGL->glAlphaFunc( src->func, src->ref );
 }
 
-FORCEINLINE void GLContextGet( GLAlphaTestFunc_t *dst )
+ALWAYS_INLINE void GLContextGet( GLAlphaTestFunc_t *dst )
 {
 	glGetEnumv( GL_ALPHA_TEST_FUNC, &dst->func );
 	gGL->glGetFloatv( GL_ALPHA_TEST_REF, &dst->ref );
 }
 
-FORCEINLINE void GLContextGetDefault( GLAlphaTestFunc_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLAlphaTestFunc_t *dst )
 {
 	dst->func = GL_ALWAYS;
 	dst->ref = 0.0f;
 }
 
 //                                                                      --- GLAlphaToCoverageEnable ---
-FORCEINLINE void GLContextSet( GLAlphaToCoverageEnable_t *src )
+ALWAYS_INLINE void GLContextSet( GLAlphaToCoverageEnable_t *src )
 {
 	glSetEnable( GL_SAMPLE_ALPHA_TO_COVERAGE_ARB, src->enable != 0 );
 }
 
-FORCEINLINE void GLContextGet( GLAlphaToCoverageEnable_t *dst )
+ALWAYS_INLINE void GLContextGet( GLAlphaToCoverageEnable_t *dst )
 {
 	dst->enable = gGL->glIsEnabled( GL_SAMPLE_ALPHA_TO_COVERAGE_ARB );
 }
 
-FORCEINLINE void GLContextGetDefault( GLAlphaToCoverageEnable_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLAlphaToCoverageEnable_t *dst )
 {
 	dst->enable = GL_FALSE;	
 }
 
 //                                                                      --- GLCullFaceEnable ---
-FORCEINLINE void GLContextSet( GLCullFaceEnable_t *src )
+ALWAYS_INLINE void GLContextSet( GLCullFaceEnable_t *src )
 {
 	glSetEnable( GL_CULL_FACE, src->enable != 0 );
 }
 
-FORCEINLINE void GLContextGet( GLCullFaceEnable_t *dst )
+ALWAYS_INLINE void GLContextGet( GLCullFaceEnable_t *dst )
 {
 	dst->enable = gGL->glIsEnabled( GL_CULL_FACE );
 }
 
-FORCEINLINE void GLContextGetDefault( GLCullFaceEnable_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLCullFaceEnable_t *dst )
 {
 	dst->enable = GL_TRUE;	
 }
 
 
 //                                                                      --- GLCullFrontFace ---
-FORCEINLINE void GLContextSet( GLCullFrontFace_t *src )
+ALWAYS_INLINE void GLContextSet( GLCullFrontFace_t *src )
 {
 	gGL->glFrontFace( src->value );	// legal values are GL_CW or GL_CCW
 }
 
-FORCEINLINE void GLContextGet( GLCullFrontFace_t *dst )
+ALWAYS_INLINE void GLContextGet( GLCullFrontFace_t *dst )
 {
 	glGetEnumv( GL_FRONT_FACE, &dst->value );
 }
 
-FORCEINLINE void GLContextGetDefault( GLCullFrontFace_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLCullFrontFace_t *dst )
 {
 	dst->value = GL_CCW;
 }
 
 
 //                                                                      --- GLPolygonMode ---
-FORCEINLINE void GLContextSet( GLPolygonMode_t *src )
+ALWAYS_INLINE void GLContextSet( GLPolygonMode_t *src )
 {
 	gGL->glPolygonMode( GL_FRONT, src->values[0] );
 	gGL->glPolygonMode( GL_BACK, src->values[1] );
 }
 
-FORCEINLINE void GLContextGet( GLPolygonMode_t *dst )
+ALWAYS_INLINE void GLContextGet( GLPolygonMode_t *dst )
 {
 	glGetEnumv( GL_POLYGON_MODE, &dst->values[0] );
 
 }
 
-FORCEINLINE void GLContextGetDefault( GLPolygonMode_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLPolygonMode_t *dst )
 {
 	dst->values[0] = dst->values[1] = GL_FILL;
 }
@@ -409,7 +409,7 @@ FORCEINLINE void GLContextGetDefault( GLPolygonMode_t *dst )
 //                                                                      --- GLDepthBias ---
 // note the implicit enable / disable.
 // if you set non zero values, it is enabled, otherwise not.
-FORCEINLINE void GLContextSet( GLDepthBias_t *src )
+ALWAYS_INLINE void GLContextSet( GLDepthBias_t *src )
 {
 	bool enable = (src->factor != 0.0f) || (src->units != 0.0f);
 
@@ -417,13 +417,13 @@ FORCEINLINE void GLContextSet( GLDepthBias_t *src )
 	gGL->glPolygonOffset( src->factor, src->units );
 }
 
-FORCEINLINE void GLContextGet( GLDepthBias_t *dst )
+ALWAYS_INLINE void GLContextGet( GLDepthBias_t *dst )
 {
 	gGL->glGetFloatv		( GL_POLYGON_OFFSET_FACTOR, &dst->factor );
 	gGL->glGetFloatv		( GL_POLYGON_OFFSET_UNITS, &dst->units );
 }
 
-FORCEINLINE void GLContextGetDefault( GLDepthBias_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLDepthBias_t *dst )
 {
 	dst->factor		= 0.0;
 	dst->units		= 0.0;
@@ -431,34 +431,34 @@ FORCEINLINE void GLContextGetDefault( GLDepthBias_t *dst )
 
 
 //                                                                      --- GLScissorEnable ---
-FORCEINLINE void GLContextSet( GLScissorEnable_t *src )
+ALWAYS_INLINE void GLContextSet( GLScissorEnable_t *src )
 {
 	glSetEnable( GL_SCISSOR_TEST, src->enable != 0 );
 }
 
-FORCEINLINE void GLContextGet( GLScissorEnable_t *dst )
+ALWAYS_INLINE void GLContextGet( GLScissorEnable_t *dst )
 {
 	dst->enable = gGL->glIsEnabled( GL_SCISSOR_TEST );
 }
 
-FORCEINLINE void GLContextGetDefault( GLScissorEnable_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLScissorEnable_t *dst )
 {
 	dst->enable = GL_FALSE;
 }
 
 
 //                                                                      --- GLScissorBox ---
-FORCEINLINE void GLContextSet( GLScissorBox_t *src )
+ALWAYS_INLINE void GLContextSet( GLScissorBox_t *src )
 {
 	gGL->glScissor ( src->x, src->y, src->width, src->height );
 }
 
-FORCEINLINE void GLContextGet( GLScissorBox_t *dst )
+ALWAYS_INLINE void GLContextGet( GLScissorBox_t *dst )
 {
 	gGL->glGetIntegerv ( GL_SCISSOR_BOX, &dst->x );
 }
 
-FORCEINLINE void GLContextGetDefault( GLScissorBox_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLScissorBox_t *dst )
 {
 	// hmmmm, good question?  we can't really know a good answer so we pick a silly one
 	// and the client better come back with a better answer later.
@@ -469,20 +469,20 @@ FORCEINLINE void GLContextGetDefault( GLScissorBox_t *dst )
 
 //                                                                      --- GLViewportBox ---
 
-FORCEINLINE void GLContextSet( GLViewportBox_t *src )
+ALWAYS_INLINE void GLContextSet( GLViewportBox_t *src )
 {
 	Assert( src->width == (int)( src->widthheight & 0xFFFF ) );
 	Assert( src->height == (int)( src->widthheight >> 16 ) );
 	gGL->glViewport (src->x, src->y, src->width, src->height );
 }
 
-FORCEINLINE void GLContextGet( GLViewportBox_t *dst )
+ALWAYS_INLINE void GLContextGet( GLViewportBox_t *dst )
 {
 	gGL->glGetIntegerv	( GL_VIEWPORT, &dst->x ); 
 	dst->widthheight = dst->width | ( dst->height << 16 );
 }
 
-FORCEINLINE void GLContextGetDefault( GLViewportBox_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLViewportBox_t *dst )
 {
 	// as with the scissor box, we don't know yet, so pick a silly one and change it later
 	dst->x = dst->y = 0;
@@ -492,24 +492,24 @@ FORCEINLINE void GLContextGetDefault( GLViewportBox_t *dst )
 
 
 //                                                                      --- GLViewportDepthRange ---
-FORCEINLINE void GLContextSet( GLViewportDepthRange_t *src )
+ALWAYS_INLINE void GLContextSet( GLViewportDepthRange_t *src )
 {
 	gGL->glDepthRange	( src->flNear, src->flFar );
 }
 
-FORCEINLINE void GLContextGet( GLViewportDepthRange_t *dst )
+ALWAYS_INLINE void GLContextGet( GLViewportDepthRange_t *dst )
 {
 	gGL->glGetDoublev	( GL_DEPTH_RANGE, &dst->flNear );
 }
 
-FORCEINLINE void GLContextGetDefault( GLViewportDepthRange_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLViewportDepthRange_t *dst )
 {
 	dst->flNear = 0.0;
 	dst->flFar = 1.0;
 }
 
 //                                                                      --- GLClipPlaneEnable ---
-FORCEINLINE void GLContextSetIndexed( GLClipPlaneEnable_t *src, int index )
+ALWAYS_INLINE void GLContextSetIndexed( GLClipPlaneEnable_t *src, int index )
 {
 #if GLMDEBUG
 	if (CommandLine()->FindParm("-caps_noclipplanes"))
@@ -524,12 +524,12 @@ FORCEINLINE void GLContextSetIndexed( GLClipPlaneEnable_t *src, int index )
 	glSetEnable( GL_CLIP_PLANE0 + index, src->enable != 0 );
 }
 
-FORCEINLINE void GLContextGetIndexed( GLClipPlaneEnable_t *dst, int index )
+ALWAYS_INLINE void GLContextGetIndexed( GLClipPlaneEnable_t *dst, int index )
 {
 	dst->enable = gGL->glIsEnabled( GL_CLIP_PLANE0 + index );
 }
 
-FORCEINLINE void GLContextGetDefaultIndexed( GLClipPlaneEnable_t *dst, int index )
+ALWAYS_INLINE void GLContextGetDefaultIndexed( GLClipPlaneEnable_t *dst, int index )
 {
 	dst->enable = 0;
 }
@@ -537,7 +537,7 @@ FORCEINLINE void GLContextGetDefaultIndexed( GLClipPlaneEnable_t *dst, int index
 
 
 //                                                                      --- GLClipPlaneEquation ---
-FORCEINLINE void GLContextSetIndexed( GLClipPlaneEquation_t *src, int index )
+ALWAYS_INLINE void GLContextSetIndexed( GLClipPlaneEquation_t *src, int index )
 {
 	// shove into glGlipPlane
 	GLdouble coeffs[4] = { src->x, src->y, src->z, src->w };
@@ -545,14 +545,14 @@ FORCEINLINE void GLContextSetIndexed( GLClipPlaneEquation_t *src, int index )
 	gGL->glClipPlane( GL_CLIP_PLANE0 + index, coeffs );
 }
 
-FORCEINLINE void GLContextGetIndexed( GLClipPlaneEquation_t *dst, int index )
+ALWAYS_INLINE void GLContextGetIndexed( GLClipPlaneEquation_t *dst, int index )
 {
 	DebuggerBreak();	 // do this later
 	//	glClipPlane( GL_CLIP_PLANE0 + index, coeffs );
 	//	GLdouble coeffs[4] = { src->x, src->y, src->z, src->w };
 }
 
-FORCEINLINE void GLContextGetDefaultIndexed( GLClipPlaneEquation_t *dst, int index )
+ALWAYS_INLINE void GLContextGetDefaultIndexed( GLClipPlaneEquation_t *dst, int index )
 {
 	dst->x = 1.0;
 	dst->y = 0.0;
@@ -562,69 +562,69 @@ FORCEINLINE void GLContextGetDefaultIndexed( GLClipPlaneEquation_t *dst, int ind
 
 
 //                                                                      --- GLColorMaskSingle ---
-FORCEINLINE void GLContextSet( GLColorMaskSingle_t *src )
+ALWAYS_INLINE void GLContextSet( GLColorMaskSingle_t *src )
 {
 	gGL->glColorMask( src->r, src->g, src->b, src->a );
 }
 
-FORCEINLINE void GLContextGet( GLColorMaskSingle_t *dst )
+ALWAYS_INLINE void GLContextGet( GLColorMaskSingle_t *dst )
 {
 	gGL->glGetBooleanv( GL_COLOR_WRITEMASK, (GLboolean*)&dst->r);
 }
 
-FORCEINLINE void GLContextGetDefault( GLColorMaskSingle_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLColorMaskSingle_t *dst )
 {
 	dst->r = dst->g = dst->b = dst->a = 1;
 }
 
 
 //                                                                      --- GLColorMaskMultiple ---
-FORCEINLINE void GLContextSetIndexed( GLColorMaskMultiple_t *src, int index )
+ALWAYS_INLINE void GLContextSetIndexed( GLColorMaskMultiple_t *src, int index )
 {
 	gGL->glColorMaskIndexedEXT ( index, src->r, src->g, src->b, src->a );
 }
 
-FORCEINLINE void GLContextGetIndexed( GLColorMaskMultiple_t *dst, int index )
+ALWAYS_INLINE void GLContextGetIndexed( GLColorMaskMultiple_t *dst, int index )
 {
 	gGL->glGetBooleanIndexedvEXT ( GL_COLOR_WRITEMASK, index, (GLboolean*)&dst->r );
 }
 
-FORCEINLINE void GLContextGetDefaultIndexed( GLColorMaskMultiple_t *dst, int index )
+ALWAYS_INLINE void GLContextGetDefaultIndexed( GLColorMaskMultiple_t *dst, int index )
 {
 	dst->r = dst->g = dst->b = dst->a = 1;
 }
 
 
 //                                                                      --- GLBlendEnable ---
-FORCEINLINE void GLContextSet( GLBlendEnable_t *src )
+ALWAYS_INLINE void GLContextSet( GLBlendEnable_t *src )
 {
 	glSetEnable( GL_BLEND, src->enable != 0 );
 }
 
-FORCEINLINE void GLContextGet( GLBlendEnable_t *dst )
+ALWAYS_INLINE void GLContextGet( GLBlendEnable_t *dst )
 {
 	dst->enable = gGL->glIsEnabled( GL_BLEND );
 }
 
-FORCEINLINE void GLContextGetDefault( GLBlendEnable_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLBlendEnable_t *dst )
 {
 	dst->enable = GL_FALSE;
 }
 
 
 //                                                                      --- GLBlendFactor ---
-FORCEINLINE void GLContextSet( GLBlendFactor_t *src )
+ALWAYS_INLINE void GLContextSet( GLBlendFactor_t *src )
 {
 	gGL->glBlendFunc ( src->srcfactor, src->dstfactor );
 }
 
-FORCEINLINE void GLContextGet( GLBlendFactor_t *dst )
+ALWAYS_INLINE void GLContextGet( GLBlendFactor_t *dst )
 {
 	glGetEnumv	( GL_BLEND_SRC, &dst->srcfactor );
 	glGetEnumv	( GL_BLEND_DST, &dst->dstfactor );
 }
 
-FORCEINLINE void GLContextGetDefault( GLBlendFactor_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLBlendFactor_t *dst )
 {
 	dst->srcfactor = GL_ONE;
 	dst->dstfactor = GL_ZERO;
@@ -632,34 +632,34 @@ FORCEINLINE void GLContextGetDefault( GLBlendFactor_t *dst )
 
 
 //                                                                      --- GLBlendEquation ---
-FORCEINLINE void GLContextSet( GLBlendEquation_t *src )
+ALWAYS_INLINE void GLContextSet( GLBlendEquation_t *src )
 {
 	gGL->glBlendEquation ( src->equation );
 }
 
-FORCEINLINE void GLContextGet( GLBlendEquation_t *dst )
+ALWAYS_INLINE void GLContextGet( GLBlendEquation_t *dst )
 {
 	glGetEnumv	( GL_BLEND_EQUATION, &dst->equation );
 }
 
-FORCEINLINE void GLContextGetDefault( GLBlendEquation_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLBlendEquation_t *dst )
 {
 	dst->equation = GL_FUNC_ADD;
 }
 
 
 //                                                                      --- GLBlendColor ---
-FORCEINLINE void GLContextSet( GLBlendColor_t *src )
+ALWAYS_INLINE void GLContextSet( GLBlendColor_t *src )
 {
 	gGL->glBlendColor ( src->r, src->g, src->b, src->a );
 }
 
-FORCEINLINE void GLContextGet( GLBlendColor_t *dst )
+ALWAYS_INLINE void GLContextGet( GLBlendColor_t *dst )
 {
 	gGL->glGetFloatv	( GL_BLEND_COLOR, &dst->r );
 }
 
-FORCEINLINE void GLContextGetDefault( GLBlendColor_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLBlendColor_t *dst )
 {
 	//solid white
 	dst->r = dst->g = dst->b = dst->a = 1.0;
@@ -671,7 +671,7 @@ FORCEINLINE void GLContextGetDefault( GLBlendColor_t *dst )
 #define GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING	0x8210
 #define GL_COLOR_ATTACHMENT0						0x8CE0
 
-FORCEINLINE void GLContextSet( GLBlendEnableSRGB_t *src )
+ALWAYS_INLINE void GLContextSet( GLBlendEnableSRGB_t *src )
 {
 #if GLMDEBUG
 	// just check in debug... this is too expensive to look at on MTGL
@@ -693,88 +693,88 @@ FORCEINLINE void GLContextSet( GLBlendEnableSRGB_t *src )
 	glSetEnable( GL_FRAMEBUFFER_SRGB_EXT, src->enable != 0 );
 }
 
-FORCEINLINE void GLContextGet( GLBlendEnableSRGB_t *dst )
+ALWAYS_INLINE void GLContextGet( GLBlendEnableSRGB_t *dst )
 {
 	//dst->enable = glIsEnabled( GL_FRAMEBUFFER_SRGB_EXT );
 	dst->enable = true; // wtf ?
 }
 
-FORCEINLINE void GLContextGetDefault( GLBlendEnableSRGB_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLBlendEnableSRGB_t *dst )
 {
 	dst->enable = GL_FALSE;
 }
 
 
 //                                                                      --- GLDepthTestEnable ---
-FORCEINLINE void GLContextSet( GLDepthTestEnable_t *src )
+ALWAYS_INLINE void GLContextSet( GLDepthTestEnable_t *src )
 {
 	glSetEnable( GL_DEPTH_TEST, src->enable != 0 );
 }
 
-FORCEINLINE void GLContextGet( GLDepthTestEnable_t *dst )
+ALWAYS_INLINE void GLContextGet( GLDepthTestEnable_t *dst )
 {
 	dst->enable = gGL->glIsEnabled( GL_DEPTH_TEST );
 }
 
-FORCEINLINE void GLContextGetDefault( GLDepthTestEnable_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLDepthTestEnable_t *dst )
 {
 	dst->enable = GL_FALSE;
 }
 
 
 //                                                                      --- GLDepthFunc ---
-FORCEINLINE void GLContextSet( GLDepthFunc_t *src )
+ALWAYS_INLINE void GLContextSet( GLDepthFunc_t *src )
 {
 	gGL->glDepthFunc				( src->func );
 }
 
-FORCEINLINE void GLContextGet( GLDepthFunc_t *dst )
+ALWAYS_INLINE void GLContextGet( GLDepthFunc_t *dst )
 {
 	glGetEnumv				( GL_DEPTH_FUNC, &dst->func );
 }
 
-FORCEINLINE void GLContextGetDefault( GLDepthFunc_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLDepthFunc_t *dst )
 {
 	dst->func = GL_GEQUAL;
 }
 
 
 //                                                                      --- GLDepthMask ---
-FORCEINLINE void GLContextSet( GLDepthMask_t *src )
+ALWAYS_INLINE void GLContextSet( GLDepthMask_t *src )
 {
 	gGL->glDepthMask ( src->mask );
 }
 
-FORCEINLINE void GLContextGet( GLDepthMask_t *dst )
+ALWAYS_INLINE void GLContextGet( GLDepthMask_t *dst )
 {
 	gGL->glGetBooleanv ( GL_DEPTH_WRITEMASK, (GLboolean*)&dst->mask );
 }
 
-FORCEINLINE void GLContextGetDefault( GLDepthMask_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLDepthMask_t *dst )
 {
 	dst->mask = GL_TRUE;
 }
 
 
 //                                                                      --- GLStencilTestEnable ---
-FORCEINLINE void GLContextSet( GLStencilTestEnable_t *src )
+ALWAYS_INLINE void GLContextSet( GLStencilTestEnable_t *src )
 {
 	glSetEnable( GL_STENCIL_TEST, src->enable != 0 );
 }
 
-FORCEINLINE void GLContextGet( GLStencilTestEnable_t *dst )
+ALWAYS_INLINE void GLContextGet( GLStencilTestEnable_t *dst )
 {
 	dst->enable = gGL->glIsEnabled( GL_STENCIL_TEST );
 }
 
-FORCEINLINE void GLContextGetDefault( GLStencilTestEnable_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLStencilTestEnable_t *dst )
 {
 	dst->enable = GL_FALSE;
 }
 
 
 //                                                                      --- GLStencilFunc ---
-FORCEINLINE void GLContextSet( GLStencilFunc_t *src )
+ALWAYS_INLINE void GLContextSet( GLStencilFunc_t *src )
 {
 	if (src->frontfunc == src->backfunc)
 		gGL->glStencilFuncSeparate( GL_FRONT_AND_BACK, src->frontfunc, src->ref, src->mask);
@@ -785,7 +785,7 @@ FORCEINLINE void GLContextSet( GLStencilFunc_t *src )
 	}
 }
 
-FORCEINLINE void GLContextGet( GLStencilFunc_t *dst )
+ALWAYS_INLINE void GLContextGet( GLStencilFunc_t *dst )
 {
 	glGetEnumv		( GL_STENCIL_FUNC, &dst->frontfunc );
 	glGetEnumv		( GL_STENCIL_BACK_FUNC, &dst->backfunc );
@@ -793,7 +793,7 @@ FORCEINLINE void GLContextGet( GLStencilFunc_t *dst )
 	gGL->glGetIntegerv	( GL_STENCIL_VALUE_MASK, (GLint*)&dst->mask );
 }
 
-FORCEINLINE void GLContextGetDefault( GLStencilFunc_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLStencilFunc_t *dst )
 {
 	dst->frontfunc	= GL_ALWAYS;
 	dst->backfunc	= GL_ALWAYS;
@@ -804,54 +804,54 @@ FORCEINLINE void GLContextGetDefault( GLStencilFunc_t *dst )
 
 //                                                                      --- GLStencilOp --- indexed 0=front, 1=back
 
-FORCEINLINE void GLContextSetIndexed( GLStencilOp_t *src, int index )
+ALWAYS_INLINE void GLContextSetIndexed( GLStencilOp_t *src, int index )
 {
 	GLenum face = (index==0) ? GL_FRONT : GL_BACK;
 	gGL->glStencilOpSeparate( face, src->sfail, src->dpfail, src->dppass );
 }
 
-FORCEINLINE void GLContextGetIndexed( GLStencilOp_t *dst, int index )
+ALWAYS_INLINE void GLContextGetIndexed( GLStencilOp_t *dst, int index )
 {
 	glGetEnumv		( (index==0) ? GL_STENCIL_FAIL : GL_STENCIL_BACK_FAIL, &dst->sfail );
 	glGetEnumv		( (index==0) ? GL_STENCIL_PASS_DEPTH_FAIL : GL_STENCIL_BACK_PASS_DEPTH_FAIL, &dst->dpfail );
 	glGetEnumv		( (index==0) ? GL_STENCIL_PASS_DEPTH_PASS : GL_STENCIL_BACK_PASS_DEPTH_PASS, &dst->dppass );
 }
 
-FORCEINLINE void GLContextGetDefaultIndexed( GLStencilOp_t *dst, int index )
+ALWAYS_INLINE void GLContextGetDefaultIndexed( GLStencilOp_t *dst, int index )
 {
 	dst->sfail = dst->dpfail = dst->dppass = GL_KEEP;
 }
 
 
 //                                                                      --- GLStencilWriteMask ---
-FORCEINLINE void GLContextSet( GLStencilWriteMask_t *src )
+ALWAYS_INLINE void GLContextSet( GLStencilWriteMask_t *src )
 {
 	gGL->glStencilMask( src->mask );
 }
 
-FORCEINLINE void GLContextGet( GLStencilWriteMask_t *dst )
+ALWAYS_INLINE void GLContextGet( GLStencilWriteMask_t *dst )
 {
 	gGL->glGetIntegerv	( GL_STENCIL_WRITEMASK, &dst->mask );
 }
 
-FORCEINLINE void GLContextGetDefault( GLStencilWriteMask_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLStencilWriteMask_t *dst )
 {
 	dst->mask = 0xFFFFFFFF;
 }
 
 
 //                                                                      --- GLClearColor ---
-FORCEINLINE void GLContextSet( GLClearColor_t *src )
+ALWAYS_INLINE void GLContextSet( GLClearColor_t *src )
 {
 	gGL->glClearColor( src->r, src->g, src->b, src->a );
 }
 
-FORCEINLINE void GLContextGet( GLClearColor_t *dst )
+ALWAYS_INLINE void GLContextGet( GLClearColor_t *dst )
 {
 	gGL->glGetFloatv		( GL_COLOR_CLEAR_VALUE, &dst->r );
 }
 
-FORCEINLINE void GLContextGetDefault( GLClearColor_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLClearColor_t *dst )
 {
 	dst->r = dst->g = dst->b = 0.5;
 	dst->a = 1.0;
@@ -859,34 +859,34 @@ FORCEINLINE void GLContextGetDefault( GLClearColor_t *dst )
 
 
 //                                                                      --- GLClearDepth ---
-FORCEINLINE void GLContextSet( GLClearDepth_t *src )
+ALWAYS_INLINE void GLContextSet( GLClearDepth_t *src )
 {
 	gGL->glClearDepth ( src->d );
 }
 
-FORCEINLINE void GLContextGet( GLClearDepth_t *dst )
+ALWAYS_INLINE void GLContextGet( GLClearDepth_t *dst )
 {
 	gGL->glGetDoublev ( GL_DEPTH_CLEAR_VALUE, &dst->d );
 }
 
-FORCEINLINE void GLContextGetDefault( GLClearDepth_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLClearDepth_t *dst )
 {
 	dst->d = 1.0;
 }
 
 
 //                                                                      --- GLClearStencil ---
-FORCEINLINE void GLContextSet( GLClearStencil_t *src )
+ALWAYS_INLINE void GLContextSet( GLClearStencil_t *src )
 {
 	gGL->glClearStencil( src->s );
 }
 
-FORCEINLINE void GLContextGet( GLClearStencil_t *dst )
+ALWAYS_INLINE void GLContextGet( GLClearStencil_t *dst )
 {
 	gGL->glGetIntegerv	( GL_STENCIL_CLEAR_VALUE, &dst->s );
 }
 
-FORCEINLINE void GLContextGetDefault( GLClearStencil_t *dst )
+ALWAYS_INLINE void GLContextGetDefault( GLClearStencil_t *dst )
 {
 	dst->s = 0;
 }
@@ -903,7 +903,7 @@ template<typename T> class GLState
 			Default();
 		}
 		
-		FORCEINLINE void Flush()
+		ALWAYS_INLINE void Flush()
 		{
 			// immediately blast out the state - it makes no sense to delta it or do anything fancy because shaderapi, dxabstract, and OpenGL itself does this for us (and OpenGL calls with multithreaded drivers are very cheap)
 			GLContextSet( &data );
@@ -911,7 +911,7 @@ template<typename T> class GLState
 				
 		// write: client src into cache
 		// common case is both false.  dirty is calculated, context write is deferred.
-		FORCEINLINE void Write( const T *src )
+		ALWAYS_INLINE void Write( const T *src )
 		{
 			data = *src;
 			Flush();
@@ -944,7 +944,7 @@ template<typename T> class GLState
 			return result;
 		}
 
-		FORCEINLINE const T &GetData() const { return data; }
+		ALWAYS_INLINE const T &GetData() const { return data; }
 		
 	protected:
 		T data;
@@ -961,7 +961,7 @@ template<typename T, int COUNT> class GLStateArray
 		}
 
 		// write cache->context if dirty or forced.
-		FORCEINLINE void FlushIndex( int index )
+		ALWAYS_INLINE void FlushIndex( int index )
 		{
 			// immediately blast out the state - it makes no sense to delta it or do anything fancy because shaderapi, dxabstract, and OpenGL itself does this for us (and OpenGL calls with multithreaded drivers are very cheap)
 			GLContextSetIndexed( &data[index], index );
@@ -969,14 +969,14 @@ template<typename T, int COUNT> class GLStateArray
 
 		// write: client src into cache
 		// common case is both false.  dirty is calculated, context write is deferred.
-		FORCEINLINE void WriteIndex( T *src, int index )
+		ALWAYS_INLINE void WriteIndex( T *src, int index )
 		{
 			data[index] = *src;
 			FlushIndex( index );	// dirty becomes false
 		};
 						
 		// write all slots in the array
-		FORCEINLINE void Flush()
+		ALWAYS_INLINE void Flush()
 		{
 			for( int i=0; i < COUNT; i++)
 			{
@@ -1337,7 +1337,7 @@ class GLMContext
 		// CheckCurrent has been removed (it no longer compiled on Linux). To minimize churn I'm leaving
 		// the inline NOP version.
 		// DO NOT change this to non-inlined. It's called all over the place from very hot codepaths.
-		FORCEINLINE void CheckCurrent( void ) { }
+		ALWAYS_INLINE void CheckCurrent( void ) { }
 		
 		void							PopulateCaps( void );	// fill out later portions of renderer info record which need context queries
 		void							DumpCaps( void );		// printf all the caps info (you can call this in release too)
@@ -1368,22 +1368,22 @@ class GLMContext
 		void	PreloadTex( CGLMTex *tex, bool force=false );
 
 		// samplers
-		FORCEINLINE void SetSamplerTex( int sampler, CGLMTex *tex );
+		ALWAYS_INLINE void SetSamplerTex( int sampler, CGLMTex *tex );
 				
-		FORCEINLINE void SetSamplerDirty( int sampler );
-		FORCEINLINE void SetSamplerMinFilter( int sampler, GLenum Value );
-		FORCEINLINE void SetSamplerMagFilter( int sampler, GLenum Value );
-		FORCEINLINE void SetSamplerMipFilter( int sampler, GLenum Value );
-		FORCEINLINE void SetSamplerAddressU( int sampler, GLenum Value );
-		FORCEINLINE void SetSamplerAddressV( int sampler, GLenum Value );
-		FORCEINLINE void SetSamplerAddressW( int sampler, GLenum Value );
-		FORCEINLINE void SetSamplerStates( int sampler, GLenum AddressU, GLenum AddressV, GLenum AddressW, GLenum minFilter, GLenum magFilter, GLenum mipFilter );
-		FORCEINLINE void SetSamplerBorderColor( int sampler, DWORD Value );
-		FORCEINLINE void SetSamplerMipMapLODBias( int sampler, DWORD Value );
-		FORCEINLINE void SetSamplerMaxMipLevel( int sampler, DWORD Value );
-		FORCEINLINE void SetSamplerMaxAnisotropy( int sampler, DWORD Value );
-		FORCEINLINE void SetSamplerSRGBTexture( int sampler, DWORD Value );
-		FORCEINLINE void SetShadowFilter( int sampler, DWORD Value );
+		ALWAYS_INLINE void SetSamplerDirty( int sampler );
+		ALWAYS_INLINE void SetSamplerMinFilter( int sampler, GLenum Value );
+		ALWAYS_INLINE void SetSamplerMagFilter( int sampler, GLenum Value );
+		ALWAYS_INLINE void SetSamplerMipFilter( int sampler, GLenum Value );
+		ALWAYS_INLINE void SetSamplerAddressU( int sampler, GLenum Value );
+		ALWAYS_INLINE void SetSamplerAddressV( int sampler, GLenum Value );
+		ALWAYS_INLINE void SetSamplerAddressW( int sampler, GLenum Value );
+		ALWAYS_INLINE void SetSamplerStates( int sampler, GLenum AddressU, GLenum AddressV, GLenum AddressW, GLenum minFilter, GLenum magFilter, GLenum mipFilter );
+		ALWAYS_INLINE void SetSamplerBorderColor( int sampler, DWORD Value );
+		ALWAYS_INLINE void SetSamplerMipMapLODBias( int sampler, DWORD Value );
+		ALWAYS_INLINE void SetSamplerMaxMipLevel( int sampler, DWORD Value );
+		ALWAYS_INLINE void SetSamplerMaxAnisotropy( int sampler, DWORD Value );
+		ALWAYS_INLINE void SetSamplerSRGBTexture( int sampler, DWORD Value );
+		ALWAYS_INLINE void SetShadowFilter( int sampler, DWORD Value );
 		
 		// render targets (FBO's)
 		CGLMFBO	*NewFBO( void );
@@ -1394,9 +1394,9 @@ class GLMContext
 		void	DelProgram( CGLMProgram *pProg );
 		void	NullProgram( void );											// de-ac all shader state
 		
-		FORCEINLINE void SetVertexProgram( CGLMProgram *pProg );	
-		FORCEINLINE void SetFragmentProgram( CGLMProgram *pProg );
-		FORCEINLINE void SetProgram( EGLMProgramType nProgType, CGLMProgram *pProg ) { m_drawingProgram[nProgType] = pProg; m_bDirtyPrograms = true; }
+		ALWAYS_INLINE void SetVertexProgram( CGLMProgram *pProg );
+		ALWAYS_INLINE void SetFragmentProgram( CGLMProgram *pProg );
+		ALWAYS_INLINE void SetProgram( EGLMProgramType nProgType, CGLMProgram *pProg ) { m_drawingProgram[nProgType] = pProg; m_bDirtyPrograms = true; }
 		
 		void	SetDrawingLang( EGLMProgramLang lang, bool immediate=false );	// choose ARB or GLSL.  immediate=false defers lang change to top of frame
 		
@@ -1410,10 +1410,10 @@ class GLMContext
 		CGLMBuffer	*NewBuffer( EGLMBufferType type, uint size, uint options );
 		void	DelBuffer( CGLMBuffer *buff );
 
-		FORCEINLINE void SetIndexBuffer( CGLMBuffer *buff ) { BindIndexBufferToCtx( buff );	}
+		ALWAYS_INLINE void SetIndexBuffer( CGLMBuffer *buff ) { BindIndexBufferToCtx( buff );	}
 
 		// FIXME: Remove this, it's no longer used
-		FORCEINLINE void SetVertexAttributes( GLMVertexSetup *setup )
+		ALWAYS_INLINE void SetVertexAttributes( GLMVertexSetup *setup )
 		{
 			// we now just latch the vert setup and then execute on it at flushdrawstatestime if shaders are enabled.
 			if ( setup )
@@ -1435,17 +1435,17 @@ class GLMContext
 			
 		// "slot" means a vec4-sized thing
 		// these write into .env parameter space
-		FORCEINLINE void SetProgramParametersF( EGLMProgramType type, uint baseSlot, float *slotData, uint slotCount );
-		FORCEINLINE void SetProgramParametersB( EGLMProgramType type, uint baseSlot, int  *slotData, uint boolCount );	// take "BOOL" aka int
-		FORCEINLINE void SetProgramParametersI( EGLMProgramType type, uint baseSlot, int  *slotData, uint slotCount );	// take int4s
+		ALWAYS_INLINE void SetProgramParametersF( EGLMProgramType type, uint baseSlot, float *slotData, uint slotCount );
+		ALWAYS_INLINE void SetProgramParametersB( EGLMProgramType type, uint baseSlot, int  *slotData, uint boolCount );	// take "BOOL" aka int
+		ALWAYS_INLINE void SetProgramParametersI( EGLMProgramType type, uint baseSlot, int  *slotData, uint slotCount );	// take int4s
 
 		// state sync
 		// If lazyUnbinding is true, unbound samplers will not actually be unbound to the GL device.
-		FORCEINLINE void FlushDrawStates( uint nStartIndex, uint nEndIndex, uint nBaseVertex );				// pushes all drawing state - samplers, tex, programs, etc.
+		ALWAYS_INLINE void FlushDrawStates( uint nStartIndex, uint nEndIndex, uint nBaseVertex );				// pushes all drawing state - samplers, tex, programs, etc.
 		void FlushDrawStatesNoShaders();
 				
 		// drawing
-		FORCEINLINE void DrawRangeElements(	GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid *indices, uint baseVertex, CGLMBuffer *pIndexBuf );
+		ALWAYS_INLINE void DrawRangeElements(	GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid *indices, uint baseVertex, CGLMBuffer *pIndexBuf );
 		void DrawRangeElementsNonInline(	GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid *indices, uint baseVertex, CGLMBuffer *pIndexBuf );
 
 		void	CheckNative( void );
@@ -1466,27 +1466,27 @@ class GLMContext
 
 		// writers for the state block inputs
 		
-		FORCEINLINE void	WriteAlphaTestEnable( GLAlphaTestEnable_t *src ) { m_AlphaTestEnable.Write( src ); }
-		FORCEINLINE void	WriteAlphaTestFunc( GLAlphaTestFunc_t *src ) { m_AlphaTestFunc.Write( src ); }
-		FORCEINLINE void	WriteAlphaToCoverageEnable( GLAlphaToCoverageEnable_t *src ) { m_AlphaToCoverageEnable.Write( src ); }
-		FORCEINLINE void	WriteCullFaceEnable( GLCullFaceEnable_t *src ) { m_CullFaceEnable.Write( src ); }
-		FORCEINLINE void	WriteCullFrontFace( GLCullFrontFace_t *src ) { m_CullFrontFace.Write( src ); }
-		FORCEINLINE void	WritePolygonMode( GLPolygonMode_t *src ) { m_PolygonMode.Write( src ); }
-		FORCEINLINE void	WriteDepthBias( GLDepthBias_t *src ) { m_DepthBias.Write( src ); }
-		FORCEINLINE void	WriteClipPlaneEnable( GLClipPlaneEnable_t *src, int which ) { m_ClipPlaneEnable.WriteIndex( src, which ); }
-		FORCEINLINE void	WriteClipPlaneEquation( GLClipPlaneEquation_t *src, int which ) { m_ClipPlaneEquation.WriteIndex( src, which ); }
-		FORCEINLINE void	WriteScissorEnable( GLScissorEnable_t *src ) { m_ScissorEnable.Write( src ); }
-		FORCEINLINE void	WriteScissorBox( GLScissorBox_t *src ) { m_ScissorBox.Write( src ); }
-		FORCEINLINE void	WriteViewportBox( GLViewportBox_t *src ) { m_ViewportBox.Write( src ); }
-		FORCEINLINE void	WriteViewportDepthRange( GLViewportDepthRange_t *src ) { m_ViewportDepthRange.Write( src ); }
-		FORCEINLINE void	WriteColorMaskSingle( GLColorMaskSingle_t *src ) { m_ColorMaskSingle.Write( src ); }
-		FORCEINLINE void	WriteColorMaskMultiple( GLColorMaskMultiple_t *src, int which ) { m_ColorMaskMultiple.WriteIndex( src, which ); }
-		FORCEINLINE void	WriteBlendEnable( GLBlendEnable_t *src ) { m_BlendEnable.Write( src ); }
-		FORCEINLINE void	WriteBlendFactor( GLBlendFactor_t *src ) { m_BlendFactor.Write( src ); }
-		FORCEINLINE void	WriteBlendEquation( GLBlendEquation_t *src ) { m_BlendEquation.Write( src ); }
-		FORCEINLINE void	WriteBlendColor( GLBlendColor_t *src ) { m_BlendColor.Write( src ); }
+		ALWAYS_INLINE void	WriteAlphaTestEnable( GLAlphaTestEnable_t *src ) { m_AlphaTestEnable.Write( src ); }
+		ALWAYS_INLINE void	WriteAlphaTestFunc( GLAlphaTestFunc_t *src ) { m_AlphaTestFunc.Write( src ); }
+		ALWAYS_INLINE void	WriteAlphaToCoverageEnable( GLAlphaToCoverageEnable_t *src ) { m_AlphaToCoverageEnable.Write( src ); }
+		ALWAYS_INLINE void	WriteCullFaceEnable( GLCullFaceEnable_t *src ) { m_CullFaceEnable.Write( src ); }
+		ALWAYS_INLINE void	WriteCullFrontFace( GLCullFrontFace_t *src ) { m_CullFrontFace.Write( src ); }
+		ALWAYS_INLINE void	WritePolygonMode( GLPolygonMode_t *src ) { m_PolygonMode.Write( src ); }
+		ALWAYS_INLINE void	WriteDepthBias( GLDepthBias_t *src ) { m_DepthBias.Write( src ); }
+		ALWAYS_INLINE void	WriteClipPlaneEnable( GLClipPlaneEnable_t *src, int which ) { m_ClipPlaneEnable.WriteIndex( src, which ); }
+		ALWAYS_INLINE void	WriteClipPlaneEquation( GLClipPlaneEquation_t *src, int which ) { m_ClipPlaneEquation.WriteIndex( src, which ); }
+		ALWAYS_INLINE void	WriteScissorEnable( GLScissorEnable_t *src ) { m_ScissorEnable.Write( src ); }
+		ALWAYS_INLINE void	WriteScissorBox( GLScissorBox_t *src ) { m_ScissorBox.Write( src ); }
+		ALWAYS_INLINE void	WriteViewportBox( GLViewportBox_t *src ) { m_ViewportBox.Write( src ); }
+		ALWAYS_INLINE void	WriteViewportDepthRange( GLViewportDepthRange_t *src ) { m_ViewportDepthRange.Write( src ); }
+		ALWAYS_INLINE void	WriteColorMaskSingle( GLColorMaskSingle_t *src ) { m_ColorMaskSingle.Write( src ); }
+		ALWAYS_INLINE void	WriteColorMaskMultiple( GLColorMaskMultiple_t *src, int which ) { m_ColorMaskMultiple.WriteIndex( src, which ); }
+		ALWAYS_INLINE void	WriteBlendEnable( GLBlendEnable_t *src ) { m_BlendEnable.Write( src ); }
+		ALWAYS_INLINE void	WriteBlendFactor( GLBlendFactor_t *src ) { m_BlendFactor.Write( src ); }
+		ALWAYS_INLINE void	WriteBlendEquation( GLBlendEquation_t *src ) { m_BlendEquation.Write( src ); }
+		ALWAYS_INLINE void	WriteBlendColor( GLBlendColor_t *src ) { m_BlendColor.Write( src ); }
 
-		FORCEINLINE void	WriteBlendEnableSRGB( GLBlendEnableSRGB_t *src ) 
+		ALWAYS_INLINE void	WriteBlendEnableSRGB( GLBlendEnableSRGB_t *src )
 		{
 			if (m_caps.m_hasGammaWrites)	// only if caps allow do we actually push it through to the extension
 			{
@@ -1500,16 +1500,16 @@ class GLMContext
 			// if fake SRGB mode is in place (m_caps.m_hasGammaWrites is false)
 		}
 
-		FORCEINLINE void	WriteDepthTestEnable( GLDepthTestEnable_t *src ) { m_DepthTestEnable.Write( src ); }
-		FORCEINLINE void	WriteDepthFunc( GLDepthFunc_t *src ) { m_DepthFunc.Write( src ); }
-		FORCEINLINE void	WriteDepthMask( GLDepthMask_t *src ) { m_DepthMask.Write( src ); }
-		FORCEINLINE void	WriteStencilTestEnable( GLStencilTestEnable_t *src ) { m_StencilTestEnable.Write( src ); }
-		FORCEINLINE void	WriteStencilFunc( GLStencilFunc_t *src ) { m_StencilFunc.Write( src ); }
-		FORCEINLINE void	WriteStencilOp( GLStencilOp_t *src, int which ) { m_StencilOp.WriteIndex( src, which ); }
-		FORCEINLINE void	WriteStencilWriteMask( GLStencilWriteMask_t *src ) { m_StencilWriteMask.Write( src ); }
-		FORCEINLINE void	WriteClearColor( GLClearColor_t *src ) { m_ClearColor.Write( src ); }
-		FORCEINLINE void	WriteClearDepth( GLClearDepth_t *src ) { m_ClearDepth.Write( src ); }
-		FORCEINLINE void	WriteClearStencil( GLClearStencil_t *src ) { m_ClearStencil.Write( src ); }
+		ALWAYS_INLINE void	WriteDepthTestEnable( GLDepthTestEnable_t *src ) { m_DepthTestEnable.Write( src ); }
+		ALWAYS_INLINE void	WriteDepthFunc( GLDepthFunc_t *src ) { m_DepthFunc.Write( src ); }
+		ALWAYS_INLINE void	WriteDepthMask( GLDepthMask_t *src ) { m_DepthMask.Write( src ); }
+		ALWAYS_INLINE void	WriteStencilTestEnable( GLStencilTestEnable_t *src ) { m_StencilTestEnable.Write( src ); }
+		ALWAYS_INLINE void	WriteStencilFunc( GLStencilFunc_t *src ) { m_StencilFunc.Write( src ); }
+		ALWAYS_INLINE void	WriteStencilOp( GLStencilOp_t *src, int which ) { m_StencilOp.WriteIndex( src, which ); }
+		ALWAYS_INLINE void	WriteStencilWriteMask( GLStencilWriteMask_t *src ) { m_StencilWriteMask.Write( src ); }
+		ALWAYS_INLINE void	WriteClearColor( GLClearColor_t *src ) { m_ClearColor.Write( src ); }
+		ALWAYS_INLINE void	WriteClearDepth( GLClearDepth_t *src ) { m_ClearDepth.Write( src ); }
+		ALWAYS_INLINE void	WriteClearStencil( GLClearStencil_t *src ) { m_ClearStencil.Write( src ); }
 
 		// debug stuff
 		void	BeginFrame( void );
@@ -1523,8 +1523,8 @@ class GLMContext
 		void	DebugClear( void );
 #endif
 
-		FORCEINLINE void SetMaxUsedVertexShaderConstantsHint( uint nMaxConstants );
-		FORCEINLINE DWORD GetCurrentOwnerThreadId() const { return m_nCurOwnerThreadId; }
+		ALWAYS_INLINE void SetMaxUsedVertexShaderConstantsHint( uint nMaxConstants );
+		ALWAYS_INLINE DWORD GetCurrentOwnerThreadId() const { return m_nCurOwnerThreadId; }
 								
 	protected:
 		friend class GLMgr;				// only GLMgr can make GLMContext objects
@@ -1548,9 +1548,9 @@ class GLMContext
 		GLMContext( IDirect3DDevice9 *pDevice, GLMDisplayParams *params );
 		~GLMContext();
 
-		FORCEINLINE GLuint FindSamplerObject( const GLMTexSamplingParams &desiredParams );
+		ALWAYS_INLINE GLuint FindSamplerObject( const GLMTexSamplingParams &desiredParams );
 
-		FORCEINLINE void SetBufAndVertexAttribPointer( uint nIndex, GLuint nGLName, GLuint stride, GLuint datatype, GLboolean normalized, GLuint nCompCount, const void *pBuf, uint nRevision )
+		ALWAYS_INLINE void SetBufAndVertexAttribPointer( uint nIndex, GLuint nGLName, GLuint stride, GLuint datatype, GLboolean normalized, GLuint nCompCount, const void *pBuf, uint nRevision )
 		{
 			VertexAttribs_t &curAttribs = m_boundVertexAttribs[nIndex];
 			if ( nGLName != m_nBoundGLBuffer[kGLMVertexBuffer] )
@@ -1588,7 +1588,7 @@ class GLMContext
 
 		CurAttribs_t m_CurAttribs;
 		
-		FORCEINLINE void ClearCurAttribs() 
+		ALWAYS_INLINE void ClearCurAttribs()
 		{ 
 			m_CurAttribs.m_nTotalBufferRevision = 0;
 			m_CurAttribs.m_pVertDecl = NULL;
@@ -1597,10 +1597,10 @@ class GLMContext
 			m_CurAttribs.m_vtxAttribMap[1] = 0xBBBBBBBBBBBBBBBBULL;
 		}
 		
-		FORCEINLINE void ReleasedShader() {	NullProgram(); }
+		ALWAYS_INLINE void ReleasedShader() {	NullProgram(); }
 		
 		// textures
-		FORCEINLINE void SelectTMU( int tmu )
+		ALWAYS_INLINE void SelectTMU( int tmu )
 		{
 			if ( tmu != m_activeTexture )
 			{
@@ -1615,7 +1615,7 @@ class GLMContext
 		void BindFBOToCtx( CGLMFBO *fbo, GLenum bindPoint = GL_FRAMEBUFFER_EXT );				// you can also choose GL_READ_FRAMEBUFFER_EXT / GL_DRAW_FRAMEBUFFER_EXT
 		
 		// buffers
-		FORCEINLINE void BindGLBufferToCtx( GLenum nGLBufType, GLuint nGLName, bool bForce = false )
+		ALWAYS_INLINE void BindGLBufferToCtx( GLenum nGLBufType, GLuint nGLName, bool bForce = false )
 		{
 			Assert( ( nGLBufType == GL_ARRAY_BUFFER_ARB ) || ( nGLBufType == GL_ELEMENT_ARRAY_BUFFER_ARB ) );
 						
@@ -1629,8 +1629,8 @@ class GLMContext
 
 		void BindBufferToCtx( EGLMBufferType type, CGLMBuffer *buff, bool force = false );		// does not twiddle any enables.
 
-		FORCEINLINE void BindIndexBufferToCtx( CGLMBuffer *buff );
-		FORCEINLINE void BindVertexBufferToCtx( CGLMBuffer *buff );
+		ALWAYS_INLINE void BindIndexBufferToCtx( CGLMBuffer *buff );
+		ALWAYS_INLINE void BindVertexBufferToCtx( CGLMBuffer *buff );
 		
 		GLuint CreateTex( GLenum texBind, GLenum internalFormat );
 		void CleanupTex( GLenum texBind, GLMTexLayout* pLayout, GLuint tex );
@@ -1783,7 +1783,7 @@ class GLMContext
 		CGLMShaderPairCache				*m_pairCache;				// GLSL only
 		CGLMShaderPair					*m_pBoundPair;				// GLSL only
 
-		FORCEINLINE void NewLinkedProgram() { ClearCurAttribs(); }
+		ALWAYS_INLINE void NewLinkedProgram() { ClearCurAttribs(); }
 
 		//uint							m_boundPairRevision;		// GLSL only
 		//GLhandleARB						m_boundPairProgram;			// GLSL only
@@ -1888,7 +1888,7 @@ class GLMContext
 #endif
 };
 
-FORCEINLINE void GLMContext::DrawRangeElements(	GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid *indices, uint baseVertex, CGLMBuffer *pIndexBuf )
+ALWAYS_INLINE void GLMContext::DrawRangeElements(	GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid *indices, uint baseVertex, CGLMBuffer *pIndexBuf )
 {
 #if GL_ENABLE_INDEX_VERIFICATION
 	DrawRangeElementsNonInline( mode, start, end, count, type, indices, baseVertex, pIndexBuf );
@@ -1999,13 +1999,13 @@ FORCEINLINE void GLMContext::DrawRangeElements(	GLenum mode, GLuint start, GLuin
 #endif // GL_ENABLE_INDEX_VERIFICATION
 }
 
-FORCEINLINE void GLMContext::SetVertexProgram( CGLMProgram *pProg )
+ALWAYS_INLINE void GLMContext::SetVertexProgram( CGLMProgram *pProg )
 {
 	m_drawingProgram[kGLMVertexProgram] = pProg;
 	m_bDirtyPrograms = true;
 }
 
-FORCEINLINE void GLMContext::SetFragmentProgram( CGLMProgram *pProg )
+ALWAYS_INLINE void GLMContext::SetFragmentProgram( CGLMProgram *pProg )
 {
 	m_drawingProgram[kGLMFragmentProgram] = pProg ? pProg : m_pNullFragmentProgram;
 	m_bDirtyPrograms = true;
@@ -2013,7 +2013,7 @@ FORCEINLINE void GLMContext::SetFragmentProgram( CGLMProgram *pProg )
 
 // "slot" means a vec4-sized thing
 // these write into .env parameter space
-FORCEINLINE void GLMContext::SetProgramParametersF( EGLMProgramType type, uint baseSlot, float *slotData, uint slotCount )
+ALWAYS_INLINE void GLMContext::SetProgramParametersF( EGLMProgramType type, uint baseSlot, float *slotData, uint slotCount )
 {
 #if GLMDEBUG
 	GLM_FUNC;
@@ -2093,7 +2093,7 @@ FORCEINLINE void GLMContext::SetProgramParametersF( EGLMProgramType type, uint b
 	}
 }
 
-FORCEINLINE void GLMContext::SetProgramParametersB( EGLMProgramType type, uint baseSlot, int *slotData, uint boolCount )
+ALWAYS_INLINE void GLMContext::SetProgramParametersB( EGLMProgramType type, uint baseSlot, int *slotData, uint boolCount )
 {
 #if GLMDEBUG
 	GLM_FUNC;
@@ -2122,7 +2122,7 @@ FORCEINLINE void GLMContext::SetProgramParametersB( EGLMProgramType type, uint b
 		m_programParamsB[type].m_dirtySlotCount = baseSlot+boolCount;
 }
 
-FORCEINLINE void GLMContext::SetProgramParametersI( EGLMProgramType type, uint baseSlot, int *slotData, uint slotCount )	// groups of 4 ints...
+ALWAYS_INLINE void GLMContext::SetProgramParametersI( EGLMProgramType type, uint baseSlot, int *slotData, uint slotCount )	// groups of 4 ints...
 {
 #if GLMDEBUG
 	GLM_FUNC;
@@ -2153,7 +2153,7 @@ FORCEINLINE void GLMContext::SetProgramParametersI( EGLMProgramType type, uint b
 	}
 }
 
-FORCEINLINE void GLMContext::SetSamplerDirty( int sampler )
+ALWAYS_INLINE void GLMContext::SetSamplerDirty( int sampler )
 {
 	Assert( sampler < GLM_SAMPLER_COUNT );
 	m_nDirtySamplers[m_nNumDirtySamplers] = sampler;
@@ -2161,7 +2161,7 @@ FORCEINLINE void GLMContext::SetSamplerDirty( int sampler )
 	m_nDirtySamplerFlags[sampler] = 0;
 }
 
-FORCEINLINE void GLMContext::SetSamplerTex( int sampler, CGLMTex *tex ) 
+ALWAYS_INLINE void GLMContext::SetSamplerTex( int sampler, CGLMTex *tex )
 { 
 	Assert( sampler < GLM_SAMPLER_COUNT );
 	m_samplers[sampler].m_pBoundTex = tex;
@@ -2189,43 +2189,43 @@ FORCEINLINE void GLMContext::SetSamplerTex( int sampler, CGLMTex *tex )
 	}
 }
 
-FORCEINLINE void GLMContext::SetSamplerMinFilter( int sampler, GLenum Value )
+ALWAYS_INLINE void GLMContext::SetSamplerMinFilter( int sampler, GLenum Value )
 {
 	Assert( Value < ( 1 << GLM_PACKED_SAMPLER_PARAMS_MIN_FILTER_BITS ) );
 	m_samplers[sampler].m_samp.m_packed.m_minFilter = Value;
 }
 
-FORCEINLINE void GLMContext::SetSamplerMagFilter( int sampler, GLenum Value )
+ALWAYS_INLINE void GLMContext::SetSamplerMagFilter( int sampler, GLenum Value )
 {
 	Assert( Value < ( 1 << GLM_PACKED_SAMPLER_PARAMS_MAG_FILTER_BITS ) );
 	m_samplers[sampler].m_samp.m_packed.m_magFilter = Value;
 }
 
-FORCEINLINE void GLMContext::SetSamplerMipFilter( int sampler, GLenum Value )
+ALWAYS_INLINE void GLMContext::SetSamplerMipFilter( int sampler, GLenum Value )
 {
 	Assert( Value < ( 1 << GLM_PACKED_SAMPLER_PARAMS_MIP_FILTER_BITS ) );
 	m_samplers[sampler].m_samp.m_packed.m_mipFilter = Value;
 }
 
-FORCEINLINE void GLMContext::SetSamplerAddressU( int sampler, GLenum Value )
+ALWAYS_INLINE void GLMContext::SetSamplerAddressU( int sampler, GLenum Value )
 {
 	Assert( Value < ( 1 << GLM_PACKED_SAMPLER_PARAMS_ADDRESS_BITS) );
 	m_samplers[sampler].m_samp.m_packed.m_addressU = Value;
 }
 
-FORCEINLINE void GLMContext::SetSamplerAddressV( int sampler, GLenum Value )
+ALWAYS_INLINE void GLMContext::SetSamplerAddressV( int sampler, GLenum Value )
 {
 	Assert( Value < ( 1 << GLM_PACKED_SAMPLER_PARAMS_ADDRESS_BITS) );
 	m_samplers[sampler].m_samp.m_packed.m_addressV = Value;
 }
 
-FORCEINLINE void GLMContext::SetSamplerAddressW( int sampler, GLenum Value )
+ALWAYS_INLINE void GLMContext::SetSamplerAddressW( int sampler, GLenum Value )
 {
 	Assert( Value < ( 1 << GLM_PACKED_SAMPLER_PARAMS_ADDRESS_BITS) );
 	m_samplers[sampler].m_samp.m_packed.m_addressW = Value;
 }
 
-FORCEINLINE void GLMContext::SetSamplerStates( int sampler, GLenum AddressU, GLenum AddressV, GLenum AddressW, GLenum minFilter, GLenum magFilter, GLenum mipFilter )
+ALWAYS_INLINE void GLMContext::SetSamplerStates( int sampler, GLenum AddressU, GLenum AddressV, GLenum AddressW, GLenum minFilter, GLenum magFilter, GLenum mipFilter )
 {
 	Assert( AddressU < ( 1 << GLM_PACKED_SAMPLER_PARAMS_ADDRESS_BITS) );
 	Assert( AddressV < ( 1 << GLM_PACKED_SAMPLER_PARAMS_ADDRESS_BITS) );
@@ -2243,41 +2243,41 @@ FORCEINLINE void GLMContext::SetSamplerStates( int sampler, GLenum AddressU, GLe
 	params.m_packed.m_mipFilter = mipFilter;
 }
 
-FORCEINLINE void GLMContext::SetSamplerBorderColor( int sampler, DWORD Value )
+ALWAYS_INLINE void GLMContext::SetSamplerBorderColor( int sampler, DWORD Value )
 {
 	m_samplers[sampler].m_samp.m_borderColor = Value;
 }
 
-FORCEINLINE void GLMContext::SetSamplerMipMapLODBias( int sampler, DWORD Value )
+ALWAYS_INLINE void GLMContext::SetSamplerMipMapLODBias( int sampler, DWORD Value )
 {
 	// not currently supported
 }
 
-FORCEINLINE void GLMContext::SetSamplerMaxMipLevel( int sampler, DWORD Value )
+ALWAYS_INLINE void GLMContext::SetSamplerMaxMipLevel( int sampler, DWORD Value )
 {
 	Assert( Value < ( 1 << GLM_PACKED_SAMPLER_PARAMS_MIN_LOD_BITS ) );
 	m_samplers[sampler].m_samp.m_packed.m_minLOD = Value;
 }
 
-FORCEINLINE void GLMContext::SetSamplerMaxAnisotropy( int sampler, DWORD Value )
+ALWAYS_INLINE void GLMContext::SetSamplerMaxAnisotropy( int sampler, DWORD Value )
 {
 	Assert( Value < ( 1 << GLM_PACKED_SAMPLER_PARAMS_MAX_ANISO_BITS ) );
 	m_samplers[sampler].m_samp.m_packed.m_maxAniso = Value;
 }
 
-FORCEINLINE void GLMContext::SetSamplerSRGBTexture( int sampler, DWORD Value )
+ALWAYS_INLINE void GLMContext::SetSamplerSRGBTexture( int sampler, DWORD Value )
 {
 	Assert( Value < ( 1 << GLM_PACKED_SAMPLER_PARAMS_SRGB_BITS ) );
 	m_samplers[sampler].m_samp.m_packed.m_srgb = Value;
 }
 
-FORCEINLINE void GLMContext::SetShadowFilter( int sampler, DWORD Value )
+ALWAYS_INLINE void GLMContext::SetShadowFilter( int sampler, DWORD Value )
 {
 	Assert( Value < ( 1 << GLM_PACKED_SAMPLER_PARAMS_COMPARE_MODE_BITS ) );
 	m_samplers[sampler].m_samp.m_packed.m_compareMode = Value;
 }
 
-FORCEINLINE void GLMContext::BindIndexBufferToCtx( CGLMBuffer *buff )
+ALWAYS_INLINE void GLMContext::BindIndexBufferToCtx( CGLMBuffer *buff )
 {
 	GLMPRINTF(( "--- GLMContext::BindIndexBufferToCtx buff %p, GL name %d", buff, (buff) ? buff->m_nHandle : -1 ));
 		
@@ -2292,7 +2292,7 @@ FORCEINLINE void GLMContext::BindIndexBufferToCtx( CGLMBuffer *buff )
 	gGL->glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, nGLName );
 }
 
-FORCEINLINE void GLMContext::BindVertexBufferToCtx( CGLMBuffer *buff )
+ALWAYS_INLINE void GLMContext::BindVertexBufferToCtx( CGLMBuffer *buff )
 {
 	GLMPRINTF(( "--- GLMContext::BindVertexBufferToCtx buff %p, GL name %d", buff, (buff) ? buff->m_nHandle : -1 ));
 
@@ -2307,7 +2307,7 @@ FORCEINLINE void GLMContext::BindVertexBufferToCtx( CGLMBuffer *buff )
 	gGL->glBindBufferARB( GL_ARRAY_BUFFER_ARB, nGLName );
 }
 
-FORCEINLINE void GLMContext::SetMaxUsedVertexShaderConstantsHint( uint nMaxConstants )
+ALWAYS_INLINE void GLMContext::SetMaxUsedVertexShaderConstantsHint( uint nMaxConstants )
 {
 	static bool bUseMaxVertexShadeConstantHints = !CommandLine()->CheckParm("-disablemaxvertexshaderconstanthints");
 	if ( bUseMaxVertexShadeConstantHints )

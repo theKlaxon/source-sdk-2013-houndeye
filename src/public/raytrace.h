@@ -89,7 +89,7 @@ struct TriGeometryData_t
 
 
 	// accessors to get around union annoyance
-	FORCEINLINE Vector &Vertex(int idx)
+	ALWAYS_INLINE Vector &Vertex(int idx)
 	{
 		return * ( reinterpret_cast<Vector *> (  m_VertexCoordData+3*idx ) );
 	}
@@ -107,12 +107,12 @@ struct CacheOptimizedTriangle
 	} m_Data;
 
 	// accessors to get around union annoyance
-	FORCEINLINE Vector &Vertex(int idx)
+	ALWAYS_INLINE Vector &Vertex(int idx)
 	{
 		return * ( reinterpret_cast<Vector *> (m_Data.m_GeometryData.m_VertexCoordData+3*idx ) );
 	}
 
-	FORCEINLINE const Vector &Vertex(int idx) const
+	ALWAYS_INLINE const Vector &Vertex(int idx) const
 	{
 		return * ( reinterpret_cast<const Vector *> (m_Data.m_GeometryData.m_VertexCoordData+3*idx ) );
 	}

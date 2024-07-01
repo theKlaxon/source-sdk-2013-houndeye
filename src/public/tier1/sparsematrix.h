@@ -36,20 +36,20 @@ public:
 
 	void AdjustAllRowIndicesAfter( int nStartRow, int nDelta );
 public:
-	FORCEINLINE float Element( int nRow, int nCol ) const;
+	ALWAYS_INLINE float Element( int nRow, int nCol ) const;
 	void SetElement( int nRow, int nCol, float flValue );
 	void SetDimensions( int nNumRows, int nNumCols );
 	void AppendElement( int nRow, int nCol, float flValue );
 	void FinishedAppending( void );
 
-	FORCEINLINE int Height( void ) const { return m_nNumRows; }
-	FORCEINLINE int Width( void ) const { return m_nNumCols; }
+	ALWAYS_INLINE int Height( void ) const { return m_nNumRows; }
+	ALWAYS_INLINE int Width( void ) const { return m_nNumCols; }
 
 };
 
 
 
-FORCEINLINE float CSparseMatrix::Element( int nRow, int nCol ) const
+ALWAYS_INLINE float CSparseMatrix::Element( int nRow, int nCol ) const
 {
 	Assert( nCol < m_nNumCols );
 	int nCount = m_rowDescriptors[nRow].m_nNonZeroCount;
@@ -104,12 +104,12 @@ namespace MatrixMath
 		}
 	}
 
-	FORCEINLINE void AppendElement( CSparseMatrix &matrix, int nRow, int nCol, float flValue )
+	ALWAYS_INLINE void AppendElement( CSparseMatrix &matrix, int nRow, int nCol, float flValue )
 	{
 		matrix.AppendElement( nRow, nCol, flValue );			// default implementation
 	}
 
-	FORCEINLINE void FinishedAppending( CSparseMatrix &matrix )
+	ALWAYS_INLINE void FinishedAppending( CSparseMatrix &matrix )
 	{
 		matrix.FinishedAppending();
 	}

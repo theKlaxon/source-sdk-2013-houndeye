@@ -174,7 +174,7 @@ static inline void DispatchNetworkStateChanged( T *pObj, void *pVar )
 	NetworkVar_##name name; 
 
 template<typename T>
-FORCEINLINE void NetworkVarConstruct( T &x ) { x = T(0); }
+ALWAYS_INLINE void NetworkVarConstruct( T &x ) { x = T(0); }
 
 template< class Type, class Changer >
 class CNetworkVarBase

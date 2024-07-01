@@ -60,7 +60,7 @@ private:
 
 //-------------------------------------
 
-FORCEINLINE void *CMemoryStack::Alloc( unsigned bytes, bool bClear ) RESTRICT
+ALWAYS_INLINE void *CMemoryStack::Alloc( unsigned bytes, bool bClear ) RESTRICT
 {
 	Assert( m_pBase );
 

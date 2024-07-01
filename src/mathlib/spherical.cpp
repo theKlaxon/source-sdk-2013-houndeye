@@ -90,7 +90,7 @@ static float SHNormalizationFactor( int nL, int nM )
 
 #define SQRT_2 1.414213562373095 
 
-FORCEINLINE float SphericalHarmonic( int nL, int nM, float flTheta, float flPhi, float flCosTheta )
+ALWAYS_INLINE float SphericalHarmonic( int nL, int nM, float flTheta, float flPhi, float flCosTheta )
 {
 	if ( nM == 0 )
 		return SHNormalizationFactor( nL, 0 ) * AssociatedLegendrePolynomial( nL, nM, flCosTheta );

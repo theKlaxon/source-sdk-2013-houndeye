@@ -113,7 +113,7 @@ struct LightingValue_t {
 	Vector m_vecLighting;
 	float m_flDirectSunAmount;
 
-	FORCEINLINE bool IsValid() const {
+	ALWAYS_INLINE bool IsValid() const {
 		return ( m_vecLighting.x >= 0 &&
 				 m_vecLighting.y >= 0 &&
 				 m_vecLighting.z >= 0 &&
@@ -122,43 +122,43 @@ struct LightingValue_t {
 				 m_vecLighting.z < 1e10 );
 	}
 
-	FORCEINLINE void Zero() {
+	ALWAYS_INLINE void Zero() {
 		m_vecLighting.Init( 0, 0, 0 );
 		m_flDirectSunAmount = 0.0;
 	}
 
-	FORCEINLINE void Scale( float m_flScale ) {
+	ALWAYS_INLINE void Scale( float m_flScale ) {
 		m_vecLighting *= m_flScale;
 		m_flDirectSunAmount *= m_flScale;
 	}
 
-	FORCEINLINE void AddWeighted( LightingValue_t const& src, float flWeight ) {
+	ALWAYS_INLINE void AddWeighted( LightingValue_t const& src, float flWeight ) {
 		m_vecLighting += flWeight * src.m_vecLighting;
 		m_flDirectSunAmount += flWeight * src.m_flDirectSunAmount;
 	}
 
-	FORCEINLINE void AddWeighted( Vector const& src, float flWeight ) {
+	ALWAYS_INLINE void AddWeighted( Vector const& src, float flWeight ) {
 		m_vecLighting += flWeight * src;
 	}
 
-	FORCEINLINE float Intensity() const {
+	ALWAYS_INLINE float Intensity() const {
 		return m_vecLighting.x + m_vecLighting.y + m_vecLighting.z;
 	}
 
-	FORCEINLINE void AddLight( float flAmount, Vector const& vecColor, float flSunAmount = 0.0 ) {
+	ALWAYS_INLINE void AddLight( float flAmount, Vector const& vecColor, float flSunAmount = 0.0 ) {
 		VectorMA( m_vecLighting, flAmount, vecColor, m_vecLighting );
 		m_flDirectSunAmount += flSunAmount;
 		Assert( this->IsValid() );
 	}
 
 
-	FORCEINLINE void AddLight( LightingValue_t const& src ) {
+	ALWAYS_INLINE void AddLight( LightingValue_t const& src ) {
 		m_vecLighting += src.m_vecLighting;
 		m_flDirectSunAmount += src.m_flDirectSunAmount;
 		Assert( this->IsValid() );
 	}
 
-	FORCEINLINE void Init( float x, float y, float z ) {
+	ALWAYS_INLINE void Init( float x, float y, float z ) {
 		m_vecLighting.Init( x, y, z );
 		m_flDirectSunAmount = 0.0;
 	}

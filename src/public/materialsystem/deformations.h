@@ -40,7 +40,7 @@ struct BoxDeformation_t : DeformationBase_t
 	Vector m_ClampMaxes;
 	float m_flPad3;
 
-	FORCEINLINE BoxDeformation_t( void )
+	ALWAYS_INLINE BoxDeformation_t( void )
 	{
 		m_eType = DEFORMATION_CLAMP_TO_BOX_IN_WORLDSPACE;
 		// invalid cube

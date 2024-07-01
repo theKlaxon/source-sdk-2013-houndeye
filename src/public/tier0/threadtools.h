@@ -687,7 +687,7 @@ private:
 		}
 
 	private:
-		FORCEINLINE bool TryLockInline( const uint32 threadId ) volatile {
+		ALWAYS_INLINE bool TryLockInline( const uint32 threadId ) volatile {
 			if ( threadId != m_ownerID && !ThreadInterlockedAssignIf( (volatile long*) &m_ownerID, (long) threadId, 0 ) )
 				return false;
 
@@ -715,7 +715,7 @@ private:
 		}
 
 		#if !IsDebug()
-			FORCEINLINE
+			ALWAYS_INLINE
 		#endif
 		void Lock( unsigned int nSpinSleepTime = 0 ) volatile {
 			const uint32 threadId = ThreadGetCurrentId();
@@ -737,7 +737,7 @@ private:
 		}
 
 		#if !IsDebug()
-			FORCEINLINE
+			ALWAYS_INLINE
 		#endif
 		void Unlock() volatile {
 			#if IsDebug()
@@ -885,17 +885,17 @@ public:
 template<class MUTEX_TYPE = CThreadMutex>
 class CAutoLockT {
 public:
-	FORCEINLINE CAutoLockT( MUTEX_TYPE& lock )
+	ALWAYS_INLINE CAutoLockT( MUTEX_TYPE& lock )
 		: m_lock( lock ) {
 		m_lock.Lock();
 	}
 
-	FORCEINLINE CAutoLockT( const MUTEX_TYPE& lock )
+	ALWAYS_INLINE CAutoLockT( const MUTEX_TYPE& lock )
 		: m_lock( const_cast<MUTEX_TYPE&>( lock ) ) {
 		m_lock.Lock();
 	}
 
-	FORCEINLINE ~CAutoLockT() {
+	ALWAYS_INLINE ~CAutoLockT() {
 		m_lock.Unlock();
 	}
 
@@ -1752,7 +1752,8 @@ inline void CThreadSpinRWLock::LockForWrite() {
 
 // read data from a memory address
 template<class T>
-FORCEINLINE T ReadVolatileMemory( T const* pPtr ) {
+ALWAYS_INLINE
+T ReadVolatileMemory( T const* pPtr ) {
 	volatile const T* pVolatilePtr = (volatile const T*) pPtr;
 	return *pVolatilePtr;
 }

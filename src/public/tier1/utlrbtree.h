@@ -305,7 +305,7 @@ protected:
 
 	Node_t* m_pElements;
 
-	FORCEINLINE M const &Elements( void ) const
+	ALWAYS_INLINE M const &Elements( void ) const
 	{
 		return m_Elements;
 	}

@@ -94,7 +94,7 @@ public:
 	void SetIsViewModelEffect ( bool bIsViewModelEffect ) { m_bViewModelEffect = bIsViewModelEffect; }
 	bool GetIsViewModelEffect () { return m_bViewModelEffect; }
 
-	FORCEINLINE EHANDLE const &GetControlPointEntity( int nWhichPoint )
+	ALWAYS_INLINE EHANDLE const &GetControlPointEntity( int nWhichPoint )
 	{
 		return m_hControlPointOwners[ nWhichPoint ];
 	}

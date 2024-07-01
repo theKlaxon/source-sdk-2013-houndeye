@@ -229,7 +229,7 @@ public:
 	bool	ValidateProgramPair( void );
 		// true result means successful link and query
 
-	FORCEINLINE void UpdateScreenUniform( uint nWidthHeight )
+	ALWAYS_INLINE void UpdateScreenUniform( uint nWidthHeight )
 	{
 		if ( m_nScreenWidthHeight == nWidthHeight )
 			return;
@@ -322,7 +322,7 @@ protected:
 	CGLMShaderPairCache( GLMContext *ctx  );
 	~CGLMShaderPairCache( );	
 
-	FORCEINLINE CGLMShaderPair *SelectShaderPair	( CGLMProgram *vp, CGLMProgram *fp, uint extraKeyBits );
+	ALWAYS_INLINE CGLMShaderPair *SelectShaderPair	( CGLMProgram *vp, CGLMProgram *fp, uint extraKeyBits );
 	void			QueryShaderPair		( int index, GLMShaderPairInfo *infoOut );
 	
 	// shoot down linked pairs that use the program in the arg
@@ -338,10 +338,10 @@ protected:
 	
 	//===============================
 
-	FORCEINLINE uint HashRowIndex( CGLMProgram *vp, CGLMProgram *fp, uint extraKeyBits ) const;
-	FORCEINLINE CGLMPairCacheEntry*	HashRowPtr( uint hashRowIndex ) const;
+	ALWAYS_INLINE uint HashRowIndex( CGLMProgram *vp, CGLMProgram *fp, uint extraKeyBits ) const;
+	ALWAYS_INLINE CGLMPairCacheEntry*	HashRowPtr( uint hashRowIndex ) const;
 	
-	FORCEINLINE void HashRowProbe( CGLMPairCacheEntry *row, CGLMProgram *vp, CGLMProgram *fp, uint extraKeyBits, int &hitway, int &emptyway, int &oldestway );
+	ALWAYS_INLINE void HashRowProbe( CGLMPairCacheEntry *row, CGLMProgram *vp, CGLMProgram *fp, uint extraKeyBits, int &hitway, int &emptyway, int &oldestway );
 		
 	CGLMShaderPair *SelectShaderPairInternal( CGLMProgram *vp, CGLMProgram *fp, uint extraKeyBits, int rowIndex );
 	//===============================
@@ -370,17 +370,17 @@ protected:
 #endif
 };	
 
-FORCEINLINE uint CGLMShaderPairCache::HashRowIndex( CGLMProgram *vp, CGLMProgram *fp, uint extraKeyBits ) const
+ALWAYS_INLINE uint CGLMShaderPairCache::HashRowIndex( CGLMProgram *vp, CGLMProgram *fp, uint extraKeyBits ) const
 {
 	return ( vp->m_nHashTag + fp->m_nHashTag + extraKeyBits * 7 ) & m_rowsMask;
 }
 
-FORCEINLINE CGLMPairCacheEntry*	CGLMShaderPairCache::HashRowPtr( uint hashRowIndex ) const
+ALWAYS_INLINE CGLMPairCacheEntry*	CGLMShaderPairCache::HashRowPtr( uint hashRowIndex ) const
 {
 	return &m_entries[ hashRowIndex * m_ways ];
 }
 
-FORCEINLINE void CGLMShaderPairCache::HashRowProbe( CGLMPairCacheEntry *row, CGLMProgram *vp, CGLMProgram *fp, uint extraKeyBits, int& hitway, int& emptyway, int& oldestway )
+ALWAYS_INLINE void CGLMShaderPairCache::HashRowProbe( CGLMPairCacheEntry *row, CGLMProgram *vp, CGLMProgram *fp, uint extraKeyBits, int& hitway, int& emptyway, int& oldestway )
 {
 	hitway = -1;
 	emptyway = -1;
@@ -420,7 +420,7 @@ FORCEINLINE void CGLMShaderPairCache::HashRowProbe( CGLMPairCacheEntry *row, CGL
 	}
 }
 
-FORCEINLINE CGLMShaderPair *CGLMShaderPairCache::SelectShaderPair( CGLMProgram *vp, CGLMProgram *fp, uint extraKeyBits )
+ALWAYS_INLINE CGLMShaderPair *CGLMShaderPairCache::SelectShaderPair( CGLMProgram *vp, CGLMProgram *fp, uint extraKeyBits )
 {
 	// select row where pair would be found if it exists
 	uint rowIndex = HashRowIndex( vp, fp, extraKeyBits );

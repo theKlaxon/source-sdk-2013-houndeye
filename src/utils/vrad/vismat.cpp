@@ -36,7 +36,7 @@ public:
 	CTransferMaker( transfer_t *all_transfers );
 	~CTransferMaker();
 
-	FORCEINLINE void TestMakeTransfer( Vector start, Vector stop, int ndxShooter, int ndxReciever )
+	ALWAYS_INLINE void TestMakeTransfer( Vector start, Vector stop, int ndxShooter, int ndxReciever )
 	{
 		g_RtEnv.AddToRayStream( m_RayStream, start, stop, &m_pResults[m_nTests] );
 		m_pShooterPatches[m_nTests] = ndxShooter;

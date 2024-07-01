@@ -33,13 +33,13 @@ protected:
 	size_t m_nStride;
 	
 public:
-	FORCEINLINE CStridedPtr<T>( void *pData, size_t nByteStride )
+	ALWAYS_INLINE CStridedPtr<T>( void *pData, size_t nByteStride )
 	{
 		m_pData = reinterpret_cast<T *>( pData );
 		m_nStride = nByteStride / sizeof( T );
 	}
 
-	FORCEINLINE CStridedPtr<T>( void ) {}
+	ALWAYS_INLINE CStridedPtr<T>( void ) {}
 	T *operator->(void) const
 	{
 		return m_pData;
@@ -50,18 +50,18 @@ public:
 		return *m_pData;
 	}
 	
-	FORCEINLINE operator T *(void)
+	ALWAYS_INLINE operator T *(void)
 	{
 		return m_pData;
 	}
 
-	FORCEINLINE CStridedPtr<T> & operator++(void)
+	ALWAYS_INLINE CStridedPtr<T> & operator++(void)
 	{
 		m_pData += m_nStride;
 		return *this;
 	}
 
-	FORCEINLINE void operator+=( size_t nNumElements )
+	ALWAYS_INLINE void operator+=( size_t nNumElements )
 	{
 		m_pData += nNumElements * m_nStride;
 	}
@@ -75,13 +75,13 @@ protected:
 	size_t m_nStride;
 
 public:
-	FORCEINLINE CStridedConstPtr<T>( void const *pData, size_t nByteStride )
+	ALWAYS_INLINE CStridedConstPtr<T>( void const *pData, size_t nByteStride )
 	{
 		m_pData = reinterpret_cast<T const *>( pData );
 		m_nStride = nByteStride / sizeof( T );
 	}
 
-	FORCEINLINE CStridedConstPtr<T>( void ) {}
+	ALWAYS_INLINE CStridedConstPtr<T>( void ) {}
 
 	const T *operator->(void) const
 	{
@@ -93,17 +93,17 @@ public:
 		return *m_pData;
 	}
 
-	FORCEINLINE operator const T *(void) const
+	ALWAYS_INLINE operator const T *(void) const
 	{
 		return m_pData;
 	}
 
-	FORCEINLINE CStridedConstPtr<T> &operator++(void)
+	ALWAYS_INLINE CStridedConstPtr<T> &operator++(void)
 	{
 		m_pData += m_nStride;
 		return *this;
 	}
-	FORCEINLINE void operator+=( size_t nNumElements )
+	ALWAYS_INLINE void operator+=( size_t nNumElements )
 	{
 		m_pData += nNumElements*m_nStride;
 	}
@@ -146,7 +146,7 @@ protected:
 
 	uint32 m_nFieldPresentMask;
 
-	FORCEINLINE void Init( void )
+	ALWAYS_INLINE void Init( void )
 	{
 		memset( m_nDataType, 0xff, sizeof( m_nDataType ) );
 		m_pDataMemory = 0;
@@ -178,7 +178,7 @@ public:
 
 	// set the data type for an attribute. If you set the data type, but tell it not to allocate,
 	// the data type will be set but writes will assert, and reads will give you back zeros.
-	FORCEINLINE void SetAttributeType( int nAttrIdx, EAttributeDataType nDataType, bool bAllocateMemory = true )
+	ALWAYS_INLINE void SetAttributeType( int nAttrIdx, EAttributeDataType nDataType, bool bAllocateMemory = true )
 	{
 		Assert( !m_pDataMemory );							// can't change after memory allocated
 		Assert( nAttrIdx < MAX_SOA_FIELDS );
@@ -189,22 +189,22 @@ public:
 			m_nFieldPresentMask &= ~( 1 << nAttrIdx );
 	}
 
-	FORCEINLINE int NumRows( void ) const
+	ALWAYS_INLINE int NumRows( void ) const
 	{
 		return m_nRows;
 	}
 
-	FORCEINLINE int NumCols( void ) const
+	ALWAYS_INLINE int NumCols( void ) const
 	{
 		return m_nColumns;
 	}
-	FORCEINLINE int NumSlices( void ) const
+	ALWAYS_INLINE int NumSlices( void ) const
 	{
 		return m_nSlices;
 	}
 
 
-	FORCEINLINE void AssertDataType( int nAttrIdx, EAttributeDataType nDataType ) const
+	ALWAYS_INLINE void AssertDataType( int nAttrIdx, EAttributeDataType nDataType ) const
 	{
 		Assert( nAttrIdx >= 0 );
 		Assert( nAttrIdx < MAX_SOA_FIELDS );
@@ -213,17 +213,17 @@ public:
 	
 
 	// # of groups of 4 elements per row
-	FORCEINLINE int NumQuadsPerRow( void ) const
+	ALWAYS_INLINE int NumQuadsPerRow( void ) const
 	{
 		return m_nNumQuadsPerRow;
 	}
 
-	FORCEINLINE int Count( void ) const						// for 1d data
+	ALWAYS_INLINE int Count( void ) const						// for 1d data
 	{
 		return NumCols();
 	}
 
-	FORCEINLINE int NumElements( void ) const
+	ALWAYS_INLINE int NumElements( void ) const
 	{
 		return NumCols() * NumRows() * NumSlices();
 	}
@@ -231,12 +231,12 @@ public:
 
 	// how much to step to go from the end of one row to the start of the next one. Basically, how
 	// many bytes to add at the end of a row when iterating over the whole 2d array with ++
-	FORCEINLINE size_t RowToRowStep( int nAttrIdx ) const
+	ALWAYS_INLINE size_t RowToRowStep( int nAttrIdx ) const
 	{
 		return 0;
 	}
 	
-	FORCEINLINE void *RowPtr( int nAttributeIdx, int nRowNumber, int nSliceNumber = 0 ) const
+	ALWAYS_INLINE void *RowPtr( int nAttributeIdx, int nRowNumber, int nSliceNumber = 0 ) const
 	{
 		Assert( nRowNumber < m_nRows );
 		Assert( nAttributeIdx < MAX_SOA_FIELDS );
@@ -247,7 +247,7 @@ public:
 			+ nSliceNumber * m_nSliceStrideInBytes[nAttributeIdx];
 	}
 
-	FORCEINLINE void const *ConstRowPtr( int nAttributeIdx, int nRowNumber, int nSliceNumber = 0 ) const
+	ALWAYS_INLINE void const *ConstRowPtr( int nAttributeIdx, int nRowNumber, int nSliceNumber = 0 ) const
 	{
 		Assert( nRowNumber < m_nRows );
 		Assert( nAttributeIdx < MAX_SOA_FIELDS );
@@ -258,7 +258,7 @@ public:
 	}
 
 
-	template<class T> FORCEINLINE T *ElementPointer( int nAttributeIdx, 
+	template<class T> ALWAYS_INLINE T *ElementPointer( int nAttributeIdx,
 													   int nX = 0, int nY = 0, int nZ = 0 ) const
 	{
 		Assert( nAttributeIdx < MAX_SOA_FIELDS );
@@ -274,7 +274,7 @@ public:
 			);
 	}
 		
-	FORCEINLINE size_t ItemByteStride( int nAttributeIdx ) const
+	ALWAYS_INLINE size_t ItemByteStride( int nAttributeIdx ) const
 	{
 		Assert( nAttributeIdx < MAX_SOA_FIELDS );
 		Assert( m_nDataType[nAttributeIdx] != ATTRDATATYPE_NONE );
@@ -289,7 +289,7 @@ public:
 
 	// move all the data from one csoacontainer to another, leaving the source empty.
 	// this is just a pointer copy.
-	FORCEINLINE void MoveDataFrom( CSOAContainer other )
+	ALWAYS_INLINE void MoveDataFrom( CSOAContainer other )
 	{
 		(*this) = other;
 		other.Init();
@@ -313,7 +313,7 @@ public:
 
 class CFltX4AttributeIterator : public CStridedConstPtr<fltx4>
 {
-	FORCEINLINE CFltX4AttributeIterator( CSOAContainer const *pContainer, int nAttribute, int nRowNumber = 0 )
+	ALWAYS_INLINE CFltX4AttributeIterator( CSOAContainer const *pContainer, int nAttribute, int nRowNumber = 0 )
 		: CStridedConstPtr<fltx4>( pContainer->ConstRowPtr( nAttribute, nRowNumber), 
 								   pContainer->ItemByteStride( nAttribute ) )
 	{
@@ -322,7 +322,7 @@ class CFltX4AttributeIterator : public CStridedConstPtr<fltx4>
 
 class CFltX4AttributeWriteIterator : public CStridedPtr<fltx4>
 {
-	FORCEINLINE CFltX4AttributeWriteIterator( CSOAContainer const *pContainer, int nAttribute, int nRowNumber = 0 )
+	ALWAYS_INLINE CFltX4AttributeWriteIterator( CSOAContainer const *pContainer, int nAttribute, int nRowNumber = 0 )
 		: CStridedPtr<fltx4>( pContainer->RowPtr( nAttribute, nRowNumber), 
 							  pContainer->ItemByteStride( nAttribute ) )
 	{

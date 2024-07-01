@@ -45,13 +45,13 @@ namespace MatrixMath
 	/// done. For normal matrix classes this is not different then SetElement, but for
 	/// CSparseMatrix, it is an accelerated way to fill a matrix from scratch.
 	template<class MATRIXCLASS>
-	FORCEINLINE void AppendElement( MATRIXCLASS &matrix, int nRow, int nCol, float flValue )
+	ALWAYS_INLINE void AppendElement( MATRIXCLASS &matrix, int nRow, int nCol, float flValue )
 	{
 		matrix.SetElement( nRow, nCol, flValue );			// default implementation
 	}
 
 	template<class MATRIXCLASS>
-	FORCEINLINE void FinishedAppending( MATRIXCLASS &matrix ) {} // default implementation
+	ALWAYS_INLINE void FinishedAppending( MATRIXCLASS &matrix ) {} // default implementation
 
 	/// M += fl
 	template<class MATRIXCLASS>
@@ -163,20 +163,20 @@ namespace MatrixMath
 	template<class MATRIXTYPE> class MatrixRowAccessor
 	{
 	public:
-		FORCEINLINE MatrixRowAccessor( MATRIXTYPE const &matrix, int nRow )
+		ALWAYS_INLINE MatrixRowAccessor( MATRIXTYPE const &matrix, int nRow )
 		{
 			m_pMatrix = &matrix;
 			m_nRow = nRow;
 		}
 
-		FORCEINLINE float Element( int nRow, int nCol ) const
+		ALWAYS_INLINE float Element( int nRow, int nCol ) const
 		{
 			Assert( nCol == 0 );
 			return m_pMatrix->Element( m_nRow, nRow );
 		}
 
-		FORCEINLINE int Width( void ) const { return 1; };
-		FORCEINLINE int Height( void ) const { return m_pMatrix->Width(); }
+		ALWAYS_INLINE int Width( void ) const { return 1; };
+		ALWAYS_INLINE int Height( void ) const { return m_pMatrix->Width(); }
 
 	private:
 		MATRIXTYPE const *m_pMatrix;
@@ -186,20 +186,20 @@ namespace MatrixMath
 	template<class MATRIXTYPE> class MatrixColumnAccessor
 	{
 	public:
-		FORCEINLINE MatrixColumnAccessor( MATRIXTYPE const &matrix, int nColumn )
+		ALWAYS_INLINE MatrixColumnAccessor( MATRIXTYPE const &matrix, int nColumn )
 		{
 			m_pMatrix = &matrix;
 			m_nColumn = nColumn;
 		}
 
-		FORCEINLINE float Element( int nRow, int nColumn ) const
+		ALWAYS_INLINE float Element( int nRow, int nColumn ) const
 		{
 			Assert( nColumn == 0 );
 			return m_pMatrix->Element( nRow, m_nColumn );
 		}
 
-		FORCEINLINE int Width( void ) const { return 1; }
-		FORCEINLINE int Height( void ) const { return m_pMatrix->Height(); }
+		ALWAYS_INLINE int Width( void ) const { return 1; }
+		ALWAYS_INLINE int Height( void ) const { return m_pMatrix->Height(); }
 	private:
 		MATRIXTYPE const *m_pMatrix;
 		int m_nColumn;
@@ -209,18 +209,18 @@ namespace MatrixMath
 	template<class MATRIXTYPE> class MatrixTransposeAccessor
 	{
 	public:
-		FORCEINLINE MatrixTransposeAccessor( MATRIXTYPE const & matrix )
+		ALWAYS_INLINE MatrixTransposeAccessor( MATRIXTYPE const & matrix )
 		{
 			m_pMatrix = &matrix;
 		}
 
-		FORCEINLINE float Element( int nRow, int nColumn ) const
+		ALWAYS_INLINE float Element( int nRow, int nColumn ) const
 		{
 			return m_pMatrix->Element( nColumn, nRow );
 		}
 
-		FORCEINLINE int Width( void ) const { return m_pMatrix->Height(); }
-		FORCEINLINE int Height( void ) const { return m_pMatrix->Width(); }
+		ALWAYS_INLINE int Width( void ) const { return m_pMatrix->Height(); }
+		ALWAYS_INLINE int Height( void ) const { return m_pMatrix->Width(); }
 	private:
 		MATRIXTYPE const *m_pMatrix;
 	};
@@ -235,13 +235,13 @@ namespace MatrixMath
 
 	/// retrieve rows and columns
 	template<class MATRIXTYPE>
-	FORCEINLINE MatrixColumnAccessor<MATRIXTYPE> MatrixColumn( MATRIXTYPE const &matrix, int nColumn )
+	ALWAYS_INLINE MatrixColumnAccessor<MATRIXTYPE> MatrixColumn( MATRIXTYPE const &matrix, int nColumn )
 	{
 		return MatrixColumnAccessor<MATRIXTYPE>( matrix, nColumn );
 	}
 
 	template<class MATRIXTYPE>
-	FORCEINLINE MatrixRowAccessor<MATRIXTYPE> MatrixRow( MATRIXTYPE const &matrix, int nRow )
+	ALWAYS_INLINE MatrixRowAccessor<MATRIXTYPE> MatrixRow( MATRIXTYPE const &matrix, int nRow )
 	{
 		return MatrixRowAccessor<MATRIXTYPE>( matrix, nRow );
 	}
@@ -370,11 +370,11 @@ namespace MatrixMath
 template<int NUMROWS, int NUMCOLS> class CFixedMatrix
 {
 public:
-	FORCEINLINE int Width( void ) const { return NUMCOLS; }
-	FORCEINLINE int Height( void ) const { return NUMROWS; }
-	FORCEINLINE float Element( int nRow, int nCol ) const { return m_flValues[nRow][nCol]; }
-	FORCEINLINE void SetElement( int nRow, int nCol, float flValue ) { m_flValues[nRow][nCol] = flValue; }
-	FORCEINLINE void SetDimensions( int nNumRows, int nNumCols ) { Assert( ( nNumRows == NUMROWS ) && ( nNumCols == NUMCOLS ) ); }
+	ALWAYS_INLINE int Width( void ) const { return NUMCOLS; }
+	ALWAYS_INLINE int Height( void ) const { return NUMROWS; }
+	ALWAYS_INLINE float Element( int nRow, int nCol ) const { return m_flValues[nRow][nCol]; }
+	ALWAYS_INLINE void SetElement( int nRow, int nCol, float flValue ) { m_flValues[nRow][nCol] = flValue; }
+	ALWAYS_INLINE void SetDimensions( int nNumRows, int nNumCols ) { Assert( ( nNumRows == NUMROWS ) && ( nNumCols == NUMCOLS ) ); }
 
 private:
 	float m_flValues[NUMROWS][NUMCOLS];
