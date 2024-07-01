@@ -2,7 +2,6 @@
 // Created by ENDERZOMBI102 on 23/02/2024.
 //
 #pragma once
-#include "filesystem.h"
 #include "mempool.h"
 #include "tier0/platform.h"
 
@@ -63,18 +62,21 @@ struct stat_t {
 };
 
 
-namespace openmode {
-	enum Type : uint8_t {
-		Read,
-		Write,
-		ReadWrite,
-		Exec,
-		Trunc = 0x10,
-		Close = 0x40,
 
-		INVALID = 0xFF
-	};
-}
+struct [[gnu::packed]] OpenMode {
+	bool read     : 1 { false };
+	bool write    : 1 { false };
+	bool append   : 1 { false };
+	bool update   : 1 { false };
+	bool binary   : 1 { false };
+	bool truncate : 1 { false };
+	bool close    : 1 { false };
+	bool unused   : 1 { false };
+
+	ALWAYS_INLINE
+	explicit operator bool() const { return *reinterpret_cast<const uint8_t*>( this ) != 0; }
+};
+static_assert( sizeof( OpenMode ) == sizeof( uint8_t ) );
 
 /**
  * Internal representation of an open file.
@@ -117,14 +119,14 @@ public: // metadata
 	auto operator==( const ISystemClient& other ) const -> bool { return this == &other || this->GetIdentifier() == other.GetIdentifier(); }
 public: // fs interactions
 	// file ops
-	virtual auto Open  ( const char* path, openmode::Type mode ) -> FileDescriptor* = 0;
-	virtual auto Read  ( const FileDescriptor* desc, uint64_t offset, void* buffer, uint32_t count ) -> uint32_t = 0;
-	virtual auto Write ( const FileDescriptor* desc, uint64_t offset, const void* buffer, uint32_t count ) -> uint32_t = 0;
+	virtual auto Open  ( const char* path, OpenMode mode ) -> FileDescriptor* = 0;
+	virtual auto Read  ( const FileDescriptor* desc, void* buffer, uint32_t count ) -> int32_t = 0;
+	virtual auto Write ( const FileDescriptor* desc, const void* buffer, uint32_t count ) -> int32_t = 0;
 	virtual auto Flush ( const FileDescriptor* desc ) -> bool = 0;
 	virtual auto Close ( const FileDescriptor* desc ) -> void = 0;
 	// generic ops
 	virtual auto Walk  ( uint16_t nwname, const char* wname ) -> void = 0;
-	virtual auto Create( const char* path, dirmode_t perm, openmode::Type mode ) -> FileDescriptor* = 0;
+	virtual auto Create( const char* path, dirmode_t perm, OpenMode mode ) -> FileDescriptor* = 0;
 	virtual auto Remove( const FileDescriptor* desc ) -> void = 0;
 	virtual auto Stat  ( const FileDescriptor* desc ) -> void = 0;
 };

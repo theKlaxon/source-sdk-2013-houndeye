@@ -34,29 +34,43 @@ auto CPlainSystemClient::Shutdown() -> void { }
 // FS interaction
 auto CPlainSystemClient::Flush( const FileDescriptor* desc ) -> bool {
 	AssertFatalMsg( desc, "Was given a `NULL` file handle!" );
+
 	return fflush( reinterpret_cast<FILE*>( desc->m_Handle ) ) == 0;
 }
 auto CPlainSystemClient::Walk( uint16_t nwname, const char* wname ) -> void {
 
 }
-auto CPlainSystemClient::Open( const char* path, openmode::Type mode ) -> FileDescriptor* {
+auto CPlainSystemClient::Open( const char* path, OpenMode mode ) -> FileDescriptor* {
 	AssertFatalMsg( path, "Was given a `NULL` file path!" );
 	AssertFatalMsg( mode, "Was given an empty open mode!" );
 
-	int32_t mode2{0};
+	#if IsLinux()
+		int32_t mode2{0};
+		// read/write combos
+		if ( mode.read && !mode.write )
+			mode2 |= O_RDONLY;
+		if ( mode.write && !mode.read )
+			mode2 |= O_WRONLY;
+		if ( mode.read && mode.write )
+			mode2 |= O_RDWR;
 
-	if ( (mode & openmode::Read) != 0 )
-		mode2 |= O_RDONLY;
-	if ( (mode & openmode::Write) != 0 )
-		mode2 |= O_WRONLY;
-	if ( (mode & openmode::ReadWrite) != 0 )
-		mode2 |= O_RDWR;
-	if ( (mode & openmode::Trunc) != 0 )
-		mode2 |= O_TRUNC;
-	if ( (mode & openmode::Close) != 0 )
-		mode2 |= O_CLOEXEC;
+		// other modes
+		if ( mode.truncate )
+			mode2 |= O_TRUNC;
+		if ( mode.close )
+			mode2 |= O_CLOEXEC;
+		if ( mode.append )
+			mode2 |= O_APPEND;
 
-	int file{ open( path, static_cast<int>( mode ) ) };
+		int file{ open( path, mode2 ) };
+
+		// Check if we got a valid handle, TODO: Actual error handling
+		if ( file == -1 )
+			return nullptr;
+	#elif IsWindows()
+		#error "Not implemented yet"
+	#endif
+
 	auto desc{ FileDescriptor::Make() };
 	desc->m_Handle = file;
 	return desc;
@@ -64,21 +78,23 @@ auto CPlainSystemClient::Open( const char* path, openmode::Type mode ) -> FileDe
 auto CPlainSystemClient::Close( const FileDescriptor* desc ) -> void {
 
 }
-auto CPlainSystemClient::Create( const char* path, dirmode_t perm, openmode::Type mode ) -> FileDescriptor* {
+auto CPlainSystemClient::Create( const char* path, dirmode_t perm, OpenMode mode ) -> FileDescriptor* {
 	return nullptr;
 }
-auto CPlainSystemClient::Read( const FileDescriptor* desc, uint64_t offset, void* buffer, uint32_t count ) -> uint32_t {
+auto CPlainSystemClient::Read( const FileDescriptor* desc, void* buffer, uint32_t count ) -> int32_t {
 	AssertFatalMsg( desc, "Was given a `NULL` file handle!" );
 	AssertFatalMsg( buffer, "Was given a `NULL` buffer ptr!" );
-	pread64( reinterpret_cast<intptr_t>( desc ), buffer, count, offset );
-	return fread( buffer, 1, count, reinterpret_cast<FILE*>( desc ) ) == 0;
+
+	return pread64( static_cast<int>( desc->m_Handle ), buffer, count, desc->m_Offset );
 }
-auto CPlainSystemClient::Write( const FileDescriptor* desc, uint64_t offset, void const* buffer, uint32_t count ) -> uint32_t {
+auto CPlainSystemClient::Write( const FileDescriptor* desc, void const* buffer, uint32_t count ) -> int32_t {
 	AssertFatalMsg( desc, "Was given a `NULL` file handle!" );
 	AssertFatalMsg( buffer, "Was given a `NULL` buffer ptr!" );
-	return fwrite( buffer, 1, count, reinterpret_cast<FILE*>( desc ) ) == 0;
+
+	return pwrite64( static_cast<int>( desc->m_Handle ), buffer, count, desc->m_Offset );
 }
 auto CPlainSystemClient::Remove( const FileDescriptor* desc ) -> void {
 }
 auto CPlainSystemClient::Stat( const FileDescriptor* desc ) -> void {
 }
+

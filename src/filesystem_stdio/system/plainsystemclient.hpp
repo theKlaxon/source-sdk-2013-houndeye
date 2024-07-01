@@ -19,11 +19,11 @@ public:
 public: // FS interaction
 	auto Flush ( const FileDescriptor* handle ) -> bool override;
 	auto Walk  ( uint16_t nwname, const char* wname ) -> void override;
-	auto Open  ( const char* path, openmode::Type mode ) -> FileDescriptor* override;
+	auto Open  ( const char* path, OpenMode mode ) -> FileDescriptor* override;
 	auto Close ( const FileDescriptor* handle ) -> void override;
-	auto Create( const char* path, dirmode_t perm, openmode::Type mode ) -> FileDescriptor* override;
-	auto Read  ( const FileDescriptor* handle, uint64_t offset, void* buffer, uint32_t count ) -> uint32_t override;
-	auto Write ( const FileDescriptor* handle, uint64_t offset, void const* buffer, uint32_t count ) -> uint32_t override;
+	auto Create( const char* path, dirmode_t perm, OpenMode mode ) -> FileDescriptor* override;
+	auto Read  ( const FileDescriptor* handle, void* buffer, uint32_t count ) -> int32_t override;
+	auto Write ( const FileDescriptor* handle, void const* buffer, uint32_t count ) -> int32_t override;
 	auto Remove( const FileDescriptor* handle ) -> void override;
 	auto Stat  ( const FileDescriptor* handle ) -> void override;
 private:

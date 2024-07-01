@@ -6,6 +6,7 @@
 #if IsWindows()
 	#include <direct.h>
 #endif
+#include <utility>
 #include "../tier0/commandline.hpp"
 #include "filesystem.hpp"
 #include "interface.h"
@@ -15,11 +16,36 @@
 static CFileSystemStdio g_FullFileSystem{};
 
 // TODO: Needed chars=['w', 'r', '+', 'b', 't', 'a']
-static auto parseOpenMode( const char* pMode ) -> openmode::Type {
-	// Check for valid initial mode character
-	if ( *pMode != 'r' && *pMode != 'w' && *pMode != 'a' ) {
-		return openmode::INVALID;
+static constexpr auto parseOpenMode( const char *pMode ) -> OpenMode {
+	OpenMode mode{};
+	while ( *pMode != '\0' ) {
+		switch ( *pMode ) {
+			case 'r':
+				mode.read = true;
+				break;
+			case 'w':
+				mode.write = true;
+				break;
+			case 'b':
+				mode.binary = true;
+				break;
+			case 't':
+				mode.truncate = true;
+				break;
+			case 'a':
+				mode.append = true;
+				break;
+			case '+':
+				mode.update = true;
+				break;
+			default:
+				std::unreachable();
+		}
+
+		pMode += 1;
 	}
+
+	return mode;
 }
 
 
@@ -42,61 +68,65 @@ InitReturnVal_t CFileSystemStdio::Init() {
 
 	return InitReturnVal_t::INIT_OK;
 }
-void CFileSystemStdio::Shutdown() { }
+void CFileSystemStdio::Shutdown() {
+	FileDescriptor::CleanupArena();
+}
 
 // ---------------
 // IBaseFilesystem
 // ---------------
 int CFileSystemStdio::Read( void* pOutput, int size, FileHandle_t file ) {
-	auto client{ this->findClientHelper( file ) };
-
-	if (! client )
+	if (! (file && pOutput) )
 		return -1;
 
-	return static_cast<int>( client->lock()->Read( file, pOutput, size ) );
+	auto desc{ static_cast<FileDescriptor*>( file ) };
+
+	// should return -1 on read failure,
+	return desc->m_System.lock()->Read( desc, pOutput, size );
 }
 int CFileSystemStdio::Write( const void* pInput, int size, FileHandle_t file ) {
-	auto client{ this->findClientHelper( file ) };
-
-	if (! client )
+	if (! (file && pInput) )
 		return -1;
 
-	return static_cast<int>( client->lock()->Write( file, pInput, size ) );
+	auto desc{ static_cast<FileDescriptor*>( file ) };
+
+	// should return -1 on read failure,
+	return desc->m_System.lock()->Write( desc, pInput, size );
 }
 
 FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions, const char* pathID ) {
+	// parse the options
+	auto mode{ parseOpenMode( pOptions ) };
+
 	// if we got a pathID, only look into that SearchPath
 	if ( pathID != nullptr ) {
 		AssertFatalMsg( this->m_SearchPaths.contains( pathID ), "Was given pathID not loaded" );
 
 		for ( const auto& system : this->m_SearchPaths[pathID].m_Clients ) {
-			auto desc{ system->Open( pFileName, pOptions ) };
+			auto desc{ system->Open( pFileName, mode ) };
+			// only add to vector if we actually got an open file
 			if ( desc != nullptr ) {
-				// this seems too complex for what it does...
-				auto found{ false };
-				for ( auto index{0}; index < this->m_Descriptors.Count(); index += 1 ) {
-					if ( system == this->m_Descriptors[index].lock() ) {
-						this->m_HandleClientsMap[ desc ] = index;
-						found = true;
-						break;
-					}
-				}
-				AssertFatalMsg( found, "`ISystemClient` impl for open handle was not found!!" );
+				desc->m_System = { system };
+				this->m_Descriptors.AddToTail( desc );
 				return desc;
 			}
 		}
 	} else {
 		// else, look into all clients
-		for ( auto index{0}; index < this->m_Descriptors.Count(); index += 1 ) {
-			auto handle{ this->m_Descriptors[index].lock()->Open( pFileName, pOptions ) };
-			if ( handle != nullptr ) {
-				this->m_HandleClientsMap[handle] = index;
-				return handle;
+		for ( const auto& [_, searchPath] : this->m_SearchPaths ) {
+			for ( const auto& system : searchPath.m_Clients ) {
+				auto desc{ system->Open( pFileName, mode ) };
+				// only add to vector if we actually got an open file
+				if ( desc != nullptr ) {
+					desc->m_System = { system };
+					this->m_Descriptors.AddToTail( desc );
+					return desc;
+				}
 			}
 		}
 	}
 
-	AssertMsg( false, "Open: %s, %s, %s", pFileName, pOptions, pathID ); return {};
+	AssertFatalMsg( false, "Open: %s, %s, %s", pFileName, pOptions, pathID ); return {};
 }
 void CFileSystemStdio::Close( FileHandle_t file ) {
 	auto desc{ static_cast<FileDescriptor*>( file ) };
