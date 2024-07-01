@@ -136,16 +136,21 @@ void CFileSystemStdio::Close( FileHandle_t file ) {
 }
 
 void CFileSystemStdio::Seek( FileHandle_t file, int pos, FileSystemSeek_t seekType ) {
-	auto desc{ static_cast<const FileDescriptor*>( file ) };
+	auto desc{ const_cast<FileDescriptor*>( static_cast<const FileDescriptor*>( file ) ) };
+	auto size{ desc->m_System.lock()->Stat( desc ).length };
 
-	/*
-	 * Seek can be implemented virtually, as both `Read` and `Write`
-	 * get offsets starting from the 0th position in the file, we
-	 * truly need a struct to handle opened files and their metadata.
-	 */
-//	if ( client )
-//		client->lock()->( file, pos, seekType );
-	AssertUnreachable();
+	switch ( seekType ) {
+		case FILESYSTEM_SEEK_CURRENT:
+			// FIXME: This is dumb
+			desc->m_Offset = Clamp( desc->m_Offset + pos, static_cast<uint64>( 0 ), size );
+			break;
+		case FILESYSTEM_SEEK_HEAD:
+			desc->m_Offset = Clamp( static_cast<uint64>( pos ), static_cast<uint64>( 0 ), size );
+			break;
+		case FILESYSTEM_SEEK_TAIL:
+			desc->m_Offset = Clamp( size - pos, static_cast<uint64>( 0 ), size );
+			break;
+	}
 }
 unsigned int CFileSystemStdio::Tell( FileHandle_t file ) { AssertUnreachable(); return {}; }
 unsigned int CFileSystemStdio::Size( FileHandle_t file ) { AssertUnreachable(); return {}; }

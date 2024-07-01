@@ -49,7 +49,7 @@ enum dirmode_t : uint32_t {
 	X9P_DM_PROTOCOL_MASK = X9P_DM_PERM_MASK | X9P_DM_DIR | X9P_DM_APPEND | X9P_DM_EXCL | X9P_DM_MOUNT | X9P_DM_AUTH | X9P_DM_TMP
 };
 
-struct stat_t {
+struct Stat {
 	uint16_t size;    // Total bytes used by following data
 
 	dirmode_t mode;   // Permissions and flags
@@ -85,7 +85,7 @@ static_assert( sizeof( OpenMode ) == sizeof( uint8_t ) );
 struct FileDescriptor {
 	std::weak_ptr<ISystemClient> m_System;
 	uintptr_t m_Handle;
-	size_t m_Offset{0};
+	uint64 m_Offset{0};
 
 	/**
 	 * Allocates a new instance of a descriptor.
@@ -128,5 +128,5 @@ public: // fs interactions
 	virtual auto Walk  ( uint16_t nwname, const char* wname ) -> void = 0;
 	virtual auto Create( const char* path, dirmode_t perm, OpenMode mode ) -> FileDescriptor* = 0;
 	virtual auto Remove( const FileDescriptor* desc ) -> void = 0;
-	virtual auto Stat  ( const FileDescriptor* desc ) -> void = 0;
+	virtual auto Stat  ( const FileDescriptor* desc ) -> Stat = 0;
 };
