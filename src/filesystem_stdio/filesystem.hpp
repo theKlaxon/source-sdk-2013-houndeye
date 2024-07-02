@@ -30,22 +30,22 @@ public: // IBaseFileSystem
 	int Write( void const* pInput, int size, FileHandle_t file ) override;
 
 	// if pathID is nullptr, all paths will be searched for the file
-	FileHandle_t Open( const char* pFileName, const char* pOptions, const char* pathID = 0 ) override;
+	FileHandle_t Open( const char* pFileName, const char* pOptions, const char* pathID = nullptr ) override;
 	void Close( FileHandle_t file ) override;
 
 	void Seek( FileHandle_t file, int pos, FileSystemSeek_t seekType ) override;
 	unsigned int Tell( FileHandle_t file ) override;
 	unsigned int Size( FileHandle_t file ) override;
-	unsigned int Size( const char* pFileName, const char* pPathID = 0 ) override;
+	unsigned int Size( const char* pFileName, const char* pPathID = nullptr ) override;
 
 	void Flush( FileHandle_t file ) override;
-	bool Precache( const char* pFileName, const char* pPathID = 0 ) override;
+	bool Precache( const char* pFileName, const char* pPathID = nullptr ) override;
 
-	bool FileExists( const char* pFileName, const char* pPathID = 0 ) override;
-	bool IsFileWritable( char const* pFileName, const char* pPathID = 0 ) override;
-	bool SetFileWritable( char const* pFileName, bool writable, const char* pPathID = 0 ) override;
+	bool FileExists( const char* pFileName, const char* pPathID = nullptr ) override;
+	bool IsFileWritable( char const* pFileName, const char* pPathID = nullptr ) override;
+	bool SetFileWritable( char const* pFileName, bool writable, const char* pPathID = nullptr ) override;
 
-	long GetFileTime( const char* pFileName, const char* pPathID = 0 ) override;
+	long GetFileTime( const char* pFileName, const char* pPathID = nullptr ) override;
 
 	//--------------------------------------------------------
 	// Reads/writes files to utlbuffers. Use this for optimal read performance when doing open/read/close
@@ -80,7 +80,7 @@ public: // IFileSystem
 	//  and this file becomes the highest priority search path ( i.e., it's looked at first
 	//   even before the mod's file system path ).
 	void AddSearchPath( const char* pPath, const char* pathID, SearchPathAdd_t addType = PATH_ADD_TO_TAIL ) override;
-	bool RemoveSearchPath( const char* pPath, const char* pathID = 0 ) override;
+	bool RemoveSearchPath( const char* pPath, const char* pathID = nullptr ) override;
 
 	// Remove all search paths (including write path?)
 	void RemoveAllSearchPaths() override;
@@ -111,16 +111,16 @@ public: // IFileSystem
 	//--------------------------------------------------------
 
 	// Deletes a file (on the WritePath)
-	void RemoveFile( char const* pRelativePath, const char* pathID = 0 ) override;
+	void RemoveFile( char const* pRelativePath, const char* pathID = nullptr ) override;
 
 	// Renames a file (on the WritePath)
-	bool RenameFile( char const* pOldPath, char const* pNewPath, const char* pathID = 0 ) override;
+	bool RenameFile( char const* pOldPath, char const* pNewPath, const char* pathID = nullptr ) override;
 
 	// create a local directory structure
-	void CreateDirHierarchy( const char* path, const char* pathID = 0 ) override;
+	void CreateDirHierarchy( const char* path, const char* pathID = nullptr ) override;
 
 	// File I/O and info
-	bool IsDirectory( const char* pFileName, const char* pathID = 0 ) override;
+	bool IsDirectory( const char* pFileName, const char* pathID = nullptr ) override;
 
 	void FileTimeToString( char* pStrip, int maxCharsIncludingTerminator, long fileTime ) override;
 
@@ -142,7 +142,7 @@ public: // IFileSystem
 	//--------------------------------------------------------
 
 	// load/unload modules
-	CSysModule* LoadModule( const char* pFileName, const char* pPathID = 0, bool bValidatedDllOnly = true ) override;
+	CSysModule* LoadModule( const char* pFileName, const char* pPathID = nullptr, bool bValidatedDllOnly = true ) override;
 	void UnloadModule( CSysModule * pModule ) override;
 
 	//--------------------------------------------------------
@@ -269,7 +269,7 @@ public: // IFileSystem
 	// Start of new functions after Lost Coast release (7/05)
 	//--------------------------------------------------------
 
-	FileHandle_t OpenEx( const char* pFileName, const char* pOptions, unsigned flags = 0, const char* pathID = 0, char** ppszResolvedFilename = nullptr ) override;
+	FileHandle_t OpenEx( const char* pFileName, const char* pOptions, unsigned flags = 0, const char* pathID = nullptr, char** ppszResolvedFilename = nullptr ) override;
 
 	// Extended version of read provides more context to allow for more optimal reading
 	int ReadEx( void* pOutput, int sizeDest, int size, FileHandle_t file ) override;
@@ -291,9 +291,9 @@ public: // IFileSystem
 
 	// If the "PreloadedData" hasn't been purged, then this'll try and instance the KeyValues using the fast path of compiled keyvalues loaded during startup.
 	// Otherwise, it'll just fall through to the regular KeyValues loading routines
-	KeyValues* LoadKeyValues( KeyValuesPreloadType_t type, char const* filename, char const* pPathID = 0 ) override;
-	bool LoadKeyValues( KeyValues & head, KeyValuesPreloadType_t type, char const* filename, char const* pPathID = 0 ) override;
-	bool ExtractRootKeyName( KeyValuesPreloadType_t type, char* outbuf, size_t bufsize, char const* filename, char const* pPathID = 0 ) override;
+	KeyValues* LoadKeyValues( KeyValuesPreloadType_t type, char const* filename, char const* pPathID = nullptr ) override;
+	bool LoadKeyValues( KeyValues & head, KeyValuesPreloadType_t type, char const* filename, char const* pPathID = nullptr ) override;
+	bool ExtractRootKeyName( KeyValuesPreloadType_t type, char* outbuf, size_t bufsize, char const* filename, char const* pPathID = nullptr ) override;
 
 	FSAsyncStatus_t AsyncWrite( const char* pFileName, const void* pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend = false, FSAsyncControl_t* pControl = nullptr ) override;
 	FSAsyncStatus_t AsyncWriteFile( const char* pFileName, const CUtlBuffer* pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend = false, FSAsyncControl_t* pControl = nullptr ) override;

@@ -38,7 +38,7 @@ typedef int WaitForResourcesHandle_t;
 
 // Turn on some extra pure server debug spew in certain builds.
 // WARNING: This spew can be used by hackers to locate places to hack
-// the code to bypas sv_pure!  Be careful!
+// the code to bypass sv_pure!  Be careful!
 #if IsDebug() || defined( STAGING_ONLY )
 	#define PURE_SERVER_DEBUG_SPEW
 #endif
@@ -61,6 +61,7 @@ public:
 	virtual EPureServerFileClass GetFileClass( const char* pszFilename ) = 0;
 
 	// Access list of trusted keys which we will allow to set trusted content
+	[[nodiscard]]
 	virtual int GetTrustedKeyCount() const = 0;
 	virtual const byte* GetTrustedKey( int iKeyIndex, int* nKeySize ) const = 0;
 };
@@ -160,15 +161,13 @@ enum DVDMode_t {
 			FB_ACCESS_SIZE = 6
 		};
 
-		FileBlockingItem() : m_ItemType( (FileBlockingWarning_t) 0 ),
-							 m_flElapsed( 0.0f ),
-							 m_nAccessType( 0 ) {
+		FileBlockingItem()
+			: m_ItemType( (FileBlockingWarning_t) 0 ), m_flElapsed( 0.0f ), m_nAccessType( 0 ) {
 			SetFileName( nullptr );
 		}
 
-		FileBlockingItem( int type, char const* filename, float elapsed, int accessType ) : m_ItemType( (FileBlockingWarning_t) type ),
-																							m_flElapsed( elapsed ),
-																							m_nAccessType( accessType ) {
+		FileBlockingItem( int type, char const* filename, float elapsed, int accessType )
+			: m_ItemType( (FileBlockingWarning_t) type ), m_flElapsed( elapsed ), m_nAccessType( accessType ) {
 			SetFileName( filename );
 		}
 
@@ -186,6 +185,7 @@ enum DVDMode_t {
 			}
 		}
 
+		[[nodiscard]]
 		char const* GetFileName() const {
 			return m_szFilename;
 		}
@@ -193,7 +193,6 @@ enum DVDMode_t {
 		FileBlockingWarning_t m_ItemType;
 		float m_flElapsed;
 		byte m_nAccessType;
-
 	private:
 		char m_szFilename[ 32 ];
 	};
@@ -205,10 +204,14 @@ enum DVDMode_t {
 		virtual void LockMutex() = 0;
 		virtual void UnlockMutex() = 0;
 
+		[[nodiscard]]
 		virtual int First() const = 0;
+		[[nodiscard]]
 		virtual int Next( int i ) const = 0;
+		[[nodiscard]]
 		virtual int InvalidIndex() const = 0;
 
+		[[nodiscard]]
 		virtual const FileBlockingItem& Get( int index ) const = 0;
 
 		virtual void Reset() = 0;
@@ -396,9 +399,13 @@ public:
 
 // Spew flags for SetWhitelistSpewFlags (set with the fs_whitelist_spew_flags cvar).
 // Update the comment for the fs_whitelist_spew_flags cvar if you change these.
-#define WHITELIST_SPEW_WHILE_LOADING 0x0001    // list files as they are added to the CRC tracker
-#define WHITELIST_SPEW_RELOAD_FILES 0x0002     // show files the filesystem is telling the engine to reload
-#define WHITELIST_SPEW_DONT_RELOAD_FILES 0x0004// show files the filesystem is NOT telling the engine to reload
+
+// list files as they are added to the CRC tracker
+#define WHITELIST_SPEW_WHILE_LOADING     0x0001
+// show files the filesystem is telling the engine to reload
+#define WHITELIST_SPEW_RELOAD_FILES      0x0002
+// show files the filesystem is NOT telling the engine to reload
+#define WHITELIST_SPEW_DONT_RELOAD_FILES 0x0004
 
 //-----------------------------------------------------------------------------
 // Interface to fetch a file asynchronously from any source.  This is used
@@ -452,23 +459,23 @@ public:
 	virtual int Write( void const* pInput, int size, FileHandle_t file ) = 0;
 
 	// if pathID is nullptr, all paths will be searched for the file
-	virtual FileHandle_t Open( const char* pFileName, const char* pOptions, const char* pathID = 0 ) = 0;
+	virtual FileHandle_t Open( const char* pFileName, const char* pOptions, const char* pathID = nullptr ) = 0;
 	virtual void Close( FileHandle_t file ) = 0;
 
 
 	virtual void Seek( FileHandle_t file, int pos, FileSystemSeek_t seekType ) = 0;
 	virtual unsigned int Tell( FileHandle_t file ) = 0;
 	virtual unsigned int Size( FileHandle_t file ) = 0;
-	virtual unsigned int Size( const char* pFileName, const char* pPathID = 0 ) = 0;
+	virtual unsigned int Size( const char* pFileName, const char* pPathID = nullptr ) = 0;
 
 	virtual void Flush( FileHandle_t file ) = 0;
-	virtual bool Precache( const char* pFileName, const char* pPathID = 0 ) = 0;
+	virtual bool Precache( const char* pFileName, const char* pPathID = nullptr ) = 0;
 
-	virtual bool FileExists( const char* pFileName, const char* pPathID = 0 ) = 0;
-	virtual bool IsFileWritable( char const* pFileName, const char* pPathID = 0 ) = 0;
-	virtual bool SetFileWritable( char const* pFileName, bool writable, const char* pPathID = 0 ) = 0;
+	virtual bool FileExists( const char* pFileName, const char* pPathID = nullptr ) = 0;
+	virtual bool IsFileWritable( char const* pFileName, const char* pPathID = nullptr ) = 0;
+	virtual bool SetFileWritable( char const* pFileName, bool writable, const char* pPathID = nullptr ) = 0;
 
-	virtual long GetFileTime( const char* pFileName, const char* pPathID = 0 ) = 0;
+	virtual long GetFileTime( const char* pFileName, const char* pPathID = nullptr ) = 0;
 
 	//--------------------------------------------------------
 	// Reads/writes files to utlbuffers. Use this for optimal read performance when doing open/read/close
@@ -491,6 +498,7 @@ public:
 	// Steam operations
 	//--------------------------------------------------------
 
+	[[nodiscard]]
 	virtual bool IsSteam() const = 0;
 
 	// Supplying an extra app id will mount this app in addition
@@ -513,7 +521,7 @@ public:
 	//  and this file becomes the highest priority search path ( i.e., it's looked at first
 	//   even before the mod's file system path ).
 	virtual void AddSearchPath( const char* pPath, const char* pathID, SearchPathAdd_t addType = PATH_ADD_TO_TAIL ) = 0;
-	virtual bool RemoveSearchPath( const char* pPath, const char* pathID = 0 ) = 0;
+	virtual bool RemoveSearchPath( const char* pPath, const char* pathID = nullptr ) = 0;
 
 	// Remove all search paths (including write path?)
 	virtual void RemoveAllSearchPaths() = 0;
@@ -551,16 +559,16 @@ public:
 	//--------------------------------------------------------
 
 	// Deletes a file (on the WritePath)
-	virtual void RemoveFile( char const* pRelativePath, const char* pathID = 0 ) = 0;
+	virtual void RemoveFile( char const* pRelativePath, const char* pathID = nullptr ) = 0;
 
 	// Renames a file (on the WritePath)
-	virtual bool RenameFile( char const* pOldPath, char const* pNewPath, const char* pathID = 0 ) = 0;
+	virtual bool RenameFile( char const* pOldPath, char const* pNewPath, const char* pathID = nullptr ) = 0;
 
 	// create a local directory structure
-	virtual void CreateDirHierarchy( const char* path, const char* pathID = 0 ) = 0;
+	virtual void CreateDirHierarchy( const char* path, const char* pathID = nullptr ) = 0;
 
 	// File I/O and info
-	virtual bool IsDirectory( const char* pFileName, const char* pathID = 0 ) = 0;
+	virtual bool IsDirectory( const char* pFileName, const char* pathID = nullptr ) = 0;
 
 	virtual void FileTimeToString( char* pStrip, int maxCharsIncludingTerminator, long fileTime ) = 0;
 
@@ -582,7 +590,7 @@ public:
 	//--------------------------------------------------------
 
 	// load/unload modules
-	virtual CSysModule* LoadModule( const char* pFileName, const char* pPathID = 0, bool bValidatedDllOnly = true ) = 0;
+	virtual CSysModule* LoadModule( const char* pFileName, const char* pPathID = nullptr, bool bValidatedDllOnly = true ) = 0;
 	virtual void UnloadModule( CSysModule * pModule ) = 0;
 
 	//--------------------------------------------------------
@@ -716,7 +724,7 @@ public:
 	// Start of new functions after Lost Coast release (7/05)
 	//--------------------------------------------------------
 
-	virtual FileHandle_t OpenEx( const char* pFileName, const char* pOptions, unsigned flags = 0, const char* pathID = 0, char** ppszResolvedFilename = nullptr ) = 0;
+	virtual FileHandle_t OpenEx( const char* pFileName, const char* pOptions, unsigned flags = 0, const char* pathID = nullptr, char** ppszResolvedFilename = nullptr ) = 0;
 
 	// Extended version of read provides more context to allow for more optimal reading
 	virtual int ReadEx( void* pOutput, int sizeDest, int size, FileHandle_t file ) = 0;
@@ -746,9 +754,9 @@ public:
 
 	// If the "PreloadedData" hasn't been purged, then this'll try and instance the KeyValues using the fast path of compiled keyvalues loaded during startup.
 	// Otherwise, it'll just fall through to the regular KeyValues loading routines
-	virtual KeyValues* LoadKeyValues( KeyValuesPreloadType_t type, char const* filename, char const* pPathID = 0 ) = 0;
-	virtual bool LoadKeyValues( KeyValues & head, KeyValuesPreloadType_t type, char const* filename, char const* pPathID = 0 ) = 0;
-	virtual bool ExtractRootKeyName( KeyValuesPreloadType_t type, char* outbuf, size_t bufsize, char const* filename, char const* pPathID = 0 ) = 0;
+	virtual KeyValues* LoadKeyValues( KeyValuesPreloadType_t type, char const* filename, char const* pPathID = nullptr ) = 0;
+	virtual bool LoadKeyValues( KeyValues & head, KeyValuesPreloadType_t type, char const* filename, char const* pPathID = nullptr ) = 0;
+	virtual bool ExtractRootKeyName( KeyValuesPreloadType_t type, char* outbuf, size_t bufsize, char const* filename, char const* pPathID = nullptr ) = 0;
 
 	virtual FSAsyncStatus_t AsyncWrite( const char* pFileName, const void* pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend = false, FSAsyncControl_t* pControl = nullptr ) = 0;
 	virtual FSAsyncStatus_t AsyncWriteFile( const char* pFileName, const CUtlBuffer* pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend = false, FSAsyncControl_t* pControl = nullptr ) = 0;
@@ -875,8 +883,9 @@ public:
 //-----------------------------------------------------------------------------
 class CMemoryFileBacking : public CRefCounted<CRefCountServiceMT> {
 public:
-	CMemoryFileBacking( IFileSystem* pFS ) : m_pFS( pFS ), m_nRegistered( 0 ), m_pFileName( nullptr ), m_pData( nullptr ), m_nLength( 0 ) {}
-	~CMemoryFileBacking() {
+	explicit CMemoryFileBacking( IFileSystem* pFS )
+		: m_pFS( pFS ), m_nRegistered( 0 ), m_pFileName( nullptr ), m_pData( nullptr ), m_nLength( 0 ) {}
+	~CMemoryFileBacking() override {
 		free( (char*) m_pFileName );
 		if ( m_pData ) m_pFS->FreeOptimalReadBuffer( (char*) m_pData );
 	}
