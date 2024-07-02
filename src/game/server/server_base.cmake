@@ -1,5 +1,4 @@
 # server_base.cmake
-
 include_guard( GLOBAL )
 
 set( SERVER_BASE_DIR ${CMAKE_CURRENT_LIST_DIR} )
@@ -987,6 +986,7 @@ function( target_use_server_base target EXCLUDE_SOURCES )
 			mathlib
 			tier1
 			tier2
+			${ASRC_vstdlib2}
 			tier3
 			steam_api
 	)

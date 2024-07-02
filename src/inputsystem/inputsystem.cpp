@@ -1,7 +1,7 @@
 //
 // Created by ENDERZOMBI102 on 06/09/2023.
 //
-#include <SDL.h>
+#include "SDL3/SDL.h"
 #include <array>
 
 #include "ButtonEntry.hpp"
@@ -36,10 +36,10 @@ void CInputSystem::AttachToWindow( void* hWnd ) {
 
 	auto props { SDL_CreateProperties() };
 	#if IsWindows()
-		SDL_SetNumberProperty( props, SDL_PROPERTY_WINDOW_CREATE_WIN32_HWND_POINTER, reinterpret_cast<int>( hWnd ) );
+		SDL_SetNumberProperty( props, SDL_PROP_WINDOW_CREATE_WIN32_HWND_POINTER, reinterpret_cast<int>( hWnd ) );
 	#elif IsLinux()
 		// TODO: When we move to wayland, this should change!
-		SDL_SetNumberProperty( props, SDL_PROPERTY_WINDOW_X11_WINDOW_NUMBER, reinterpret_cast<int>( hWnd ) );
+		SDL_SetNumberProperty( props, SDL_PROP_WINDOW_X11_WINDOW_NUMBER, reinterpret_cast<int>( hWnd ) );
 	#endif
 
 	this->m_pSdlWindow = SDL_CreateWindowWithProperties( props );
@@ -138,7 +138,7 @@ int CInputSystem::GetJoystickCount() const {
 	SDL_GetJoysticks( &count );
 
 	if ( count < 0 ) {
-		DevWarning( "[AuroraSource | InputSystem] Failed to enumerate joysticks: %s", SDL_GetError() );
+		DevWarning( "[AuroraSource|InputSystem] Failed to enumerate joysticks: %s", SDL_GetError() );
 		return 0;
 	}
 
@@ -227,8 +227,9 @@ int CInputSystem::GetPollCount() const {
 }
 
 void CInputSystem::SetCursorPosition( int x, int y ) {
+	// FIXME: This doesn't sound good
 	if ( SDL_WarpMouseGlobal( x, y ) < 0 )
-		DevWarning( "[AuroraSource | InputSystem] Failed to warp mouse pointer: %s", SDL_GetError() );
+		DevWarning( "[AuroraSource|InputSystem] Failed to warp mouse pointer: %s", SDL_GetError() );
 }
 
 void* CInputSystem::GetHapticsInterfaceAddress() const {

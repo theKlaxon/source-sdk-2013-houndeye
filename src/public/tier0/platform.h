@@ -187,7 +187,7 @@ static_assert( sizeof( uintp ) == sizeof(void*) ); //  ( ie, sizeof(intp) >= siz
 
 // This can be used to ensure the size of pointers to members when declaring
 // a pointer type for a class that has only been forward declared
-#if defined( COMPILER_MSVC )
+#if defined( COMPILER_MSVC ) || defined( COMPILER_CLANG )
 	#define SINGLE_INHERITANCE __single_inheritance
 	#define MULTIPLE_INHERITANCE __multiple_inheritance
 #else
@@ -195,19 +195,15 @@ static_assert( sizeof( uintp ) == sizeof(void*) ); //  ( ie, sizeof(intp) >= siz
 	#define MULTIPLE_INHERITANCE
 #endif
 
-#if defined( COMPILER_MSVC )
+#if defined( COMPILER_MSVC ) || defined( COMPILER_CLANG )
 	#define NO_VTABLE __declspec( novtable )
 #else
 	#define NO_VTABLE
 #endif
 
-#if defined( COMPILER_MSVC )
-	// This indicates that a function never returns, which helps with
-	// generating accurate compiler warnings
-	#define NORETURN __declspec( noreturn )
-#else
-	#define NORETURN [[noreturn]]
-#endif
+// This indicates that a function never returns, which helps with
+// generating accurate compiler warnings
+#define NORETURN [[noreturn]]
 
 // This can be used to declare an abstract (interface only) class.
 // Classes marked abstract should not be instantiated; If they are, an access violation will occur.

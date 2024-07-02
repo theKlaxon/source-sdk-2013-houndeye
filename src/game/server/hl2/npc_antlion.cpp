@@ -32,7 +32,7 @@
 #include "ai_tacticalservices.h"
 
 #ifdef HL2_EPISODIC
-#include "grenade_spit.h"
+	#include "grenade_spit.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -4529,7 +4529,6 @@ LINK_ENTITY_TO_CLASS( point_antlion_repellant, CAntlionRepellant);
 //-----------------------------------------------------------------------------
 
 AI_BEGIN_CUSTOM_NPC( npc_antlion, CNPC_Antlion )
-
 	//Register our interactions
 	DECLARE_INTERACTION( g_interactionAntlionFoundTarget )
 	DECLARE_INTERACTION( g_interactionAntlionFiredAtTarget )
