@@ -3109,7 +3109,7 @@ void CViewRender::DrawMonitors( const CViewSetup &cameraView )
 
 	tmZone( TELEMETRY_LEVEL0, TMZF_NONE, "%s", __FUNCTION__ );
 
-#ifdef _DEBUG
+#if IsDebug()
 	g_bRenderingCameraView = true;
 #endif
 
@@ -3132,7 +3132,7 @@ void CViewRender::DrawMonitors( const CViewSetup &cameraView )
 
 		++cameraNum;
 	}
-#ifdef _DEBUG
+#if IsDebug()
 	g_bRenderingCameraView = false;
 #endif
 

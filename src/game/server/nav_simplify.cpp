@@ -252,7 +252,7 @@ void CNavMesh::SimplifySelectedAreas( void )
 		}
 	}
 
-#ifndef _DEBUG
+#if !IsDebug()
 	// leave nodes in debug for testing
 	RemoveNodes();
 #endif

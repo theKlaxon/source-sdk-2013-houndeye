@@ -296,7 +296,7 @@ private:
 
 	float			m_flCloseCaptionDuration;
 
-#ifdef _DEBUG
+#if IsDebug()
 	// Used to get the classname of the entity associated with the sound
 	string_t		m_iszClassName;
 #endif
@@ -389,7 +389,7 @@ void CSoundPatch::Init( IRecipientFilter *pFilter, CBaseEntity *pEnt, int channe
 	m_Filter.Init( pFilter );
 	m_baseFlags = 0;
 
-#ifdef _DEBUG
+#if IsDebug()
 	if ( pEnt )
 	{
 		m_iszClassName = AllocPooledString( pEnt->GetClassname() );

@@ -89,7 +89,7 @@ int V_strnicmp( const char *s1, const char *s2, int n );
 #endif
 
 
-#ifdef _DEBUG
+#if IsDebug()
 	#define V_memset(dest, fill, count)		_V_memset   (__FILE__, __LINE__, (dest), (fill), (count))
 	#define V_memcpy(dest, src, count)		_V_memcpy	(__FILE__, __LINE__, (dest), (src), (count))
 	#define V_memmove(dest, src, count)		_V_memmove	(__FILE__, __LINE__, (dest), (src), (count))

@@ -465,7 +465,7 @@ inline unsigned short CSaveRestoreSegment::FindCreateSymbol( const char *pszToke
 {
 	unsigned short	hash = (unsigned short)(HashString( pszToken ) % (unsigned)tokenCount );
 	
-#if _DEBUG
+#if IsDebug()
 	static int tokensparsed = 0;
 	tokensparsed++;
 	if ( !tokenCount || !pTokens )
@@ -476,7 +476,7 @@ inline unsigned short CSaveRestoreSegment::FindCreateSymbol( const char *pszToke
 
 	for ( int i=0; i<tokenCount; i++ )
 	{
-#if _DEBUG
+#if IsDebug()
 		static bool beentheredonethat = false;
 		if ( i > 50 && !beentheredonethat )
 		{

@@ -15,17 +15,14 @@
 	//#define USE_MEM_DEBUG 1
 #endif
 
-#if defined( _MEMTEST )
-	#if IsWindows()
-		#define USE_MEM_DEBUG 1
-	#endif
+#if defined( _MEMTEST ) && IsWindows()
+	#define USE_MEM_DEBUG 1
 #endif
 
 // Undefine this if using a compiler lacking threadsafe RTTI (like vc6)
 #define MEM_DEBUG_CLASSNAME 1
 
 #include <cstddef>
-
 #include "tier0/mem.h"
 
 #if !defined( STEAM ) && !defined( NO_MALLOC_OVERRIDE )
@@ -98,7 +95,7 @@
 		virtual void DumpBlockStats( void* ) = 0;
 
 		#if defined( _MEMTEST )
-		virtual void SetStatsExtraInfo( const char* pMapName, const char* pComment ) = 0;
+			virtual void SetStatsExtraInfo( const char* pMapName, const char* pComment ) = 0;
 		#endif
 
 		// Returns 0 if no failure, otherwise the size_t of the last requested chunk
@@ -122,27 +119,27 @@
 
 	//-----------------------------------------------------------------------------
 
-		#ifdef MEMALLOC_REGIONS
-			#ifndef MEMALLOC_REGION
-				#define MEMALLOC_REGION 0
-			#endif
-	inline void* MemAlloc_Alloc( size_t nSize ) {
-		return g_pMemAlloc->RegionAlloc( MEMALLOC_REGION, nSize );
-	}
-
-	inline void* MemAlloc_Alloc( size_t nSize, const char* pFileName, int nLine ) {
-		return g_pMemAlloc->RegionAlloc( MEMALLOC_REGION, nSize, pFileName, nLine );
-	}
-		#else
-			#undef MEMALLOC_REGION
-	inline void* MemAlloc_Alloc( size_t nSize ) {
-		return g_pMemAlloc->Alloc( nSize );
-	}
-
-	inline void* MemAlloc_Alloc( size_t nSize, const char* pFileName, int nLine ) {
-		return g_pMemAlloc->Alloc( nSize, pFileName, nLine );
-	}
+	#ifdef MEMALLOC_REGIONS
+		#ifndef MEMALLOC_REGION
+			#define MEMALLOC_REGION 0
 		#endif
+		inline void* MemAlloc_Alloc( size_t nSize ) {
+			return g_pMemAlloc->RegionAlloc( MEMALLOC_REGION, nSize );
+		}
+
+		inline void* MemAlloc_Alloc( size_t nSize, const char* pFileName, int nLine ) {
+			return g_pMemAlloc->RegionAlloc( MEMALLOC_REGION, nSize, pFileName, nLine );
+		}
+	#else
+		#undef MEMALLOC_REGION
+		inline void* MemAlloc_Alloc( size_t nSize ) {
+			return g_pMemAlloc->Alloc( nSize );
+		}
+
+		inline void* MemAlloc_Alloc( size_t nSize, const char* pFileName, int nLine ) {
+			return g_pMemAlloc->Alloc( nSize, pFileName, nLine );
+		}
+	#endif
 	inline void MemAlloc_Free( void* ptr ) {
 		g_pMemAlloc->Free( ptr );
 	}
@@ -152,8 +149,7 @@
 
 	//-----------------------------------------------------------------------------
 
-	inline bool ValueIsPowerOfTwo( size_t value )// don't clash with mathlib definition
-	{
+	inline bool ValueIsPowerOfTwo( size_t value ) { // don't clash with mathlib definition
 		return ( value & ( value - 1 ) ) == 0;
 	}
 
@@ -305,34 +301,34 @@
 
 	//-----------------------------------------------------------------------------
 
-		#if ( defined( _DEBUG ) || defined( USE_MEM_DEBUG ) )
-			#define MEM_ALLOC_CREDIT_( tag ) CMemAllocAttributeAlloction memAllocAttributeAlloction( tag, __LINE__ )
-			#define MemAlloc_PushAllocDbgInfo( pszFile, line ) g_pMemAlloc->PushAllocDbgInfo( pszFile, line )
-			#define MemAlloc_PopAllocDbgInfo() g_pMemAlloc->PopAllocDbgInfo()
-			#define MemAlloc_RegisterAllocation( pFileName, nLine, nLogicalSize, nActualSize, nTime ) g_pMemAlloc->RegisterAllocation( pFileName, nLine, nLogicalSize, nActualSize, nTime )
-			#define MemAlloc_RegisterDeallocation( pFileName, nLine, nLogicalSize, nActualSize, nTime ) g_pMemAlloc->RegisterDeallocation( pFileName, nLine, nLogicalSize, nActualSize, nTime )
-		#else
-			#define MEM_ALLOC_CREDIT_( tag ) ( (void) 0 )
-			#define MemAlloc_PushAllocDbgInfo( pszFile, line ) ( (void) 0 )
-			#define MemAlloc_PopAllocDbgInfo() ( (void) 0 )
-			#define MemAlloc_RegisterAllocation( pFileName, nLine, nLogicalSize, nActualSize, nTime ) ( (void) 0 )
-			#define MemAlloc_RegisterDeallocation( pFileName, nLine, nLogicalSize, nActualSize, nTime ) ( (void) 0 )
-		#endif
+	#if IsDebug() || defined( USE_MEM_DEBUG )
+		#define MEM_ALLOC_CREDIT_( tag ) CMemAllocAttributeAlloction memAllocAttributeAlloction( tag, __LINE__ )
+		#define MemAlloc_PushAllocDbgInfo( pszFile, line ) g_pMemAlloc->PushAllocDbgInfo( pszFile, line )
+		#define MemAlloc_PopAllocDbgInfo() g_pMemAlloc->PopAllocDbgInfo()
+		#define MemAlloc_RegisterAllocation( pFileName, nLine, nLogicalSize, nActualSize, nTime ) g_pMemAlloc->RegisterAllocation( pFileName, nLine, nLogicalSize, nActualSize, nTime )
+		#define MemAlloc_RegisterDeallocation( pFileName, nLine, nLogicalSize, nActualSize, nTime ) g_pMemAlloc->RegisterDeallocation( pFileName, nLine, nLogicalSize, nActualSize, nTime )
+	#else
+		#define MEM_ALLOC_CREDIT_( tag ) ( (void) 0 )
+		#define MemAlloc_PushAllocDbgInfo( pszFile, line ) ( (void) 0 )
+		#define MemAlloc_PopAllocDbgInfo() ( (void) 0 )
+		#define MemAlloc_RegisterAllocation( pFileName, nLine, nLogicalSize, nActualSize, nTime ) ( (void) 0 )
+		#define MemAlloc_RegisterDeallocation( pFileName, nLine, nLogicalSize, nActualSize, nTime ) ( (void) 0 )
+	#endif
 
-		#define MemAlloc_DumpStats() g_pMemAlloc->DumpStats()
-		#define MemAlloc_CompactHeap() g_pMemAlloc->CompactHeap()
-		#define MemAlloc_OutOfMemory() g_pMemAlloc->OutOfMemory()
-		#define MemAlloc_CompactIncremental() g_pMemAlloc->CompactIncremental()
-		#define MemAlloc_DumpStatsFileBase( _filename ) g_pMemAlloc->DumpStatsFileBase( _filename )
-		#define MemAlloc_CrtCheckMemory() g_pMemAlloc->CrtCheckMemory()
-		#define MemAlloc_GlobalMemoryStatus( _usedMemory, _freeMemory ) g_pMemAlloc->GlobalMemoryStatus( _usedMemory, _freeMemory )
-		#define MemAlloc_MemoryAllocFailed() g_pMemAlloc->MemoryAllocFailed()
+	#define MemAlloc_DumpStats() g_pMemAlloc->DumpStats()
+	#define MemAlloc_CompactHeap() g_pMemAlloc->CompactHeap()
+	#define MemAlloc_OutOfMemory() g_pMemAlloc->OutOfMemory()
+	#define MemAlloc_CompactIncremental() g_pMemAlloc->CompactIncremental()
+	#define MemAlloc_DumpStatsFileBase( _filename ) g_pMemAlloc->DumpStatsFileBase( _filename )
+	#define MemAlloc_CrtCheckMemory() g_pMemAlloc->CrtCheckMemory()
+	#define MemAlloc_GlobalMemoryStatus( _usedMemory, _freeMemory ) g_pMemAlloc->GlobalMemoryStatus( _usedMemory, _freeMemory )
+	#define MemAlloc_MemoryAllocFailed() g_pMemAlloc->MemoryAllocFailed()
 
-		#define MemAlloc_GetDebugInfoSize() g_pMemAlloc->GetDebugInfoSize()
-		#define MemAlloc_SaveDebugInfo( pvDebugInfo ) g_pMemAlloc->SaveDebugInfo( pvDebugInfo )
-		#define MemAlloc_RestoreDebugInfo( pvDebugInfo ) g_pMemAlloc->RestoreDebugInfo( pvDebugInfo )
-		#define MemAlloc_InitDebugInfo( pvDebugInfo, pchRootFileName, nLine ) g_pMemAlloc->InitDebugInfo( pvDebugInfo, pchRootFileName, nLine )
-		#define MemAlloc_GetSize( x ) g_pMemAlloc->GetSize( x );
+	#define MemAlloc_GetDebugInfoSize() g_pMemAlloc->GetDebugInfoSize()
+	#define MemAlloc_SaveDebugInfo( pvDebugInfo ) g_pMemAlloc->SaveDebugInfo( pvDebugInfo )
+	#define MemAlloc_RestoreDebugInfo( pvDebugInfo ) g_pMemAlloc->RestoreDebugInfo( pvDebugInfo )
+	#define MemAlloc_InitDebugInfo( pvDebugInfo, pchRootFileName, nLine ) g_pMemAlloc->InitDebugInfo( pvDebugInfo, pchRootFileName, nLine )
+	#define MemAlloc_GetSize( x ) g_pMemAlloc->GetSize( x );
 	//-----------------------------------------------------------------------------
 
 	class CMemAllocAttributeAlloction {
@@ -346,87 +342,82 @@
 		}
 	};
 
-		#define MEM_ALLOC_CREDIT() MEM_ALLOC_CREDIT_( __FILE__ )
+	#define MEM_ALLOC_CREDIT() MEM_ALLOC_CREDIT_( __FILE__ )
 
 	//-----------------------------------------------------------------------------
 
-		#if defined( _WIN32 ) && ( defined( _DEBUG ) || defined( USE_MEM_DEBUG ) )
+	#if IsWindows() && ( IsDebug() || defined( USE_MEM_DEBUG ) )
+		#pragma warning( disable : 4290 )
+		#pragma warning( push )
+		#include <typeinfo>
 
-			#pragma warning( disable : 4290 )
-			#pragma warning( push )
-			#include <typeinfo>
-
-			// MEM_DEBUG_CLASSNAME is opt-in.
-			// Note: typeid().name() is not threadsafe, so if the project needs to access it in multiple threads
-			// simultaneously, it'll need a mutex.
-			#if defined( _CPPRTTI ) && defined( MEM_DEBUG_CLASSNAME )
-				#define MEM_ALLOC_CREDIT_CLASS() MEM_ALLOC_CREDIT_( typeid( *this ).name() )
-				#define MEM_ALLOC_CLASSNAME( type ) ( typeid( (type*) ( 0 ) ).name() )
-			#else
-				#define MEM_ALLOC_CREDIT_CLASS() MEM_ALLOC_CREDIT_( __FILE__ )
-				#define MEM_ALLOC_CLASSNAME( type ) ( __FILE__ )
-			#endif
-
-			// MEM_ALLOC_CREDIT_FUNCTION is used when no this pointer is available ( inside 'new' overloads, for example )
-			#ifdef _MSC_VER
-				#define MEM_ALLOC_CREDIT_FUNCTION() MEM_ALLOC_CREDIT_( __FUNCTION__ )
-			#else
-				#define MEM_ALLOC_CREDIT_FUNCTION() ( __FILE__ )
-			#endif
-
-			#pragma warning( pop )
+		// MEM_DEBUG_CLASSNAME is opt-in.
+		// Note: typeid().name() is not threadsafe, so if the project needs to access it in multiple threads
+		// simultaneously, it'll need a mutex.
+		#if defined( _CPPRTTI ) && defined( MEM_DEBUG_CLASSNAME )
+			#define MEM_ALLOC_CREDIT_CLASS() MEM_ALLOC_CREDIT_( typeid( *this ).name() )
+			#define MEM_ALLOC_CLASSNAME( type ) ( typeid( (type*) ( 0 ) ).name() )
 		#else
-			#define MEM_ALLOC_CREDIT_CLASS()
-			#define MEM_ALLOC_CLASSNAME( type ) nullptr
-			#define MEM_ALLOC_CREDIT_FUNCTION()
+			#define MEM_ALLOC_CREDIT_CLASS() MEM_ALLOC_CREDIT_( __FILE__ )
+			#define MEM_ALLOC_CLASSNAME( type ) ( __FILE__ )
 		#endif
+
+		// MEM_ALLOC_CREDIT_FUNCTION is used when no this pointer is available ( inside 'new' overloads, for example )
+		#ifdef _MSC_VER
+			#define MEM_ALLOC_CREDIT_FUNCTION() MEM_ALLOC_CREDIT_( __FUNCTION__ )
+		#else
+			#define MEM_ALLOC_CREDIT_FUNCTION() ( __FILE__ )
+		#endif
+
+		#pragma warning( pop )
+	#else
+		#define MEM_ALLOC_CREDIT_CLASS()
+		#define MEM_ALLOC_CLASSNAME( type ) nullptr
+		#define MEM_ALLOC_CREDIT_FUNCTION()
+	#endif
 
 	//-----------------------------------------------------------------------------
 
-		#if ( defined( _DEBUG ) || defined( USE_MEM_DEBUG ) )
-	struct MemAllocFileLine_t {
-		const char* pszFile;
-		int line;
-	};
+	#if IsDebug() || defined( USE_MEM_DEBUG )
+		struct MemAllocFileLine_t {
+			const char* pszFile;
+			int line;
+		};
 
-			#define MEMALLOC_DEFINE_EXTERNAL_TRACKING( tag )                                            \
-				static CUtlMap<void*, MemAllocFileLine_t, int> g_##tag##Allocs( DefLessFunc( void* ) ); \
-				static const char* g_psz##tag##Alloc = strcpy( (char*) g_pMemAlloc->Alloc( strlen( #tag "Alloc" ) + 1, "intentional leak", 0 ), #tag "Alloc" );
+		#define MEMALLOC_DEFINE_EXTERNAL_TRACKING( tag )                                            \
+			static CUtlMap<void*, MemAllocFileLine_t, int> g_##tag##Allocs( DefLessFunc( void* ) ); \
+			static const char* g_psz##tag##Alloc = strcpy( (char*) g_pMemAlloc->Alloc( strlen( #tag "Alloc" ) + 1, "intentional leak", 0 ), #tag "Alloc" );
 
-			#define MemAlloc_RegisterExternalAllocation( tag, p, size )                            \
-				if ( !p )                                                                          \
-					;                                                                              \
-				else {                                                                             \
-					MemAllocFileLine_t fileLine = { g_psz##tag##Alloc, 0 };                        \
-					g_pMemAlloc->GetActualDbgInfo( fileLine.pszFile, fileLine.line );              \
-					if ( fileLine.pszFile != g_psz##tag##Alloc ) {                                 \
-						g_##tag##Allocs.Insert( p, fileLine );                                     \
-					}                                                                              \
-																								   \
-					MemAlloc_RegisterAllocation( fileLine.pszFile, fileLine.line, size, size, 0 ); \
-				}
+		#define MemAlloc_RegisterExternalAllocation( tag, p, size )                            \
+			if ( !p )                                                                          \
+				;                                                                              \
+			else {                                                                             \
+				MemAllocFileLine_t fileLine = { g_psz##tag##Alloc, 0 };                        \
+				g_pMemAlloc->GetActualDbgInfo( fileLine.pszFile, fileLine.line );              \
+				if ( fileLine.pszFile != g_psz##tag##Alloc ) {                                 \
+					g_##tag##Allocs.Insert( p, fileLine );                                     \
+				}                                                                              \
+																							   \
+				MemAlloc_RegisterAllocation( fileLine.pszFile, fileLine.line, size, size, 0 ); \
+			}
 
-			#define MemAlloc_RegisterExternalDeallocation( tag, p, size )                                               \
-				if ( !p )                                                                                               \
-					;                                                                                                   \
-				else {                                                                                                  \
-					MemAllocFileLine_t fileLine = { g_psz##tag##Alloc, 0 };                                             \
-					CUtlMap<void*, MemAllocFileLine_t, int>::IndexType_t iRecordedFileLine = g_##tag##Allocs.Find( p ); \
-					if ( iRecordedFileLine != g_##tag##Allocs.InvalidIndex() ) {                                        \
-						fileLine = g_##tag##Allocs[ iRecordedFileLine ];                                                \
-						g_##tag##Allocs.RemoveAt( iRecordedFileLine );                                                  \
-					}                                                                                                   \
-																														\
-					MemAlloc_RegisterDeallocation( fileLine.pszFile, fileLine.line, size, size, 0 );                    \
-				}
+		#define MemAlloc_RegisterExternalDeallocation( tag, p, size )                                               \
+			if ( p ) {                                                                                              \
+				MemAllocFileLine_t fileLine = { g_psz##tag##Alloc, 0 };                                             \
+				CUtlMap<void*, MemAllocFileLine_t, int>::IndexType_t iRecordedFileLine = g_##tag##Allocs.Find( p ); \
+				if ( iRecordedFileLine != g_##tag##Allocs.InvalidIndex() ) {                                        \
+					fileLine = g_##tag##Allocs[ iRecordedFileLine ];                                                \
+					g_##tag##Allocs.RemoveAt( iRecordedFileLine );                                                  \
+				}                                                                                                   \
+																													\
+				MemAlloc_RegisterDeallocation( fileLine.pszFile, fileLine.line, size, size, 0 );                    \
+			}
 
-		#else
-
-			#define MEMALLOC_DEFINE_EXTERNAL_TRACKING( tag )
-			#define MemAlloc_RegisterExternalAllocation( tag, p, size ) ( (void) 0 )
-			#define MemAlloc_RegisterExternalDeallocation( tag, p, size ) ( (void) 0 )
-
-		#endif
+	#else
+		#define MEMALLOC_DEFINE_EXTERNAL_TRACKING( tag )
+		#define MemAlloc_RegisterExternalAllocation( tag, p, size ) ( (void) 0 )
+		#define MemAlloc_RegisterExternalDeallocation( tag, p, size ) ( (void) 0 )
+	#endif
 
 	//-----------------------------------------------------------------------------
 #elif IsPosix()
@@ -511,21 +502,29 @@
 	PLATFORM_INTERFACE void SetMemoryMark();
 	PLATFORM_INTERFACE void DumpChangedMemory( int nThresh );
 #else
-	ALWAYS_INLINE void MemoryLogMessage( char const* s ) { }
+	ALWAYS_INLINE
+	void MemoryLogMessage( char const* s ) { }
 
-	ALWAYS_INLINE void EnableMemoryLogging( bool bOnOff ) { }
-	ALWAYS_INLINE void DumpMemoryLog( int nThresh ) { }
-	ALWAYS_INLINE void DumpMemorySummary() { }
-	ALWAYS_INLINE void SetMemoryMark() { }
-	ALWAYS_INLINE void DumpChangedMemory( int nThresh ) { }
+	ALWAYS_INLINE
+	void EnableMemoryLogging( bool bOnOff ) { }
+	ALWAYS_INLINE
+	void DumpMemoryLog( int nThresh ) { }
+	ALWAYS_INLINE
+	void DumpMemorySummary() { }
+	ALWAYS_INLINE
+	void SetMemoryMark() { }
+	ALWAYS_INLINE
+	void DumpChangedMemory( int nThresh ) { }
 
 #endif
 
 #if defined( POSIX )
 	// ApproximateProcessMemoryUsage returns the approximate memory footprint of this process.
-	PLATFORM_INTERFACE size_t ApproximateProcessMemoryUsage();
+	PLATFORM_INTERFACE
+	size_t ApproximateProcessMemoryUsage();
 #else
-	ALWAYS_INLINE size_t ApproximateProcessMemoryUsage() {
+	ALWAYS_INLINE
+	size_t ApproximateProcessMemoryUsage() {
 		return 0;
 	}
 #endif

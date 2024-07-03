@@ -2714,7 +2714,7 @@ void CBaseAnimating::InitBoneControllers ( void ) // FIXME: rename
 	{
 		nBoneControllerCount = NUM_BONECTRLS;
 
-#ifdef _DEBUG
+#if IsDebug()
 		Warning( "Model %s has too many bone controllers! (Max %d allowed)\n", pStudioHdr->pszName(), NUM_BONECTRLS );
 #endif
 	}
@@ -2920,7 +2920,7 @@ void CBaseAnimating::GetInputDispatchEffectPosition( const char *sInputString, V
 //-----------------------------------------------------------------------------
 void CBaseAnimating::SetHitboxSet( int setnum )
 {
-#ifdef _DEBUG
+#if IsDebug()
 	CStudioHdr *pStudioHdr = GetModelPtr();
 	if ( !pStudioHdr )
 		return;

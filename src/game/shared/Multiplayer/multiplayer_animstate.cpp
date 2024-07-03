@@ -1951,7 +1951,7 @@ void CMultiPlayerAnimState::DebugShowEyeYaw( void )
 //-----------------------------------------------------------------------------
 void CMultiPlayerAnimState::DebugShowActivity( Activity activity )
 {
-#ifdef _DEBUG
+#if IsDebug()
 
 	const char *pszActivity = "other";
 

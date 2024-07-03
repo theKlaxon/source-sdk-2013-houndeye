@@ -1008,7 +1008,7 @@ void MatrixBuildRotation( VMatrix &dst, const Vector& initialDirection, const Ve
 
 	MatrixBuildRotationAboutAxis( dst, axis, angle );
 
-#ifdef _DEBUG
+#if IsDebug()
 	Vector test;
 	Vector3DMultiply( dst, initialDirection, test );
 	test -= finalDirection;

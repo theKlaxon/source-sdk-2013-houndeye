@@ -16,23 +16,6 @@
 #include "tier0/valve_off.h"
 #include "wchartypes.h"
 
-#if defined( _DEBUG )
-	#if !defined( PLAT_COMPILE_TIME_ASSERT )
-		#define PLAT_COMPILE_TIME_ASSERT( pred ) \
-			switch ( 0 ) {                       \
-				case 0:                          \
-				case pred:;                      \
-			}
-	#endif
-#else
-	#if !defined( PLAT_COMPILE_TIME_ASSERT )
-		#define PLAT_COMPILE_TIME_ASSERT( pred )
-	#endif
-#endif
-
-// feature enables
-#define NEW_SOFTWARE_LIGHTING
-
 #if defined( POSIX )
 	// need this for _alloca
 	#include <alloca.h>
@@ -48,9 +31,11 @@
 
 #if defined( _RETAIL )
 	#define IsRetail() true
+	#undef _RETAIL
 #else
 	#define IsRetail() false
 #endif
+
 
 #if defined( _DEBUG )
 	#define IsRelease() false
@@ -96,7 +81,11 @@
 		#define IsPlatformOpenGL() false
 	#endif
 #elif defined( POSIX )
+	// no windows over here!
 	#define IsWindows() false
+	#define IsPlatformWindowsPC64() false
+	#define IsPlatformWindowsPC32() false
+
 	#if defined( LINUX )
 		#define IsLinux() true
 	#else
@@ -105,6 +94,7 @@
 
 	#define IsPosix() true
 	#define IsPlatformOpenGL() true
+	#define __cdecl  // override __cdecl to be nothing, used in some places (for now >:3) NOLINT(*-reserved-identifier)
 #else
 	#error "Unsupported platform, please implement!"
 #endif
@@ -727,7 +717,7 @@ inline T QWordSwapC( T dw ) {
 	// Assert sizes passed to this are already correct, otherwise
 	// the cast to uint64 * below is unsafe and may have wrong results
 	// or even crash.
-	PLAT_COMPILE_TIME_ASSERT( sizeof( dw ) == sizeof( uint64 ) );
+	static_assert( sizeof( dw ) == sizeof( uint64 ) );
 
 	uint64 temp;
 
@@ -1272,7 +1262,7 @@ PLATFORM_INTERFACE bool vtune( bool resume );
 //-----------------------------------------------------------------------------
 // Dynamic libs support
 //-----------------------------------------------------------------------------
-#if 0// defined( PLATFORM_WINDOWS_PC )
+#if 0// IsWindows() && IsPC()
 	PLATFORM_INTERFACE void* Plat_GetProcAddress( const char* pszModule, const char* pszName );
 
 	template <typename FUNCPTR_TYPE>

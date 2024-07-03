@@ -81,7 +81,7 @@ ConVar zoom_sensitivity_ratio( "zoom_sensitivity_ratio", "1.0", 0, "Additional m
 CViewRender g_DefaultViewRender;
 IViewRender *view = NULL;	// set in cldll_client_init.cpp if no mod creates their own
 
-#if _DEBUG
+#if IsDebug()
 bool g_bRenderingCameraView = false;
 #endif
 

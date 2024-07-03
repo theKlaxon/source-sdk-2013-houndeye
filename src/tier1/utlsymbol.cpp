@@ -187,7 +187,7 @@ CUtlSymbol CUtlSymbolTable::Find( const char* pString ) const
 	// use the string passed in the context
 	UtlSymId_t idx = m_Lookup.Find( INVALID_STRING_INDEX );
 
-#ifdef _DEBUG
+#if IsDebug()
 	m_pUserSearchString = NULL;
 #endif
 

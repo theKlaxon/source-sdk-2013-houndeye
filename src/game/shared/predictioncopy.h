@@ -15,7 +15,7 @@
 	class C_BaseEntity;
 	typedef CHandle<C_BaseEntity> EHANDLE;
 
-	#if defined( _DEBUG )
+	#if IsDebug()
 		// #define COPY_CHECK_STRESSTEST
 		class IGameSystem;
 		IGameSystem* GetPredictionCopyTester( void );

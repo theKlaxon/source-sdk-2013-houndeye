@@ -439,7 +439,7 @@ int Q_log2(int val);
 // Math routines done in optimized assembly math package routines
 void inline SinCos( float radians, float *sine, float *cosine )
 {
-#if defined( PLATFORM_WINDOWS_PC32 )
+#if IsPlatformWindowsPC32()
 	_asm
 	{
 		fld		DWORD PTR [radians]
@@ -451,10 +451,10 @@ void inline SinCos( float radians, float *sine, float *cosine )
 		fstp DWORD PTR [edx]
 		fstp DWORD PTR [eax]
 	}
-#elif defined( PLATFORM_WINDOWS_PC64 )
+#elif IsPlatformWindowsPC64()
 	*sine = sin( radians );
 	*cosine = cos( radians );
-#elif defined( POSIX )
+#elif IsPosix()
 	double __cosr, __sinr;
 	__asm ("fsincos" : "=t" (__cosr), "=u" (__sinr) : "0" (radians));
 
@@ -1201,7 +1201,7 @@ inline float SimpleSplineRemapValClamped( float val, float A, float B, float C, 
 
 ALWAYS_INLINE int RoundFloatToInt(float f)
 {
-#if defined(__i386__) || defined(_M_IX86) || defined( PLATFORM_WINDOWS_PC64 ) || defined(__x86_64__)
+#if defined(__i386__) || defined(_M_IX86) || IsPlatformWindowsPC64() || defined(__x86_64__)
 	return _mm_cvtss_si32(_mm_load_ss(&f));
 #endif
 }
@@ -1217,7 +1217,7 @@ ALWAYS_INLINE unsigned char RoundFloatToByte(float f)
 
 ALWAYS_INLINE unsigned long RoundFloatToUnsignedLong(float f)
 {
-#if defined( PLATFORM_WINDOWS_PC64 )
+#if IsPlatformWindowsPC64()
 	uint nRet = ( uint ) f;
 	if ( nRet & 1 )
 	{
@@ -1234,7 +1234,7 @@ ALWAYS_INLINE unsigned long RoundFloatToUnsignedLong(float f)
 		}
 	}
 	return nRet;
-#else // PLATFORM_WINDOWS_PC64
+#else // IsPlatformWindowsPC64()
 	union { unsigned char nResult[8]; unsigned long ulResult; } u;
 
 	#if defined( _WIN32 )
@@ -1249,7 +1249,7 @@ ALWAYS_INLINE unsigned long RoundFloatToUnsignedLong(float f)
 	#endif
 
 		return u.ulResult;
-#endif // PLATFORM_WINDOWS_PC64
+#endif // IsPlatformWindowsPC64()
 }
 
 ALWAYS_INLINE bool IsIntegralValue( float flValue, float flTolerance = 0.001f )

@@ -33,7 +33,7 @@ END_DATADESC()
 
 CParticleFire::CParticleFire()
 {
-#ifdef _DEBUG
+#if IsDebug()
 	m_vOrigin.Init();
 	m_vDirection.Init();
 #endif

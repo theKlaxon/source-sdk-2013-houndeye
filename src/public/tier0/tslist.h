@@ -690,7 +690,7 @@ public:
 	}
 
 	Node_t* Push( Node_t* pNode ) {
-		#ifdef _DEBUG
+		#if IsDebug()
 			if ( (size_t) pNode % TSLIST_NODE_ALIGNMENT != 0 ) {
 				Error( "CTSListBase: Misaligned node\n" );
 				DebuggerBreak();

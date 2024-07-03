@@ -579,7 +579,7 @@ static void EmitOccluderBrushes()
 	CUtlVector<side_t*> sideList( 1024, 1024 );
 	GenerateOccluderFaceList( pOccluderTree->headnode, faceList );
 
-#ifdef _DEBUG
+#if IsDebug()
 	int *pEmitted = (int*)stackalloc( faceList.Count() * sizeof(int) );
 	memset( pEmitted, 0, faceList.Count() * sizeof(int) );
 #endif

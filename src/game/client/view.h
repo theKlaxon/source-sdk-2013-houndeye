@@ -13,7 +13,7 @@
 #pragma once
 #endif
 
-#if _DEBUG
+#if IsDebug()
 extern bool g_bRenderingCameraView;		// For debugging (frustum fix for cameras)...
 #endif
 

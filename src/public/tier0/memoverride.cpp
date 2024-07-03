@@ -1,7 +1,7 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Insert this file into all projects using the memory system
-// It will cause that project to use the shader memory allocator
+// It will cause that project to use the shared memory allocator
 //
 // $NoKeywords: $
 //=============================================================================//

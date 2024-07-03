@@ -654,7 +654,7 @@ void CWeaponBrickbat::TraceAttack( const CTakeDamageInfo &info, const Vector &ve
 //-----------------------------------------------------------------------------
 CWeaponBrickbat::CWeaponBrickbat( void )
 {
-#ifdef _DEBUG
+#if IsDebug()
 	m_vecTossVelocity.Init();
 #endif
 

@@ -1257,7 +1257,7 @@ void Panel::PaintTraverse( bool repaint, bool allowForce )
 			surface()->PopMakeCurrent( vpanel );
 		}
 
-#ifdef _DEBUG
+#if IsDebug()
 		// IsBuildGroupEnabled recurses up all the parents and ends up being very expensive as it wanders all over memory
 		if ( GetBuildModeDialogCount() && IsBuildGroupEnabled() ) //&& HasFocus() )
 		{
@@ -4125,8 +4125,8 @@ void Panel::PerformApplySchemeSettings()
 //-----------------------------------------------------------------------------
 // Purpose: Loads panel details related to autoresize from the resource info
 //-----------------------------------------------------------------------------
-#if defined( _DEBUG )
-static Panel *lastWarningParent = 0;
+#if IsDebug()
+	static Panel *lastWarningParent = 0;
 #endif
 
 void Panel::ApplyAutoResizeSettings(KeyValues *inResourceData)
@@ -4145,7 +4145,7 @@ void Panel::ApplyAutoResizeSettings(KeyValues *inResourceData)
 	if ( GetParent() )
 	{
 		GetParent()->GetSize( pw, pt );
-#if defined( _DEBUG )
+#if IsDebug()
 		if ( pw == 64 && pt == 24 )
 		{
 			if ( GetParent() != lastWarningParent )
@@ -5164,10 +5164,10 @@ void Panel::OnMessage(const KeyValues *params, VPANEL ifromPanel)
 	// iterate through the class hierarchy message maps
 	for ( ; panelMap != NULL && !bFound; panelMap = panelMap->baseMap )
 	{
-#if defined( _DEBUG )
-//		char const *className = panelMap->pfnClassName();
-//		NOTE_UNUSED( className );
-#endif
+		#if IsDebug()
+//			char const *className = panelMap->pfnClassName();
+//			NOTE_UNUSED( className );
+		#endif
 
 		// iterate all the entries in the panel map
 		for ( int i = 0; i < panelMap->entries.Count(); i++ )

@@ -195,7 +195,7 @@ CNPC_Combine_Cannon::CNPC_Combine_Cannon( void ) :
 	m_pBeam( NULL ),
 	m_hBarrageTarget( NULL )
 { 
-#ifdef _DEBUG
+#if IsDebug()
 	m_vecPaintCursor.Init();
 	m_vecPaintStart.Init();
 #endif

@@ -36,7 +36,7 @@ typedef uint64 VertexFormat_t;
 //-----------------------------------------------------------------------------
 // Define this to find write-combine problems
 //-----------------------------------------------------------------------------
-#ifdef _DEBUG
+#if IsDebug()
 //#ifndef DEBUG_WRITE_COMBINE
 //#define DEBUG_WRITE_COMBINE 1
 //#endif
@@ -634,7 +634,7 @@ inline CVertexBuilder::CVertexBuilder()
 	m_nTotalVertexCount = 0;
 	m_CompressionType = VERTEX_COMPRESSION_INVALID;
 
-#ifdef _DEBUG
+#if IsDebug()
 	m_pCurrPosition = NULL;
 	m_pCurrNormal = NULL;
 	m_pCurrColor = NULL;
@@ -663,7 +663,7 @@ inline CVertexBuilder::CVertexBuilder( IVertexBuffer *pVertexBuffer, VertexForma
 		Assert( m_pVertexBuffer->GetVertexFormat() == fmt );
 	}
 
-#ifdef _DEBUG
+#if IsDebug()
 	m_pCurrPosition = NULL;
 	m_pCurrNormal = NULL;
 	m_pCurrColor = NULL;
@@ -720,7 +720,7 @@ inline void CVertexBuilder::Unlock()
 {
 	Assert( !m_bModify && m_pVertexBuffer );
 
-#ifdef _DEBUG
+#if IsDebug()
 	m_pVertexBuffer->ValidateData( m_nVertexCount, *this );
 #endif
 
@@ -729,7 +729,7 @@ inline void CVertexBuilder::Unlock()
 
 	m_nMaxVertexCount = 0;
 
-#ifdef _DEBUG
+#if IsDebug()
 	// Null out our data...
 	m_pCurrPosition = NULL;
 	m_pCurrNormal = NULL;
@@ -786,7 +786,7 @@ inline void CVertexBuilder::SetCompressionType( VertexCompressionType_t compress
 
 inline void CVertexBuilder::ValidateCompressionType()
 {
-#ifdef _DEBUG
+#if IsDebug()
 	VertexCompressionType_t vbCompressionType = CompressionType( m_pVertexBuffer->GetVertexFormat() );
 	if ( vbCompressionType != VERTEX_COMPRESSION_NONE )
 	{
@@ -837,7 +837,7 @@ inline void CVertexBuilder::End( bool bSpewData )
 		m_pVertexBuffer->Spew( m_nVertexCount, *this );
 	}
 
-#ifdef _DEBUG
+#if IsDebug()
 	m_pVertexBuffer->ValidateData( m_nVertexCount, *this );
 #endif
 
@@ -849,7 +849,7 @@ inline void CVertexBuilder::End( bool bSpewData )
 
 	m_CompressionType = VERTEX_COMPRESSION_INVALID;
 
-#ifdef _DEBUG
+#if IsDebug()
 	// Null out our pointers...
 	m_pCurrPosition = NULL;
 	m_pCurrNormal = NULL;
@@ -898,7 +898,7 @@ inline void CVertexBuilder::AttachEnd()
 
 	m_CompressionType = VERTEX_COMPRESSION_INVALID;
 
-#ifdef _DEBUG
+#if IsDebug()
 	// Null out our pointers...
 	m_pCurrPosition = NULL;
 	m_pCurrNormal = NULL;
@@ -932,7 +932,7 @@ inline void CVertexBuilder::AttachEndModify()
 
 	m_CompressionType = VERTEX_COMPRESSION_INVALID;
 
-#ifdef _DEBUG
+#if IsDebug()
 	// Null out our pointers...
 	m_pCurrPosition = NULL;
 	m_pCurrNormal = NULL;
@@ -970,7 +970,7 @@ inline void CVertexBuilder::Reset()
 	}
 	m_pCurrColor = m_pColor;
 
-#if ( defined( _DEBUG ) && ( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 ) )
+#if IsDebug() && ( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 )
 	m_bWrittenNormal   = false;
 	m_bWrittenUserData = false;
 #endif
@@ -1050,7 +1050,7 @@ inline void CVertexBuilder::SelectVertex( int nIndex )
 	m_pCurrTexCoord[7] = OffsetFloatPointer( m_pTexCoord[7], m_nCurrentVertex, m_VertexSize_TexCoord[7] );
 	m_pCurrColor = m_pColor + m_nCurrentVertex * m_VertexSize_Color;
 
-#if ( defined( _DEBUG ) && ( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 ) )
+#if IsDebug() && ( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 )
 	m_bWrittenNormal   = false;
 	m_bWrittenUserData = false;
 #endif
@@ -1093,7 +1093,7 @@ template<int nFlags, int nNumTexCoords> ALWAYS_INLINE void CVertexBuilder::Advan
 	if ( nNumTexCoords > 7 )
 		IncrementFloatPointer( m_pCurrTexCoord[7], m_VertexSize_TexCoord[7] );
 
-#if ( defined( _DEBUG ) && ( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 ) )
+#if IsDebug() && ( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 )
 	m_bWrittenNormal   = false;
 	m_bWrittenUserData = false;
 #endif
@@ -1205,7 +1205,7 @@ inline void CVertexBuilder::FastVertex( const ModelVertexDX7_t &vertex )
 	IncrementFloatPointer( m_pCurrPosition, m_VertexSize_Position );
 	//m_nVertexCount = ++m_nCurrentVertex;
 
-#if ( defined( _DEBUG ) && ( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 ) )
+#if IsDebug() && ( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 )
 	m_bWrittenNormal   = false;
 	m_bWrittenUserData = false;
 #endif
@@ -1216,7 +1216,7 @@ inline void CVertexBuilder::FastVertexSSE( const ModelVertexDX7_t &vertex )
 	Assert( m_CompressionType == VERTEX_COMPRESSION_NONE ); // FIXME: support compressed verts if needed
 	Assert( m_nCurrentVertex < m_nMaxVertexCount );
 
-#if defined( _WIN32 )
+#if IsWindows()
 	const void *pRead = &vertex;
 	void *pCurrPos = m_pCurrPosition;
 	__asm
@@ -1232,7 +1232,7 @@ inline void CVertexBuilder::FastVertexSSE( const ModelVertexDX7_t &vertex )
 			movntps [edi + 16], xmm1
 			movntps [edi + 32], xmm2
 	}
-#elif defined(GNUC)
+#elif defined(COMPILER_GCC)
 	const char *pRead = (char *)&vertex;
 	char *pCurrPos = (char *)m_pCurrPosition;
 	__m128 m1 = _mm_load_ps( (float *)pRead );
@@ -1248,7 +1248,7 @@ inline void CVertexBuilder::FastVertexSSE( const ModelVertexDX7_t &vertex )
 	IncrementFloatPointer( m_pCurrPosition, m_VertexSize_Position );
 	//m_nVertexCount = ++m_nCurrentVertex;
 
-#if ( defined( _DEBUG ) && ( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 ) )
+#if IsDebug() && ( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 )
 	m_bWrittenNormal   = false;
 	m_bWrittenUserData = false;
 #endif
@@ -1310,7 +1310,7 @@ inline void CVertexBuilder::Fast4VerticesSSE(
 #endif
 	IncrementFloatPointer( m_pCurrPosition, 4*m_VertexSize_Position );
 
-#if ( defined( _DEBUG ) && ( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 ) )
+#if IsDebug() && ( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 )
 	m_bWrittenNormal   = false;
 	m_bWrittenUserData = false;
 #endif
@@ -1349,7 +1349,7 @@ inline void CVertexBuilder::FastVertex( const ModelVertexDX8_t &vertex )
 
 			emms
 	}
-#elif defined(GNUC)
+#elif defined(COMPILER_GCC)
 	const void *pRead = &vertex;
 	void *pCurrPos = m_pCurrPosition;
 	__asm__ __volatile__ (
@@ -1378,7 +1378,7 @@ inline void CVertexBuilder::FastVertex( const ModelVertexDX8_t &vertex )
 	IncrementFloatPointer( m_pCurrPosition, m_VertexSize_Position );
 	//	m_nVertexCount = ++m_nCurrentVertex;
 
-#if ( defined( _DEBUG ) && ( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 ) )
+#if IsDebug() && ( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 )
 	m_bWrittenNormal   = false;
 	m_bWrittenUserData = false;
 #endif
@@ -1389,7 +1389,7 @@ inline void CVertexBuilder::FastVertexSSE( const ModelVertexDX8_t &vertex )
 	Assert( m_CompressionType == VERTEX_COMPRESSION_NONE ); // FIXME: support compressed verts if needed
 	Assert( m_nCurrentVertex < m_nMaxVertexCount );
 
-#if defined( _WIN32 )
+#if IsWindows()
 	const void *pRead = &vertex;
 	void *pCurrPos = m_pCurrPosition;
 	__asm
@@ -1407,7 +1407,7 @@ inline void CVertexBuilder::FastVertexSSE( const ModelVertexDX8_t &vertex )
 			movntps [edi + 32], xmm2
 			movntps [edi + 48], xmm3
 	}
-#elif defined(GNUC)
+#elif defined(COMPILER_GCC)
 	const void *pRead = &vertex;
 	void *pCurrPos = m_pCurrPosition;
 	__asm__ __volatile__ (
@@ -1427,7 +1427,7 @@ inline void CVertexBuilder::FastVertexSSE( const ModelVertexDX8_t &vertex )
 	IncrementFloatPointer( m_pCurrPosition, m_VertexSize_Position );
 	//	m_nVertexCount = ++m_nCurrentVertex;
 
-#if ( defined( _DEBUG ) && ( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 ) )
+#if IsDebug() && ( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 )
 	m_bWrittenNormal   = false;
 	m_bWrittenUserData = false;
 #endif
@@ -1664,7 +1664,7 @@ template <VertexCompressionType_t T> inline void CVertexBuilder::CompressedNorma
 #else //( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 )
 		// NOTE: write the normal into the lower 16 bits of a word, clearing the top 16 bits - a userdata4
 		//       tangent must be written into the upper 16 bits by CompressedUserData() *AFTER* this.
-#ifdef _DEBUG
+#if IsDebug()
 		Assert( m_bWrittenUserData == false );
 		m_bWrittenNormal = true;
 #endif
@@ -2256,7 +2256,7 @@ template <VertexCompressionType_t T> inline void CVertexBuilder::CompressedUserD
 		// bits - here, we OR in the tangent into the upper 16 bits
 		unsigned int existingNormalData = *(unsigned int *)m_pCurrNormal;
 		Assert( ( existingNormalData & 0xFFFF0000 ) == 0 );
-#ifdef _DEBUG
+#if IsDebug()
 		Assert( m_bWrittenNormal == true );
 		m_bWrittenUserData = true;
 #endif
@@ -2407,7 +2407,7 @@ inline CIndexBuilder::CIndexBuilder() : m_pIndexBuffer(0), m_nIndexCount(0),
 	m_nTotalIndexCount = 0;
 	m_nBufferOffset = INVALID_BUFFER_OFFSET;
 	m_nBufferFirstIndex = 0;
-#ifdef _DEBUG
+#if IsDebug()
 	m_bModify = false;
 #endif
 }
@@ -2429,7 +2429,7 @@ inline CIndexBuilder::CIndexBuilder( IIndexBuffer *pIndexBuffer, MaterialIndexFo
 	{
 		Assert( m_pIndexBuffer->IndexFormat() == fmt );
 	}
-#ifdef _DEBUG
+#if IsDebug()
 	m_bModify = false;
 #endif
 }
@@ -2488,7 +2488,7 @@ inline void CIndexBuilder::Unlock()
 
 	m_nMaxIndexCount = 0;
 
-#ifdef _DEBUG
+#if IsDebug()
 	// Null out our data...
 	memset( (IndexDesc_t*)this, 0, sizeof(IndexDesc_t) );
 #endif
@@ -2567,7 +2567,7 @@ inline void CIndexBuilder::End( bool bSpewData )
 	m_pIndexBuffer = 0;
 	m_nMaxIndexCount = 0;
 
-#ifdef _DEBUG
+#if IsDebug()
 	// Null out our data...
 	memset( (IndexDesc_t*)this, 0, sizeof(IndexDesc_t) );
 #endif
@@ -2608,7 +2608,7 @@ inline void CIndexBuilder::EndModify( bool bSpewData )
 	m_pIndexBuffer = 0;
 	m_nMaxIndexCount = 0;
 
-#ifdef _DEBUG
+#if IsDebug()
 	// Null out our data...
 	memset( (IndexDesc_t*)this, 0, sizeof(IndexDesc_t) );
 #endif
@@ -2643,7 +2643,7 @@ inline void CIndexBuilder::AttachEnd()
 	m_pIndexBuffer = 0;
 	m_nMaxIndexCount = 0;
 
-#ifdef _DEBUG
+#if IsDebug()
 	// Null out our data...
 	memset( (IndexDesc_t*)this, 0, sizeof(IndexDesc_t) );
 #endif
@@ -2673,7 +2673,7 @@ inline void CIndexBuilder::AttachEndModify()
 	m_pIndexBuffer = 0;
 	m_nMaxIndexCount = 0;
 
-#ifdef _DEBUG
+#if IsDebug()
 	// Null out our data...
 	memset( (IndexDesc_t*)this, 0, sizeof(IndexDesc_t) );
 #endif
@@ -3368,7 +3368,7 @@ inline void CMeshBuilder::End( bool bSpewData, bool bDraw )
 		m_pMesh->Spew( m_VertexBuilder.VertexCount(), m_IndexBuilder.IndexCount(), *this );
 	}
 
-#ifdef _DEBUG
+#if IsDebug()
 	m_pMesh->ValidateData( m_VertexBuilder.VertexCount(), m_IndexBuilder.IndexCount(), *this );
 #endif
 
@@ -3385,7 +3385,7 @@ inline void CMeshBuilder::End( bool bSpewData, bool bDraw )
 
 	m_pMesh = 0;
 
-#ifdef _DEBUG
+#if IsDebug()
 	memset( (MeshDesc_t*)this, 0, sizeof(MeshDesc_t) );
 #endif
 }
@@ -3424,7 +3424,7 @@ inline void CMeshBuilder::EndModify( bool bSpewData )
 	{
 		m_pMesh->Spew( m_VertexBuilder.VertexCount(), m_IndexBuilder.IndexCount(), *this );
 	}
-#ifdef _DEBUG
+#if IsDebug()
 	m_pMesh->ValidateData( m_VertexBuilder.VertexCount(), m_IndexBuilder.IndexCount(), *this );
 #endif
 
@@ -3435,7 +3435,7 @@ inline void CMeshBuilder::EndModify( bool bSpewData )
 	m_IndexBuilder.AttachEndModify();
 	m_VertexBuilder.AttachEndModify();
 
-#ifdef _DEBUG
+#if IsDebug()
 	// Null out our pointers...
 	memset( (MeshDesc_t*)this, 0, sizeof(MeshDesc_t) );
 #endif

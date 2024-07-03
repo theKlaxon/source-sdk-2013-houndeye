@@ -598,7 +598,7 @@ const ConCommandBase *Cmd_ExecuteString (const char *text, cmd_source_t src)
 		}
 
 		// Allow cheat commands in singleplayer, debug, or multiplayer with sv_cheats on
-#ifndef _DEBUG
+#if !IsDebug()
 		if ( pCommand->IsBitSet( FCVAR_CHEAT ) )
 		{
 			if ( !Host_IsSinglePlayerGame() && sv_cheats.GetInt() == 0 )

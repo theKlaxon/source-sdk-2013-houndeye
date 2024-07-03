@@ -195,7 +195,7 @@ sub WriteHelperVar
 	local( $boolname ) = "m_b" . $name;
 	push @outputHeader, "private:\n";
 	push @outputHeader, "\tint $varname;\n";
-	push @outputHeader, "#ifdef _DEBUG\n";
+	push @outputHeader, "#if IsDebug()\n";
 	push @outputHeader, "\tbool $boolname;\n";
 	push @outputHeader, "#endif\n";
 	push @outputHeader, "public:\n";
@@ -204,7 +204,7 @@ sub WriteHelperVar
 	push @outputHeader, "\t{\n";
 	push @outputHeader, "\t\tAssert( i >= $min && i <= $max );\n";
 	push @outputHeader, "\t\t$varname = i;\n";
-	push @outputHeader, "#ifdef _DEBUG\n";
+	push @outputHeader, "#if IsDebug()\n";
 	push @outputHeader, "\t\t$boolname = true;\n";
 	push @outputHeader, "#endif\n";
 	push @outputHeader, "\t}\n";
@@ -213,7 +213,7 @@ sub WriteHelperVar
 	push @outputHeader, "\t{\n";
 #		push @outputHeader, "\t\tAssert( i >= $min && i <= $max );\n";
 	push @outputHeader, "\t\t$varname = i ? 1 : 0;\n";
-	push @outputHeader, "#ifdef _DEBUG\n";
+	push @outputHeader, "#if IsDebug()\n";
 	push @outputHeader, "\t\t$boolname = true;\n";
 	push @outputHeader, "#endif\n";
 	push @outputHeader, "\t}\n";
@@ -276,7 +276,7 @@ sub WriteDynamicHelperClasses
 		local( $name ) = @dynamicDefineNames[$i];
 		local( $boolname ) = "m_b" . $name;
 		local( $varname ) = "m_n" . $name;
-		push @outputHeader, "#ifdef _DEBUG\n";
+		push @outputHeader, "#if IsDebug()\n";
 		push @outputHeader, "\t\t$boolname = false;\n";
 		push @outputHeader, "#endif // _DEBUG\n";
 		push @outputHeader, "\t\t$varname = 0;\n";
@@ -295,7 +295,7 @@ sub WriteDynamicHelperClasses
 	}
 	push @outputHeader, "\t\t// Asserts to make sure that we are setting all of the combination vars.\n";
 
-	push @outputHeader, "#ifdef _DEBUG\n";
+	push @outputHeader, "#if IsDebug()\n";
 	if( scalar( @dynamicDefineNames ) > 0 )
 	{
 		push @outputHeader, "\t\tbool bAllDynamicVarsDefined = ";
@@ -368,14 +368,14 @@ sub WriteStaticHelperClasses
 		local( $varname ) = "m_n" . $name;
 		if ( length( $staticDefineInit{$name} ) )
 		  {
-			push @outputHeader, "#ifdef _DEBUG\n";
+			push @outputHeader, "#if IsDebug()\n";
 			push @outputHeader, "\t\t$boolname = true;\n";
 			push @outputHeader, "#endif // _DEBUG\n";
 			push @outputHeader, "\t\t$varname = $staticDefineInit{$name};\n";
 		  }
 		else
 		  {
-			push @outputHeader, "#ifdef _DEBUG\n";
+			push @outputHeader, "#if IsDebug()\n";
 			push @outputHeader, "\t\t$boolname = false;\n";
 			push @outputHeader, "#endif // _DEBUG\n";
 			push @outputHeader, "\t\t$varname = 0;\n";
@@ -392,7 +392,7 @@ sub WriteStaticHelperClasses
 	}
 	push @outputHeader, "\t\t// Asserts to make sure that we are setting all of the combination vars.\n";
 
-	push @outputHeader, "#ifdef _DEBUG\n";
+	push @outputHeader, "#if IsDebug()\n";
 	if( scalar( @staticDefineNames ) > 0 )
 	{
 		push @outputHeader, "\t\tbool bAllStaticVarsDefined = ";

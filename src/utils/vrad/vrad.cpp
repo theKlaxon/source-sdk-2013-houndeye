@@ -16,7 +16,7 @@
 #include "tools_minidump.h"
 #include "tier0/icommandline.h"
 
-#define ALLOWDEBUGOPTIONS ( 0 || _DEBUG )
+#define ALLOWDEBUGOPTIONS ( 0 || IsDebug() )
 
 static FileHandle_t pFpTrans = nullptr;
 

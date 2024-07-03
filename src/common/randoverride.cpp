@@ -11,9 +11,9 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-#ifdef GNUC
-#define __cdecl 
-#endif
+//#ifdef GNUC
+//#define __cdecl
+//#endif
 
 void __cdecl srand(unsigned int)
 {

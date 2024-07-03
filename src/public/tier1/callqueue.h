@@ -82,7 +82,7 @@ public:
 	CCallQueueT()
 		: m_bNoQueue( false )
 	{
-#ifdef _DEBUG
+#if IsDebug()
 		m_nCurSerialNumber = 0;
 		m_nBreakSerialNumber = (unsigned)-1;
 #endif
@@ -123,7 +123,7 @@ public:
 
 		while ( m_queue.PopItem( &pFunctor ) && pFunctor != NULL )
 		{
-#ifdef _DEBUG
+#if IsDebug()
 			if ( pFunctor->m_nUserID == m_nBreakSerialNumber)
 			{
 				m_nBreakSerialNumber = (unsigned)-1;
@@ -160,7 +160,7 @@ private:
 	{
 		if ( !m_bNoQueue )
 		{
-#ifdef _DEBUG
+#if IsDebug()
 			pFunctor->m_nUserID = m_nCurSerialNumber++;
 #endif
 			m_queue.PushItem( pFunctor );

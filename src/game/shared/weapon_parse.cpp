@@ -76,7 +76,7 @@ extern itemFlags_t g_ItemFlags[8];
 
 static CUtlDict< FileWeaponInfo_t*, unsigned short > m_WeaponInfoDatabase;
 
-#ifdef _DEBUG
+#if IsDebug()
 // used to track whether or not two weapons have been mistakenly assigned the wrong slot
 bool g_bUsedWeaponSlots[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS] = { { false } };
 
@@ -154,7 +154,7 @@ void ResetFileWeaponInfoDatabase( void )
 	}
 	m_WeaponInfoDatabase.RemoveAll();
 
-#ifdef _DEBUG
+#if IsDebug()
 	memset(g_bUsedWeaponSlots, 0, sizeof(g_bUsedWeaponSlots));
 #endif
 }
@@ -405,7 +405,7 @@ void FileWeaponInfo_t::Parse( KeyValues *pKeyValuesData, const char *szWeaponNam
 	m_bAllowFlipping = ( pKeyValuesData->GetInt( "AllowFlipping", 1 ) != 0 ) ? true : false;
 	m_bMeleeWeapon = ( pKeyValuesData->GetInt( "MeleeWeapon", 0 ) != 0 ) ? true : false;
 
-#if defined(_DEBUG) && defined(HL2_CLIENT_DLL)
+#if IsDebug() && defined(HL2_CLIENT_DLL)
 	// make sure two weapons aren't in the same slot & position
 	if ( iSlot >= MAX_WEAPON_SLOTS ||
 		iPosition >= MAX_WEAPON_POSITIONS )

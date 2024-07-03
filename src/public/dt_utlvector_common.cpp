@@ -47,7 +47,7 @@ char* AllocateUniqueDataTableName( bool bSendTable, const char *pFormat, ... )
 	va_end( marker );
 
 	// Make sure it's unique.
-#ifdef _DEBUG
+#if IsDebug()
 	// Have to allocate them here because if they're declared as straight global variables,
 	// their constructors won't have been called yet by the time we get in here.
 	if ( !g_STDict )

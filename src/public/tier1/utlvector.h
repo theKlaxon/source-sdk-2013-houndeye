@@ -510,7 +510,7 @@ private:
 		{
 			Q_memmove( &Element(elem), &Element(elem+num), numToMove * sizeof(T) );
 
-#ifdef _DEBUG
+#if IsDebug()
 			Q_memset( &Element(Size-num), 0xDD, num * sizeof(T) );
 #endif
 		}
@@ -834,7 +834,7 @@ void CUtlVector<T, A>::ShiftElementsLeft( int elem, int num )
 	{
 		Q_memmove( &Element(elem), &Element(elem+num), numToMove * sizeof(T) );
 
-#ifdef _DEBUG
+#if IsDebug()
 		Q_memset( &Element(m_Size-num), 0xDD, num * sizeof(T) );
 #endif
 	}

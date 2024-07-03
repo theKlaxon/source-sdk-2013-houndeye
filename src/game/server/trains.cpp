@@ -1245,7 +1245,7 @@ END_SEND_TABLE()
 //-----------------------------------------------------------------------------
 CFuncTrackTrain::CFuncTrackTrain()
 {
-#ifdef _DEBUG
+#if IsDebug()
 	m_controlMins.Init();
 	m_controlMaxs.Init();
 #endif

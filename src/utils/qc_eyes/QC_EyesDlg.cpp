@@ -7,7 +7,7 @@
 #include "QC_Eyes.h"
 #include "QC_EyesDlg.h"
 
-#ifdef _DEBUG
+#if IsDebug()
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;

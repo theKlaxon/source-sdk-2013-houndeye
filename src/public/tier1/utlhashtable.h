@@ -330,7 +330,7 @@ public:
 		::V_swap( m_nUsed, other.m_nUsed );
 	}
 
-#if _DEBUG
+#if IsDebug()
 	// Validate the integrity of the hashtable
 	void DbgCheckIntegrity() const;
 #endif
@@ -431,7 +431,7 @@ void CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT>::BumpEntry( uns
 	// Did we pick something closer to the ideal slot, leaving behind a
 	// FLAG_LAST bit on the current slot because we didn't scan past it?
 	if ( table[ idx ].flags_and_hash & FLAG_LAST ) {
-#ifdef _DEBUG
+#if IsDebug()
 		Assert( new_flags_and_hash & FLAG_LAST );
 		// Verify logic: we must have moved to an earlier slot, right?
 		uint offset = ( (uint) idx - chainid + slotmask + 1 ) & slotmask;
@@ -699,7 +699,7 @@ UtlHashHandle_t CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT>::Nex
 }
 
 
-#if _DEBUG
+#if IsDebug()
 template<typename KeyT, typename ValueT, typename KeyHashT, typename KeyIsEqualT, typename AltKeyT>
 void CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT>::DbgCheckIntegrity() const {
 	// Stress test the hash table as a test of both container functionality

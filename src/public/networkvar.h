@@ -19,7 +19,7 @@
 
 #define MyOffsetOf( type, var ) ( (int)&((type*)0)->var )
 
-#ifdef _DEBUG
+#if IsDebug()
 	extern bool g_bUseNetworkVars;
 	#define CHECK_USENETWORKVARS if(g_bUseNetworkVars)
 #else
@@ -50,7 +50,7 @@ inline int CheckDeclareClass_Access( T *, const char *pShouldBe )
 
 #ifndef _STATIC_LINKED
 #ifdef _MSC_VER
-#if defined(_DEBUG) && (_MSC_VER > 1200 )
+#if IsDebug() && (_MSC_VER > 1200 )
 	#define VALIDATE_DECLARE_CLASS 1
 #endif
 #endif

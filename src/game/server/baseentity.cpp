@@ -103,7 +103,7 @@ void SendProxy_AnimTime( const SendProp *pProp, const void *pStruct, const void 
 {
 	CBaseEntity *pEntity = (CBaseEntity *)pStruct;
 
-#if defined( _DEBUG )
+#if IsDebug()
 	CBaseAnimating *pAnimating = pEntity->GetBaseAnimating();
 	Assert( pAnimating );
 
@@ -350,7 +350,7 @@ CBaseEntity::CBaseEntity( bool bServerOnly )
 	static_assert( MOVETYPE_LAST < (1 << MOVETYPE_MAX_BITS) );
 	static_assert( MOVECOLLIDE_COUNT < (1 << MOVECOLLIDE_MAX_BITS) );
 
-#ifdef _DEBUG
+#if IsDebug()
 	// necessary since in debug, we initialize vectors to NAN for debugging
 	m_vecAngVelocity.Init();
 //	m_vecAbsAngVelocity.Init();
@@ -381,7 +381,7 @@ CBaseEntity::CBaseEntity( bool bServerOnly )
 	m_nSimulationTick = -1;
 	SetIdentityMatrix( m_rgflCoordinateFrame );
 	m_pBlocker = NULL;
-#if _DEBUG
+#if IsDebug()
 	m_iCurrentThinkContext = NO_THINK_CONTEXT;
 #endif
 	m_nWaterTouch = m_nSlimeTouch = 0;
@@ -519,7 +519,7 @@ void CBaseEntity::PostClientActive( void )
 //-----------------------------------------------------------------------------
 // Purpose: Verifies that this entity's data description is valid in debug builds.
 //-----------------------------------------------------------------------------
-#ifdef _DEBUG
+#if IsDebug()
 typedef CUtlVector< const char * >	KeyValueNameList_t;
 
 static void AddDataMapFieldNamesToList( KeyValueNameList_t &list, datamap_t *pDataMap )
@@ -572,7 +572,7 @@ void CBaseEntity::ValidateDataDescription(void)
 		}
 	}
 }
-#endif // _DEBUG
+#endif // IsDebug()
 
 
 //-----------------------------------------------------------------------------
@@ -3296,7 +3296,7 @@ void CBaseEntity::OnRestore()
 		}
 		if ( pChild != this )
 		{
-#if _DEBUG
+#if IsDebug()
 			// generally this means you've got something marked FCAP_DONT_SAVE
 			// in a hierarchy.  That's probably ok given this fixup, but the hierarhcy
 			// linked list is just saved/loaded in-place
@@ -3360,7 +3360,7 @@ void CBaseEntity::operator delete( void *pMem )
 #include "tier0/memdbgon.h"
 
 
-#ifdef _DEBUG
+#if IsDebug()
 void CBaseEntity::FunctionCheck( void *pFunction, const char *name )
 { 
 #ifdef USES_SAVERESTORE
@@ -3403,7 +3403,7 @@ void CBaseEntity::SetOwnerEntity( CBaseEntity* pOwner )
 
 void CBaseEntity::SetMoveType( MoveType_t val, MoveCollide_t moveCollide )
 {
-#ifdef _DEBUG
+#if IsDebug()
 	// Make sure the move type + move collide are compatible...
 	if ((val != MOVETYPE_FLY) && (val != MOVETYPE_FLYGRAVITY))
 	{
@@ -5952,7 +5952,7 @@ void CBaseEntity::SetLocalOrigin( const Vector& origin )
 	if (m_vecOrigin != origin)
 	{
 		// Sanity check to make sure the origin is valid.
-#ifdef _DEBUG
+#if IsDebug()
 		float largeVal = 1024 * 128;
 		Assert( origin.x >= -largeVal && origin.x <= largeVal );
 		Assert( origin.y >= -largeVal && origin.y <= largeVal );

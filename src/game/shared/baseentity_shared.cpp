@@ -297,11 +297,11 @@ void CBaseEntity::ParseMapData( CEntityMapData *mapData )
 	char keyName[MAPKEY_MAXLENGTH];
 	char value[MAPKEY_MAXLENGTH];
 
-	#ifdef _DEBUG
+	#if IsDebug()
 	#ifdef GAME_DLL
 	ValidateDataDescription();
 	#endif // GAME_DLL
-	#endif // _DEBUG
+	#endif IsDebug()
 
 	// loop through all keys in the data block and pass the info back into the object
 	if ( mapData->GetFirstKey(keyName, value) )
@@ -760,7 +760,7 @@ int CBaseEntity::RegisterThinkContext( const char *szContext )
 BASEPTR	CBaseEntity::ThinkSet( BASEPTR func, float thinkTime, const char *szContext )
 {
 #if !defined( CLIENT_DLL )
-#ifdef _DEBUG
+#if IsDebug()
 #ifdef GNUC
 	static_assert( sizeof(func) == 8 );
 #else
@@ -774,7 +774,7 @@ BASEPTR	CBaseEntity::ThinkSet( BASEPTR func, float thinkTime, const char *szCont
 	{
 		m_pfnThink = func;
 #if !defined( CLIENT_DLL )
-#ifdef _DEBUG
+#if IsDebug()
 		FunctionCheck( *(reinterpret_cast<void **>(&m_pfnThink)), "BaseThinkFunc" ); 
 #endif
 #endif
@@ -790,7 +790,7 @@ BASEPTR	CBaseEntity::ThinkSet( BASEPTR func, float thinkTime, const char *szCont
 
 	m_aThinkFunctions[ iIndex ].m_pfnThink = func;
 #if !defined( CLIENT_DLL )
-#ifdef _DEBUG
+#if IsDebug()
 	FunctionCheck( *(reinterpret_cast<void **>(&m_aThinkFunctions[ iIndex ].m_pfnThink)), szContext ); 
 #endif
 #endif
@@ -815,7 +815,7 @@ void CBaseEntity::SetNextThink( float thinkTime, const char *szContext )
 	int iIndex = 0;
 	if ( !szContext )
 	{
-#ifdef _DEBUG
+#if IsDebug()
 		if ( m_iCurrentThinkContext != NO_THINK_CONTEXT )
 		{
 			Msg( "Warning: Setting base think function within think context %s\n", STRING(m_aThinkFunctions[m_iCurrentThinkContext].m_iszContext) );
@@ -851,7 +851,7 @@ float CBaseEntity::GetNextThink( const char *szContext )
 	int iIndex = 0;
 	if ( !szContext )
 	{
-#ifdef _DEBUG
+#if IsDebug()
 		if ( m_iCurrentThinkContext != NO_THINK_CONTEXT )
 		{
 			Msg( "Warning: Getting base nextthink time within think context %s\n", STRING(m_aThinkFunctions[m_iCurrentThinkContext].m_iszContext) );
@@ -886,7 +886,7 @@ int	CBaseEntity::GetNextThinkTick( const char *szContext /*= NULL*/ )
 	int iIndex = 0;
 	if ( !szContext )
 	{
-#ifdef _DEBUG
+#if IsDebug()
 		if ( m_iCurrentThinkContext != NO_THINK_CONTEXT )
 		{
 			Msg( "Warning: Getting base nextthink time within think context %s\n", STRING(m_aThinkFunctions[m_iCurrentThinkContext].m_iszContext) );
@@ -925,7 +925,7 @@ float CBaseEntity::GetLastThink( const char *szContext )
 	int iIndex = 0;
 	if ( !szContext )
 	{
-#ifdef _DEBUG
+#if IsDebug()
 		if ( m_iCurrentThinkContext != NO_THINK_CONTEXT )
 		{
 			Msg( "Warning: Getting base lastthink time within think context %s\n", STRING(m_aThinkFunctions[m_iCurrentThinkContext].m_iszContext) );
@@ -949,7 +949,7 @@ int CBaseEntity::GetLastThinkTick( const char *szContext /*= NULL*/ )
 	int iIndex = 0;
 	if ( !szContext )
 	{
-#ifdef _DEBUG
+#if IsDebug()
 		if ( m_iCurrentThinkContext != NO_THINK_CONTEXT )
 		{
 			Msg( "Warning: Getting base lastthink time within think context %s\n", STRING(m_aThinkFunctions[m_iCurrentThinkContext].m_iszContext) );

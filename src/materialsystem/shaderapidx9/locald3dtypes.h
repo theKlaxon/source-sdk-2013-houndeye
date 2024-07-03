@@ -50,7 +50,7 @@ public:
 
 
 #if !defined( DX_TO_GL_ABSTRACTION )
-#ifdef _DEBUG
+#if IsDebug()
 #define D3D_DEBUG_INFO 1
 #endif
 #endif

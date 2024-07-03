@@ -444,7 +444,7 @@ void CWeaponMolotov::ItemPostFrame( void )
 //-----------------------------------------------------------------------------
 CWeaponMolotov::CWeaponMolotov( void )
 {
-#ifdef _DEBUG
+#if IsDebug()
 	m_vecTossVelocity.Init();
 #endif
 

@@ -125,14 +125,14 @@ void CInput::ActivateMouse (void)
 	{
 		if ( m_fMouseParmsValid )
 		{
-#if defined( PLATFORM_WINDOWS )
+#if IsWindows()
 			m_fRestoreSPI = SystemParametersInfo (SPI_SETMOUSE, 0, m_rgNewMouseParms, 0) ? true : false;
 #endif
 		}
 		m_fMouseActive = true;
 
 		ResetMouse();
-#if !defined( PLATFORM_WINDOWS )
+#if !IsWindows()
 		int dx, dy;
 		engine->GetMouseDelta( dx, dy, true );
 #endif
@@ -161,13 +161,13 @@ void CInput::DeactivateMouse (void)
 	{
 		if ( m_fRestoreSPI )
 		{
-#if defined( PLATFORM_WINDOWS )
+#if IsWindows()
 			SystemParametersInfo( SPI_SETMOUSE, 0, m_rgOrigMouseParms, 0 );
 #endif
 		}
 		m_fMouseActive = false;
 		vgui::surface()->SetCursor( vgui::dc_arrow );
-#if !defined( PLATFORM_WINDOWS )
+#if !IsWindows()
 		// now put the mouse back in the middle of the screen
 		ResetMouse();
 #endif

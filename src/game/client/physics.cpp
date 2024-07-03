@@ -68,9 +68,9 @@ public:
 
 	// IPhysicsCollisionSolver
 	int		ShouldCollide( IPhysicsObject *pObj0, IPhysicsObject *pObj1, void *pGameData0, void *pGameData1 );
-#if _DEBUG
-	int		ShouldCollide_2( IPhysicsObject *pObj0, IPhysicsObject *pObj1, void *pGameData0, void *pGameData1 );
-#endif
+	#if IsDebug()
+		int		ShouldCollide_2( IPhysicsObject *pObj0, IPhysicsObject *pObj1, void *pGameData0, void *pGameData1 );
+	#endif
 	// debugging collision problem in TF2
 	int		ShouldSolvePenetration( IPhysicsObject *pObj0, IPhysicsObject *pObj1, void *pGameData0, void *pGameData1, float dt );
 	bool	ShouldFreezeObject( IPhysicsObject *pObject ) { return true; }
@@ -192,7 +192,7 @@ void PhysicsReset()
 ConVar cl_ragdoll_collide( "cl_ragdoll_collide", "0" );
 
 int CCollisionEvent::ShouldCollide( IPhysicsObject *pObj0, IPhysicsObject *pObj1, void *pGameData0, void *pGameData1 )
-#if _DEBUG
+#if IsDebug()
 {
 	int x0 = ShouldCollide_2(pObj0, pObj1, pGameData0, pGameData1);
 	int x1 = ShouldCollide_2(pObj1, pObj0, pGameData1, pGameData0);
@@ -435,7 +435,7 @@ void CPhysicsSystem::PhysicsSimulate()
 		tmZone( TELEMETRY_LEVEL0, TMZF_NONE, "%s %d", __FUNCTION__, physenv->GetActiveObjectCount() );
 
 		g_Collisions.BufferTouchEvents( true );
-#ifdef _DEBUG
+#if IsDebug()
 		physenv->DebugCheckContacts();
 #endif
 		physenv->Simulate( frametime * cl_phys_timescale.GetFloat() );

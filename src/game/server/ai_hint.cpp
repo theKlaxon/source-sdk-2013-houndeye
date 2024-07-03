@@ -779,7 +779,7 @@ void CAI_HintManager::DumpHints()
 //-----------------------------------------------------------------------------
 void CAI_HintManager::ValidateHints()
 {
-#ifdef _DEBUG
+#if IsDebug()
 	int nTyped = 0;
 	FOR_EACH_VEC( gm_AllHints, i )
 	{

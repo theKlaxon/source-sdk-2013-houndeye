@@ -11,7 +11,7 @@
 #pragma once
 #endif
 
-#if defined( _DEBUG ) && defined( GAME_DLL )
+#if IsDebug() && defined( GAME_DLL )
 #include "tier0/dbg.h"
 #include "cbase.h"
 #endif

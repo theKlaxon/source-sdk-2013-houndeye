@@ -197,7 +197,7 @@ void Vector2DLerp(const Vector2D& src1, const Vector2D& src2, vec_t t, Vector2D&
 
 inline Vector2D::Vector2D(void)									
 { 
-#ifdef _DEBUG
+#if IsDebug()
 	// Initialize to NAN to catch errors
 	x = y = VEC_T_NAN;
 #endif

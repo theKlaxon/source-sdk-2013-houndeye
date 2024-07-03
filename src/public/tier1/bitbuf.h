@@ -22,7 +22,7 @@
 #include "tier0/dbg.h"
 
 
-#if _DEBUG
+#if IsDebug()
 #define BITBUF_INLINE inline
 #else
 #define BITBUF_INLINE ALWAYS_INLINE
@@ -56,7 +56,7 @@ typedef enum
 typedef void (*BitBufErrorHandler)( BitBufErrorType errorType, const char *pDebugName );
 
 
-#if defined( _DEBUG )
+#if IsDebug()
 	extern void InternalBitBufErrorHandler( BitBufErrorType errorType, const char *pDebugName );
 	#define CallErrorHandler( errorType, pDebugName ) InternalBitBufErrorHandler( errorType, pDebugName );
 #else
@@ -389,7 +389,7 @@ inline void	bf_write::WriteOneBitAt( int iBit, int nValue )
 
 BITBUF_INLINE void bf_write::WriteUBitLong( unsigned int curData, int numbits, bool bCheckRange ) RESTRICT
 {
-#ifdef _DEBUG
+#if IsDebug()
 	// Make sure it doesn't overflow.
 	if ( bCheckRange && numbits < 32 )
 	{

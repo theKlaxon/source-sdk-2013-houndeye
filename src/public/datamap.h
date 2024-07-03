@@ -298,9 +298,9 @@ struct datamap_t
 	bool				packed_offsets_computed;
 	int					packed_size;
 
-#if defined( _DEBUG )
+#if IsDebug()
 	bool				bValidityChecked;
-#endif // _DEBUG
+#endif
 };
 
 

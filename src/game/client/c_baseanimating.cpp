@@ -1254,7 +1254,7 @@ void C_BaseAnimating::GetPoseParameters( CStudioHdr* pStudioHdr, float poseParam
 	}
 
 
-	#if 0// _DEBUG
+	#if 0// IsDebug()
 		if (/* Q_stristr( pStudioHdr->pszName(), r_sequence_debug.GetString()) != nullptr || */ r_sequence_debug.GetInt() == entindex()) {
 			DevMsgRT( "%s\n", pStudioHdr->pszName() );
 			DevMsgRT( "%6.2f : ", gpGlobals->curtime );
@@ -1628,7 +1628,7 @@ void C_BaseAnimating::MaintainSequenceTransitions( IBoneSetup& boneSetup, float 
 		flCycle = blend->m_flCycle + dt * blend->m_flPlaybackRate * GetSequenceCycleRate( boneSetup.GetStudioHdr(), blend->m_nSequence );
 		flCycle = ClampCycle( flCycle, IsSequenceLooping( boneSetup.GetStudioHdr(), blend->m_nSequence ) );
 
-		#if 1// _DEBUG
+		#if 1// IsDebug()
 			if ( /*Q_stristr( hdr->pszName(), r_sequence_debug.GetString()) != nullptr || */ r_sequence_debug.GetInt() == entindex() ) {
 				DevMsgRT( "%8.4f : %30s : %5.3f : %4.2f  +\n", gpGlobals->curtime, boneSetup.GetStudioHdr()->pSeqdesc( blend->m_nSequence ).pszLabel(), flCycle, (float) blend->m_flWeight );
 			}
@@ -1736,7 +1736,7 @@ void C_BaseAnimating::StandardBlendingRules( CStudioHdr* hdr, Vector pos[], Quat
 	// build root animation
 	float fCycle = GetCycle();
 
-	#if 1//_DEBUG
+	#if 1 // IsDebug()
 		if ( /* Q_stristr( hdr->pszName(), r_sequence_debug.GetString()) != nullptr || */ r_sequence_debug.GetInt() == entindex() ) {
 			DevMsgRT( "%8.4f : %30s : %5.3f : %4.2f\n", currentTime, hdr->pSeqdesc( GetSequence() ).pszLabel(), fCycle, 1.0 );
 		}

@@ -6,7 +6,6 @@
 //
 //=============================================================================//
 #pragma once
-
 #include "basetypes.h"
 #include "dbgflag.h"
 #include "platform.h"
@@ -14,9 +13,7 @@
 #include <cstdarg>
 #include <cstdio>
 
-#if IsPosix()
-	#define __cdecl
-#endif
+
 
 //-----------------------------------------------------------------------------
 // dll export stuff
@@ -246,22 +243,22 @@ DBG_INTERFACE bool HushAsserts();
 	#define DBGFLAG_ASSERTFATAL
 	#define DBGFLAG_ASSERTDEBUG
 #else
-	#define _AssertMsg( _exp, _msg, _executeExp, _bFatal )                                                 \
-		do {                                                                                               \
-			if ( !( _exp ) ) {                                                                             \
-				_SpewInfo( SPEW_ASSERT, __TFILE__, __LINE__ );                                             \
-				SpewRetval_t ret = _SpewMessage( "%s", static_cast<const char*>( _msg ) );                 \
-				CallAssertFailedNotifyFunc( __TFILE__, __LINE__, _msg );                                   \
-				_executeExp;                                                                               \
-				if ( ret == SPEW_DEBUGGER ) {                                                              \
-					if ( !ShouldUseNewAssertDialog() || DoNewAssertDialog( __TFILE__, __LINE__, _msg ) ) { \
-						DebuggerBreak();                                                                   \
-					}                                                                                      \
-					if ( _bFatal ) {                                                                       \
-						_ExitOnFatalAssert( __TFILE__, __LINE__ );                                         \
-					}                                                                                      \
-				}                                                                                          \
-			}                                                                                              \
+	#define _AssertMsg( _exp, _msg, _executeExp, _bFatal )                                                \
+		do {                                                                                              \
+			if ( !( _exp ) ) {                                                                            \
+				_SpewInfo( SPEW_ASSERT, __FILE__, __LINE__ );                                             \
+				SpewRetval_t ret{ _SpewMessage( "%s", static_cast<const char*>( _msg ) ) };               \
+				CallAssertFailedNotifyFunc( __FILE__, __LINE__, _msg );                                   \
+				_executeExp;                                                                              \
+				if ( ret == SPEW_DEBUGGER ) {                                                             \
+					if ( !ShouldUseNewAssertDialog() || DoNewAssertDialog( __FILE__, __LINE__, _msg ) ) { \
+						DebuggerBreak();                                                                  \
+					}                                                                                     \
+					if ( _bFatal ) {                                                                      \
+						_ExitOnFatalAssert( __FILE__, __LINE__ );                                         \
+					}                                                                                     \
+				}                                                                                         \
+			}                                                                                             \
 		} while ( 0 )
 
 	#define _AssertMsgOnce( _exp, _msg, _bFatal )                        \
@@ -486,16 +483,16 @@ DBG_INTERFACE void COM_TimestampedLog( PRINTF_FORMAT_STRING char const* fmt, ...
 		} else {                        \
 		}
 	#define DBG_BREAK() DebuggerBreak() /* defined in platform.h */
-#else                                   /* not _DEBUG */
+#else                                   /* not IsDebug() */
 	#define DBG_CODE( _code ) ( (void) 0 )
 	#define DBG_CODE_NOSCOPE( _code )
 	#define DBG_DCODE( _g, _l, _code ) ( (void) 0 )
 	#define DBG_BREAK() ( (void) 0 )
-#endif /* _DEBUG */
+#endif /* IsDebug() */
 
 //-----------------------------------------------------------------------------
 
-#if !defined( _RETAIL )
+#if !IsRetail()
 	class CScopeMsg {
 	public:
 		explicit CScopeMsg( const char* pszScope ) {
@@ -515,8 +512,7 @@ DBG_INTERFACE void COM_TimestampedLog( PRINTF_FORMAT_STRING char const* fmt, ...
 
 //-----------------------------------------------------------------------------
 // Macro to assist in asserting constant invariants during compilation
-
-#if defined( _DEBUG )
+#if IsDebug()
 	template<typename DEST_POINTER_TYPE, typename SOURCE_POINTER_TYPE>
 	inline DEST_POINTER_TYPE assert_cast( SOURCE_POINTER_TYPE* pSource ) {
 		Assert( static_cast<DEST_POINTER_TYPE>( pSource ) == dynamic_cast<DEST_POINTER_TYPE>( pSource ) );
@@ -537,9 +533,12 @@ DBG_INTERFACE void _AssertValidReadWritePtr( void* ptr, int count = 1 );
 DBG_INTERFACE void AssertValidStringPtr( const tchar* ptr, int maxchar = 0xFFFFFF );
 
 #if defined( DBGFLAG_ASSERT )
-	ALWAYS_INLINE void AssertValidReadPtr( const void* ptr, int count = 1 ) { _AssertValidReadPtr( (void*) ptr, count ); }
-	ALWAYS_INLINE void AssertValidWritePtr( const void* ptr, int count = 1 ) { _AssertValidWritePtr( (void*) ptr, count ); }
-	ALWAYS_INLINE void AssertValidReadWritePtr( const void* ptr, int count = 1 ) { _AssertValidReadWritePtr( (void*) ptr, count ); }
+	ALWAYS_INLINE
+	void AssertValidReadPtr( const void* ptr, int count = 1 ) { _AssertValidReadPtr( (void*) ptr, count ); }
+	ALWAYS_INLINE
+	void AssertValidWritePtr( const void* ptr, int count = 1 ) { _AssertValidWritePtr( (void*) ptr, count ); }
+	ALWAYS_INLINE
+	void AssertValidReadWritePtr( const void* ptr, int count = 1 ) { _AssertValidReadWritePtr( (void*) ptr, count ); }
 #else
 	ALWAYS_INLINE void AssertValidReadPtr( const void* ptr, int count = 1 ) {}
 	ALWAYS_INLINE void AssertValidWritePtr( const void* ptr, int count = 1 ) {}
@@ -552,7 +551,7 @@ DBG_INTERFACE void AssertValidStringPtr( const tchar* ptr, int maxchar = 0xFFFFF
 //-----------------------------------------------------------------------------
 // Macro to protect functions that are not reentrant
 
-#if defined( _DEBUG )
+#if IsDebug()
 	class CReentryGuard {
 	public:
 		explicit CReentryGuard( int* pSemaphore )
@@ -583,7 +582,7 @@ DBG_INTERFACE void AssertValidStringPtr( const tchar* ptr, int maxchar = 0xFFFFF
 #include "tier0/valve_off.h"
 class CDbgFmtMsg {
 public:
-	CDbgFmtMsg( PRINTF_FORMAT_STRING const tchar* pszFormat, ... ) FMTFUNCTION( 2, 3 ) {
+	explicit CDbgFmtMsg( PRINTF_FORMAT_STRING const tchar* pszFormat, ... ) FMTFUNCTION( 2, 3 ) { // NOLINT(*-pro-type-member-init)
 		va_list arg_ptr;
 
 		va_start( arg_ptr, pszFormat );
@@ -593,7 +592,7 @@ public:
 		m_szBuf[ sizeof( m_szBuf ) - 1 ] = 0;
 	}
 
-	operator const tchar*() const {
+	operator const tchar*() const { // NOLINT(*-explicit-constructor)
 		return m_szBuf;
 	}
 
@@ -606,10 +605,8 @@ private:
 //
 // Purpose: Embed debug info in each file.
 //
-#if defined( _WIN32 )
-	#if defined( _DEBUG )
-		#pragma comment( compiler )
-	#endif
+#if IsWindows() && IsDebug()
+	#pragma comment( compiler )
 #endif
 
 //-----------------------------------------------------------------------------
@@ -617,7 +614,7 @@ private:
 // Purpose: Wrap around a variable to create a simple place to put a breakpoint
 //
 
-#if defined( _DEBUG )
+#if IsDebug()
 	template<class Type>
 	class CDataWatcher {
 	public:
@@ -671,15 +668,13 @@ private:
 			return ( *this -= 1 );
 		}
 
-		Type operator++( int )// postfix version..
-		{
+		Type operator++( int ) {// postfix version..
 			Type val = m_Value;
 			( *this += 1 );
 			return val;
 		}
 
-		Type operator--( int )// postfix version..
-		{
+		Type operator--( int ) { // postfix version..
 			Type val = m_Value;
 			( *this -= 1 );
 			return val;
@@ -711,7 +706,7 @@ private:
 	template<class Type>
 	class CDataWatcher {
 	private:
-		CDataWatcher();// refuse to compile in non-debug builds
+		CDataWatcher(); // refuse to compile in non-debug builds
 	};
 #endif
 

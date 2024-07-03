@@ -1263,7 +1263,7 @@ void CClientLeafSystem::RenderableChanged( ClientRenderHandle_t handle )
 		m_Renderables[handle].m_Flags |= RENDER_FLAGS_HASCHANGED;
 		m_DirtyRenderables.AddToTail( handle );
 	}
-#if _DEBUG
+#if IsDebug()
 	else
 	{
 		// It had better be in the list
@@ -1459,7 +1459,7 @@ void CClientLeafSystem::ComputeTranslucentRenderLeaf( int count, const LeafIndex
 inline void AddRenderableToRenderList( CClientRenderablesList &renderList, IClientRenderable *pRenderable, 
 	int iLeaf, RenderGroup_t group,	ClientRenderHandle_t renderHandle, bool bTwoPass = false )
 {
-#ifdef _DEBUG
+#if IsDebug()
 	if (cl_drawleaf.GetInt() >= 0)
 	{
 		if (iLeaf != cl_drawleaf.GetInt())

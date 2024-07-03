@@ -184,9 +184,9 @@ ConVar	sk_player_arm( "sk_player_arm","1" );
 ConVar	sk_player_leg( "sk_player_leg","1" );
 
 //ConVar	player_usercommand_timeout( "player_usercommand_timeout", "10", 0, "After this many seconds without a usercommand from a player, the client is kicked." );
-#ifdef _DEBUG
+#if IsDebug()
 ConVar  sv_player_net_suppress_usercommands( "sv_player_net_suppress_usercommands", "0", FCVAR_CHEAT, "For testing usercommand hacking sideeffects. DO NOT SHIP" );
-#endif // _DEBUG
+#endif IsDebug()
 ConVar  sv_player_display_usercommand_errors( "sv_player_display_usercommand_errors", "0", FCVAR_CHEAT, "1 = Display warning when command values are out-of-range. 2 = Spew invalid ranges." );
 
 ConVar  player_debug_print_damage( "player_debug_print_damage", "0", FCVAR_CHEAT, "When true, print amount and type of all damage received by player to console." );
@@ -550,7 +550,7 @@ CBasePlayer::CBasePlayer( )
 {
 	AddEFlags( EFL_NO_AUTO_EDICT_ATTACH );
 
-#ifdef _DEBUG
+#if IsDebug()
 	m_vecAutoAim.Init();
 	m_vecAdditionalPVSOrigin.Init();
 	m_vecCameraPVSOrigin.Init();
@@ -3312,12 +3312,12 @@ void CBasePlayer::PhysicsSimulate( void )
 
 	float vphysicsArrivalTime = TICK_INTERVAL;
 
-#ifdef _DEBUG
+#if IsDebug()
 	if ( sv_player_net_suppress_usercommands.GetBool() )
 	{
 		commandsToRun = 0;
 	}
-#endif // _DEBUG
+#endif IsDebug()
 
 	int numUsrCmdProcessTicksMax = sv_maxusrcmdprocessticks.GetInt();
 	if ( gpGlobals->maxClients != 1 && numUsrCmdProcessTicksMax ) // don't apply this filter in SP games
@@ -6320,7 +6320,7 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 bool CBasePlayer::ClientCommand( const CCommand &args )
 {
 	const char *cmd = args[0];
-#ifdef _DEBUG
+#if IsDebug()
 	if( stricmp( cmd, "test_SmokeGrenade" ) == 0 )
 	{
 		if ( sv_cheats && sv_cheats->GetBool() )
@@ -6344,7 +6344,7 @@ bool CBasePlayer::ClientCommand( const CCommand &args )
 		}
 	}
 	else
-#endif // _DEBUG
+#endif IsDebug()
 	if( stricmp( cmd, "vehicleRole" ) == 0 )
 	{
 		// Get the vehicle role value.

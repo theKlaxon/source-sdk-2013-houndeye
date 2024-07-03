@@ -198,9 +198,9 @@ ConVar mp_bonusroundtime_final( "mp_bonusroundtime_final", "15", FCVAR_REPLICATE
 ConVar mp_stalemate_meleeonly( "mp_stalemate_meleeonly", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Restrict everyone to melee weapons only while in Sudden Death." );
 ConVar mp_forceautoteam( "mp_forceautoteam", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Automatically assign players to teams when joining." );
 
-#if defined( _DEBUG ) || defined( STAGING_ONLY )
+#if IsDebug() || defined( STAGING_ONLY )
 ConVar mp_developer( "mp_developer", "0", FCVAR_ARCHIVE | FCVAR_REPLICATED | FCVAR_NOTIFY, "1: basic conveniences (instant respawn and class change, etc).  2: add combat conveniences (infinite ammo, buddha, etc)" );
-#endif // _DEBUG || STAGING_ONLY
+#endif // IsDebug() || defined( STAGING_ONLY )
 
 #ifdef GAME_DLL
 ConVar mp_showroundtransitions( "mp_showroundtransitions", "0", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY, "Show gamestate round transitions." );
@@ -860,10 +860,10 @@ void CTeamplayRoundBasedRules::CheckWaitingForPlayers( void )
 
 	bool bCancelWait = ( mp_waitingforplayers_cancel.GetBool() || IsInItemTestingMode() ) && !IsInTournamentMode();
 
-#if defined( _DEBUG ) || defined( STAGING_ONLY )
+#if IsDebug() || defined( STAGING_ONLY )
 	if ( mp_developer.GetBool() )
 		bCancelWait = true;
-#endif // _DEBUG || STAGING_ONLY
+#endif
 
 	if ( bCancelWait )
 	{
@@ -2983,10 +2983,10 @@ void CTeamplayRoundBasedRules::BalanceTeams( bool bRequireSwitcheesToBeDead )
 		return;
 	}
 
-#if defined( _DEBUG ) || defined( STAGING_ONLY )
+#if IsDebug() || defined( STAGING_ONLY )
 	if ( mp_developer.GetBool() )
 		return;
-#endif // _DEBUG || STAGING_ONLY
+#endif // IsDebug() || defined( STAGING_ONLY )
 
 	if ( IsInTraining() || IsInItemTestingMode() )
 	{
@@ -3438,7 +3438,7 @@ bool CTeamplayRoundBasedRules::ShouldBalanceTeams( void )
 #if defined( _DEBUG ) || defined( STAGING_ONLY )
 	if ( mp_developer.GetBool() )
 		return false;
-#endif // _DEBUG || STAGING_ONLY
+#endif IsDebug() || STAGING_ONLY
 
 	if ( mp_teams_unbalance_limit.GetInt() <= 0 )
 		return false;
@@ -3459,10 +3459,10 @@ bool CTeamplayRoundBasedRules::WouldChangeUnbalanceTeams( int iNewTeam, int iCur
 	if ( ShouldBalanceTeams() == false )
 		return false;
 
-#if defined( _DEBUG ) || defined( STAGING_ONLY )
+#if IsDebug() || defined( STAGING_ONLY )
 	if ( mp_developer.GetBool() )
 		return false;
-#endif // _DEBUG || STAGING_ONLY
+#endif
 
 	// if they are joining a non-playing team, allow
 	if ( iNewTeam < FIRST_GAME_TEAM )
@@ -3736,7 +3736,7 @@ void CTeamplayRoundBasedRules::GetAllPlayersLobbyInfo( CUtlVector<LobbyPlayerInf
 				{
 					Assert( mbr == NULL );
 					mbr = &vecPlayers[j];
-					#ifndef _DEBUG
+					#if !IsDebug()
 						break; // in debug, keep looking so the assert above can fire
 					#endif
 				}

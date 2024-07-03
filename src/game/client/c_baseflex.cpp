@@ -126,7 +126,7 @@ C_BaseFlex::C_BaseFlex() :
 #endif
 	m_LocalToGlobal( 0, 0, FlexSettingLessFunc )
 {
-#ifdef _DEBUG
+#if IsDebug()
 	((Vector&)m_viewtarget).Init();
 #endif
 

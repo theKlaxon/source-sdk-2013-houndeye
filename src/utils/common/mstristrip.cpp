@@ -27,7 +27,7 @@
 #include <vector>
 
 #include <assert.h>
-#ifdef _DEBUG
+#if IsDebug()
 	#if defined( _WIN32 )
 		#include <crtdbg.h>
 	#else
@@ -617,7 +617,7 @@ void CStripper::BuildStrips(STRIPLIST *pstriplist, int maxlen, bool flookahead)
             fstartcw = !fstartcw;
     }
 
-#ifdef _DEBUG
+#if IsDebug()
     // make sure all tris are used
     for(int t = 0; t < m_numtris; t++)
         assert(m_pused[t]);
@@ -760,7 +760,7 @@ bool CVertCache::Add(int strip, int vertindex)
     return true;
 }
 
-#ifdef _DEBUG
+#if IsDebug()
 //=========================================================================
 // Turn on c runtime leak checking, etc.
 //=========================================================================
@@ -806,7 +806,7 @@ int Stripify(int numtris, WORD *ptriangles, int *pnumindices, WORD **ppstripindi
     if(!numtris || !ptriangles)
         return 0;
 
-#ifdef _DEBUG
+#if IsDebug()
 //    EnableLeakChecking();
 #endif
 

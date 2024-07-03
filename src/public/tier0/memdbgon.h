@@ -10,11 +10,10 @@
 // SPECIAL NOTE! This file must *not* use include guards; we need to be able
 // to include this potentially multiple times (since we can deactivate debugging
 // by including memdbgoff.h)
+// SPECIAL NOTE #2: This must be the final include in a .cpp or .h file!!!
 
 #if !defined(STEAM) && !defined(NO_MALLOC_OVERRIDE)
-	// SPECIAL NOTE #2: This must be the final include in a .cpp or .h file!!!
-
-	#if defined(_DEBUG) && !defined(USE_MEM_DEBUG)
+	#if IsDebug() && !defined(USE_MEM_DEBUG)
 		#define USE_MEM_DEBUG 1
 	#endif
 
@@ -23,7 +22,7 @@
 	#endif
 
 	// If debug build or ndebug and not already included MS custom alloc files, or already included this file
-	#if ( defined(_DEBUG) || !defined(_INC_CRTDBG) ) || defined(MEMDBGON_H)
+	#if ( IsDebug() || !defined(_INC_CRTDBG) ) || defined(MEMDBGON_H)
 		#include "basetypes.h"
 		#ifdef _WIN32
 			#include <tchar.h>
@@ -57,7 +56,7 @@
 					void* operator new[]( size_t nSize, int blah, const char *pFileName, int nLine );
 				#endif
 				// Include crtdbg.h and make sure _DEBUG is set to 1.
-				#if !defined(_DEBUG)
+				#if !IsDebug()
 					#define _DEBUG 1
 					#include <crtdbg.h>
 					#undef _DEBUG
@@ -219,17 +218,15 @@
 		#endif // USE_MEM_DEBUG
 
 		#define MEMDBGON_H // Defined here so can be used above
-
 	#else
 		#if defined(USE_MEM_DEBUG)
 			#ifdef _STATIC_LINKED
-				#pragma message ("Note: file includes crtdbg.h directly, therefore will cannot use memdbgon.h in non-debug build")
+				#pragma message("Note: file includes crtdbg.h directly, therefore will not be able to use memdbgon.h in non-debug build")
 			#else
-				#error "Error: file includes crtdbg.h directly, therefore will cannot use memdbgon.h in non-debug build. Not recoverable in static build"
+				#error "Error: file includes crtdbg.h directly, therefore will not be able to use memdbgon.h in non-debug build. Not recoverable in static build"
 			#endif
 		#endif
 	#endif // _INC_CRTDBG
-
 #else
 	// Needed for MEM_ALLOC_CREDIT(), MemAlloc_Alloc(), etc.
 	#include "memalloc.h"

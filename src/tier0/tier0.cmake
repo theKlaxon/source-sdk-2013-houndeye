@@ -26,7 +26,6 @@ set( TIER0_SOURCE_FILES
 	"${SRCDIR}/public/tier0/EventMasks.h"
 	"${SRCDIR}/public/tier0/EventModes.h"
 	"${SRCDIR}/public/tier0/fasttimer.h"
-	"${SRCDIR}/public/tier0/ia32detect.h"
 	"${SRCDIR}/public/tier0/icommandline.h"
 	"${SRCDIR}/public/tier0/IOCTLCodes.h"
 	"${SRCDIR}/public/tier0/K8PerformanceCounters.h"

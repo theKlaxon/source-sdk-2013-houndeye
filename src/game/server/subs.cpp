@@ -154,7 +154,7 @@ END_DATADESC()
 
 CBaseToggle::CBaseToggle()
 {
-#ifdef _DEBUG
+#if IsDebug()
 	// necessary since in debug, we initialize vectors to NAN for debugging
 	m_vecPosition1.Init();
 	m_vecPosition2.Init();

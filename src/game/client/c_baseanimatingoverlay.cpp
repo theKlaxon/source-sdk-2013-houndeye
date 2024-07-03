@@ -232,7 +232,7 @@ void C_BaseAnimatingOverlay::CheckForLayerChanges( CStudioHdr *hdr, float curren
 		if ( pHead && pPrev1 && pHead->m_nSequence != pPrev1->m_nSequence )
 		{
 			bLayersChanged = true;
-	#if 1 // _DEBUG
+	#if 1 // IsDebug()
 			if (/* Q_stristr( hdr->pszName(), r_sequence_debug.GetString()) != NULL || */ r_sequence_debug.GetInt() == entindex())
 			{
 				DevMsgRT( "(%7.4f : %30s : %5.3f : %4.2f : %1d)\n", t0, hdr->pSeqdesc( pHead->m_nSequence ).pszLabel(),  (float)pHead->m_flCycle,  (float)pHead->m_flWeight, i );
@@ -370,7 +370,7 @@ void C_BaseAnimatingOverlay::AccumulateLayers( IBoneSetup &boneSetup, Vector pos
 
 				boneSetup.AccumulatePose( pos, q, m_AnimOverlay[i].m_nSequence, fCycle, fWeight, currentTime, m_pIk );
 
-#if 1 // _DEBUG
+#if 1 // IsDebug()
 				if (/* Q_stristr( hdr->pszName(), r_sequence_debug.GetString()) != NULL || */ r_sequence_debug.GetInt() == entindex())
 				{
 					if (1)

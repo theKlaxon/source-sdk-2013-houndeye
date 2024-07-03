@@ -73,7 +73,8 @@ public:
 
 
 	// Num elements
-	[[nodiscard]] unsigned int Count() const { return m_Tree.Count(); }
+	[[nodiscard]]
+	unsigned int Count() const { return m_Tree.Count(); }
 
 	// Max "size" of the vector
 	IndexType_t MaxElement() const { return m_Tree.MaxElement(); }
@@ -82,7 +83,8 @@ public:
 	bool IsValidIndex( IndexType_t i ) const { return m_Tree.IsValidIndex( i ); }
 
 	// Checks if the map as a whole is valid
-	[[nodiscard]] bool IsValid() const { return m_Tree.IsValid(); }
+	[[nodiscard]]
+	bool IsValid() const { return m_Tree.IsValid(); }
 
 	// Invalid index
 	static IndexType_t InvalidIndex() { return CTree::InvalidIndex(); }

@@ -76,7 +76,7 @@ int CThreadPool::SuspendExecution() {
 			Resume();
 		}
 
-	#ifdef _DEBUG
+	#if IsDebug()
 		curCount = Suspend();
 		Resume();
 		Assert( curCount > 0 );

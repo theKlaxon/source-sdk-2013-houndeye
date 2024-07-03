@@ -894,7 +894,7 @@ inline void CVProfile::EnterScope( const tchar *pszName, int detailLevel, const 
 		}
 		m_pBudgetGroups[m_pCurNode->GetBudgetGroupID()].m_BudgetFlags |= budgetFlags;
 
-#if defined( _DEBUG )
+#if IsDebug()
 		// 360 doesn't want this to allow tier0 debug/release .def files to match
 		if ( bAssertAccounted )
 		{

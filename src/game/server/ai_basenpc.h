@@ -2078,7 +2078,7 @@ public:
 	float m_LastShootAccuracy;
 	int m_TotalShots;
 	int m_TotalHits;
-#ifdef _DEBUG
+#if IsDebug()
 	bool m_bSelected;
 #endif
 

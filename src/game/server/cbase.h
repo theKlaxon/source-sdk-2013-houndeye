@@ -20,7 +20,7 @@
 #pragma warning(disable : 4675)     // resolved overload was found by argument dependent lookup
 #endif
 
-#ifdef _DEBUG
+#if IsDebug()
 #define DEBUG 1
 #endif
 

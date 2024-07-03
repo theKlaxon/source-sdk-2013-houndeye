@@ -2759,7 +2759,7 @@ void CClientShadowMgr::UpdateBrushShadow( IClientRenderable *pRenderable, Client
 }
 
 
-#ifdef _DEBUG
+#if IsDebug()
 
 static bool s_bBreak = false;
 
@@ -2770,7 +2770,7 @@ void ShadowBreak_f()
 
 static ConCommand r_shadowbreak("r_shadowbreak", ShadowBreak_f);
 
-#endif // _DEBUG
+#endif // IsDebug()
 
 
 bool CClientShadowMgr::WillParentRenderBlobbyShadow( IClientRenderable *pRenderable )
@@ -2987,7 +2987,7 @@ void CClientShadowMgr::AddToDirtyShadowList( IClientRenderable *pRenderable, boo
 	if ( handle == CLIENTSHADOW_INVALID_HANDLE )
 		return;
 
-#ifdef _DEBUG
+#if IsDebug()
 	// Make sure everything's consistent
 	if ( handle != CLIENTSHADOW_INVALID_HANDLE )
 	{
@@ -3062,7 +3062,7 @@ void CClientShadowMgr::UpdateShadow( ClientShadowHandle_t handle, bool force )
 		return;
 	}
 
-#ifdef _DEBUG
+#if IsDebug()
 	if (s_bBreak)
 	{
 		s_bBreak = false;

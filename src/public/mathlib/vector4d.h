@@ -201,7 +201,7 @@ void Vector4DLerp(Vector4D const& src1, Vector4D const& src2, vec_t t, Vector4D&
 
 inline Vector4D::Vector4D(void)									
 { 
-#ifdef _DEBUG
+#if IsDebug()
 	// Initialize to NAN to catch errors
 	x = y = z = w = VEC_T_NAN;
 #endif

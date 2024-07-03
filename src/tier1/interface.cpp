@@ -236,10 +236,10 @@ CSysModule* Sys_LoadModule( const char* pModuleName, Sys_Flags flags /* = SYS_NO
 	if ( !hDLL ) {
 		// full path failed, let LoadLibrary() try to search the PATH now
 		hDLL = Sys_LoadLibrary( pModuleName, flags );
-#if defined( _DEBUG )
+#if IsDebug()
 		if ( !hDLL ) {
 	// So you can see what the error is in the debugger...
-	#if defined( _WIN32 )
+	#if IsWindows()
 			char* lpMsgBuf;
 
 			FormatMessage(
@@ -252,12 +252,12 @@ CSysModule* Sys_LoadModule( const char* pModuleName, Sys_Flags flags /* = SYS_NO
 				NULL );
 
 			LocalFree( (HLOCAL) lpMsgBuf );
-	#endif// _WIN32
+	#endif // IsWindows()
 		}
-#endif// DEBUG
+#endif // IsDebug()
 	}
 
-#if !defined( LINUX )
+#if !IsLinux()
 	// If running in the debugger, assume debug binaries are okay, otherwise they must run with -allowdebug
 	if ( Sys_GetProcAddress( hDLL, "BuiltDebug" ) ) {
 		if ( hDLL && !CommandLine()->FindParm( "-allowdebug" ) && !Sys_IsDebuggerPresent() ) {

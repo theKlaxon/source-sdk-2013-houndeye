@@ -117,7 +117,7 @@ bool DoNewAssertDialog( const tchar* pFile, int line, const tchar* pExpression )
 
 	puts( message.c_str() );
 
-	return false;
+	return true;
 }
 
 // TODO: Implement these

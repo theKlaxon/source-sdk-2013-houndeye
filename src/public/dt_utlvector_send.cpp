@@ -79,7 +79,7 @@ void* SendProxy_UtlVectorElement_DataTable(
 
 	// This should have gotten called in SendProxy_LengthTable before we get here, so 
 	// the capacity should be correct.
-#ifdef _DEBUG
+#if IsDebug()
 	pExtra->m_EnsureCapacityFn( (void*)pStructBase, pExtra->m_Offset, pExtra->m_nMaxElements );
 #endif
 

@@ -15,7 +15,7 @@ void FASTCALL _SSE_VectorNormalizeFast(Vector& vec);
 float _SSE_InvRSquared(const float* v);
 void _SSE_SinCos(float x, float* s, float* c);
 float _SSE_cos( float x);
-#ifdef PLATFORM_WINDOWS_PC32
+#if IsPlatformWindowsPC32()
 void _SSE2_SinCos(float x, float* s, float* c);
 float _SSE2_cos(float x); 
 #endif

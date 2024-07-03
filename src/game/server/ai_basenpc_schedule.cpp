@@ -178,7 +178,7 @@ void CAI_BaseNPC::SetSchedule( CAI_Schedule *pNewSchedule )
 	Forget( bits_MEMORY_TURNING );
 
 /*
-#if _DEBUG
+#if IsDebug()
 	if ( !ScheduleFromName( pNewSchedule->GetName() ) )
 	{
 		DevMsg( "Schedule %s not in table!!!\n", pNewSchedule->GetName() );

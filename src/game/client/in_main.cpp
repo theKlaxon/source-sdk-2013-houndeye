@@ -431,9 +431,7 @@ void IN_BreakDown( const CCommand &args ) { KeyDown( &in_break , args[1] );}
 void IN_BreakUp( const CCommand &args )
 { 
 	KeyUp( &in_break, args[1] ); 
-#if defined( _DEBUG )
-	DebuggerBreak();
-#endif
+	DBG_BREAK();
 };
 void IN_KLookDown ( const CCommand &args ) {KeyDown(&in_klook, args[1] );}
 void IN_KLookUp ( const CCommand &args ) {KeyUp(&in_klook, args[1] );}

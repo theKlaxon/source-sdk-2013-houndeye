@@ -436,7 +436,7 @@ inline CStudioHdr *CBaseAnimating::GetModelPtr( void )
 	if ( IsDynamicModelLoading() )
 		return NULL;
 
-#ifdef _DEBUG
+#if IsDebug()
 	if ( !HushAsserts() )
 	{
 		// GetModelPtr() is often called before OnNewModel() so go ahead and set it up first chance.

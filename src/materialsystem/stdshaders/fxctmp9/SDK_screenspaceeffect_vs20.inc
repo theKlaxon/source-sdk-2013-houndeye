@@ -3,7 +3,7 @@ class sdk_screenspaceeffect_vs20_Static_Index
 {
 private:
 	int m_nX360APPCHOOSER;
-#ifdef _DEBUG
+#if IsDebug()
 	bool m_bX360APPCHOOSER;
 #endif
 public:
@@ -11,21 +11,21 @@ public:
 	{
 		Assert( i >= 0 && i <= 1 );
 		m_nX360APPCHOOSER = i;
-#ifdef _DEBUG
+#if IsDebug()
 		m_bX360APPCHOOSER = true;
 #endif
 	}
 	void SetX360APPCHOOSER( bool i )
 	{
 		m_nX360APPCHOOSER = i ? 1 : 0;
-#ifdef _DEBUG
+#if IsDebug()
 		m_bX360APPCHOOSER = true;
 #endif
 	}
 public:
 	sdk_screenspaceeffect_vs20_Static_Index( )
 	{
-#ifdef _DEBUG
+#if IsDebug()
 		m_bX360APPCHOOSER = true;
 #endif // _DEBUG
 		m_nX360APPCHOOSER =  0;
@@ -34,7 +34,7 @@ public:
 	{
 		// Asserts to make sure that we aren't using any skipped combinations.
 		// Asserts to make sure that we are setting all of the combination vars.
-#ifdef _DEBUG
+#if IsDebug()
 		bool bAllStaticVarsDefined = m_bX360APPCHOOSER;
 		Assert( bAllStaticVarsDefined );
 #endif // _DEBUG
@@ -52,7 +52,7 @@ public:
 	{
 		// Asserts to make sure that we aren't using any skipped combinations.
 		// Asserts to make sure that we are setting all of the combination vars.
-#ifdef _DEBUG
+#if IsDebug()
 #endif // _DEBUG
 		return 0;
 	}

@@ -1625,12 +1625,12 @@ void CHL2_Player::CommanderExecute( CommanderCommand_t command )
 		}
 	}
 
-#ifdef _DEBUG
+#if IsDebug()
 	if( goal.m_pGoalEntity == NULL && goal.m_vecGoalLocation == vec3_invalid )
 	{
 		DevMsg( 1, "**ERROR: Someone sent an invalid goal to CommanderExecute!\n" );
 	}
-#endif // _DEBUG
+#endif // IsDebug()
 
 	AISquadIter_t iter;
 	for ( CAI_BaseNPC *pAllyNpc = m_pPlayerAISquad->GetFirstMember(&iter); pAllyNpc; pAllyNpc = m_pPlayerAISquad->GetNextMember(&iter) )

@@ -516,7 +516,7 @@ CUtlRBTree<CBoneSetupEnt> g_BoneSetupEnts( BoneSetupCompare );
 
 void TrackBoneSetupEnt( C_BaseAnimating *pEnt )
 {
-#ifdef _DEBUG
+#if IsDebug()
 	if ( IsRetail() )
 		return;
 
@@ -541,7 +541,7 @@ void TrackBoneSetupEnt( C_BaseAnimating *pEnt )
 
 void DisplayBoneSetupEnts()
 {
-#ifdef _DEBUG
+#if IsDebug()
 	if ( IsRetail() )
 		return;
 

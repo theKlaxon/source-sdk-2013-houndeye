@@ -426,7 +426,7 @@ ALWAYS_INLINE void InitIntParam( int nIndex, IMaterialVar **params, int nValue )
 
 class ConVar;
 
-#ifdef _DEBUG
+#if IsDebug()
 extern ConVar mat_envmaptintoverride;
 extern ConVar mat_envmaptintscale;
 #endif

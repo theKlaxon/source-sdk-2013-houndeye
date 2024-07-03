@@ -1364,7 +1364,7 @@ inline CBasePlayer *ToBasePlayer( CBaseEntity *pEntity )
 {
 	if ( !pEntity || !pEntity->IsPlayer() )
 		return NULL;
-#if _DEBUG
+#if IsDebug()
 	return dynamic_cast<CBasePlayer *>( pEntity );
 #else
 	return static_cast<CBasePlayer *>( pEntity );
@@ -1375,7 +1375,7 @@ inline const CBasePlayer *ToBasePlayer( const CBaseEntity *pEntity )
 {
 	if ( !pEntity || !pEntity->IsPlayer() )
 		return NULL;
-#if _DEBUG
+#if IsDebug()
 	return dynamic_cast<const CBasePlayer *>( pEntity );
 #else
 	return static_cast<const CBasePlayer *>( pEntity );

@@ -236,7 +236,7 @@ void CReplayRenderOverlay::PerformLayout()
 
 void CReplayRenderOverlay::OnTick()
 {
-#if _DEBUG
+#if IsDebug()
 	if ( m_bReloadScheme )
 	{
 		InvalidateLayout( true, true );
@@ -306,7 +306,7 @@ void CReplayRenderOverlay::OnTick()
 
 void CReplayRenderOverlay::OnMousePressed( MouseCode nCode )
 {
-#if _DEBUG
+#if IsDebug()
 	m_bReloadScheme = true;
 #endif
 	BaseClass::OnMousePressed( nCode );

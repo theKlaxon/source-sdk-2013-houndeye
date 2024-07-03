@@ -1687,7 +1687,7 @@ inline bool FClassnameIs( C_BaseEntity* pEntity, const char* szClassname ) {
 #define SetThink( a ) ThinkSet( static_cast<void ( CBaseEntity::* )()>( a ), 0, nullptr )
 #define SetContextThink( a, b, context ) ThinkSet( static_cast<void ( CBaseEntity::* )()>( a ), ( b ), context )
 
-#if defined( _DEBUG )
+#if IsDebug()
 	#define SetTouch( a ) TouchSet( static_cast<void ( C_BaseEntity::* )( C_BaseEntity* )>( a ), #a )
 #else
 	#define SetTouch( a ) m_pfnTouch = static_cast<void ( C_BaseEntity::* )( C_BaseEntity* )>( a )

@@ -150,7 +150,7 @@ protected:
 	{
 		m_pElements = m_Memory.Base();
 
-#ifdef _DEBUG
+#if IsDebug()
 		// Allocate space for the element list (which list is each element in)
 		if (m_Memory.NumAllocated() > 0)
 		{

@@ -270,11 +270,11 @@ bool CAchievementMgr::Init()
 	// (for single player), so register ourselves with the engine so UI has a uniform place 
 	// to go get the pointer to us
 
-#ifdef _DEBUG
+#if IsDebug()
 	// There can be only one achievement manager instance; no one else should be registered
 	IAchievementMgr *pAchievementMgr = engine->GetAchievementMgr();
 	Assert( NULL == pAchievementMgr );
-#endif // _DEBUG
+#endif IsDebug()
 
 	// register ourselves
 	engine->SetAchievementMgr( this );
@@ -411,7 +411,7 @@ void CAchievementMgr::Update( float frametime )
 	}
 #endif
 
-#ifndef _DEBUG
+#if !IsDebug()
 	// keep track if cheats have ever been turned on during this level
 	if ( !WereCheatsEverOn() )
 	{
@@ -1753,7 +1753,7 @@ void MsgFunc_AchievementEvent( bf_read &msg )
 	pAchievementMgr->OnAchievementEvent( iAchievementID, iCount );
 }
 
-#if defined(_DEBUG) || defined(STAGING_ONLY) || DEBUG_ACHIEVEMENTS_IN_RELEASE
+#if IsDebug() || defined(STAGING_ONLY) || DEBUG_ACHIEVEMENTS_IN_RELEASE
 CON_COMMAND_F( achievement_reset_all, "Clears all achievements", FCVAR_CHEAT )
 {
 	CAchievementMgr *pAchievementMgr = dynamic_cast<CAchievementMgr *>( engine->GetAchievementMgr() );
@@ -1894,7 +1894,7 @@ CON_COMMAND_F( achievement_mark_dirty, "Mark achievement data as dirty", FCVAR_C
 		return;
 	pAchievementMgr->SetDirty( true );
 }
-#endif // _DEBUG
+#endif IsDebug()
 
 #endif // CLIENT_DLL
 

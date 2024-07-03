@@ -20,7 +20,7 @@ static CUtlDict< FilePlayerClassInfo_t*, unsigned short > m_PlayerClassInfoDatab
 
 #define MAX_PLAYERCLASSES	32
 
-#ifdef _DEBUG
+#if IsDebug()
 
 // used to track whether or not two player classes have been mistakenly assigned the same slot
 bool g_bUsedPlayerClassSlots[MAX_PLAYERCLASSES] = { 0 };
@@ -101,7 +101,7 @@ void ResetFilePlayerClassInfoDatabase( void )
 {
 	m_PlayerClassInfoDatabase.PurgeAndDeleteElements();
 
-#ifdef _DEBUG
+#if IsDebug()
 	memset(g_bUsedPlayerClassSlots, 0, sizeof(g_bUsedPlayerClassSlots));
 #endif
 }
@@ -227,7 +227,7 @@ void FilePlayerClassInfo_t::Parse( KeyValues *pKeyValuesData, const char *szPlay
 	Q_strncpy( m_szSelectCmd, pKeyValuesData->GetString( "selectcmd", "!! Missing selectcmd on Player Class" ), 32 );
 
 
-#if defined(_DEBUG) && defined(HL2_CLIENT_DLL)
+#if IsDebug() && defined(HL2_CLIENT_DLL)
 
 	// Use this for class select keys
 

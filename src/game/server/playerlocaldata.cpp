@@ -176,7 +176,7 @@ END_DATADESC()
 //-----------------------------------------------------------------------------
 CPlayerLocalData::CPlayerLocalData()
 {
-#ifdef _DEBUG
+#if IsDebug()
 	m_vecOverViewpoint.Init();
 	m_vecPunchAngle.Init();
 #endif

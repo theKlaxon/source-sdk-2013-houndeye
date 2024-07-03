@@ -305,7 +305,7 @@ void CCountedStringPool::SpewStrings()
 	Msg("\n%d total counted strings.", m_Elements.Count());
 }
 
-#ifdef _DEBUG
+#if IsDebug()
 CON_COMMAND( test_stringpool, "Tests the class CStringPool" )
 {
 	CStringPool pool;

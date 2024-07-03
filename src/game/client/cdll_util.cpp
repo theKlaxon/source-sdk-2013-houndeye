@@ -35,7 +35,7 @@ ConVar localplayer_visionflags( "localplayer_visionflags", "0", FCVAR_DEVELOPMEN
 //-----------------------------------------------------------------------------
 // ConVars
 //-----------------------------------------------------------------------------
-#ifdef _DEBUG
+#if IsDebug()
 
 ConVar r_FadeProps( "r_FadeProps", "1" );
 
@@ -1093,7 +1093,7 @@ unsigned char UTIL_ComputeEntityFade( C_BaseEntity *pEntity, float flMinDist, fl
 	if ( g_MakingDevShots || cl_leveloverview.GetFloat() > 0 )
 		return 255;
 
-#ifdef _DEBUG
+#if IsDebug()
 	if ( r_FadeProps.GetBool() )
 #endif
 	{

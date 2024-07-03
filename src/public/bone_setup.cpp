@@ -5406,7 +5406,7 @@ bool TraceToStudio( IPhysicsSurfaceProps *pProps, const Ray_t& ray, CStudioHdr *
 
 void Studio_SeqAnims( const CStudioHdr *pStudioHdr, mstudioseqdesc_t &seqdesc, int iSequence, const float poseParameter[], mstudioanimdesc_t *panim[4], float *weight )
 {
-#if _DEBUG
+#if IsDebug()
 	VPROF_INCREMENT_COUNTER("SEQ_ANIMS",1);
 #endif
 	if (!pStudioHdr || iSequence >= pStudioHdr->GetNumSeq())

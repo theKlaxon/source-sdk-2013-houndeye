@@ -203,14 +203,14 @@ inline ParticleDraw* CParticleRenderIterator::GetParticleDraw() const
 inline CParticleSimulateIterator::CParticleSimulateIterator()
 {
 	m_pNextParticle = NULL;
-#ifdef _DEBUG
+#if IsDebug()
 	m_bGotFirst = false;
 #endif
 }
 
 inline Particle* CParticleSimulateIterator::GetFirst()
 {
-#ifdef _DEBUG
+#if IsDebug()
 	// Make sure they're either starting out fresh or that the previous guy iterated through all the particles.
 	if ( m_bGotFirst )
 	{
@@ -222,7 +222,7 @@ inline Particle* CParticleSimulateIterator::GetFirst()
 	if ( pRet == &m_pMaterial->m_Particles )
 		return NULL;
 
-#ifdef _DEBUG
+#if IsDebug()
 	m_bGotFirst = true;
 #endif
 

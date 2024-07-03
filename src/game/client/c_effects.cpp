@@ -1862,7 +1862,7 @@ void CSnowFallManager::FindSnowVolumes( Vector &vecCenter, float flRadius, Vecto
 	}
 
 	// Debugging code!
-#ifdef _DEBUG
+#if IsDebug()
 	if ( r_SnowDebugBox.GetFloat() != 0.0f )
 	{
 		for ( iSnow = 0; iSnow < m_nActiveSnowCount; ++iSnow )

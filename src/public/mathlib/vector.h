@@ -501,7 +501,7 @@ float RandomVectorInUnitCircle( Vector2D *pVector );
 //-----------------------------------------------------------------------------
 inline Vector::Vector(void)									
 { 
-#ifdef _DEBUG
+#if IsDebug()
 #ifdef VECTOR_PARANOIA
 	// Initialize to NAN to catch errors
 	x = y = z = VEC_T_NAN;
@@ -639,7 +639,7 @@ inline bool Vector::IsValid() const
 
 inline void Vector::Invalidate()
 {
-//#ifdef _DEBUG
+//#if IsDebug()
 //#ifdef VECTOR_PARANOIA
 	x = y = z = VEC_T_NAN;
 //#endif
@@ -1544,7 +1544,7 @@ public:
 	inline Quaternion(void)	{ 
 	
 	// Initialize to NAN to catch errors
-#ifdef _DEBUG
+#if IsDebug()
 #ifdef VECTOR_PARANOIA
 		x = y = z = w = VEC_T_NAN;
 #endif
@@ -1698,7 +1698,7 @@ inline bool Quaternion::IsValid() const
 
 inline void Quaternion::Invalidate()
 {
-//#ifdef _DEBUG
+//#if IsDebug()
 //#ifdef VECTOR_PARANOIA
 	x = y = z = w = VEC_T_NAN;
 //#endif
@@ -1734,7 +1734,7 @@ inline bool RadianEuler::IsValid() const
 
 inline void RadianEuler::Invalidate()
 {
-//#ifdef _DEBUG
+//#if IsDebug()
 //#ifdef VECTOR_PARANOIA
 	x = y = z = VEC_T_NAN;
 //#endif
@@ -1872,7 +1872,7 @@ inline void VectorMA( const QAngle &start, float scale, const QAngle &direction,
 //-----------------------------------------------------------------------------
 inline QAngle::QAngle(void)									
 { 
-#ifdef _DEBUG
+#if IsDebug()
 #ifdef VECTOR_PARANOIA
 	// Initialize to NAN to catch errors
 	x = y = z = VEC_T_NAN;
@@ -1992,7 +1992,7 @@ inline bool QAngle::IsValid() const
 
 inline void QAngle::Invalidate()
 {
-//#ifdef _DEBUG
+//#if IsDebug()
 //#ifdef VECTOR_PARANOIA
 	x = y = z = VEC_T_NAN;
 //#endif

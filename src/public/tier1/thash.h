@@ -601,7 +601,7 @@ void CTHash<Data,I>::Validate( CValidator &validator, const char *pchName )
 	validator.ClaimMemory( m_pBucket );
 	ValidatePtr( m_pMemoryPoolRecord );
 
-#if defined( _DEBUG )
+#if IsDebug()
 	// first verify m_cRecordInUse
 	Data * pvRecord = PvRecordFirst();
 	int cItems = 0;
@@ -615,7 +615,7 @@ void CTHash<Data,I>::Validate( CValidator &validator, const char *pchName )
 	// then ask the mempool to verify this
 	if ( m_pMemoryPoolRecord )
 		m_pMemoryPoolRecord->LeakCheck( cItems );
-#endif // _DEBUG
+#endif IsDebug()
 }
 #endif // DBGFLAG_VALIDATE
 

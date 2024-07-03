@@ -69,7 +69,7 @@ static const char *s_pDiveBombSoundThinkContext = "DiveBombSoundThinkContext";
 //-----------------------------------------------------------------------------
 CNPC_BaseScanner::CNPC_BaseScanner()
 {
-#ifdef _DEBUG
+#if IsDebug()
 	m_vCurrentBanking.Init();
 #endif
 	m_pEngineSound = NULL;

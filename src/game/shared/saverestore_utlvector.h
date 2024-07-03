@@ -53,7 +53,7 @@ public:
 			false,
 			false,
 			0,
-#ifdef _DEBUG
+#if IsDebug()
 			true
 #endif
 		};
@@ -106,7 +106,7 @@ public:
 			false,
 			false,
 			0,
-#ifdef _DEBUG
+#if IsDebug()
 			true
 #endif
 		};

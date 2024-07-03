@@ -172,7 +172,7 @@ private:
 	HashBucket_t m_aBuckets[BUCKET_COUNT];
 	bool m_bNeedsCommit;
 
-#ifdef _DEBUG
+#if IsDebug()
 	CInterlockedInt m_ContentionCheck;
 #endif
 };
@@ -185,7 +185,7 @@ template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignme
 CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::CUtlTSHash( int nAllocationCount ) :
 	m_EntryMemory( sizeof( HashFixedData_t ), nAllocationCount, CUtlMemoryPool::GROW_SLOW, MEM_ALLOC_CLASSNAME( HashFixedData_t ), nAlignment )
 {
-#ifdef _DEBUG
+#if IsDebug()
 	m_ContentionCheck = 0;
 #endif
 	m_bNeedsCommit = false;
@@ -204,7 +204,7 @@ CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::CUtlTSHash( int nAlloca
 template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
 CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::~CUtlTSHash()
 {
-#ifdef _DEBUG
+#if IsDebug()
 	if ( m_ContentionCheck != 0 )
 	{
 		DebuggerBreak();
@@ -285,7 +285,7 @@ inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>
 template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
 inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::Insert( KEYTYPE uiKey, const T &data, bool *pDidInsert )
 {
-#ifdef _DEBUG
+#if IsDebug()
 	if ( m_ContentionCheck != 0 )
 	{
 		DebuggerBreak();
@@ -326,7 +326,7 @@ inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>
 template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
 inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::Insert( KEYTYPE uiKey, ITSHashConstructor<T> *pConstructor, bool *pDidInsert )
 {
-#ifdef _DEBUG
+#if IsDebug()
 	if ( m_ContentionCheck != 0 )
 	{
 		DebuggerBreak();
@@ -373,7 +373,7 @@ inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>
 template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
 inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::FastInsert( KEYTYPE uiKey, const T &data )
 {
-#ifdef _DEBUG
+#if IsDebug()
 	if ( m_ContentionCheck != 0 )
 	{
 		DebuggerBreak();
@@ -391,7 +391,7 @@ inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>
 template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
 inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::FastInsert( KEYTYPE uiKey, ITSHashConstructor<T> *pConstructor )
 {
-#ifdef _DEBUG
+#if IsDebug()
 	if ( m_ContentionCheck != 0 )
 	{
 		DebuggerBreak();
@@ -418,7 +418,7 @@ inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::Commit( )
 		return;
 
 	// This must occur when no queries are occurring
-#ifdef _DEBUG
+#if IsDebug()
 	m_ContentionCheck++;
 #endif
 
@@ -432,7 +432,7 @@ inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::Commit( )
 
 	m_bNeedsCommit = false;
 
-#ifdef _DEBUG
+#if IsDebug()
 	m_ContentionCheck--;
 #endif
 }
@@ -448,7 +448,7 @@ inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::FindAndRemo
 		return;
 
 	// This must occur when no queries are occurring
-#ifdef _DEBUG
+#if IsDebug()
 	m_ContentionCheck++;
 #endif
 
@@ -478,7 +478,7 @@ inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::FindAndRemo
 
 		Destruct( &pElement->m_Data );
 
-#ifdef _DEBUG
+#if IsDebug()
 		memset( pElement, 0xDD, sizeof(HashFixedData_t) );
 #endif
 
@@ -489,7 +489,7 @@ inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::FindAndRemo
 
 	bucket.m_AddLock.UnlockWrite( );
 
-#ifdef _DEBUG
+#if IsDebug()
 	m_ContentionCheck--;
 #endif
 }
@@ -506,7 +506,7 @@ inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::RemoveAll( 
 		return;
 
 	// This must occur when no queries are occurring
-#ifdef _DEBUG
+#if IsDebug()
 	m_ContentionCheck++;
 #endif
 
@@ -528,7 +528,7 @@ inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::RemoveAll( 
 
 	m_EntryMemory.Clear();
 
-#ifdef _DEBUG
+#if IsDebug()
 	m_ContentionCheck--;
 #endif
 }
@@ -539,7 +539,7 @@ inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::RemoveAll( 
 template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
 inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::Find( KEYTYPE uiKey, HashFixedData_t *pFirstElement, HashFixedData_t *pLastElement )
 {
-#ifdef _DEBUG
+#if IsDebug()
 	if ( m_ContentionCheck != 0 )
 	{
 		DebuggerBreak();

@@ -336,7 +336,7 @@ public:
 		if ( !BaseClass::Elements().IsIdxValid( i ) )
 			return false;
 
-#ifdef _DEBUG // it's safe to skip this here, since the only way to get indices after m_LastAlloc is to use MaxElement()
+#if IsDebug() // it's safe to skip this here, since the only way to get indices after m_LastAlloc is to use MaxElement()
 		if ( BaseClass::Elements().IsIdxAfter( i, this->m_LastAlloc ) )
 		{
 			Assert( 0 );
@@ -701,7 +701,7 @@ I  CUtlRBTree<T, I, L, M>::NewNode()
 		m_FirstFree = Links( m_FirstFree ).m_Right;
 	}
 
-#ifdef _DEBUG
+#if IsDebug()
 	// reset links to invalid....
 	Links_t &node = Links( elem );
 	node.m_Left = node.m_Right = node.m_Parent = InvalidIndex();

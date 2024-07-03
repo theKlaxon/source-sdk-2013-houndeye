@@ -744,11 +744,11 @@ inline CStudioHdr *C_BaseAnimating::GetModelPtr() const
 	if ( IsDynamicModelLoading() )
 		return NULL;
 
-#ifdef _DEBUG
-	// GetModelPtr() is often called before OnNewModel() so go ahead and set it up first chance.
-//	static IDataCacheSection *pModelCache = datacache->FindSection( "ModelData" );
-//	AssertOnce( pModelCache->IsFrameLocking() );
-#endif
+	#if IsDebug()
+		// GetModelPtr() is often called before OnNewModel() so go ahead and set it up first chance.
+		//	static IDataCacheSection *pModelCache = datacache->FindSection( "ModelData" );
+		//	AssertOnce( pModelCache->IsFrameLocking() );
+	#endif
 	if ( !m_pStudioHdr )
 	{
 		const_cast<C_BaseAnimating *>(this)->LockStudioHdr();
