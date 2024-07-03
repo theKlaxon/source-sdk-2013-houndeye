@@ -7,7 +7,7 @@
 
 #ifndef HUD_VOTE_H
 #define HUD_VOTE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

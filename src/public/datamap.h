@@ -7,7 +7,7 @@
 
 #ifndef DATAMAP_H
 #define DATAMAP_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -111,11 +111,11 @@ DECLARE_FIELD_SIZE( FIELD_TICK,			sizeof(int))
 DECLARE_FIELD_SIZE( FIELD_MODELNAME,	sizeof(int))
 DECLARE_FIELD_SIZE( FIELD_SOUNDNAME,	sizeof(int))
 DECLARE_FIELD_SIZE( FIELD_INPUT,		sizeof(int))
-#ifdef POSIX
-// pointer to members under gnuc are 8bytes if you have a virtual func
-DECLARE_FIELD_SIZE( FIELD_FUNCTION,		sizeof(uint64))
+#if IsPosix()
+	// pointer to members under gnuc are 8bytes if you have a virtual func
+	DECLARE_FIELD_SIZE( FIELD_FUNCTION,		sizeof(uint64))
 #else
-DECLARE_FIELD_SIZE( FIELD_FUNCTION,		sizeof(int *))
+	DECLARE_FIELD_SIZE( FIELD_FUNCTION,		sizeof(int *))
 #endif
 DECLARE_FIELD_SIZE( FIELD_VMATRIX,		16 * sizeof(float))
 DECLARE_FIELD_SIZE( FIELD_VMATRIX_WORLDSPACE,	16 * sizeof(float))
@@ -190,7 +190,7 @@ DECLARE_FIELD_SIZE( FIELD_MATERIALINDEX,	sizeof(int) )
 
 // INPUTS
 #define DEFINE_INPUT( name, fieldtype, inputname ) { fieldtype, #name, { static_cast<int>( offsetof(classNameTypedef, name) ), 0 }, 1, FTYPEDESC_INPUT | FTYPEDESC_SAVE | FTYPEDESC_KEY,	inputname, NULL, NULL, NULL, sizeof( ((classNameTypedef *)0)->name ) }
-#define DEFINE_INPUTFUNC( fieldtype, inputname, inputfunc ) { fieldtype, #inputfunc, { NULL, NULL }, 1, FTYPEDESC_INPUT, inputname, NULL, static_cast <inputfunc_t> (&classNameTypedef::inputfunc) }
+#define DEFINE_INPUTFUNC( fieldtype, inputname, inputfunc ) { fieldtype, #inputfunc, { 0, 0 }, 1, FTYPEDESC_INPUT, inputname, nullptr, static_cast<inputfunc_t>(&classNameTypedef::inputfunc) }
 
 // OUTPUTS
 // the variable 'name' MUST BE derived from CBaseOutput
@@ -200,7 +200,7 @@ extern ISaveRestoreOps *eventFuncs;
 #define DEFINE_OUTPUT( name, outputname )	{ FIELD_CUSTOM, #name, { static_cast<int>( offsetof(classNameTypedef, name) ), 0 }, 1, FTYPEDESC_OUTPUT | FTYPEDESC_SAVE | FTYPEDESC_KEY, outputname, eventFuncs }
 
 // replaces EXPORT table for portability and non-DLL based systems (xbox)
-#define DEFINE_FUNCTION_RAW( function, func_type )			{ FIELD_VOID, nameHolder.GenerateName(#function), { NULL, NULL }, 1, FTYPEDESC_FUNCTIONTABLE, NULL, NULL, (inputfunc_t)((func_type)(&classNameTypedef::function)) }
+#define DEFINE_FUNCTION_RAW( function, func_type )			{ FIELD_VOID, nameHolder.GenerateName(#function), { 0, 0 }, 1, FTYPEDESC_FUNCTIONTABLE, nullptr, nullptr, (inputfunc_t)((func_type)(&classNameTypedef::function)) }
 #define DEFINE_FUNCTION( function )			DEFINE_FUNCTION_RAW( function, inputfunc_t )
 
 
@@ -319,24 +319,24 @@ struct datamap_t
 	virtual datamap_t *GetDataDescMap( void );
 
 #define BEGIN_DATADESC( className ) \
-	datamap_t className::m_DataMap = { 0, 0, #className, NULL }; \
+	datamap_t className::m_DataMap = { NULL, 0, #className, NULL }; \
 	datamap_t *className::GetDataDescMap( void ) { return &m_DataMap; } \
 	datamap_t *className::GetBaseMap() { datamap_t *pResult; DataMapAccess((BaseClass *)NULL, &pResult); return pResult; } \
 	BEGIN_DATADESC_GUTS( className )
 
 #define BEGIN_DATADESC_NO_BASE( className ) \
-	datamap_t className::m_DataMap = { 0, 0, #className, NULL }; \
+	datamap_t className::m_DataMap = { NULL, 0, #className, NULL }; \
 	datamap_t *className::GetDataDescMap( void ) { return &m_DataMap; } \
 	datamap_t *className::GetBaseMap() { return NULL; } \
 	BEGIN_DATADESC_GUTS( className )
 
 #define BEGIN_SIMPLE_DATADESC( className ) \
-	datamap_t className::m_DataMap = { 0, 0, #className, NULL }; \
+	datamap_t className::m_DataMap = { NULL, 0, #className, NULL }; \
 	datamap_t *className::GetBaseMap() { return NULL; } \
 	BEGIN_DATADESC_GUTS( className )
 
 #define BEGIN_SIMPLE_DATADESC_( className, BaseClass ) \
-	datamap_t className::m_DataMap = { 0, 0, #className, NULL }; \
+	datamap_t className::m_DataMap = { NULL, 0, #className, NULL }; \
 	datamap_t *className::GetBaseMap() { datamap_t *pResult; DataMapAccess((BaseClass *)NULL, &pResult); return pResult; } \
 	BEGIN_DATADESC_GUTS( className )
 

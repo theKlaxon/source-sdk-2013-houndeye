@@ -9,7 +9,7 @@
 #ifndef MUMBLE_H
 #define MUMBLE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

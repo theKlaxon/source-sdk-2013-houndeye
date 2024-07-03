@@ -6,7 +6,7 @@
 //=============================================================================//
 #ifndef HUD_LCD_H
 #define HUD_LCD_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

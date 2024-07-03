@@ -7,7 +7,7 @@
 
 #ifndef PLAYER_RESOURCE_H
 #define PLAYER_RESOURCE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

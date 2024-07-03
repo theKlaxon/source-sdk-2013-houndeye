@@ -7,7 +7,7 @@
 #ifndef DEFORMATIONS_H
 #define DEFORMATIONS_H
 
-#ifdef _WIN32
+#if IsWindows()
 	#pragma once
 #endif
 

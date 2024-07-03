@@ -8,7 +8,7 @@
 #ifndef AI_NAVIGATOR_H
 #define AI_NAVIGATOR_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

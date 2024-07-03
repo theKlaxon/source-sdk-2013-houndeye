@@ -361,7 +361,7 @@ Mimic unix command line expansion
 #define	MAX_EX_ARGC	1024
 int		ex_argc;
 char	*ex_argv[MAX_EX_ARGC];
-#if defined( _WIN32 )
+#if IsWindows()
 #include "io.h"
 void ExpandWildcards (int *argc, char ***argv)
 {
@@ -437,7 +437,7 @@ void qprintf (const char *format, ...)
 
 static void CmdLib_getwd( char *out, int outSize )
 {
-#if defined( _WIN32 ) || defined( WIN32 )
+#if IsWindows() || IsWindows()
 	_getcwd( out, outSize );
 	Q_strncat( out, "\\", outSize, COPY_ALL_CHARACTERS );
 #else
@@ -507,7 +507,7 @@ void GetHourMinuteSecondsString( int nInputSeconds, char *pOut, int outLen )
 
 void Q_mkdir (char *path)
 {
-#if defined( _WIN32 ) || defined( WIN32 )
+#if IsWindows() || IsWindows()
 	if (_mkdir (path) != -1)
 		return;
 #else
@@ -886,7 +886,7 @@ void CreatePath (char *path)
 //-----------------------------------------------------------------------------
 // Creates a path, path may already exist
 //-----------------------------------------------------------------------------
-#if defined( _WIN32 ) || defined( WIN32 )
+#if IsWindows() || IsWindows()
 void SafeCreatePath( char *path )
 {
 	char *ptr;

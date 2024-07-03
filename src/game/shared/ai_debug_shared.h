@@ -6,7 +6,7 @@
 
 #ifndef AI_DEBUG_SHARED_H
 #define AI_DEBUG_SHARED_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

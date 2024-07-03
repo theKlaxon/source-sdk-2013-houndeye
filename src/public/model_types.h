@@ -8,7 +8,7 @@
 //=============================================================================//
 #if !defined( MODEL_TYPES_H )
 #define MODEL_TYPES_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

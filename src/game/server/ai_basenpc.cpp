@@ -155,7 +155,7 @@ ConVar	ai_test_moveprobe_ignoresmall( "ai_test_moveprobe_ignoresmall", "0" );
 extern ConVar ai_vehicle_avoidance;
 #endif // HL2_EPISODIC
 
-#ifndef _RETAIL
+#if !IsRetail()
 #define ShouldUseEfficiency()			( ai_use_think_optimizations.GetBool() && ai_use_efficiency.GetBool() )
 #define ShouldUseFrameThinkLimits()		( ai_use_think_optimizations.GetBool() && ai_use_frame_think_limits.GetBool() )
 #define ShouldRebalanceThinks()			( ai_use_think_optimizations.GetBool() && ai_rebalance_thinks.GetBool() )
@@ -167,7 +167,7 @@ extern ConVar ai_vehicle_avoidance;
 #define ShouldDefaultEfficient()		( true )
 #endif
 
-#ifndef _RETAIL
+#if !IsRetail()
 #define DbgEnemyMsg if ( !ai_debug_enemies.GetBool() ) ; else DevMsg
 #else
 #define DbgEnemyMsg if ( 0 ) ; else DevMsg

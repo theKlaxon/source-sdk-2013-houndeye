@@ -105,7 +105,7 @@ entities. Each one is useful under different conditions.
 #ifndef PARTICLEMGR_H
 #define PARTICLEMGR_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -9,7 +9,7 @@
 #if !defined( ICLIENTENTITYLIST_H )
 #define ICLIENTENTITYLIST_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

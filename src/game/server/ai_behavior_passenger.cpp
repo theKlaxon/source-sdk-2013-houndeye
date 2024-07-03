@@ -1410,8 +1410,7 @@ void CAI_PassengerBehavior::PrescheduleThink( void )
 		GetOuter()->ClearSchedule("Passenger enter canceled");
 	}
 
-#ifdef DEBUG
-	if ( GetPassengerState() == PASSENGER_STATE_INSIDE )
+#if IsDebug()	if ( GetPassengerState() == PASSENGER_STATE_INSIDE )
 	{
 		Vector vecSeatOrigin;
 		QAngle vecSeatAngles;
@@ -1433,7 +1432,7 @@ void CAI_PassengerBehavior::PrescheduleThink( void )
 			return;
 		}
 	}
-#endif // DEBUG
+#endif
 }
 
 //-----------------------------------------------------------------------------

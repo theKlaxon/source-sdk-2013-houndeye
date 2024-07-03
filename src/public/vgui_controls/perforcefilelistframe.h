@@ -7,7 +7,7 @@
 #ifndef PERFORCEFILELISTFRAME_H
 #define PERFORCEFILELISTFRAME_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

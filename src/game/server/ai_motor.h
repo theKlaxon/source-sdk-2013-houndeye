@@ -8,7 +8,7 @@
 #ifndef AI_MOTOR_H
 #define AI_MOTOR_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

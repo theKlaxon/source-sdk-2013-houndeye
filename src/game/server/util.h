@@ -7,7 +7,7 @@
 
 #ifndef UTIL_H
 #define UTIL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -36,7 +36,7 @@ struct levellist_t;
 class IServerNetworkable;
 class IEntityFactory;
 
-#ifdef _WIN32
+#if IsWindows()
 	#define SETUP_EXTERNC(mapClassName)\
 		extern "C" _declspec( dllexport ) IServerNetworkable* mapClassName( void );
 #else
@@ -46,14 +46,14 @@ class IEntityFactory;
 //
 // How did I ever live without ASSERT?
 //
-#ifdef	DEBUG
-void DBG_AssertFunction(bool fExpr, const char* szExpr, const char* szFile, int szLine, const char* szMessage);
-#define ASSERT(f)		DBG_AssertFunction((bool)((f)!=0), #f, __FILE__, __LINE__, NULL)
-#define ASSERTSZ(f, sz)	DBG_AssertFunction((bool)((f)!=0), #f, __FILE__, __LINE__, sz)
-#else	// !DEBUG
-#define ASSERT(f)
-#define ASSERTSZ(f, sz)
-#endif	// !DEBUG
+#if IsDebug()
+	void DBG_AssertFunction(bool fExpr, const char* szExpr, const char* szFile, int szLine, const char* szMessage);
+	#define ASSERT(f)		DBG_AssertFunction((bool)((f)!=0), #f, __FILE__, __LINE__, NULL)
+	#define ASSERTSZ(f, sz)	DBG_AssertFunction((bool)((f)!=0), #f, __FILE__, __LINE__, sz)
+#else
+	#define ASSERT(f)
+	#define ASSERTSZ(f, sz)
+#endif
 
 #include "tier0/memdbgon.h"
 

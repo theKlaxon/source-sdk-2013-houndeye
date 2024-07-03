@@ -9,7 +9,7 @@
 #ifndef DATATABLE_SEND_H
 #define DATATABLE_SEND_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

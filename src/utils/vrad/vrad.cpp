@@ -1337,7 +1337,7 @@ Get light from other patches
 =============
 */
 
-#ifdef _WIN32
+#if IsWindows()
 	#pragma warning( disable : 4701 )
 #endif
 
@@ -1474,7 +1474,7 @@ void GatherLight( int threadnum, void* pUserData ) {
 	}
 }
 
-#ifdef _WIN32
+#if IsWindows()
 	#pragma warning( default : 4701 )
 #endif
 

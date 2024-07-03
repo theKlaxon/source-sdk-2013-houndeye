@@ -6,7 +6,7 @@
 
 #ifndef WEAPON_GRENADE_H
 #define WEAPON_GRENADE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -402,7 +402,7 @@
 		#undef GL_EXT
 
 		bool HasSwapTearExtension() const {
-			#ifdef _WIN32
+			#if IsWindows()
 				return m_bHave_WGL_EXT_swap_control_tear;
 			#else
 				return m_bHave_GLX_EXT_swap_control_tear;

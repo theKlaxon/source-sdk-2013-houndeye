@@ -3,13 +3,13 @@
 // Purpose:
 //
 //===========================================================================//
-#if defined( _WIN32 )
+#if IsWindows()
 	#include <libloaderapi.h>
 	#include <errhandlingapi.h>
 	#include <windef.h>
 	#include <winbase.h>
 	#include <direct.h>// getcwd
-#elif POSIX
+#elif IsPosix()
 	#include <dlfcn.h>
 	#include <unistd.h>
 	#include <type_traits>
@@ -83,7 +83,7 @@ void* CreateInterface( const char* pName, int* pReturnCode ) {
 }
 
 
-#if defined( POSIX )
+#if IsPosix()
 // Linux doesn't have this function so this emulates its functionality
 void* GetModuleHandle( const char* name ) {
 	void* handle;
@@ -118,10 +118,10 @@ static void* Sys_GetProcAddress( const char* pModuleName, const char* pName ) {
 	return reinterpret_cast<void*>( GetProcAddress( hModule, pName ) );
 }
 
-#if !defined( LINUX )
-static void* Sys_GetProcAddress( HMODULE hModule, const char* pName ) {
-	return reinterpret_cast<void*>( GetProcAddress( hModule, pName ) );
-}
+#if !IsLinux()
+	static void* Sys_GetProcAddress( HMODULE hModule, const char* pName ) {
+		return reinterpret_cast<void*>( GetProcAddress( hModule, pName ) );
+	}
 #endif
 
 bool Sys_IsDebuggerPresent() {
@@ -133,19 +133,19 @@ struct ThreadedLoadLibaryContext_t {
 	HMODULE m_hLibrary;
 };
 
-#ifdef _WIN32
-// wraps LoadLibraryEx() since 360 doesn't support that
-static HMODULE InternalLoadLibrary( const char* pName, Sys_Flags flags ) {
-	if ( flags & SYS_NOLOAD )
-		return GetModuleHandle( pName );
+#if IsWindows()
+	// wraps LoadLibraryEx() since 360 doesn't support that
+	static HMODULE InternalLoadLibrary( const char* pName, Sys_Flags flags ) {
+		if ( flags & SYS_NOLOAD )
+			return GetModuleHandle( pName );
 
-	return LoadLibraryEx( pName, NULL, LOAD_WITH_ALTERED_SEARCH_PATH );
-}
-unsigned ThreadedLoadLibraryFunc( void* pParam ) {
-	auto* pContext = reinterpret_cast<ThreadedLoadLibaryContext_t*>( pParam );
-	pContext->m_hLibrary = InternalLoadLibrary( pContext->m_pLibraryName, SYS_NOFLAGS );
-	return 0;
-}
+		return LoadLibraryEx( pName, NULL, LOAD_WITH_ALTERED_SEARCH_PATH );
+	}
+	unsigned ThreadedLoadLibraryFunc( void* pParam ) {
+		auto* pContext = reinterpret_cast<ThreadedLoadLibaryContext_t*>( pParam );
+		pContext->m_hLibrary = InternalLoadLibrary( pContext->m_pLibraryName, SYS_NOFLAGS );
+		return 0;
+	}
 #endif
 
 HMODULE Sys_LoadLibrary( const char* pLibraryName, Sys_Flags flags ) {
@@ -269,7 +269,7 @@ CSysModule* Sys_LoadModule( const char* pModuleName, Sys_Flags flags /* = SYS_NO
 		if ( !s_bRunningWithDebugModules ) {
 			s_bRunningWithDebugModules = true;
 
-	#if 0//def IS_WINDOWS_PC
+	#if 0// IsWindows() && IsPC()
 					char chMemoryName[ MAX_PATH ];
 					DebugKernelMemoryObjectName( chMemoryName );
 
@@ -319,7 +319,7 @@ const char* Sys_LastErrorString() {
 //-----------------------------------------------------------------------------
 bool Sys_RunningWithDebugModules() {
 	if ( !s_bRunningWithDebugModules ) {
-#if 0//def IS_WINDOWS_PC
+#if 0// IsWindows() && IsPC()
 		char chMemoryName[ MAX_PATH ];
 		DebugKernelMemoryObjectName( chMemoryName );
 
@@ -346,9 +346,9 @@ void Sys_UnloadModule( CSysModule* pModule ) {
 
 	auto hDLL = reinterpret_cast<HMODULE>( pModule );
 
-#ifdef _WIN32
+#if IsWindows()
 	FreeLibrary( hDLL );
-#elif defined( POSIX )
+#elif IsPosix()
 	dlclose( reinterpret_cast<void*>( hDLL ) );
 #endif
 }
@@ -452,7 +452,7 @@ void CDllDemandLoader::Unload() {
 }
 
 
-#if defined( STAGING_ONLY ) && defined( _WIN32 )
+#if defined( STAGING_ONLY ) && IsWindows()
 typedef USHORT( WINAPI RtlCaptureStackBackTrace_FUNC )( ULONG frames_to_skip, ULONG frames_to_capture, PVOID* backtrace, PULONG backtrace_hash );
 
 extern "C" int backtrace( void** buffer, int size ) {

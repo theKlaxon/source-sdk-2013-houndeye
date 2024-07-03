@@ -9,7 +9,7 @@
 #ifndef VGUI_BITMAPBUTTON_H
 #define VGUI_BITMAPBUTTON_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

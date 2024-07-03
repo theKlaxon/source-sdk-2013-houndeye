@@ -10,7 +10,7 @@
 #ifndef	GRENADEHOMER_H
 #define	GRENADEHOMER_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

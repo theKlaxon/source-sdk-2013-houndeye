@@ -7,7 +7,7 @@
 //===========================================================================//
 #if !defined( IVRENDERVIEW_H )
 #define IVRENDERVIEW_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

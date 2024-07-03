@@ -4,7 +4,7 @@
 
 #ifndef IREPLAYDEMOPLAYER_H
 #define IREPLAYDEMOPLAYER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

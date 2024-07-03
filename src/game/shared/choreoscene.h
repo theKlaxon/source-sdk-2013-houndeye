@@ -7,7 +7,7 @@
 
 #ifndef CHOREOSCENE_H
 #define CHOREOSCENE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

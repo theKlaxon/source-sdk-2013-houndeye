@@ -14,7 +14,7 @@
 #ifndef TIER3APP_H
 #define TIER3APP_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

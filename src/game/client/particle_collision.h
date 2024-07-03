@@ -13,7 +13,7 @@
 
 #if !defined( PARTICLE_COLLISION_H )
 #define PARTICLE_COLLISION_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

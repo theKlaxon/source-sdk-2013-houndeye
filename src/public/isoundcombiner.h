@@ -6,7 +6,7 @@
 
 #ifndef ISOUNDCOMBINER_H
 #define ISOUNDCOMBINER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

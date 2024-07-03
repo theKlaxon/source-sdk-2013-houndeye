@@ -6,7 +6,7 @@
 
 #ifndef STEAMCLIENTPUBLIC_H
 #define STEAMCLIENTPUBLIC_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 //lint -save -e1931 -e1927 -e1924 -e613 -e726

@@ -29,7 +29,7 @@ bool VGui_InitInterfacesList( const char *moduleName, CreateInterfaceFn *factory
 
 	// If you hit this error, then you need to include memoverride.cpp in the project somewhere or else
 	// you'll get crashes later when vgui_controls allocates KeyValues and vgui tries to delete them.
-#if !defined(NO_MALLOC_OVERRIDE) && defined( WIN32 )
+#if !defined(NO_MALLOC_OVERRIDE) && IsWindows()
 	if ( _heapmin() != 1 )
 	{
 		Assert( false );

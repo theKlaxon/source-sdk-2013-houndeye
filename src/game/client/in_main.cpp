@@ -964,7 +964,7 @@ void CInput::ControllerMove( float frametime, CUserCmd *cmd )
 		haptics->CalculateMove(cmd->forwardmove, cmd->sidemove, frametime);
 		// NVNT send a game process to the haptics system.
 		haptics->GameProcess();
-#if defined( WIN32 )
+#if IsWindows()
 		// NVNT update our avatar effect.
 		UpdateAvatarEffect();
 #endif

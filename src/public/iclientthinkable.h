@@ -7,7 +7,7 @@
 
 #ifndef ICLIENTTHINKABLE_H
 #define ICLIENTTHINKABLE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

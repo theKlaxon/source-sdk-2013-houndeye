@@ -6,7 +6,7 @@
 
 #ifndef SUN_SHARED_H
 #define SUN_SHARED_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

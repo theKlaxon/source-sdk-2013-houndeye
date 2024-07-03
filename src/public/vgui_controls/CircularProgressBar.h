@@ -8,7 +8,7 @@
 #ifndef CIRCULARPROGRESSBAR_H
 #define CIRCULARPROGRESSBAR_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

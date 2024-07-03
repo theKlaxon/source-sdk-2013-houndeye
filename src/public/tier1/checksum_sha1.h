@@ -7,7 +7,7 @@
 #ifndef CHECKSUM_SHA1_H
 #define CHECKSUM_SHA1_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

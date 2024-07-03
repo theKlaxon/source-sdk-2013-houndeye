@@ -8,7 +8,7 @@
 #ifndef TIER1_H
 #define TIER1_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

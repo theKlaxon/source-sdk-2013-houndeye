@@ -6,7 +6,7 @@
 
 #ifndef OBJECT_HASH_H
 #define OBJECT_HASH_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -7,7 +7,7 @@
 
 #ifndef MPI_STATS_H
 #define MPI_STATS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

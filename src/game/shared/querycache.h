@@ -6,7 +6,7 @@
 //=============================================================================//
 #ifndef QUERYCACHE_H
 #define QUERYCACHE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

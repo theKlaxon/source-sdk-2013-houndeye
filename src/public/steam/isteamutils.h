@@ -6,7 +6,7 @@
 
 #ifndef ISTEAMUTILS_H
 #define ISTEAMUTILS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -43,7 +43,7 @@ enum EGamepadTextInputLineMode
 
 
 // function prototype for warning message hook
-#if defined( POSIX )
+#if IsPosix()
 #define __cdecl
 #endif
 extern "C" typedef void (__cdecl *SteamAPIWarningMessageHook_t)(int, const char *);

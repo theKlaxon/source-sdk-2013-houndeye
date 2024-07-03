@@ -6,7 +6,7 @@
 //===========================================================================//
 #if !defined( UTIL_REGISTRY_H )
 #define UTIL_REGISTRY_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

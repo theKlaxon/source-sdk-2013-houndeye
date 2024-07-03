@@ -7,7 +7,7 @@
 #ifndef UTLHASHDICT_H
 #define UTLHASHDICT_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

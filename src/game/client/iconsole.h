@@ -12,7 +12,7 @@
 //=============================================================================//
 #if !defined( ICONSOLE_H )
 #define ICONSOLE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

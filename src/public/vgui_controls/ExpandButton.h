@@ -8,7 +8,7 @@
 #ifndef EXPANDBUTTON_H
 #define EXPANDBUTTON_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -5,7 +5,7 @@
 // $NoKeywords: $
 //===========================================================================//
 
-#if defined( WIN32 )
+#if IsWindows()
 #include <windows.h>
 #endif
 #include "tier0/platform.h"
@@ -44,7 +44,7 @@ public:
 
 private:
 	bool			m_bValid;
-#ifdef WIN32
+#if IsWindows()
 	HKEY			m_hKey;
 #endif
 };
@@ -113,7 +113,7 @@ void CRegistry::WriteString( const char *pKeyBase, const char *pKey, const char 
 	WriteString( pFullKey, value );
 }
 
-#ifndef POSIX
+#if !IsPosix()
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -413,5 +413,5 @@ void CRegistry::Shutdown( void )
 	// Make invalid
 	m_bValid = false;
 }
-#endif // POSIX
+#endif // IsPosix()
 

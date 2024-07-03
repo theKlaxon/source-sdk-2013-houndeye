@@ -7,7 +7,7 @@
 #ifndef ENTITYPARTICLETRAIL_H
 #define ENTITYPARTICLETRAIL_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

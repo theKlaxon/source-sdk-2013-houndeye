@@ -10,7 +10,7 @@
 #ifndef UTLMEMORY_H
 #define UTLMEMORY_H
 
-#ifdef _WIN32
+#if IsWindows()
 	#pragma once
 #endif
 
@@ -264,7 +264,7 @@ private:
 	char m_Memory[ SIZE*sizeof(T) + nAlignment ];
 };
 
-#if defined(POSIX)
+#if IsPosix()
 // From Chris Green: Memory is a little fuzzy but I believe this class did
 //	something fishy with respect to msize and alignment that was OK under our
 //	allocator, the glibc allocator, etc but not the valgrind one (which has no

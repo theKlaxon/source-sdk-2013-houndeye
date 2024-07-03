@@ -6,7 +6,7 @@
 
 #ifndef FUNC_TANK_H
 #define FUNC_TANK_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

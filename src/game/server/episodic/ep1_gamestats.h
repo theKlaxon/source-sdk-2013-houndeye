@@ -6,7 +6,7 @@
 
 #ifndef EP1_GAMESTATS_H
 #define EP1_GAMESTATS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

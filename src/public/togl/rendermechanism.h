@@ -46,7 +46,7 @@
 	#include "togl/linuxwin/dxabstract.h"
 #else
 	//USE_ACTUAL_DX
-	#ifdef WIN32
+	#if IsWindows()
 		#include <windows.h>
 		#include "../../dx9sdk/include/d3d9.h"
 		#include "../../dx9sdk/include/d3dx9.h"

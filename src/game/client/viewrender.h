@@ -6,7 +6,7 @@
 
 #if !defined( VIEWRENDER_H )
 #define VIEWRENDER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

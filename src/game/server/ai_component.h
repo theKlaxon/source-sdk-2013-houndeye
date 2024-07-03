@@ -8,7 +8,7 @@
 #ifndef AI_COMPONENT_H
 #define AI_COMPONENT_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

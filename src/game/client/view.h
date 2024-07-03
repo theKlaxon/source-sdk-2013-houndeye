@@ -9,7 +9,7 @@
 
 #if !defined( VIEW_H )
 #define VIEW_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

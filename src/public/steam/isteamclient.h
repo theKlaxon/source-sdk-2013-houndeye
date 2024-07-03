@@ -7,7 +7,7 @@
 
 #ifndef ISTEAMCLIENT_H
 #define ISTEAMCLIENT_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -65,8 +65,8 @@ typedef int32 HSteamPipe;
 // handle to single instance of a steam user
 typedef int32 HSteamUser;
 // function prototype
-#if defined( POSIX )
-#define __cdecl
+#if IsPosix()
+	#define __cdecl
 #endif
 extern "C" typedef void (__cdecl *SteamAPIWarningMessageHook_t)(int, const char *);
 extern "C" typedef void( *SteamAPI_PostAPIResultInProcess_t )(SteamAPICall_t callHandle, void *, uint32 unCallbackSize, int iCallbackNum);

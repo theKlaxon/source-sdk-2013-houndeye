@@ -8,7 +8,7 @@
 #ifndef KEYVALUES_H
 #define KEYVALUES_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

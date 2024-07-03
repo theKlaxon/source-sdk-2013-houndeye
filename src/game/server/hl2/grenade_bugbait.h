@@ -7,7 +7,7 @@
 
 #ifndef GRENADE_BUGBAIT_H
 #define GRENADE_BUGBAIT_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

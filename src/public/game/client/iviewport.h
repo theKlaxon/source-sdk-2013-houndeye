@@ -12,7 +12,7 @@
 //=============================================================================//
 #if !defined( IVIEWPORT_H )
 #define IVIEWPORT_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

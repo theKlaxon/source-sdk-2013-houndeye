@@ -6,7 +6,7 @@
 
 #ifndef FX_TRAIL_H
 #define FX_TRAIL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

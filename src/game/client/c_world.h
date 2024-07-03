@@ -6,7 +6,7 @@
 //=============================================================================//
 #if !defined( C_WORLD_H )
 #define C_WORLD_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

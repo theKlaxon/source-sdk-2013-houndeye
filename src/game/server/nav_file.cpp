@@ -987,7 +987,7 @@ Changes all '/' characters into '\' characters, in place.
 */
 inline void COM_FixSlashes( char *pname )
 {
-#ifdef _WIN32
+#if IsWindows()
 	while ( *pname ) 
 	{
 		if ( *pname == '/' )

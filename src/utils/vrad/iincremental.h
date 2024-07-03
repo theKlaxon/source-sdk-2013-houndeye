@@ -7,7 +7,7 @@
 
 #ifndef IINCREMENTAL_H
 #define IINCREMENTAL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

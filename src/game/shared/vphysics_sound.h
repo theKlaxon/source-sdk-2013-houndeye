@@ -7,7 +7,7 @@
 
 #ifndef VPHYSICS_SOUND_H
 #define VPHYSICS_SOUND_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

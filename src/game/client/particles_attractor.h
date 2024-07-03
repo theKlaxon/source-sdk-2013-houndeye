@@ -6,7 +6,7 @@
 
 #ifndef PARTICLES_ATTRACTOR_H
 #define PARTICLES_ATTRACTOR_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

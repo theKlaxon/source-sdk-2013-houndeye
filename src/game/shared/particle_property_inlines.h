@@ -14,7 +14,7 @@
 
 #ifndef PARTICLEPROPERTY_INLINES_H
 #define PARTICLEPROPERTY_INLINES_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

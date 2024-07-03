@@ -8,7 +8,7 @@
 #ifndef SPLITTER_H
 #define SPLITTER_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

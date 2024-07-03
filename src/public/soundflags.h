@@ -8,7 +8,7 @@
 #ifndef SOUNDFLAGS_H
 #define SOUNDFLAGS_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

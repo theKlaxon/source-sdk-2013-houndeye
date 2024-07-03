@@ -405,7 +405,7 @@ void C_PropVehicleDriveable::UpdateViewAngles( C_BasePlayer *pLocalPlayer, CUser
 //-----------------------------------------------------------------------------
 void C_PropVehicleDriveable::OnEnteredVehicle( C_BaseCombatCharacter *pPassenger )
 {
-#if defined( WIN32 )
+#if IsWindows()
 	// NVNT notify haptics system of navigation change
 	HapticsEnteredVehicle(this,pPassenger);
 #endif
@@ -414,7 +414,7 @@ void C_PropVehicleDriveable::OnEnteredVehicle( C_BaseCombatCharacter *pPassenger
 // NVNT - added function
 void C_PropVehicleDriveable::OnExitedVehicle( C_BaseCombatCharacter *pPassenger )
 {
-#if defined( WIN32 )
+#if IsWindows()
 	// NVNT notify haptics system of navigation exit
 	HapticsExitedVehicle(this,pPassenger);
 #endif

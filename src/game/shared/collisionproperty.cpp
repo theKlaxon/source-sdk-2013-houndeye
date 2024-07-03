@@ -1143,8 +1143,7 @@ void CCollisionProperty::ComputeSurroundingBox( Vector *pVecWorldMins, Vector *p
 		return;
 	}
 
-#ifdef DEBUG
-	/*
+#if IsDebug()	/*
 	// For debugging purposes, make sure the bounds actually does surround the thing.
 	// Otherwise the optimization we were using isn't really all that great, is it?
 	Vector vecTestMins, vecTestMaxs;

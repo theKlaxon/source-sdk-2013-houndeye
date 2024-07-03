@@ -6,7 +6,7 @@
 
 #ifndef HL2_PLAYER_SHARED_H
 #define HL2_PLAYER_SHARED_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

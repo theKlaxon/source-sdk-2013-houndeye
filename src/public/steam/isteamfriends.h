@@ -6,7 +6,7 @@
 
 #ifndef ISTEAMFRIENDS_H
 #define ISTEAMFRIENDS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

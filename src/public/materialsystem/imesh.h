@@ -7,7 +7,7 @@
 #ifndef IMESH_H
 #define IMESH_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -1127,7 +1127,7 @@ inline void CVertexBuilder::AdvanceVertices( int nVerts )
 	IncrementFloatPointer( m_pCurrTexCoord[7], m_VertexSize_TexCoord[7]*nVerts );
 	m_pCurrColor += m_VertexSize_Color*nVerts;
 
-#if ( defined( _DEBUG ) && ( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 ) )
+#if ( IsDebug() && ( COMPRESSED_NORMALS_TYPE == COMPRESSED_NORMALS_COMBINEDTANGENTS_UBYTE4 ) )
 	m_bWrittenNormal   = false;
 	m_bWrittenUserData = false;
 #endif
@@ -1155,7 +1155,7 @@ inline void CVertexBuilder::FastVertex( const ModelVertexDX7_t &vertex )
 	Assert( m_CompressionType == VERTEX_COMPRESSION_NONE ); // FIXME: support compressed verts if needed
 	Assert( m_nCurrentVertex < m_nMaxVertexCount );
 
-#if defined( _WIN32 )
+#if IsWindows()
 	const void *pRead = &vertex;
 	void *pCurrPos = m_pCurrPosition;
 
@@ -1180,7 +1180,7 @@ inline void CVertexBuilder::FastVertex( const ModelVertexDX7_t &vertex )
 
 			emms
 	}
-#elif defined(GNUC)
+#elif defined( COMPILER_GCC )
 	const void *pRead = &vertex;
 	void *pCurrPos = m_pCurrPosition;
 	__asm__ __volatile__ (
@@ -1263,7 +1263,7 @@ inline void CVertexBuilder::Fast4VerticesSSE(
 	Assert( m_CompressionType == VERTEX_COMPRESSION_NONE ); // FIXME: support compressed verts if needed
 	Assert( m_nCurrentVertex < m_nMaxVertexCount-3 );
 
-#if defined( _WIN32 )
+#if IsWindows()
 	void *pCurrPos = m_pCurrPosition;
 	__asm
 	{
@@ -1321,7 +1321,7 @@ inline void CVertexBuilder::FastVertex( const ModelVertexDX8_t &vertex )
 	Assert( m_CompressionType == VERTEX_COMPRESSION_NONE ); // FIXME: support compressed verts if needed
 	Assert( m_nCurrentVertex < m_nMaxVertexCount );
 
-#if defined( _WIN32 )
+#if IsWindows()
 	const void *pRead = &vertex;
 	void *pCurrPos = m_pCurrPosition;
 	__asm
@@ -2180,8 +2180,8 @@ template <VertexCompressionType_t T> inline void CVertexBuilder::CompressedBoneW
 		unsigned int weight0 = Float2Int( pWeights[0] * 32768.0f );
 		*weights = ( 0x0000FFFF & (weight0 - 1) ) << WEIGHT0_SHIFT;
 
-#ifdef DEBUG
-		if ( m_NumBoneWeights == 1 )
+#if IsDebug()
+	if ( m_NumBoneWeights == 1 )
 		{
 			// Double-check the validity of the values that were passed in
 			Assert( IsFinite( pWeights[1] ) && ( pWeights[1] >= 0.0f ) && ( pWeights[1] <= 1.0f ) );

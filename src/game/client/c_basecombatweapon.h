@@ -9,7 +9,7 @@
 #ifndef C_BASECOMBATWEAPON_H
 #define C_BASECOMBATWEAPON_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

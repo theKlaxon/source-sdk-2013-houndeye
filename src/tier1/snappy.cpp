@@ -36,7 +36,7 @@
 #include <string>
 #include <vector>
 
-#ifdef _WIN32
+#if IsWindows()
 
 #pragma warning(disable:4018) // warning C4018: '<' : signed/unsigned mismatch
 #pragma warning(disable:4389) // warning C4389: '==' : signed/unsigned mismatch
@@ -563,7 +563,7 @@ static const uint16 char_table[256] = {
 
 // In debug mode, allow optional computation of the table at startup.
 // Also, check that the decompression table is correct.
-#ifndef NDEBUG
+#if IsDebug()
 DEFINE_bool(snappy_dump_decompression_table, false,
             "If true, we print the decompression table at startup.");
 
@@ -661,7 +661,7 @@ static void ComputeTable() {
     }
   }
 }
-#endif /* !NDEBUG */
+#endif
 
 // Helper class for decompression
 class SnappyDecompressor {

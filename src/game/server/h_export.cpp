@@ -13,7 +13,7 @@
 
 */
 
-#if defined(_WIN32)
+#if IsWindows()
 
 #include "winlite.h"
 #include "datamap.h"

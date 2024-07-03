@@ -8,7 +8,7 @@
 #ifndef AI_NPCSTATE_H
 #define AI_NPCSTATE_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

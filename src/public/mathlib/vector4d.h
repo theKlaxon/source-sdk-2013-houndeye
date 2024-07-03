@@ -9,7 +9,7 @@
 #ifndef VECTOR4D_H
 #define VECTOR4D_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

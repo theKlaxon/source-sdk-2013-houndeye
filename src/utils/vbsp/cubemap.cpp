@@ -724,8 +724,7 @@ void Cubemap_FixupBrushSidesMaterials( void )
 			
 			side_t *pSide = &g_MainMap->brushsides[sideIndex];
 
-#ifdef DEBUG
-			if ( pSide->pMapDisp )
+#if IsDebug()			if ( pSide->pMapDisp )
 			{
 				Assert( pSide->texinfo == pSide->pMapDisp->face.texinfo );
 			}
@@ -941,8 +940,7 @@ void Cubemap_AttachDefaultCubemapToSpecularSides( void )
 		if ( iCubemap == -1 )
 			continue;
 
-#ifdef DEBUG
-		if ( pSide->pMapDisp )
+#if IsDebug()		if ( pSide->pMapDisp )
 		{
 			Assert( pSide->texinfo == pSide->pMapDisp->face.texinfo );
 		}

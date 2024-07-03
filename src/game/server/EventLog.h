@@ -9,7 +9,7 @@
 #if !defined EVENTLOG_H
 #define EVENTLOG_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

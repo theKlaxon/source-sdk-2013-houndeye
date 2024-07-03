@@ -6,7 +6,7 @@
 
 #ifndef NPC_VORTIGAUNT_H
 #define NPC_VORTIGAUNT_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

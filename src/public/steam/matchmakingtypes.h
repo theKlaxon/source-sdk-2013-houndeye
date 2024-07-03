@@ -8,11 +8,11 @@
 #ifndef MATCHMAKINGTYPES_H
 #define MATCHMAKINGTYPES_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
-#ifdef POSIX
+#if IsPosix()
 #ifndef _snprintf
 #define _snprintf snprintf
 #endif

@@ -6,7 +6,7 @@
 
 #ifndef BONE_ACCESSOR_H
 #define BONE_ACCESSOR_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

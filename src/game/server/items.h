@@ -8,7 +8,7 @@
 #ifndef ITEMS_H
 #define ITEMS_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

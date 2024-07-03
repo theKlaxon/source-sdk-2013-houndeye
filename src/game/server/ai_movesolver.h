@@ -12,7 +12,7 @@
 #ifndef AI_MOVESOLVER_H
 #define AI_MOVESOLVER_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

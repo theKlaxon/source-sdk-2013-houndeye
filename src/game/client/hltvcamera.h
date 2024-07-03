@@ -6,7 +6,7 @@
 
 #ifndef HLTVCAMERA_H
 #define HLTVCAMERA_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

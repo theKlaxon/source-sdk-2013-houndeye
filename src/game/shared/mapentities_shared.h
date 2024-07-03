@@ -6,7 +6,7 @@
 
 #ifndef MAPENTITIES_SHARED_H
 #define MAPENTITIES_SHARED_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

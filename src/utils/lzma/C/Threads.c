@@ -3,7 +3,7 @@
 
 #include "Precomp.h"
 
-#ifndef _WIN32_WCE
+#if !defined( WIN32_WCE )
 #include <process.h>
 #endif
 

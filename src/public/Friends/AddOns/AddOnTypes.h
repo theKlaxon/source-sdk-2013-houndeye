@@ -8,7 +8,7 @@
 #define ADDONTYPES_H
 #pragma once
 
-#ifndef WIN32
+#if !IsWindows()
   typedef unsigned long long SessionInt64;
 #else
   typedef unsigned __int64 SessionInt64;

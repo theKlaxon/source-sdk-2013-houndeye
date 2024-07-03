@@ -6,7 +6,7 @@
 
 #ifndef SEQUENCEPICKER_H
 #define SEQUENCEPICKER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -10,9 +10,9 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-#if defined( WIN32 )
+#if IsWindows()
 	#include <windows.h>
-#elif defined( POSIX )
+#elif IsPosix()
 	#include <pthread.h>
 #else
 	#error "threads.h: Don't know how to handle threads here!"

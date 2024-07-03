@@ -6,7 +6,7 @@
 
 #ifndef SDK_PLAYER_SHARED_H
 #define SDK_PLAYER_SHARED_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -8,7 +8,7 @@
 
 #if !defined( INPUT_H )
 #define INPUT_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

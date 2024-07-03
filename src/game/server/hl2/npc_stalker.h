@@ -7,7 +7,7 @@
 
 #ifndef NPC_STALKER_H
 #define NPC_STALKER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

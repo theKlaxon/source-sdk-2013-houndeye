@@ -10,7 +10,7 @@
 #ifndef CMDLIB_H
 #define CMDLIB_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -58,7 +58,7 @@ void				CmdLib_TermFileSystem();	// GracefulExit calls this.
 CreateInterfaceFn	CmdLib_GetFileSystemFactory();
 
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma warning(disable : 4244)     // MIPS
 #pragma warning(disable : 4136)     // X86
 #pragma warning(disable : 4051)     // ALPHA

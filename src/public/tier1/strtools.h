@@ -355,7 +355,7 @@ int Q_UTF16ToUChar32( const uchar16 *pUTF16, uchar32 &uValueOut, bool &bErrorOut
 
 
 // NOTE: WString means either UTF32 or UTF16 depending on the platform and compiler settings.
-#if defined( _MSC_VER ) || defined( _WIN32 )
+#if defined( _MSC_VER ) || IsWindows()
 #define Q_UTF8ToWString Q_UTF8ToUTF16
 #define Q_UTF8CharsToWString Q_UTF8CharsToUTF16
 #define Q_UTF32ToWString Q_UTF32ToUTF16
@@ -376,7 +376,7 @@ int Q_UTF16ToUChar32( const uchar16 *pUTF16, uchar32 &uValueOut, bool &bErrorOut
 #define V_UnicodeToUTF8 Q_WStringToUTF8
 
 
-#ifdef WIN32
+#if IsWindows()
 // This function is ill-defined as it relies on the current ANSI code page. Currently Win32 only for tools.
 int Q_LocaleSpecificANSIToUTF8( const char *pANSI, int cubSrcInBytes, OUT_Z_BYTECAP(cubDestSizeInBytes) char *pUTF8, int cubDestSizeInBytes );
 #endif
@@ -423,7 +423,7 @@ template <size_t maxLenInChars> int Q_NormalizeUTF8ToASCII( OUT_Z_ARRAY char (&p
 }
 
 // UNDONE: Find a non-compiler-specific way to do this
-#ifdef _WIN32
+#if IsWindows()
 #ifndef _VA_LIST_DEFINED
 
 #ifdef  _M_ALPHA
@@ -444,16 +444,16 @@ typedef char *  va_list;
 
 #endif   // _VA_LIST_DEFINED
 
-#elif POSIX
+#elif IsPosix()
 #include <stdarg.h>
 #endif
 
-#ifdef _WIN32
+#if IsWindows()
 #define CORRECT_PATH_SEPARATOR '\\'
 #define CORRECT_PATH_SEPARATOR_S "\\"
 #define INCORRECT_PATH_SEPARATOR '/'
 #define INCORRECT_PATH_SEPARATOR_S "/"
-#elif POSIX
+#elif IsPosix()
 #define CORRECT_PATH_SEPARATOR '/'
 #define CORRECT_PATH_SEPARATOR_S "/"
 #define INCORRECT_PATH_SEPARATOR '\\'
@@ -763,7 +763,7 @@ public:
 	{
 		m_pch = pch;
 		m_pwch = NULL;
-#if !defined( WIN32 ) && !defined(_WIN32)
+#if !IsWindows() && !IsWindows()
 		m_pucs2 = NULL;
 		m_bCreatedUCS2 = false;
 #endif
@@ -775,14 +775,14 @@ public:
 	{
 		m_pch = NULL;
 		m_pwch = pwch;
-#if !defined( WIN32 ) && !defined(_WIN32)
+#if !IsWindows() && !IsWindows()
 		m_pucs2 = NULL;
 		m_bCreatedUCS2 = false;
 #endif
 		m_bCreatedUTF16 = true;
 	}
 
-#if !defined(WIN32) && !defined(_WINDOWS) && !defined(_WIN32)
+#if !IsWindows() && !defined(_WINDOWS) && !IsWindows()
 	explicit CStrAutoEncode( const ucs2 *pwch )
 	{
 		m_pch = NULL;
@@ -816,7 +816,7 @@ public:
 		return m_pwch;
 	}
 
-#if !defined( WIN32 ) && !defined(_WIN32)
+#if !IsWindows() && !IsWindows()
 	// returns the UTF-16 string, converting on the fly.
 	const ucs2* ToUCS2String()
 	{
@@ -847,7 +847,7 @@ public:
 		{
 			delete [] m_pwch;
 		}
-#if !defined( WIN32 ) && !defined(_WIN32)
+#if !IsWindows() && !IsWindows()
 		if ( !m_bCreatedUCS2 && m_pucs2 )
 			delete [] m_pucs2;
 #endif
@@ -920,7 +920,7 @@ private:
 		}
 	}
 
-#if !defined( WIN32 ) && !defined(_WIN32)
+#if !IsWindows() && !IsWindows()
 	// ensure we have done any conversion work required to farm out a
 	// UTF-16 encoded string.
 	//
@@ -959,7 +959,7 @@ private:
 	// with is the pointer we've allocated and must free.
 	const char *m_pch;
 	const wchar_t *m_pwch;
-#if !defined( WIN32 ) && !defined(_WIN32)
+#if !IsWindows() && !IsWindows()
 	const ucs2 *m_pucs2;
 	bool m_bCreatedUCS2;
 #endif

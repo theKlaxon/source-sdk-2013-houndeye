@@ -6,7 +6,7 @@
 
 #ifndef ACHIEVEMENTMGR_H
 #define ACHIEVEMENTMGR_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 #include "baseachievement.h"

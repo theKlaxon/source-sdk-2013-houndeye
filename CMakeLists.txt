@@ -47,53 +47,53 @@ set_property(CACHE BUILD_GROUP PROPERTY STRINGS
 )
 
 # Which game are we building?
-set(BUILD_GAME "hl2mp" CACHE STRING "Build Game")
+set( BUILD_GAME "hl2mp" CACHE STRING "Build Game" )
 
-set_property(CACHE BUILD_GAME PROPERTY STRINGS
+set_property( CACHE BUILD_GAME PROPERTY STRINGS
 	"hl2mp" # Only hl2mp at the moment
 )
 
-set(SRCDIR "${CMAKE_CURRENT_LIST_DIR}/src")
-set(GAMEDIR "${CMAKE_CURRENT_LIST_DIR}/game")
-set(THIRDPARTYDIR "${CMAKE_CURRENT_LIST_DIR}/thirdparty")
+set( SRCDIR "${CMAKE_CURRENT_LIST_DIR}/src" )
+set( GAMEDIR "${CMAKE_CURRENT_LIST_DIR}/game" )
+set( THIRDPARTYDIR "${CMAKE_CURRENT_LIST_DIR}/thirdparty" )
 
 # Compile options that are populated and set for each target depending on their type
-set(ADDITIONAL_COMPILE_OPTIONS_EXE)
-set(ADDITIONAL_COMPILE_OPTIONS_DLL)
-set(ADDITIONAL_COMPILE_OPTIONS_LIB)
+set( ADDITIONAL_COMPILE_OPTIONS_EXE )
+set( ADDITIONAL_COMPILE_OPTIONS_DLL )
+set( ADDITIONAL_COMPILE_OPTIONS_LIB )
 
 # Libraries that are linked to for each target depending on their type
-set(ADDITIONAL_LINK_LIBRARIES_EXE)
-set(ADDITIONAL_LINK_LIBRARIES_DLL)
+set( ADDITIONAL_LINK_LIBRARIES_EXE )
+set( ADDITIONAL_LINK_LIBRARIES_DLL )
 
 # Linker options that are populated and set for each target depending on their type
-set(ADDITIONAL_LINK_OPTIONS_EXE)
-set(ADDITIONAL_LINK_OPTIONS_DLL)
-set(ADDITIONAL_LINK_OPTIONS_LIB)
+set( ADDITIONAL_LINK_OPTIONS_EXE )
+set( ADDITIONAL_LINK_OPTIONS_DLL )
+set( ADDITIONAL_LINK_OPTIONS_LIB )
 
 # Sources that are added to each target depending on their type
-set(ADDITIONAL_SOURCES_EXE)
-set(ADDITIONAL_SOURCES_DLL)
-set(ADDITIONAL_SOURCES_LIB)
+set( ADDITIONAL_SOURCES_EXE )
+set( ADDITIONAL_SOURCES_DLL )
+set( ADDITIONAL_SOURCES_LIB )
 
 # Compile definitions that are added to each target depending on their type
-set(ADDITIONAL_COMPILE_DEFINITIONS_EXE)
-set(ADDITIONAL_COMPILE_DEFINITIONS_DLL)
-set(ADDITIONAL_COMPILE_DEFINITIONS_LIB)
+set( ADDITIONAL_COMPILE_DEFINITIONS_EXE )
+set( ADDITIONAL_COMPILE_DEFINITIONS_DLL )
+set( ADDITIONAL_COMPILE_DEFINITIONS_LIB )
 
 # SETUP THIRD PARTY, before we "customize" our compilation process
 include( "thirdparty/init.cmake" )
 include( "_cmake_scripts/dlang.cmake" )
 
 # Init project structure
-include("_cmake_scripts/pch_skip.cmake")
-include("_cmake_scripts/platform_dirs.cmake")
-include("_cmake_scripts/base.cmake")
-include("_cmake_scripts/video_base.cmake")
-include("_cmake_scripts/postbuild.cmake")
+include( "_cmake_scripts/pch_skip.cmake" )
+include( "_cmake_scripts/platform_dirs.cmake" )
+include( "_cmake_scripts/base.cmake" )
+include( "_cmake_scripts/video_base.cmake" )
+include( "_cmake_scripts/postbuild.cmake" )
 
-set(LIBPUBLIC "${SRCDIR}/lib/public${PLATSUBDIR}")
-set(LIBCOMMON "${SRCDIR}/lib/common${PLATSUBDIR}")
+set( LIBPUBLIC "${SRCDIR}/lib/public${PLATSUBDIR}" )
+set( LIBCOMMON "${SRCDIR}/lib/common${PLATSUBDIR}" )
 
 link_directories(
 	${LIBPUBLIC}
@@ -107,12 +107,9 @@ include_directories(
 	"${SRCDIR}/public/tier1"
 )
 
-add_compile_definitions( $<$<CONFIG:Debug>:DEBUG> $<$<CONFIG:Debug>:_DEBUG> )
-add_compile_definitions( $<$<CONFIG:Release>:NDEBUG> )
-
-if (${IS_WINDOWS})
-	include("_cmake_scripts/windows_base.cmake")
-elseif (${IS_LINUX})
+if ( ${IS_WINDOWS} )
+	include( "_cmake_scripts/windows_base.cmake" )
+elseif ( ${IS_POSIX} )
 	include("_cmake_scripts/posix_base.cmake")
 endif()
 

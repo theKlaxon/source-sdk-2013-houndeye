@@ -6,7 +6,7 @@
 
 #ifndef BITVEC_H
 #define BITVEC_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -36,7 +36,7 @@ private:
 #define LOG2_BITS_PER_INT	5
 #define BITS_PER_INT		32
 
-#if _WIN32
+#if IsWindows()
 #include <intrin.h>
 #pragma intrinsic(_BitScanForward)
 #endif

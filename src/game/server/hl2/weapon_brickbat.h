@@ -10,7 +10,7 @@
 #ifndef	WEAPON_BRICKBAT_H
 #define	WEAPON_BRICKBAT_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

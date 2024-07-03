@@ -6,7 +6,7 @@
 
 #ifndef FGDLIB_H
 #define FGDLIB_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

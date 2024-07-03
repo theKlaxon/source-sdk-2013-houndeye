@@ -90,7 +90,7 @@ bool ParseKeyvalue( void *pObject, typedescription_t *pFields, int iNumFields, c
 				return true;
 
 			case FIELD_COLOR32:
-				UTIL_StringToColor32( (color32 *) ((char *)pObject + fieldOffset), szValue );
+				UTIL_StringToColor32( reinterpret_cast<Color&>( *((char*)pObject + fieldOffset) ), szValue );
 				return true;
 
 			case FIELD_CUSTOM:

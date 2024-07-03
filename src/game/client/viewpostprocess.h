@@ -7,7 +7,7 @@
 #ifndef VIEWPOSTPROCESS_H
 #define VIEWPOSTPROCESS_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

@@ -8,8 +8,7 @@
 //=============================================================================
 #pragma once
 
-#if defined( _MSC_VER )
-	#pragma once
+#if defined( COMPILER_MSVC )
 	// Suppress this spurious warning:
 	// warning C4700: uninitialized local variable 'oldHead' used
 	#pragma warning( push )
@@ -42,12 +41,12 @@ inline bool ThreadInterlockedAssignIf64x128( volatile int64* pDest, const int64 
 }
 #endif
 
-#if defined( _MSC_VER ) || defined( __clang__ )
+#if defined( COMPILER_MSVC ) || defined( COMPILER_CLANG )
 	#define TSLIST_HEAD_ALIGN DECL_ALIGN( TSLIST_HEAD_ALIGNMENT )
 	#define TSLIST_NODE_ALIGN DECL_ALIGN( TSLIST_NODE_ALIGNMENT )
 	#define TSLIST_HEAD_ALIGN_POST
 	#define TSLIST_NODE_ALIGN_POST
-#elif defined( GNUC )
+#elif defined( COMPILER_GCC )
 	#define TSLIST_HEAD_ALIGN
 	#define TSLIST_NODE_ALIGN
 	#define TSLIST_HEAD_ALIGN_POST DECL_ALIGN( TSLIST_HEAD_ALIGNMENT )
@@ -203,7 +202,7 @@ public:
 			for ( ;; ) {
 				oldHead.value64x128 = m_Head.value64x128;
 				if ( !oldHead.value.Next )
-					return NULL;
+					return nullptr;
 
 				newHead.value.Next = oldHead.value.Next->Next;
 				newHead.value32.DepthAndSequence = oldHead.value32.DepthAndSequence - 1;
@@ -235,9 +234,9 @@ public:
 
 				oldHead.value64x128 = m_Head.value64x128;
 				if ( !oldHead.value.Next )
-					return NULL;
+					return nullptr;
 
-				newHead.value.Next = NULL;
+				newHead.value.Next = nullptr;
 				// <sergiy> the reason for AND'ing it instead of poking a short into memory
 				//          is probably to avoid store forward issues, but I'm not sure because
 				//          I didn't construct this code. In any case, leaving it as is on big-endian
@@ -525,7 +524,7 @@ public:
 private:
 	// These ain't gonna work
 	static void* operator new[]( size_t size ) throw() {
-		return NULL;
+		return nullptr;
 	}
 
 	static void operator delete[]( void* p ) {
@@ -754,7 +753,7 @@ public:
 
 			if ( head.value.pNode == *pTailNode ) {
 				if ( pNext == End() )
-					return NULL;
+					return nullptr;
 
 				// Another thread is trying to push, help it along
 				NodeLink_t& oldTail = head;           // just reuse local memory for head to build old tail
@@ -830,7 +829,7 @@ private:
 	CTSListBase m_FreeNodes;
 } TSLIST_NODE_ALIGN_POST;
 
-#if defined( _WIN32 )
+#if IsWindows()
 	// Suppress this spurious warning:
 	// warning C4700: uninitialized local variable 'oldHead' used
 	#pragma warning( pop )

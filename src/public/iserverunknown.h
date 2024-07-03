@@ -8,7 +8,7 @@
 #ifndef ISERVERUNKNOWN_H
 #define ISERVERUNKNOWN_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

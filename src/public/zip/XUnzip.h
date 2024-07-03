@@ -90,7 +90,7 @@
 #define XUNZIP_H
 
 #if !defined( DWORD )
-#ifdef _WIN32
+#if IsWindows()
 typedef unsigned long DWORD;
 #else
 typedef unsigned int DWORD;
@@ -101,7 +101,7 @@ typedef unsigned int DWORD;
 typedef char TCHAR;
 #endif
 
-#if defined(POSIX) && !defined(MAX_PATH)
+#if IsPosix() && !defined(MAX_PATH)
 #include <limits.h>
 #define MAX_PATH PATH_MAX
 typedef bool BOOL;
@@ -117,7 +117,7 @@ typedef void *HANDLE;
 DECLARE_HANDLE(HZIP);		// An HZIP identifies a zip file that is being created
 #endif
 
-#if defined(_WIN32) && !defined(_WINBASE_) && !defined(_FILETIME_)
+#if IsWindows() && !defined(_WINBASE_) && !defined(_FILETIME_)
 #define _FILETIME_
 typedef struct _FILETIME
 {
@@ -126,7 +126,7 @@ typedef struct _FILETIME
 } FILETIME, * LPFILETIME, *PFILETIME;
 #endif
 
-#if defined(POSIX)
+#if IsPosix()
 typedef time_t FILETIME;
 #endif
 

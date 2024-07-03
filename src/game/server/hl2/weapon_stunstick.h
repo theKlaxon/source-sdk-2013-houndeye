@@ -6,7 +6,7 @@
 
 #ifndef WEAPON_STUNSTICK_H
 #define WEAPON_STUNSTICK_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

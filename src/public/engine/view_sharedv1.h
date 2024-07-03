@@ -7,7 +7,7 @@
 #ifndef VIEW_SHAREDV1_H
 #define VIEW_SHAREDV1_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

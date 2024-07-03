@@ -6,7 +6,7 @@
 
 #ifndef SNDINFO_H
 #define SNDINFO_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

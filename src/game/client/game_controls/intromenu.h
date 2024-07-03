@@ -6,7 +6,7 @@
 
 #ifndef INTROMENU_H
 #define INTROMENU_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

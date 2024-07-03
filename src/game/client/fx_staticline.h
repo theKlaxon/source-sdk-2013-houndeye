@@ -11,7 +11,7 @@
 
 #if !defined( FXSTATICLINE_H )
 #define FXSTATICLINE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

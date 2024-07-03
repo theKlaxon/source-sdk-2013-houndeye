@@ -11,7 +11,7 @@
 #ifndef CHARACTERSET_H
 #define CHARACTERSET_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

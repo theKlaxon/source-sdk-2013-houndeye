@@ -9,7 +9,7 @@
 #ifndef IMATERIALVAR_H
 #define IMATERIALVAR_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

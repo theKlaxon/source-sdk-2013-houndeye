@@ -7,7 +7,7 @@
 
 #ifndef SPECTATORGUI_H
 #define SPECTATORGUI_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

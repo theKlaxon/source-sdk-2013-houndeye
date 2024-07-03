@@ -1,10 +1,10 @@
 # posix_base.cmake
 message( NOTICE "Platform: POSIX" )
 
-string(REPLACE "-O3" "-O2" CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
-string(REPLACE "-O3" "-O2" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+string( REPLACE "-O3" "-O2" CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}" )
+string( REPLACE "-O3" "-O2" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}" )
 
-find_package(Threads REQUIRED)
+find_package( Threads REQUIRED )
 
 add_compile_options(
 	-g
@@ -30,9 +30,6 @@ add_link_options(
 
 
 add_compile_definitions(
-	_POSIX
-	POSIX
-	$<$<CXX_COMPILER_ID:GNU>:GNUC>
 	$<$<CXX_COMPILER_ID:GNU>:COMPILER_GCC=1>
 	NO_HOOK_MALLOC
 	NO_MALLOC_OVERRIDE
@@ -40,8 +37,8 @@ add_compile_definitions(
 	$<${IS_LINUX}:LINUX>
 )
 
-if (${IS_LINUX})
-	if (NOT ${DEDICATED})
+if ( ${IS_LINUX} )
+	if ( NOT ${DEDICATED} )
 		list( APPEND ADDITIONAL_LINK_OPTIONS_EXE
 			-Wl,--no-as-needed -ltcmalloc_minimal -Wl,--as-needed
 		)
@@ -59,7 +56,7 @@ link_libraries(
 	$<${IS_LINUX}:m>
 )
 
-if (${IS_LINUX})
+if ( ${IS_LINUX} )
 	add_link_options(
 		-static-libgcc
 		-static-libstdc++

@@ -3,8 +3,10 @@
 //
 #include "plainsystemclient.hpp"
 
+#include <dirent.h>
 #include <fcntl.h>
 #include <filesystem>
+#include <unistd.h>
 #include <utility>
 
 #include "dbg.h"
@@ -36,7 +38,7 @@ auto CPlainSystemClient::Flush( const FileDescriptor* desc ) -> bool {
 	return {};
 }
 auto CPlainSystemClient::Walk( uint16_t nwname, const char* wname ) -> void {
-	readdir(  )
+//	getdents64(  )
 }
 auto CPlainSystemClient::Open( const char* path, OpenMode mode ) -> FileDescriptor* {
 	AssertFatalMsg( path, "Was given a `NULL` file path!" );

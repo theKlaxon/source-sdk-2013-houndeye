@@ -6,7 +6,7 @@
 
 #ifndef ROTORWASH_H
 #define ROTORWASH_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

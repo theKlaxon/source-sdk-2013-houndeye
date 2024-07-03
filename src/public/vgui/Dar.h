@@ -8,7 +8,7 @@
 #ifndef DAR_H
 #define DAR_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

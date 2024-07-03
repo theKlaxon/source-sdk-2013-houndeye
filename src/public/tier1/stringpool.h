@@ -8,7 +8,7 @@
 #ifndef STRINGPOOL_H
 #define STRINGPOOL_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

@@ -15,10 +15,10 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#if defined( _WIN32 )
+#if IsWindows()
 	#pragma once
 #endif
-#if defined(POSIX)
+#if IsPosix()
 	#pragma GCC visibility push(hidden)
 #endif
 
@@ -263,7 +263,7 @@ void CFmtStrN< SIZE_BUF, QUIET_TRUNCATION >::AppendFormatV( const char *pchForma
 }
 
 
-#if defined(POSIX)
+#if IsPosix()
 	#pragma GCC visibility pop
 #endif
 
@@ -313,7 +313,7 @@ public:
 
 	inline void SetBool( bool b )			{ Q_memcpy( m_szBuf, b ? "1" : "0", 2 ); } 
 
-	#ifdef _WIN32
+	#if IsWindows()
 		inline void SetInt8( int8 n8 )			{ _itoa( (int32)n8, m_szBuf, 10 ); }
 		inline void SetUint8( uint8 un8 )		{ _itoa( (int32)un8, m_szBuf, 10 ); }
 		inline void SetInt16( int16 n16 )		{ _itoa( (int32)n16, m_szBuf, 10 ); }

@@ -128,9 +128,9 @@ const char *UTIL_FunctionToName( datamap_t *pMap, inputfunc_t *function )
 		{
 			if ( pMap->dataDesc[i].flags & FTYPEDESC_FUNCTIONTABLE )
 			{
-#ifdef WIN32
+#if IsWindows()
 				Assert( sizeof(pMap->dataDesc[i].inputFunc) == sizeof(void *) );
-#elif defined(POSIX)
+#elif IsPosix()
 				Assert( sizeof(pMap->dataDesc[i].inputFunc) == 8 );
 #else
 #error
@@ -158,9 +158,9 @@ inputfunc_t *UTIL_FunctionFromName( datamap_t *pMap, const char *pName )
 	{
 		for ( int i = 0; i < pMap->dataNumFields; i++ )
 		{
-#ifdef WIN32
+#if IsWindows()
 			Assert( sizeof(pMap->dataDesc[i].inputFunc) == sizeof(void *) );
-#elif defined(POSIX)
+#elif IsPosix()
 			Assert( sizeof(pMap->dataDesc[i].inputFunc) == 8 );
 #else
 #error

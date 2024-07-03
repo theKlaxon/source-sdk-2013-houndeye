@@ -10,7 +10,7 @@
 #ifndef UTLBLOCKMEMORY_H
 #define UTLBLOCKMEMORY_H
 
-#ifdef _WIN32
+#if IsWindows()
 	#pragma once
 #endif
 

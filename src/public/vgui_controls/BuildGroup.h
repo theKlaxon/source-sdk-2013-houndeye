@@ -8,7 +8,7 @@
 #ifndef VGUI_BUILDGROUP_H
 #define VGUI_BUILDGROUP_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

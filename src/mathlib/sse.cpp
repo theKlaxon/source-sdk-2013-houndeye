@@ -173,13 +173,13 @@
 		Assert( s_bMathlibInitialized );
 
 		float rroot;
-	#ifdef _WIN32
+	#if IsWindows()
 		_asm
 		{
 			rsqrtss	xmm0, x
 			movss	rroot, xmm0
 		}
-	#elif POSIX
+	#elif IsPosix()
 		__asm__ __volatile__( "rsqrtss %0, %1" : "=x" (rroot) : "x" (x) );
 	#else
 	#error
@@ -194,14 +194,14 @@
 
 		// NOTE: This is necessary to prevent an memory overwrite...
 		// sice vec only has 3 floats, we can't "movaps" directly into it.
-	#ifdef _WIN32
+	#if IsWindows()
 		__declspec(align(16)) float result[4];
-	#elif POSIX
+	#elif  IsPosix()
 		 float result[4] __attribute__((aligned(16)));
 	#endif
 
 		float *v = &vec[0];
-	#ifdef _WIN32
+	#if IsWindows()
 		float *r = &result[0];
 	#endif
 
@@ -210,7 +210,7 @@
 		// be much of a performance win, considering you will very likely miss 3 branch predicts in a row.
 		if ( v[0] || v[1] || v[2] )
 		{
-	#ifdef _WIN32
+	#if IsWindows()
 		_asm
 			{
 				mov			eax, v
@@ -235,7 +235,7 @@
 				mulps		xmm4, xmm1			// r4 = vx * 1/radius, vy * 1/radius, vz * 1/radius, X
 				movaps		[edx], xmm4			// v = vx * 1/radius, vy * 1/radius, vz * 1/radius, X
 			}
-	#elif POSIX
+	#elif  IsPosix()
 			__asm__ __volatile__(
 	#ifdef ALIGNED_VECTOR
 				"movaps          %2, %%xmm4 \n\t"
@@ -284,7 +284,7 @@
 	float _SSE_InvRSquared(const float* v)
 	{
 		float	inv_r2 = 1.f;
-	#ifdef _WIN32
+	#if IsWindows()
 		_asm { // Intel SSE only routine
 			mov			eax, v
 			movss		xmm5, inv_r2		// x5 = 1.0, 0, 0, 0
@@ -304,7 +304,7 @@
 			rcpss		xmm0, xmm1			// x0 = 1 / max( 1.0, x1 )
 			movss		inv_r2, xmm0		// inv_r2 = x0
 		}
-	#elif POSIX
+	#elif  IsPosix()
 			__asm__ __volatile__(
 			"movss			 %0, %%xmm5 \n\t"
 	#ifdef ALIGNED_VECTOR
@@ -334,7 +334,7 @@
 	}
 
 
-	#ifdef POSIX
+	#if IsPosix()
 	// #define _PS_CONST(Name, Val) static const ALIGN16 float _ps_##Name[4] ALIGN16_POST = { Val, Val, Val, Val }
 	#define _PS_CONST_TYPE(Name, Type, Val) static const ALIGN16 Type _ps_##Name[4] ALIGN16_POST = { Val, Val, Val, Val }
 
@@ -377,7 +377,7 @@
 
 	void _SSE_SinCos(float x, float* s, float* c)
 	{
-	#ifdef _WIN32
+	#if IsWindows()
 		float t4, t8, t12;
 
 		__asm
@@ -462,7 +462,7 @@
 			movss	[eax], xmm0
 			movss	[edx], xmm4
 		}
-	#elif POSIX
+	#elif  IsPosix()
 
 		Assert( "Needs testing, verify impl!\n" );
 
@@ -584,7 +584,7 @@
 
 	float _SSE_cos( float x )
 	{
-	#ifdef _WIN32
+	#if IsWindows()
 		float temp;
 		__asm
 		{
@@ -633,7 +633,7 @@
 			movss   x,    xmm0
 
 		}
-	#elif POSIX
+	#elif  IsPosix()
 
 		Assert( "Needs testing, verify impl!\n" );
 
@@ -742,7 +742,7 @@
 	#if IsPlatformWindowsPC32()
 	void _SSE2_SinCos(float x, float* s, float* c)  // any x
 	{
-	#ifdef _WIN32
+	#if IsWindows()
 		__asm
 		{
 			movss	xmm0, x
@@ -818,7 +818,7 @@
 			movss	[eax], xmm0
 			movss	[edx], xmm6
 		}
-	#elif POSIX
+	#elif  IsPosix()
 		#warning "_SSE2_SinCos NOT implemented!"
 		Assert( 0 );
 	#else
@@ -830,7 +830,7 @@
 	#if IsPlatformWindowsPC32()
 	float _SSE2_cos(float x)
 	{
-	#ifdef _WIN32
+	#if IsWindows()
 		__asm
 		{
 			movss	xmm0, x
@@ -894,7 +894,7 @@
 		Assert( s_bMathlibInitialized );
 		Assert( in1 != out1 );
 
-	#ifdef _WIN32
+	#if IsWindows()
 		__asm
 		{
 			mov eax, in1;
@@ -936,7 +936,7 @@
 			addss xmm0, [ecx+12]
 			movss [edx+8], xmm0;
 		}
-	#elif POSIX
+	#elif  IsPosix()
 		#warning "VectorTransformSSE C implementation only"
 			out1[0] = DotProduct(in1, in2[0]) + in2[0][3];
 			out1[1] = DotProduct(in1, in2[1]) + in2[1][3];
@@ -953,7 +953,7 @@
 		Assert( s_bMathlibInitialized );
 		Assert( in1 != out1 );
 
-	#ifdef _WIN32
+	#if IsWindows()
 		__asm
 		{
 			mov eax, in1;
@@ -992,7 +992,7 @@
 			addss xmm0, xmm2;
 			movss [edx+8], xmm0;
 		}
-	#elif POSIX
+	#elif IsPosix()
 		#warning "VectorRotateSSE C implementation only"
 			out1[0] = DotProduct( in1, in2[0] );
 			out1[1] = DotProduct( in1, in2[1] );

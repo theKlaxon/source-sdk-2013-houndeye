@@ -8,7 +8,7 @@
 //=============================================================================//
 #pragma once
 
-#if defined( POSIX )
+#if IsPosix()
 	#undef time
 	#include <time.h>
 #endif

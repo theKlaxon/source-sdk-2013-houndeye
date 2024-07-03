@@ -19,7 +19,7 @@
 /* #undef INCOMPLETE_TYPES_BROKEN */
 
 /* Define "boolean" as unsigned char, not int, on Windows systems. */
-#ifdef _WIN32
+#if IsWindows()
 #ifndef __RPCNDR_H__		/* don't conflict if rpcndr.h already read */
 typedef unsigned char boolean;
 #endif

@@ -6,7 +6,7 @@
 
 #ifndef BASEASSETPICKER_H
 #define BASEASSETPICKER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

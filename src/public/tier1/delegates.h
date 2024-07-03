@@ -7,7 +7,7 @@
 #ifndef DELEGATES_H
 #define DELEGATES_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

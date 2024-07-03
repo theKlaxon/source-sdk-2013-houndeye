@@ -6,7 +6,7 @@
 
 #ifndef ISTEAMHTTP_H
 #define ISTEAMHTTP_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

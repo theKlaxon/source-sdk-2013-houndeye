@@ -6,7 +6,7 @@
 
 #ifndef OBSTACLE_PUSHAWAY_H
 #define OBSTACLE_PUSHAWAY_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

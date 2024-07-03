@@ -6,7 +6,7 @@
 
 #ifndef SDK_WEAPON_PARSE_H
 #define SDK_WEAPON_PARSE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

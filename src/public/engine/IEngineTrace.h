@@ -8,7 +8,7 @@
 
 #ifndef ENGINE_IENGINETRACE_H
 #define ENGINE_IENGINETRACE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

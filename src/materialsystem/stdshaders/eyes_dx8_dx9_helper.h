@@ -6,7 +6,7 @@
 
 #ifndef EYES_DX8_DX9_HELPER_H
 #define EYES_DX8_DX9_HELPER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

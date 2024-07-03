@@ -9,7 +9,7 @@
 #if !defined( IENGINEVGUI_H )
 #define IENGINEVGUI_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -10,7 +10,7 @@
 #ifndef	SATCHEL_H
 #define	SATCHEL_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

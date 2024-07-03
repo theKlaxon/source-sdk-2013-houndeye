@@ -7,7 +7,7 @@
 #ifndef PASSWORDHASH_H
 #define PASSWORDHASH_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

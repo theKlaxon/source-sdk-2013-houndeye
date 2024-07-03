@@ -8,7 +8,7 @@
 #ifndef FILEUTILS_H
 #define FILEUTILS_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

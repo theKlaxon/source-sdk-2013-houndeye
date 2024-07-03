@@ -6,7 +6,7 @@
 
 #ifndef ISTEAMMATCHMAKING
 #define ISTEAMMATCHMAKING
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -6,7 +6,7 @@
 
 #ifndef MDLSEQUENCEPICKER_H
 #define MDLSEQUENCEPICKER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -7,7 +7,7 @@
 
 #ifndef ICLIENTENTITY_H
 #define ICLIENTENTITY_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2006, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2006, Valve Corporation, All rights reserved. ======//
 //
 // Base class for windows that draw vgui in Maya
 //
@@ -7,7 +7,7 @@
 #ifndef VSVGUIWINDOW_H
 #define VSVGUIWINDOW_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

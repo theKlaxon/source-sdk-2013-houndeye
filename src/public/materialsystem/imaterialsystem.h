@@ -9,7 +9,7 @@
 #ifndef IMATERIALSYSTEM_H
 #define IMATERIALSYSTEM_H
 
-#ifdef _WIN32
+#if IsWindows()
 	#pragma once
 #endif
 
@@ -68,7 +68,7 @@ typedef uint64 VertexFormat_t;
 // waiting to be enabled during an interface revision.
 #define MATERIAL_SYSTEM_INTERFACE_VERSION "VMaterialSystem080"
 
-#ifdef POSIX
+#if IsPosix()
 	#define ABSOLUTE_MINIMUM_DXLEVEL 90
 #else
 	#define ABSOLUTE_MINIMUM_DXLEVEL 80

@@ -7,7 +7,7 @@
 
 #ifndef PARTICLES_SIMPLE_H
 #define PARTICLES_SIMPLE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -7,7 +7,7 @@
 
 #ifndef VEHICLES_H
 #define VEHICLES_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

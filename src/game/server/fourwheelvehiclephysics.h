@@ -8,7 +8,7 @@
 #ifndef FOUR_WHEEL_VEHICLE_PHYSICS_H
 #define FOUR_WHEEL_VEHICLE_PHYSICS_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

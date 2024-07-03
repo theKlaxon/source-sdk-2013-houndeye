@@ -12,7 +12,7 @@
 //=============================================================================//
 #if !defined( IFPSPANEL_H )
 #define IFPSPANEL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

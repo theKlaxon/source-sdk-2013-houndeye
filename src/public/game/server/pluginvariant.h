@@ -7,7 +7,7 @@
 
 #ifndef PLUGINVARIANT_H
 #define PLUGINVARIANT_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -16,7 +16,7 @@
 
 /*
 //Tony; including stdstring at this point (which I need) messes up the offsetof override in linux, so I need to reset it here.
-#if defined( POSIX )
+#if IsPosix()
 #undef offsetof
 #define offsetof(s,m)   (size_t)&(((s *)0)->m)
 #endif

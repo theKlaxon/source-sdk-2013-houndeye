@@ -6,7 +6,7 @@
 
 #ifndef KEYBINDINGHELPDIALOG_H
 #define KEYBINDINGHELPDIALOG_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -7,7 +7,7 @@
 
 #ifndef DISP_TESSELATE_H
 #define DISP_TESSELATE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

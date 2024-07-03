@@ -415,9 +415,9 @@ int CSoundEnt::IAllocSound( void )
 
 	m_iActiveSound = iNewSound;// now make the new sound the top of the active list. You're done.
 
-#ifdef DEBUG
+#if IsDebug()
 	m_SoundPool[ iNewSound ].m_iMyIndex = iNewSound;
-#endif // DEBUG
+#endif
 
 	return iNewSound;
 }

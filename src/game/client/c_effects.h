@@ -6,7 +6,7 @@
 
 #ifndef C_EFFECTS_H
 #define C_EFFECTS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

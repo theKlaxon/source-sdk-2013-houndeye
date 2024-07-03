@@ -4208,7 +4208,7 @@ void C_BaseEntity::CalcAbsoluteAngularVelocity()
 		return ClientEntityList().GetBaseEntity( iEnt );
 	}
 
-#ifdef WIN32
+#if IsWindows()
 	#pragma warning( push )
 	#include <typeinfo>
 	#pragma warning( pop )
@@ -4747,9 +4747,9 @@ void C_BaseEntity::CalcAbsoluteAngularVelocity()
 			sizeof( int ),   // FIELD_SOUNDNAME
 
 			sizeof( int ),// FIELD_INPUT		(uses custom type)
-#ifdef GNUC
-			// pointer to members under gnuc are 8bytes if you have a virtual func
-			sizeof( uint64 ),// FIELD_FUNCTION
+#if defined( COMPILER_GCC )
+		// pointer to members under gcc are 8bytes if you have a virtual func
+		sizeof( uint64 ),// FIELD_FUNCTION
 #else
 		sizeof( int* ),// FIELD_FUNCTION
 #endif

@@ -6,7 +6,7 @@
 
 #ifndef PHYSICS_SHARED_H
 #define PHYSICS_SHARED_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

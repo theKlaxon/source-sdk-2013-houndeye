@@ -7,7 +7,7 @@
 
 #ifndef MYSQLDATABASE_H
 #define MYSQLDATABASE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

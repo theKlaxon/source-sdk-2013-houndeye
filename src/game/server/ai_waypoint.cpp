@@ -132,7 +132,7 @@ const AI_Waypoint_t *CAI_WaypointList::GetLast() const
 
 //-------------------------------------
 
-#ifdef DEBUG
+#if IsDebug()
 void AssertRouteValid( AI_Waypoint_t* route )
 {
 	// Check that the goal wasn't just clobbered

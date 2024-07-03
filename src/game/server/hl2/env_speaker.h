@@ -6,7 +6,7 @@
 
 #ifndef ENV_SPEAKER_H
 #define ENV_SPEAKER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

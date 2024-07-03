@@ -6,7 +6,7 @@
 
 #ifndef INETWORK_H
 #define INETWORK_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

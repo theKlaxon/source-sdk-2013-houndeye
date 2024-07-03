@@ -27,7 +27,7 @@
 #endif
 
 
-#ifdef POSIX
+#if IsPosix()
 	#include <stdint.h>
 #endif
 
@@ -117,7 +117,7 @@ typedef unsigned long ULONG;
 typedef unsigned char BYTE;
 typedef unsigned char byte;
 typedef unsigned short word;
-#ifdef _WIN32
+#if IsWindows()
 	typedef wchar_t ucs2; // under windows wchar_t is ucs2
 #else
 	typedef unsigned short ucs2;

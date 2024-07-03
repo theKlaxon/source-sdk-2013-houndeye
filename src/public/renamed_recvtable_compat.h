@@ -3,7 +3,7 @@
 //=======================================================================================//
 #if !defined( RENAMED_RECVTABLE_COMPAT_H )
 #define RENAMED_RECVTABLE_COMPAT_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

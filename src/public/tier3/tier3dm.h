@@ -8,7 +8,7 @@
 #ifndef TIER3DM_H
 #define TIER3DM_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

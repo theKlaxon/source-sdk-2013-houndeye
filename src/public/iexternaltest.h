@@ -6,7 +6,7 @@
 
 #ifndef IEXTERNALTEST
 #define IEXTERNALTEST
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

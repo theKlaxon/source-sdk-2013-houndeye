@@ -7,7 +7,7 @@
 
 #ifndef NPC_ASSASSIN_H
 #define NPC_ASSASSIN_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

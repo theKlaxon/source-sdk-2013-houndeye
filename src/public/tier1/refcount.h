@@ -109,7 +109,7 @@ class CBaseAutoPtr {
 public:
 	CBaseAutoPtr()
 		: m_pObject( 0 ) { }
-	CBaseAutoPtr( T* pFrom )
+	CBaseAutoPtr( T* pFrom ) // NOLINT(*-explicit-constructor)
 		: m_pObject( pFrom ) { }
 
 	operator const void*() const { return m_pObject; }
@@ -161,10 +161,9 @@ protected:
 template<class T>
 class CRefPtr : public CBaseAutoPtr<T> {
 	typedef CBaseAutoPtr<T> BaseClass;
-
 public:
 	CRefPtr() = default;
-	explicit CRefPtr( T* pInit )
+	CRefPtr( T* pInit ) // NOLINT(*-explicit-constructor)
 		: BaseClass( pInit ) { }
 	CRefPtr( const CRefPtr<T>& from )
 		: BaseClass( from ) { }

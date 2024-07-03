@@ -8,7 +8,7 @@
 //=============================================================================//
 #if !defined( CLIENTMODE_NORMAL_H )
 #define CLIENTMODE_NORMAL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

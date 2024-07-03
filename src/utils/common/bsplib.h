@@ -10,7 +10,7 @@
 #ifndef BSPLIB_H
 #define BSPLIB_H
 
-#ifdef _WIN32
+#if IsWindows()
 	#pragma once
 #endif
 

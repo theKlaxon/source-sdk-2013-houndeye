@@ -33,7 +33,7 @@
 //=============================================================================//
 
 #include <fcntl.h>
-#ifdef _WIN32
+#if IsWindows()
 #include <io.h>
 #endif
 #include <math.h>

@@ -6,7 +6,7 @@
 
 #ifndef NPC_COMBINE_H
 #define NPC_COMBINE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

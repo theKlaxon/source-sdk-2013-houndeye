@@ -13,7 +13,7 @@
 #ifndef	AI_INTERACTIONS_H
 #define	AI_INTERACTIONS_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

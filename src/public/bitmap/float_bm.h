@@ -9,7 +9,7 @@
 #ifndef FLOAT_BM_H
 #define FLOAT_BM_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

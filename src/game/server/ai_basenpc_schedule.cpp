@@ -361,8 +361,8 @@ bool CAI_BaseNPC::IsScheduleValid()
 	if ( HasCondition(COND_SCHEDULE_DONE) || 
 		 HasCondition(COND_TASK_FAILED)   )
 	{
-#ifdef DEBUG
-		if ( HasCondition ( COND_TASK_FAILED ) && m_failSchedule == SCHED_NONE )
+#if IsDebug()
+	if ( HasCondition ( COND_TASK_FAILED ) && m_failSchedule == SCHED_NONE )
 		{
 			// fail! Send a visual indicator.
 			DevWarning( 2, "Schedule: %s Failed\n", GetCurSchedule()->GetName() );
@@ -373,7 +373,7 @@ bool CAI_BaseNPC::IsScheduleValid()
 
 			g_pEffects->Sparks( tmp );
 		}
-#endif // DEBUG
+#endif
 
 		// some condition has interrupted the schedule, or the schedule is done
 		return false;
@@ -526,7 +526,7 @@ CAI_Schedule *CAI_BaseNPC::GetFailSchedule( void )
 
 static bool ShouldStopProcessingTasks( CAI_BaseNPC *pNPC, int taskTime, int timeLimit )
 {
-#ifdef DEBUG
+#if IsDebug()
 	if( ai_simulate_task_overtime.GetBool() )
 		return true;
 #endif

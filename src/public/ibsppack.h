@@ -7,7 +7,7 @@
 
 #ifndef IBSPPACK_H
 #define IBSPPACK_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

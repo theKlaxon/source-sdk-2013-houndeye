@@ -1423,7 +1423,7 @@ void CClientVirtualReality::Activate()
 
     vgui::surface()->SetSoftwareCursor( true );
 
-#if defined(POSIX)
+#if IsPosix()
 	ConVarRef m_rawinput( "m_rawinput" );
     m_bNonVRRawInput = m_rawinput.GetBool();
     m_rawinput.SetValue( 1 );
@@ -1476,7 +1476,7 @@ void CClientVirtualReality::Deactivate()
     sdl_displayindex.SetValue( m_nNonVRSDLDisplayIndex );
 #endif
 
-#if defined(POSIX)
+#if IsPosix()
     ConVarRef m_rawinput( "m_rawinput" );
     m_rawinput.SetValue( m_bNonVRRawInput );
 #endif

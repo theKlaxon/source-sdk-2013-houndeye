@@ -6,7 +6,7 @@
 
 #ifndef PHYSICS_PROP_RAGDOLL_H
 #define PHYSICS_PROP_RAGDOLL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

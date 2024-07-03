@@ -7,7 +7,7 @@
 #ifndef TOOLFRAMEWORK_CLIENT_H
 #define TOOLFRAMEWORK_CLIENT_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

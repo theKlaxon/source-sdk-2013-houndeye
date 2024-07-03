@@ -1308,7 +1308,7 @@ void CBaseEntity::FireNamedOutput( const char *pszOutput, variant_t variant, CBa
 
 void CBaseEntity::Activate( void )
 {
-#ifdef DEBUG
+#if IsDebug()
 	extern bool g_bCheckForChainedActivate;
 	extern bool g_bReceivedChainedActivate;
 
@@ -1677,7 +1677,7 @@ class CThinkContextsSaveDataOps : public CDefSaveRestoreOps
 		// Now write out all the functions
 		for ( int i = 0; i < pUtlVector->Size(); i++ )
 		{
-#ifdef WIN32
+#if IsWindows()
 			void **ppV = (void**)&((*pUtlVector)[i].m_pfnThink);
 #else
 			BASEPTR *ppV = &((*pUtlVector)[i].m_pfnThink);
@@ -1709,7 +1709,7 @@ class CThinkContextsSaveDataOps : public CDefSaveRestoreOps
 		{
 			bool bHasFunc;
 			pRestore->ReadBool( &bHasFunc, 1 );
-#ifdef WIN32
+#if IsWindows()
 			void **ppV = (void**)&((*pUtlVector)[i].m_pfnThink);
 #else
 			BASEPTR *ppV = &((*pUtlVector)[i].m_pfnThink);

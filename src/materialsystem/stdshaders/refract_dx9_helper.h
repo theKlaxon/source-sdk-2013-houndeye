@@ -6,7 +6,7 @@
 
 #ifndef REFRACT_DX9_HELPER_H
 #define REFRACT_DX9_HELPER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

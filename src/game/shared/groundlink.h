@@ -6,7 +6,7 @@
 
 #ifndef GROUNDLINK_H
 #define GROUNDLINK_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

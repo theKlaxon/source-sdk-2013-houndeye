@@ -7,7 +7,7 @@
 
 #ifndef SCENEIMAGE_H
 #define SCENEIMAGE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

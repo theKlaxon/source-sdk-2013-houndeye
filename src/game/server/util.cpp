@@ -49,7 +49,7 @@ extern short		g_sModelIndexSmoke;			// (in combatweapon.cpp) holds the index for
 extern short		g_sModelIndexBloodDrop;		// (in combatweapon.cpp) holds the sprite index for the initial blood
 extern short		g_sModelIndexBloodSpray;	// (in combatweapon.cpp) holds the sprite index for splattered blood
 
-#ifdef	DEBUG
+#if IsDebug()
 void DBG_AssertFunction( bool fExpr, const char *szExpr, const char *szFile, int szLine, const char *szMessage )
 {
 	if (fExpr)
@@ -61,7 +61,7 @@ void DBG_AssertFunction( bool fExpr, const char *szExpr, const char *szFile, int
 		Q_snprintf(szOut,sizeof(szOut), "ASSERT FAILED:\n %s \n(%s@%d)\n", szExpr, szFile, szLine);
 	Warning( "%s", szOut);
 }
-#endif	// DEBUG
+#endif
 
 
 //-----------------------------------------------------------------------------
@@ -648,7 +648,7 @@ CBasePlayer *UTIL_GetLocalPlayer( void )
 		{
 			Assert( !"UTIL_GetLocalPlayer" );
 			
-#ifdef	DEBUG
+#if IsDebug()
 			Warning( "UTIL_GetLocalPlayer() called in multiplayer game.\n" );
 #endif
 		}

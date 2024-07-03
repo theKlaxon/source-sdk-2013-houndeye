@@ -7,7 +7,7 @@
 #ifndef UTLPAIR_H
 #define UTLPAIR_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -8,10 +8,10 @@
 
 #define PROTECTED_THINGS_DISABLE
 
-#if defined( WIN32 )
+#if IsWindows()
 #include "winlite.h"
 #include <shellapi.h>
-#elif defined( POSIX )
+#elif IsPosix()
 #include <stdlib.h>
 #define _stat stat
 #define _wcsnicmp wcsncmp
@@ -503,7 +503,7 @@ void FileOpenDialog::Init( const char *title, KeyValues *pContextKeyValues )
 	SetTitle(title, true);
 	SetMinimizeButtonVisible(false);
 	
-#ifdef POSIX
+#if IsPosix()
 	Q_strncpy(m_szLastPath, "/", sizeof( m_szLastPath ) );	
 #else
 	Q_strncpy(m_szLastPath, "c:\\", sizeof( m_szLastPath ) );
@@ -557,7 +557,7 @@ void FileOpenDialog::Init( const char *title, KeyValues *pContextKeyValues )
 	m_pNewFolderButton->GetTooltip()->SetText( "#FileOpenDialog_ToolTip_NewFolder" );
 	m_pOpenInExplorerButton = new Button( this, "OpenInExplorerButton", "", this );
 
-#if defined ( POSIX )
+#if IsPosix()
 	m_pOpenInExplorerButton->GetTooltip()->SetText( "#FileOpenDialog_ToolTip_OpenInDesktopManagerButton" );
 #else // Assume Windows / Explorer
 	m_pOpenInExplorerButton->GetTooltip()->SetText( "#FileOpenDialog_ToolTip_OpenInExplorerButton" );
@@ -717,7 +717,7 @@ void FileOpenDialog::PopulateDriveList()
 
 	m_pFullPathEdit->DeleteAllItems();
 
-#ifdef WIN32
+#if IsWindows()
 	// populate the drive list
 	char buf[512];
 	int len = system()->GetAvailableDrives(buf, 512);
@@ -850,9 +850,9 @@ void FileOpenDialog::OnOpenInExplorer()
 {
 	char pCurrentDirectory[MAX_PATH];
 	GetCurrentDirectory( pCurrentDirectory, sizeof(pCurrentDirectory) );
-#if defined( WIN32 )
+#if IsWindows()
 	ShellExecute( NULL, NULL, pCurrentDirectory, NULL, NULL, SW_SHOWNORMAL );
-#elif defined( LINUX )
+#elif IsLinux()
 	char szCmd[ MAX_PATH * 2 ];	
 	Q_snprintf( szCmd, sizeof(szCmd), "xdg-open \"%s\" &", pCurrentDirectory );
 	::system( szCmd );
@@ -1040,7 +1040,7 @@ void FileOpenDialog::ValidatePath()
 	// when statting a directory on Windows, you want to include
 	// the terminal slash exactly when you are statting a root
 	// directory. PKMN.
-#ifdef _WIN32
+#if IsWindows()
 	if ( Q_strlen( fullpath ) != 3 )
 	{
 		Q_StripTrailingSlash( fullpath );
@@ -1065,7 +1065,7 @@ void FileOpenDialog::ValidatePath()
 	m_pFullPathEdit->GetTooltip()->SetText(m_szLastPath);
 }
 
-#ifdef WIN32	
+#if IsWindows()
 const char *GetAttributesAsString( DWORD dwAttributes )
 {
 	static char out[ 256 ];
@@ -1525,7 +1525,7 @@ void FileOpenDialog::OnOpen()
 	// when statting a directory on Windows, you want to include
 	// the terminal slash exactly when you are statting a root
 	// directory. PKMN.
-#ifdef _WIN32
+#if IsWindows()
 	if ( Q_strlen( pFullPath ) == 2 )
 	{
 		Q_AppendSlash( pFullPath, Q_ARRAYSIZE( pFullPath ) );

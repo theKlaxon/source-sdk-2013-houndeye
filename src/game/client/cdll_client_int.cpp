@@ -1088,7 +1088,7 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 
 	C_BaseAnimating::InitBoneSetupThreadPool();
 
-#if defined( WIN32 )
+#if IsWindows()
 	// NVNT connect haptics sytem
 	ConnectHaptics(appSystemFactory);
 #endif
@@ -1227,7 +1227,7 @@ void CHLClient::Shutdown( void )
 
 	gameeventmanager = NULL;
 
-#if defined( WIN32 )
+#if IsWindows()
 	// NVNT Disconnect haptics system
 	DisconnectHaptics();
 #endif

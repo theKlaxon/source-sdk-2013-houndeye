@@ -11,7 +11,7 @@
 #ifndef UTLARRAY_H
 #define UTLARRAY_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -31,7 +31,7 @@ public:
 	static const bool IsUtlArray = true; // Used to match this at compiletime 		
 };
 
-#if defined( GNUC ) && defined( DEBUG )
+#if defined( COMPILER_GCC ) && IsDebug()
 // gcc in debug doesn't optimize away the need for the storage of IsUtlArray so make one here
 //  as this is in a shared header use SELECTANY to make it throw away the dupe symbols
 const bool base_array_t::IsUtlArray SELECTANY;

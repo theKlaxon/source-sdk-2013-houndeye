@@ -382,7 +382,7 @@ void CHL2MPClientScoreBoardDialog::UpdateTeamInfo()
 			if ( HL2MPRules()->IsTeamplay() == false )
 			{
 				_snwprintf( wNumPlayers, ARRAYSIZE(wNumPlayers), L"%i", iNumPlayersInGame );
-#ifdef WIN32
+#if IsWindows()
 				_snwprintf( name, ARRAYSIZE(name), L"%s", g_pVGuiLocalize->Find("#ScoreBoard_Deathmatch") );
 #else
 				_snwprintf( name, ARRAYSIZE(name), L"%S", g_pVGuiLocalize->Find("#ScoreBoard_Deathmatch") );

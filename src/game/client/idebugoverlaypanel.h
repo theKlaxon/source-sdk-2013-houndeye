@@ -12,7 +12,7 @@
 //=============================================================================//
 #if !defined( IDEBUGOVERLAYPANEL_H )
 #define IDEBUGOVERLAYPANEL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

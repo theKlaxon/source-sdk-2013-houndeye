@@ -6,7 +6,7 @@
 
 #ifndef SAVERESTORE_UTLSYMBOL_H
 #define SAVERESTORE_UTLSYMBOL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

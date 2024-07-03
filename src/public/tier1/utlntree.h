@@ -9,7 +9,7 @@
 #ifndef UTLNTREE_H
 #define UTLNTREE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

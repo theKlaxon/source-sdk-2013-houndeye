@@ -2028,7 +2028,7 @@ void CBasePlayer::SetPlayerUnderwater( bool state )
 {
 	if ( m_bPlayerUnderwater != state )
 	{
-#if defined( WIN32 )
+#if IsWindows()
 		// NVNT turn on haptic drag when underwater
 		if(state)
 			HapticSetDrag(this,1);

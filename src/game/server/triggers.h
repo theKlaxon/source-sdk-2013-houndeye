@@ -7,7 +7,7 @@
 
 #ifndef TRIGGERS_H
 #define TRIGGERS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

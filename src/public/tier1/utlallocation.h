@@ -9,7 +9,7 @@
 
 #ifndef UTLALLOCATION_H
 #define UTLALLOCATION_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

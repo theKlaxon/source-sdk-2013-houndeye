@@ -8,7 +8,7 @@
 #ifndef TOGGLEBUTTON_H
 #define TOGGLEBUTTON_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

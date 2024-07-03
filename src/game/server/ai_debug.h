@@ -11,7 +11,7 @@
 #include "fmtstr.h"
 #include "ai_debug_shared.h"
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 
@@ -63,7 +63,7 @@ void AI_TraceLOS( const Vector& vecAbsStart, const Vector& vecAbsEnd, CBaseEntit
 
 //-----------------------------------------------------------------------------
 
-#ifdef DEBUG
+#if IsDebug()
 extern bool g_fTestSteering;
 #define TestingSteering() g_fTestSteering
 #else

@@ -40,12 +40,12 @@ void AppShutdown( CAppSystemGroup* pAppSystemGroup );
 //-----------------------------------------------------------------------------
 // Macros to create singleton application objects for windowed + console apps
 //-----------------------------------------------------------------------------
-#ifdef WIN32
+#if IsWindows()
 	#define DEFINE_WINDOWED_APPLICATION_OBJECT_GLOBALVAR( _globalVarName )                                     \
 		int __stdcall WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow ) { \
 			return AppMain( hInstance, hPrevInstance, lpCmdLine, nCmdShow, &_globalVarName );                  \
 		}
-#elif defined( LINUX )
+#elif IsLinux()
 	#define DEFINE_WINDOWED_APPLICATION_OBJECT_GLOBALVAR( _globalVarName )                                \
 		int main( int argc, char** argv ) {                                                               \
 			extern int ValveLinuxWindowedMain( int argc, char** argv, CAppSystemGroup* pAppSystemGroup ); \

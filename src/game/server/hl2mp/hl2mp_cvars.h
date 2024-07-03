@@ -7,7 +7,7 @@
 
 #ifndef HL2MP_CVARS_H
 #define HL2MP_CVARS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

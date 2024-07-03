@@ -7,7 +7,7 @@
 
 #ifndef ACTIVITYLIST_H
 #define ACTIVITYLIST_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

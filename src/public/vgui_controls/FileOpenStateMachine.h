@@ -8,7 +8,7 @@
 #ifndef FILEOPENSTATEMACHINE_H
 #define FILEOPENSTATEMACHINE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

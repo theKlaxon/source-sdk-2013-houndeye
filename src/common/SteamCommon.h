@@ -33,7 +33,7 @@ extern "C"
 
 /* Applications should not define STEAM_EXPORTS. */
 
-#if defined ( _WIN32 )
+#if IsWindows()
 
 #ifdef STEAM_EXPORTS
 #define STEAM_API __declspec(dllexport)

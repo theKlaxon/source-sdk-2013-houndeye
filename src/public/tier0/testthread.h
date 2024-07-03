@@ -6,7 +6,7 @@
 
 #ifndef TESTTHREAD_H
 #define TESTTHREAD_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -10,7 +10,7 @@
 #include "ai_basenpc.h"
 #include "utlvector.h"
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

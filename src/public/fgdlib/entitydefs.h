@@ -7,7 +7,7 @@
 
 #ifndef ENTITYDEFS_H
 #define ENTITYDEFS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

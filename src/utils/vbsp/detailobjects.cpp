@@ -6,7 +6,7 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#if defined( _WIN32 )
+#if IsWindows()
 	#include <windows.h>
 #endif
 #include "vbsp.h"
@@ -14,7 +14,7 @@
 #include "KeyValues.h"
 #include "utlsymbol.h"
 #include "utlvector.h"
-#if defined( _WIN32 )
+#if IsWindows()
 	#include <io.h>
 #else
 	#include <sys/io.h>

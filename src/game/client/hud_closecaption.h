@@ -7,7 +7,7 @@
 
 #ifndef HUD_CLOSECAPTION_H
 #define HUD_CLOSECAPTION_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

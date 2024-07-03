@@ -6,7 +6,7 @@
 
 #ifndef PARTICLEPROPERTY_H
 #define PARTICLEPROPERTY_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

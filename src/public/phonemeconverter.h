@@ -7,7 +7,7 @@
 
 #ifndef PHONEMECONVERTER_H
 #define PHONEMECONVERTER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

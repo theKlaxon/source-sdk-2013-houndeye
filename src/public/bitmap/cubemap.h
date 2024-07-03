@@ -10,7 +10,7 @@
 #ifndef CUBEMAP_H
 #define CUBEMAP_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

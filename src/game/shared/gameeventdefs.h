@@ -7,7 +7,7 @@
 #ifndef GAMEEVENTDEFS_H
 #define GAMEEVENTDEFS_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -10,7 +10,7 @@
 #ifndef KEYCODE_H
 #define KEYCODE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

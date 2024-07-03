@@ -17,7 +17,7 @@
 	#include "hl2_gamerules.h"
 #endif
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

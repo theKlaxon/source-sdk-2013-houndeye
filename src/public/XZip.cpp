@@ -93,7 +93,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined( WIN32)
+#if IsWindows()
 #define STRICT
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -2181,7 +2181,7 @@ bool HasZipSuffix(const char *fn)
   return false;
 }
 
-#ifdef _WIN32
+#if IsWindows()
 time_t filetime2timet(const FILETIME ft)
 { SYSTEMTIME st; FileTimeToSystemTime(&ft,&st);
   if (st.wYear<1970) {st.wYear=1970; st.wMonth=1; st.wDay=1;}
@@ -2261,7 +2261,7 @@ ZRESULT GetFileInfo(HANDLE hf, ulg *attr, long *size, iztimes *times, ulg *times
 }
 #endif
 
-#ifndef _WIN32
+#if !IsWindows()
 int timet_to_timestamp( time_t time )
 {
 	struct tm *tm;
@@ -2361,7 +2361,7 @@ ZRESULT TZip::Create(void *z,unsigned int len,DWORD flags)
 			obuf=(char*)z;
 		else
 		{ 
-#ifdef _WIN32
+#if IsWindows()
 			hmapout = CreateFileMapping(INVALID_HANDLE_VALUE,NULL,PAGE_READWRITE,0,len,NULL);
 			if (hmapout==NULL) 
 				return ZR_NOALLOC;
@@ -2373,7 +2373,7 @@ ZRESULT TZip::Create(void *z,unsigned int len,DWORD flags)
 				return ZR_NOALLOC;
 			}
 #endif
-#ifdef POSIX
+#if IsPosix()
 			obuf = (char*) calloc( len, 1 );
 			hmapout = (void*)-1; // sentinel to let close know it's a file in posix.
 			if ( !obuf )
@@ -2385,7 +2385,7 @@ ZRESULT TZip::Create(void *z,unsigned int len,DWORD flags)
 		mapsize=len;
 		return ZR_OK;
 	}
-#ifdef _WIN32
+#if IsWindows()
 	else if (flags==ZIP_HANDLE)
 	{ 
 		HANDLE hf = (HANDLE)z;
@@ -2446,7 +2446,7 @@ unsigned int TZip::write(const char *buf,unsigned int size)
     opos+=size;
     return size;
   }
-#ifdef _WIN32
+#if IsWindows()
   else if (hfout!=0)
   { DWORD writ; WriteFile(hfout,buf,size,&writ,NULL);
     return writ;
@@ -2462,7 +2462,7 @@ bool TZip::oseek(unsigned int pos)
     opos=pos;
     return true;
   }
-#ifdef _WIN32
+#if IsWindows()
   else if (hfout!=0)
   { SetFilePointer(hfout,pos+ooffset,NULL,FILE_BEGIN);
     return true;
@@ -2487,13 +2487,13 @@ ZRESULT TZip::Close()
   // then we do it now
   ZRESULT res=ZR_OK; if (!hasputcen) res=AddCentral(); hasputcen=true;
   if (obuf!=0 && hmapout!=0) 
-#ifdef _WIN32
+#if IsWindows()
     UnmapViewOfFile(obuf); 
-#elif defined( POSIX )
+#elif IsPosix()
 	free(obuf);
 #endif
   obuf=0;
-#ifdef _WIN32
+#if IsWindows()
   if (hmapout!=0) CloseHandle(hmapout); hmapout=0;
   if (hfout!=0) CloseHandle(hfout); hfout=0;
 #endif
@@ -2507,13 +2507,13 @@ ZRESULT TZip::open_file(const TCHAR *fn)
 { hfin=0; bufin=0; selfclosehf=false; crc=CRCVAL_INITIAL; isize=0; csize=0; ired=0;
   if (fn==0) return ZR_ARGS;
   HANDLE hf = INVALID_HANDLE_VALUE;
-#ifdef _WIN32
+#if IsWindows()
   hf = CreateFile(fn,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,0,NULL);
 #endif
   if (hf==INVALID_HANDLE_VALUE) return ZR_NOFILE;
   ZRESULT res = open_handle(hf,0);
   if (res!=ZR_OK) {
-#ifdef _WIN32
+#if IsWindows()
     CloseHandle(hf); 
 #endif
     return res;
@@ -2524,7 +2524,7 @@ ZRESULT TZip::open_file(const TCHAR *fn)
 ZRESULT TZip::open_handle(HANDLE hf,unsigned int len)
 { hfin=0; bufin=0; selfclosehf=false; crc=CRCVAL_INITIAL; isize=0; csize=0; ired=0;
   if (hf==0 || hf==INVALID_HANDLE_VALUE) return ZR_ARGS;
-#ifdef _WIN32
+#if IsWindows()
   DWORD type = GetFileType(hf);
   if (type==FILE_TYPE_DISK)
   { ZRESULT res = GetFileInfo(hf,&attr,&isize,&times,&timestamp);
@@ -2557,7 +2557,7 @@ ZRESULT TZip::open_mem(void *src,unsigned int len)
 { hfin=0; bufin=(const char*)src; selfclosehf=false; crc=CRCVAL_INITIAL; ired=0; csize=0; ired=0;
   lenin=len; posin=0;
   if (src==0 || len==0) return ZR_ARGS;
-#ifdef _WIN32
+#if IsWindows()
   attr= 0x80000000; // just a normal file
   isize = len;
   iseekable=true;
@@ -2580,7 +2580,7 @@ ZRESULT TZip::open_mem(void *src,unsigned int len)
 
 ZRESULT TZip::open_dir()
 { hfin=0; bufin=0; selfclosehf=false; crc=CRCVAL_INITIAL; isize=0; csize=0; ired=0;
-#ifdef _WIN32
+#if IsWindows()
   attr= 0x41C00010; // a readable writable directory, and again directory
   isize = 0;
   iseekable=false;
@@ -2618,7 +2618,7 @@ unsigned TZip::read(char *buf, unsigned size)
     crc = crc32(crc, (uch*)buf, red);
     return red;
   }
-#ifdef _WIN32
+#if IsWindows()
   else if (hfin!=0)
   { DWORD red;
     BOOL ok = ReadFile(hfin,buf,size,&red,NULL);
@@ -2633,7 +2633,7 @@ unsigned TZip::read(char *buf, unsigned size)
 
 ZRESULT TZip::iclose()
 { 
-#ifdef _WIN32
+#if IsWindows()
   if (selfclosehf && hfin!=0) CloseHandle(hfin); 
 #endif
   hfin=0;

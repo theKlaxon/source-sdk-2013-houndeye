@@ -8,7 +8,7 @@
 #ifndef MESSAGEBOX_H
 #define MESSAGEBOX_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

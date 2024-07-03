@@ -7,7 +7,7 @@
 #ifndef CON_NPRINT_H
 #define CON_NPRINT_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

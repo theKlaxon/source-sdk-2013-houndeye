@@ -7,7 +7,7 @@
 #ifndef COLORPICKERPANEL_H
 #define COLORPICKERPANEL_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

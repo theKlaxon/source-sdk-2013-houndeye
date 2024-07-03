@@ -10,7 +10,7 @@
 #ifndef RENDERPARM_H
 #define RENDERPARM_H
 
-#ifndef _WIN32
+#if !IsWindows()
 #pragma once
 #endif
 

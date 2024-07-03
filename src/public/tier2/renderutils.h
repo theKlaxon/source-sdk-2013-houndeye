@@ -7,7 +7,7 @@
 #ifndef RENDERUTILS_H
 #define RENDERUTILS_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

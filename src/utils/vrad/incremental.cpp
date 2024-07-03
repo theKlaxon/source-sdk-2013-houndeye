@@ -339,7 +339,7 @@ void DecompressLightData( CUtlBuffer* pIn, CUtlVector<CLightValue>* pOut ) {
 	}
 }
 
-#ifdef _WIN32
+#if IsWindows()
 	#pragma warning( disable : 4701 )
 #endif
 
@@ -374,7 +374,7 @@ void CompressLightData(
 	}
 }
 
-#ifdef _WIN32
+#if IsWindows()
 	#pragma warning( default : 4701 )
 #endif
 

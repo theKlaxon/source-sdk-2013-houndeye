@@ -15,7 +15,7 @@
 #include "physics_bone_follower.h"
 #include "physics_prop_ragdoll.h"
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

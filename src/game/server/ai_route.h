@@ -7,7 +7,7 @@
 
 #ifndef AI_ROUTE_H
 #define AI_ROUTE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

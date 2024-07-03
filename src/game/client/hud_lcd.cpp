@@ -3,18 +3,17 @@
 // Purpose: LCD support
 //
 //=====================================================================================//
-
-#if defined( WIN32 )
-#include <windows.h>
+#if IsWindows()
+	#include <windows.h>
 #endif
 
 #include "cbase.h"
 
-#ifdef POSIX
-#define HICON int
-const int DT_LEFT = 1;
-const int DT_CENTER = 2;
-const int DT_RIGHT = 3;
+#if IsPosix()
+	#define HICON int
+	const int DT_LEFT = 1;
+	const int DT_CENTER = 2;
+	const int DT_RIGHT = 3;
 #endif
 
 #include "hud_lcd.h"
@@ -113,7 +112,7 @@ void CLCDItemAggregate::WipeChildrenOnly( IG15 *lcd )
 
 void CLCDItemIcon::Create( IG15 *lcd )
 {	
-#ifdef WIN32
+#if IsWindows()
 	m_Handle = lcd->AddIcon( (HICON)m_icon, w, h );
 #else
 	m_Handle = lcd->AddIcon( (void *)m_icon, w, h );
@@ -769,7 +768,7 @@ void CLCD::ParseIconMappings( KeyValues *kv )
 		char const *name = icon->GetName();
 		char fullpath[ 512 ];
 		filesystem->RelativePathToFullPath( icon->GetString(), "GAME", fullpath, sizeof( fullpath ) );
-#ifdef WIN32
+#if IsWindows()
 		hIcon = (HICON)::LoadImageA( NULL, fullpath, IMAGE_ICON, 32, 32, LR_LOADFROMFILE );
 #else
 		hIcon = 0;

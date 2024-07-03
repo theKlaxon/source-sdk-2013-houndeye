@@ -36,11 +36,11 @@ If MY_CPU_LE_UNALIGN is not defined, we don't know about these properties of pla
 #define MY_CPU_32BIT
 #endif
 
-#if defined(_WIN32) && defined(_M_ARM)
+#if IsWindows() && defined(_M_ARM)
 #define MY_CPU_ARM_LE
 #endif
 
-#if defined(_WIN32) && defined(_M_IA64)
+#if IsWindows() && defined(_M_IA64)
 #define MY_CPU_IA64_LE
 #endif
 

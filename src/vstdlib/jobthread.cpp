@@ -245,7 +245,7 @@ inline void CThreadPool::WaitPut() {
 }
 
 inline void CThreadPool::ReleasePut() {
-#ifdef _WIN32
+#if IsWindows()
 	if ( m_bUseSemaphore )
 		m_PutSemaphore.Release();
 #endif

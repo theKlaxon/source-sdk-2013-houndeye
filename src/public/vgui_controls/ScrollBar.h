@@ -8,7 +8,7 @@
 #ifndef SCROLLBAR_H
 #define SCROLLBAR_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

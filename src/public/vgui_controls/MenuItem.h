@@ -8,7 +8,7 @@
 #ifndef MENUITEM_H
 #define MENUITEM_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

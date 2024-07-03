@@ -7,7 +7,7 @@
 #ifndef ITEM_DYNAMIC_RESUPPLY_H
 #define ITEM_DYNAMIC_RESUPPLY_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

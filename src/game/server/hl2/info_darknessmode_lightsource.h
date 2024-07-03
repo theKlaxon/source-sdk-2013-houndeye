@@ -6,7 +6,7 @@
 
 #ifndef INFO_DARKNESSMODE_LIGHTSOURCE_H
 #define INFO_DARKNESSMODE_LIGHTSOURCE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

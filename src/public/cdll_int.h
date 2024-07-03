@@ -6,7 +6,7 @@
 
 #ifndef CDLL_INT_H
 #define CDLL_INT_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -742,7 +742,7 @@ public:
 	virtual const char		*GetPropertyIdString( const uint id ) = 0;
 	virtual void			GetPropertyDisplayString( uint id, uint value, char *pOutput, int nBytes ) = 0;
 
-#ifdef WIN32
+#if IsWindows()
 	virtual void			StartStatsReporting( HANDLE handle, bool bArbitrated ) = 0;
 #endif
 	
@@ -753,7 +753,7 @@ public:
 
 	// For sv_pure mode. The filesystem figures out which files the client needs to reload to be "pure" ala the server's preferences.
 	virtual void			ReloadFilesInList( IFileList *pFilesToReload ) = 0;
-#ifdef POSIX
+#ifdef IsPosix()
 	// AR: Same as above win32 defn but down here at the end of the vtable for back compat
 	virtual void			StartStatsReporting( HANDLE handle, bool bArbitrated ) = 0;
 #endif

@@ -6,7 +6,7 @@
 
 #ifndef SDK_CLIENTMODE_H
 #define SDK_CLIENTMODE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

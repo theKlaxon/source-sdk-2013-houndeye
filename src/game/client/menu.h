@@ -7,7 +7,7 @@
 
 #ifndef HUD_MENU_H
 #define HUD_MENU_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

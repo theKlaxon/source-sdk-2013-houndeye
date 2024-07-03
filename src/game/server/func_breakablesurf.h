@@ -7,7 +7,7 @@
 
 #ifndef FUNC_BREAKABLESURF_H
 #define FUNC_BREAKABLESURF_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

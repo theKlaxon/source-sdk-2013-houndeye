@@ -915,7 +915,7 @@ void CHudWeaponSelection::DrawLargeWeaponBox( C_BaseCombatWeapon *pWeapon, bool 
 		// setup our localized string
 		if ( tempString )
 		{
-#ifdef WIN32
+#if IsWindows()
 			_snwprintf(text, sizeof(text)/sizeof(wchar_t) - 1, L"%s", tempString);
 #else
 			_snwprintf(text, sizeof(text)/sizeof(wchar_t) - 1, L"%S", tempString);

@@ -7,7 +7,7 @@
 
 #ifndef MOUSEOVERHTMLBUTTON_H
 #define MOUSEOVERHTMLBUTTON_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -88,7 +88,7 @@ private:
 
 			if ( m_bAddShortCut )
 			{
-#ifdef WIN32
+#if IsWindows()
 				_snwprintf( newText, sizeof( newText )/ sizeof( wchar_t ), L"&%i %s", m_iIndex, localizeText);
 #else
 				_snwprintf( newText, sizeof( newText )/ sizeof( wchar_t ), L"&%i %S", m_iIndex, localizeText);

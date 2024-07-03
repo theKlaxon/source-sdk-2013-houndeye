@@ -4,10 +4,10 @@
 //
 //===========================================================================//
 
-#if defined( WIN32 )
+#if IsWindows()
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#elif defined( POSIX )
+#elif IsPosix()
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -28,7 +28,7 @@ const char *COM_GetModDirectory(); // return the mod dir (rather than the comple
 
 struct MumbleSharedMemory_t
 {
-#ifdef WIN32
+#if IsWindows()
 	uint32	uiVersion;
 	ulong	uiTick;
 #else
@@ -43,7 +43,7 @@ struct MumbleSharedMemory_t
 	float	fCameraFront[3];
 	float	fCameraTop[3];
 	wchar_t	identity[256];
-#ifdef WIN32
+#if IsWindows()
 	uint32	context_len;
 #else
 	uint32_t context_len;
@@ -53,7 +53,7 @@ struct MumbleSharedMemory_t
 };
 
 MumbleSharedMemory_t *g_pMumbleMemory = NULL;
-#ifdef WIN32
+#if IsWindows()
 HANDLE g_hMapObject = NULL;
 #endif
 
@@ -86,7 +86,7 @@ void CMumbleSystem::LevelInitPostEntity()
 	if ( g_pMumbleMemory )
 		return;
 
-#if defined( WIN32 )
+#if IsWindows()
 	g_hMapObject = OpenFileMappingW( FILE_MAP_ALL_ACCESS, FALSE, L"MumbleLink" );
 	if ( g_hMapObject == NULL )
 		return;
@@ -98,7 +98,7 @@ void CMumbleSystem::LevelInitPostEntity()
 		g_hMapObject = NULL;
 		return;
 	}
-#elif defined( POSIX )
+#elif IsPosix()
 	char memname[256];
 	V_sprintf_safe( memname, "/MumbleLink.%d", getuid() );
 
@@ -121,14 +121,14 @@ void CMumbleSystem::LevelInitPostEntity()
 
 void CMumbleSystem::LevelShutdownPreEntity()
 {
-#if defined( WIN32 )
+#if IsWindows()
 	if ( g_hMapObject )
 	{
 		CloseHandle( g_hMapObject );
 		g_pMumbleMemory = NULL;
 		g_hMapObject = NULL;
 	}
-#elif defined( POSIX )
+#elif IsPosix()
 	if ( g_pMumbleMemory )
 	{
 		munmap( g_pMumbleMemory, sizeof(struct MumbleSharedMemory_t) );

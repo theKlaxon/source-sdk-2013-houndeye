@@ -7,7 +7,7 @@
 
 #ifndef CVARTOGGLECHECKBUTTON_H
 #define CVARTOGGLECHECKBUTTON_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

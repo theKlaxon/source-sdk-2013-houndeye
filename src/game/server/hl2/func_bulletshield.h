@@ -7,7 +7,7 @@
 
 #ifndef FUNC_BULLETSHIELD_H
 #define FUNC_BULLETSHIELD_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

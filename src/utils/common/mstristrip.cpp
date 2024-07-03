@@ -28,7 +28,7 @@
 
 #include <assert.h>
 #if IsDebug()
-	#if defined( _WIN32 )
+	#if IsWindows()
 		#include <crtdbg.h>
 	#else
 		#include <cstring>
@@ -767,7 +767,7 @@ bool CVertCache::Add(int strip, int vertindex)
 void EnableLeakChecking()
 {
 	// FIXME: This shouldn't be commented out...
-	#if defined( _WIN32 )
+	#if IsWindows()
 		int flCrtDbgFlags = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
 
 		flCrtDbgFlags &=

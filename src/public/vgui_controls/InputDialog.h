@@ -6,7 +6,7 @@
 
 #ifndef INPUTDIALOG_H
 #define INPUTDIALOG_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

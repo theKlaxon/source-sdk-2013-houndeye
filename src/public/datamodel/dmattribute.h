@@ -6,7 +6,7 @@
 
 #ifndef DMATTRIBUTE_H
 #define DMATTRIBUTE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

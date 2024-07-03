@@ -39,7 +39,7 @@
 #include "tier1/refcount.h"
 #include "tier1/utlenvelope.h"
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 
@@ -273,8 +273,8 @@ abstract_class CFunctor : public IRefCounted
 public:
 	CFunctor()
 	{
-#ifdef DEBUG
-		m_nUserID = 0;
+#if IsDebug()
+	m_nUserID = 0;
 #endif
 	}
 	// Add a virtual destructor to silence the clang warning.

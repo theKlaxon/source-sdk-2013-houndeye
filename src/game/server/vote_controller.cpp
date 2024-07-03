@@ -529,7 +529,7 @@ CVoteController::TryCastVoteResult CVoteController::TryCastVote( int iEntIndex, 
 		if ( nOldVote != VOTE_UNCAST ) {
 			return CAST_FAIL_NO_CHANGES;
 		}
-	#endif// !DEBUG
+	#endif
 
 	// Which option are they voting for?
 	int nCurrentVote = VOTE_UNCAST;
@@ -550,7 +550,7 @@ CVoteController::TryCastVoteResult CVoteController::TryCastVote( int iEntIndex, 
 			}
 			VoteChoice_Decrement( nOldVote );
 		}
-	#endif// DEBUG
+	#endif
 
 	// With a Yes/No vote, slam anything past "No" to No
 	if ( m_potentialIssues[ m_iActiveIssueIndex ]->IsYesNoVote() ) {
@@ -725,7 +725,7 @@ bool CVoteController::IsValidVoter( CBasePlayer* pWhom ) {
 
 		if ( pWhom->IsFakeClient() )
 			return false;
-	#endif// DEBUG
+	#endif
 
 	if ( pWhom->IsHLTV() )
 		return false;

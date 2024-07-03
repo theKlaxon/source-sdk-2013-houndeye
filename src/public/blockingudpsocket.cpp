@@ -4,9 +4,9 @@
 //
 //=============================================================================//
 
-#if defined(_WIN32)
+#if IsWindows()
 #include <winsock.h>
-#elif POSIX
+#elif IsPosix()
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
 #include <sys/types.h>
@@ -57,12 +57,12 @@ bool CBlockingUDPSocket::CreateSocket (void)
 		return false;
 	}
 
-#ifdef _WIN32
+#if IsWindows()
 	if ( m_pImpl->m_SocketIP.sin_addr.S_un.S_addr == INADDR_ANY )
 	{
 		m_pImpl->m_SocketIP.sin_addr.S_un.S_addr = 0L;
 	}		
-#elif POSIX
+#elif IsPosix()
 	if ( m_pImpl->m_SocketIP.sin_addr.s_addr == INADDR_ANY )
 	{
 		m_pImpl->m_SocketIP.sin_addr.s_addr = 0L;

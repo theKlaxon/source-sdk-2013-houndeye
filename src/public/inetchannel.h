@@ -6,7 +6,7 @@
 
 #ifndef INETCHANNEL_H
 #define INETCHANNEL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -43,7 +43,7 @@ public:
 	virtual void	ProcessPacket( struct netpacket_s* packet, bool bHasHeader ) = 0;
 			
 	virtual bool	SendNetMsg(INetMessage &msg, bool bForceReliable = false, bool bVoice = false ) = 0;
-#ifdef POSIX
+#if IsPosix()
 	ALWAYS_INLINE bool SendNetMsg(INetMessage const &msg, bool bForceReliable = false, bool bVoice = false ) { return SendNetMsg( *( (INetMessage *) &msg ), bForceReliable, bVoice ); }
 #endif
 	virtual bool	SendData(bf_write &msg, bool bReliable = true) = 0;

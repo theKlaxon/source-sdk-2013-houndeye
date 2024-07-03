@@ -7,7 +7,7 @@
 
 #ifndef IPREDICTIONSYSTEM_H
 #define IPREDICTIONSYSTEM_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

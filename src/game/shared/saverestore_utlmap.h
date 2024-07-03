@@ -10,7 +10,7 @@
 #include "utlmap.h"
 #include "saverestore_utlrbtree.h"
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

@@ -8,7 +8,7 @@
 #ifndef CHUNKFILE_H
 #define CHUNKFILE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

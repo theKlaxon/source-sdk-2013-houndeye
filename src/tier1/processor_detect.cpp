@@ -12,7 +12,7 @@
 	bool CheckSSETechnology( void ) { return false; }
 	bool CheckSSE2Technology( void ) { return false; }
 	bool Check3DNowTechnology( void ) { return false; }
-#elif defined( _WIN32 )
+#elif IsWindows()
 	#pragma optimize( "", off )
 	#pragma warning( disable : 4800 )//'int' : forcing value to bool 'true' or 'false' (performance warning)
 

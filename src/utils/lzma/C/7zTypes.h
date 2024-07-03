@@ -4,7 +4,7 @@
 #ifndef __7Z_TYPES_H
 #define __7Z_TYPES_H
 
-#ifdef _WIN32
+#if IsWindows()
 /* #include <windows.h> */
 #endif
 
@@ -42,7 +42,7 @@ EXTERN_C_BEGIN
 
 typedef int SRes;
 
-#ifdef _WIN32
+#if IsWindows()
 /* typedef DWORD WRes; */
 typedef unsigned WRes;
 #else
@@ -98,7 +98,7 @@ typedef int Bool;
 #define False 0
 
 
-#ifdef _WIN32
+#if IsWindows()
 #define MY_STD_CALL __stdcall
 #else
 #define MY_STD_CALL
@@ -235,7 +235,7 @@ typedef struct
 #define IAlloc_Alloc(p, size) (p)->Alloc((p), size)
 #define IAlloc_Free(p, a) (p)->Free((p), a)
 
-#ifdef _WIN32
+#if IsWindows()
 
 #define CHAR_PATH_SEPARATOR '\\'
 #define WCHAR_PATH_SEPARATOR L'\\'

@@ -6,7 +6,7 @@
 
 #ifndef AI_BEHAVIOR_PASSENGER_ZOMBIE_H
 #define AI_BEHAVIOR_PASSENGER_ZOMBIE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

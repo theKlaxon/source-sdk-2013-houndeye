@@ -7,7 +7,7 @@
 
 #ifndef NPC_BASEZOMBIE_H
 #define NPC_BASEZOMBIE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -4,7 +4,7 @@
 
 #ifndef REPLAYBROWSER_LISTPANEL_H
 #define REPLAYBROWSER_LISTPANEL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

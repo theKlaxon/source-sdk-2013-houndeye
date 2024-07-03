@@ -10,7 +10,7 @@
 #ifndef GAMESTRINGPOOL_H
 #define GAMESTRINGPOOL_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

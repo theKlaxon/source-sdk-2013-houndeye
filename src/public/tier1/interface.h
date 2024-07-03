@@ -29,7 +29,7 @@
 // therby stitching all of that lib's code/data together for eventual final exe link inclusion.
 #pragma once
 
-#if defined( _LINUX )
+#if IsLinux()
 	#include <dlfcn.h>// dlopen, dlclose, et al
 	#include <unistd.h>
 

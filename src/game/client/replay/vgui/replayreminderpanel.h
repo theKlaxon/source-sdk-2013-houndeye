@@ -6,7 +6,7 @@
 
 #ifndef REPLAYREMINDERPANEL_H
 #define REPLAYREMINDERPANEL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

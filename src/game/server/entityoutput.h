@@ -9,7 +9,7 @@
 #ifndef ENTITYOUTPUT_H
 #define ENTITYOUTPUT_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -190,6 +190,6 @@ typedef CEntityOutputTemplate<string_t,FIELD_STRING>		COutputString;
 typedef CEntityOutputTemplate<EHANDLE,FIELD_EHANDLE>		COutputEHANDLE;
 typedef CEntityOutputTemplate<Vector,FIELD_VECTOR>			COutputVector;
 typedef CEntityOutputTemplate<Vector,FIELD_POSITION_VECTOR>	COutputPositionVector;
-typedef CEntityOutputTemplate<color32,FIELD_COLOR32>		COutputColor32;
+typedef CEntityOutputTemplate<Color,FIELD_COLOR32>		    COutputColor32;
 
 #endif // ENTITYOUTPUT_H

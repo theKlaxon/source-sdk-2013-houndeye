@@ -9,7 +9,7 @@
 #ifndef COMPRESSED_VECTOR_H
 #define COMPRESSED_VECTOR_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

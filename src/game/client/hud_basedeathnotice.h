@@ -7,7 +7,7 @@
 
 #ifndef HUD_BASEDEATHNOTICE_H
 #define HUD_BASEDEATHNOTICE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

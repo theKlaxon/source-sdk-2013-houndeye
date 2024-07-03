@@ -11,7 +11,7 @@
 #ifndef TEXTENTRY_H
 #define TEXTENTRY_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

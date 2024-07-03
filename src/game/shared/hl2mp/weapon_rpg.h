@@ -8,7 +8,7 @@
 #ifndef WEAPON_RPG_H
 #define WEAPON_RPG_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -14,7 +14,7 @@
 #ifndef TIER2APP_H
 #define TIER2APP_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

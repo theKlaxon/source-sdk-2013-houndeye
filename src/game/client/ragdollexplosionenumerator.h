@@ -7,7 +7,7 @@
 
 #ifndef RAGDOLLEXPLOSIONENUMERATOR_H
 #define RAGDOLLEXPLOSIONENUMERATOR_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

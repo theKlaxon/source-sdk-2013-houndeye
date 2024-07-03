@@ -4,7 +4,7 @@
 
 #ifndef IREPLAYMOVIERENDERER_H
 #define IREPLAYMOVIERENDERER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

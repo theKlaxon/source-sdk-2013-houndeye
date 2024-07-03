@@ -7,7 +7,7 @@
 #ifndef SDK_WEAPON_MELEE_H
 #define SDK_WEAPON_MELEE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

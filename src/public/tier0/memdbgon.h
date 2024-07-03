@@ -24,7 +24,7 @@
 	// If debug build or ndebug and not already included MS custom alloc files, or already included this file
 	#if ( IsDebug() || !defined(_INC_CRTDBG) ) || defined(MEMDBGON_H)
 		#include "basetypes.h"
-		#ifdef _WIN32
+		#if IsWindows()
 			#include <tchar.h>
 		#else
 			#include <wchar.h>
@@ -35,7 +35,7 @@
 		#include "memalloc.h"
 
 		#if defined(USE_MEM_DEBUG)
-			#if defined( POSIX )
+			#if IsPosix()
 				#define _NORMAL_BLOCK 1
 
 				#include <cstddef>
@@ -56,7 +56,7 @@
 					void* operator new[]( size_t nSize, int blah, const char *pFileName, int nLine );
 				#endif
 				// Include crtdbg.h and make sure _DEBUG is set to 1.
-				#if !IsDebug()
+				#if !defined( _DEBUG )
 					#define _DEBUG 1
 					#include <crtdbg.h>
 					#undef _DEBUG
@@ -107,7 +107,7 @@
 			#endif
 			#define _malloc_dbg(s, t, f, l)	WHYCALLINGTHISDIRECTLY(s)
 
-			#if !defined( LINUX )
+			#if !IsLinux()
 				#if defined(__AFX_H__) && defined(DEBUG_NEW)
 					#define new DEBUG_NEW
 				#else

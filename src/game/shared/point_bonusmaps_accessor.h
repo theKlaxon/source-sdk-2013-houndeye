@@ -8,7 +8,7 @@
 #ifndef POINT_BONUSMAPS_ACCESSOR_H
 #define POINT_BONUSMAPS_ACCESSOR_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

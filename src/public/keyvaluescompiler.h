@@ -6,7 +6,7 @@
 
 #ifndef KEYVALUESCOMPILER_H
 #define KEYVALUESCOMPILER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

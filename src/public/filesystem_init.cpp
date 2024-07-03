@@ -6,16 +6,16 @@
 
 #undef PROTECTED_THINGS_ENABLE
 #undef PROTECT_FILEIO_FUNCTIONS
-#ifndef POSIX
+#if !IsPosix()
 	#undef fopen
 #endif
 
-#if defined( _WIN32 )
+#if IsWindows()
 	#include <direct.h>
 	#include <io.h>
 	#include <process.h>
 	#include <windows.h>
-#elif defined( POSIX )
+#elif IsPosix()
 	#include <unistd.h>
 	#define _chdir chdir
 	#define _access access

@@ -7,7 +7,7 @@
 
 #ifndef CBASESPRITEPROJECTILE_H
 #define CBASESPRITEPROJECTILE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

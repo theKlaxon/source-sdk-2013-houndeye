@@ -8,7 +8,7 @@
 #ifndef POINT_H
 #define POINT_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

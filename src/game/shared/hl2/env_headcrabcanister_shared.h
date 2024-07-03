@@ -8,7 +8,7 @@
 #ifndef ENV_HEADCRABCANISTER_SHARED_H
 #define ENV_HEADCRABCANISTER_SHARED_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

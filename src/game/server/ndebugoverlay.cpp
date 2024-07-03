@@ -13,7 +13,7 @@
 #include "ndebugoverlay.h"
 #include "wcedit.h"
 
-#ifdef POSIX
+#ifdef IsPosix()
 #include "ai_basenpc.h"
 #include "ai_network.h"
 #include "ai_networkmanager.h"
@@ -153,7 +153,7 @@ void UTIL_DrawPositioningOverlay( float flCrossDistance )
 	Vector pRight;
 	pPlayer->EyeVectors( NULL, &pRight, NULL );
 
-#ifdef _WIN32
+#if IsWindows()
 	Vector topPos		= NWCEdit::AirNodePlacementPosition();
 #else
         Vector pForward;

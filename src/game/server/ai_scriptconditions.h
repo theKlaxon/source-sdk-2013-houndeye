@@ -13,7 +13,7 @@
 #include "simtimer.h"
 #include "ai_npcstate.h"
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

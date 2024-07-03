@@ -8,7 +8,7 @@
 #ifndef MDLUTILS_H
 #define MDLUTILS_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

@@ -7,7 +7,7 @@
 
 #ifndef CONSOLEWND_H
 #define CONSOLEWND_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

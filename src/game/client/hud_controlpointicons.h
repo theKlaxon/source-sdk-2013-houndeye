@@ -6,7 +6,7 @@
 
 #ifndef HUD_CONTROLPOINTICONS_H
 #define HUD_CONTROLPOINTICONS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

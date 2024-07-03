@@ -8,7 +8,7 @@
 
 #if !defined( C_BASEHLPLAYER_H )
 #define C_BASEHLPLAYER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

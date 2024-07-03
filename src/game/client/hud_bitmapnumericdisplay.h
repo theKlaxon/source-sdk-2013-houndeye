@@ -6,7 +6,7 @@
 
 #ifndef HUD_BITMAPNUMERICDISPLAY_H
 #define HUD_BITMAPNUMERICDISPLAY_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

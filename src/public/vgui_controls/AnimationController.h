@@ -6,7 +6,7 @@
 
 #ifndef ANIMATIONCONTROLLER_H
 #define ANIMATIONCONTROLLER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

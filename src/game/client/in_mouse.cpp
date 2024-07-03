@@ -6,7 +6,7 @@
 // $Date:         $
 // $NoKeywords: $
 //===========================================================================//
-#if defined( WIN32 )
+#if IsWindows()
 #define _WIN32_WINNT 0x0502
 #include <windows.h>
 #endif
@@ -101,7 +101,7 @@ static ConVar m_mouseaccel2( "m_mouseaccel2", "0", FCVAR_ARCHIVE, "Windows mouse
 
 static ConVar m_rawinput( "m_rawinput", "0", FCVAR_ARCHIVE, "Use Raw Input for mouse input.");
 
-#if DEBUG
+#if IsDebug()
 ConVar cl_mouselook( "cl_mouselook", "1", FCVAR_ARCHIVE, "Set to 1 to use mouse for look, 0 for keyboard look." );
 #else
 ConVar cl_mouselook( "cl_mouselook", "1", FCVAR_ARCHIVE | FCVAR_NOT_CONNECTED, "Set to 1 to use mouse for look, 0 for keyboard look. Cannot be set while connected to a server." );
@@ -235,7 +235,7 @@ void CInput::CheckMouseAcclerationVars()
 	if ( dirty )
 	{
 		// Update them
-#ifdef WIN32
+#if IsWindows()
 		m_fRestoreSPI = SystemParametersInfo( SPI_SETMOUSE, 0, m_rgNewMouseParms, 0 ) ? true : false;
 #endif
 	}
@@ -258,7 +258,7 @@ void CInput::Init_Mouse (void)
 
 	if ( CommandLine()->FindParm ("-useforcedmparms" ) ) 
 	{
-#ifdef WIN32
+#if IsWindows()
 		m_fMouseParmsValid = SystemParametersInfo( SPI_GETMOUSE, 0, m_rgOrigMouseParms, 0 ) ? true : false;
 #else
 		m_fMouseParmsValid = false;

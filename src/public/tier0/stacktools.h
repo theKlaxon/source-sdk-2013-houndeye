@@ -8,7 +8,7 @@
 #ifndef TIER0_STACKTOOLS_H
 #define TIER0_STACKTOOLS_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

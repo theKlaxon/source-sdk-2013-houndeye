@@ -11,7 +11,7 @@
 #include "mathlib/mathlib.h"
 #include "mathlib/vector.h"
 
-#if defined( GNUC )
+#if defined( COMPILER_GCC )
 	#define USE_STDC_FOR_SIMD 0
 #else
 	#define USE_STDC_FOR_SIMD 0
@@ -934,18 +934,18 @@ ALWAYS_INLINE fltx4 ReplicateX4( float flValue ) {
 
 ALWAYS_INLINE float SubFloat( const fltx4& a, int idx ) {
 		// NOTE: if the output goes into a register, this causes a Load-Hit-Store stall (don't mix fpu/vpu math!)
-	#ifndef POSIX
-	return a.m128_f32[ idx ];
+	#if !IsPosix()
+		return a.m128_f32[ idx ];
 	#else
-	return ( reinterpret_cast<float const*>( &a ) )[ idx ];
+		return ( reinterpret_cast<float const*>( &a ) )[ idx ];
 	#endif
 }
 
 ALWAYS_INLINE float& SubFloat( fltx4& a, int idx ) {
-	#ifndef POSIX
-	return a.m128_f32[ idx ];
+	#if !IsPosix()
+		return a.m128_f32[ idx ];
 	#else
-	return ( reinterpret_cast<float*>( &a ) )[ idx ];
+		return ( reinterpret_cast<float*>( &a ) )[ idx ];
 	#endif
 }
 
@@ -954,18 +954,18 @@ ALWAYS_INLINE uint32 SubFloatConvertToInt( const fltx4& a, int idx ) {
 }
 
 ALWAYS_INLINE uint32 SubInt( const fltx4& a, int idx ) {
-	#ifndef POSIX
-	return a.m128_u32[ idx ];
+	#if !IsPosix()
+		return a.m128_u32[ idx ];
 	#else
-	return ( reinterpret_cast<uint32 const*>( &a ) )[ idx ];
+		return ( reinterpret_cast<uint32 const*>( &a ) )[ idx ];
 	#endif
 }
 
 ALWAYS_INLINE uint32& SubInt( fltx4& a, int idx ) {
-	#ifndef POSIX
-	return a.m128_u32[ idx ];
+	#if !IsPosix()
+		return a.m128_u32[ idx ];
 	#else
-	return ( reinterpret_cast<uint32*>( &a ) )[ idx ];
+		return ( reinterpret_cast<uint32*>( &a ) )[ idx ];
 	#endif
 }
 

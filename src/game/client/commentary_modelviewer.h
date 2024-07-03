@@ -7,7 +7,7 @@
 
 #ifndef COMMENTARY_MODELVIEWER_H
 #define COMMENTARY_MODELVIEWER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

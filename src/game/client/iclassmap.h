@@ -7,7 +7,7 @@
 
 #ifndef ICLASSMAP_H
 #define ICLASSMAP_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

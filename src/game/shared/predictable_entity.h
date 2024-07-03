@@ -7,7 +7,7 @@
 
 #ifndef PREDICTABLE_ENTITY_H
 #define PREDICTABLE_ENTITY_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

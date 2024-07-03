@@ -102,7 +102,7 @@ typedef void* VD3DHANDLE;
 	typedef unsigned char BYTE;
 	#define CONST const
 		
-	#if defined(POSIX)
+	#if IsPosix()
 		typedef size_t ULONG_PTR;
 	#else
 		typedef unsigned long ULONG_PTR;
@@ -1057,7 +1057,7 @@ struct D3DMATRIX
 
     };
 
-#if defined( WIN32 )
+#if IsWindows()
 	operator void* ();
 	bool operator == ( CONST D3DMATRIX& src ) const;
 #endif

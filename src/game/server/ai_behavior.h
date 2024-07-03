@@ -14,14 +14,14 @@
 #include "AI_Criteria.h"
 #include "networkvar.h"
 
-#ifdef DEBUG
-#pragma warning(push)
-#include <typeinfo>
-#pragma warning(pop)
-#pragma warning(disable:4290)
+#if IsDebug()
+	#pragma warning(push)
+	#include <typeinfo>
+	#pragma warning(pop)
+	#pragma warning(disable:4290)
 #endif
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 
@@ -386,8 +386,8 @@ public:
 	CAI_BehaviorHost()
 	  : m_pCurBehavior(NULL)
 	{
-#ifdef DEBUG
-  		m_fDebugInCreateBehaviors = false;
+#if IsDebug()
+ 		m_fDebugInCreateBehaviors = false;
 #endif
 	}
 
@@ -525,7 +525,7 @@ private:
 
 	bool			m_bCalledBehaviorSelectSchedule;
 	
-#ifdef DEBUG
+#if IsDebug()
 	bool 			m_fDebugInCreateBehaviors;
 #endif
 	
@@ -1890,7 +1890,7 @@ inline void CAI_BehaviorHost<BASE_NPC>::OnChangeRunningBehavior( CAI_BehaviorBas
 template <class BASE_NPC>
 inline void CAI_BehaviorHost<BASE_NPC>::AddBehavior( CAI_BehaviorBase *pBehavior )
 {
-#ifdef DEBUG
+#if IsDebug()
 	Assert( m_Behaviors.Find( pBehavior ) == m_Behaviors.InvalidIndex() );
 	Assert( m_fDebugInCreateBehaviors );
 	for ( int i = 0; i < m_Behaviors.Count(); i++)
@@ -1956,12 +1956,12 @@ inline bool CAI_BehaviorHost<BASE_NPC>::CreateComponents()
 {
 	if ( BaseClass::CreateComponents() )
 	{
-#ifdef DEBUG
-		m_fDebugInCreateBehaviors = true;
+#if IsDebug()
+	m_fDebugInCreateBehaviors = true;
 #endif
 		bool result = CreateBehaviors();
-#ifdef DEBUG
-		m_fDebugInCreateBehaviors = false;
+#if IsDebug()
+	m_fDebugInCreateBehaviors = false;
 #endif
 		return result;
 	}

@@ -54,10 +54,14 @@ public:
 		return *reinterpret_cast<const int*>( this );
 	}
 
-	[[nodiscard]] inline int r() const { return this->_color[ 0 ]; }
-	[[nodiscard]] inline int g() const { return this->_color[ 1 ]; }
-	[[nodiscard]] inline int b() const { return this->_color[ 2 ]; }
-	[[nodiscard]] inline int a() const { return this->_color[ 3 ]; }
+	[[nodiscard]]
+	inline int r() const { return this->_color[ 0 ]; }
+	[[nodiscard]]
+	inline int g() const { return this->_color[ 1 ]; }
+	[[nodiscard]]
+	inline int b() const { return this->_color[ 2 ]; }
+	[[nodiscard]]
+	inline int a() const { return this->_color[ 3 ]; }
 
 	inline void r( unsigned char value ) { this->_color[ 0 ] = value; }
 	inline void g( unsigned char value ) { this->_color[ 1 ] = value; }

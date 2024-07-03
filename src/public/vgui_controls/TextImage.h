@@ -8,7 +8,7 @@
 #ifndef TEXTIMAGE_H
 #define TEXTIMAGE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

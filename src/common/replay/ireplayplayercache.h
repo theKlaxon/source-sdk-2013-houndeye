@@ -4,7 +4,7 @@
 
 #ifndef IREPLAYPLAYERCACHE_H
 #define IREPLAYPLAYERCACHE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

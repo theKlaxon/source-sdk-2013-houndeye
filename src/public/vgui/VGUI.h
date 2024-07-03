@@ -8,7 +8,7 @@
 #ifndef VGUI_H
 #define VGUI_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -50,7 +50,7 @@ namespace vgui
 {
 // handle to an internal vgui panel
 // this is the only handle to a panel that is valid across dll boundaries
-typedef unsigned int VPANEL;
+using VPANEL = unsigned int;
 
 // handles to vgui objects
 // NULL values signify an invalid value
@@ -66,7 +66,7 @@ const HFont INVALID_FONT = 0; // the value of an invalid font handle
 
 #include "tier1/strtools.h"
 
-#if 0 // defined( LINUX )
+#if 0 // IsLinux()
 // Disabled all platforms. Did a major cleanup of osxfont.cpp, and having this
 //  turned off renders much closer to Windows and Linux and also uses the same
 //  code paths (which is good).

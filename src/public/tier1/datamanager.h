@@ -6,7 +6,7 @@
 
 #ifndef RESOURCEMANAGER_H
 #define RESOURCEMANAGER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

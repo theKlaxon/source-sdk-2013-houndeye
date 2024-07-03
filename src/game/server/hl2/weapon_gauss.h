@@ -8,7 +8,7 @@
 
 #ifndef WEAPON_GAUSS_H
 #define WEAPON_GAUSS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

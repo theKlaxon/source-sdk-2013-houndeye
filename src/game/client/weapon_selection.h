@@ -6,7 +6,7 @@
 //=============================================================================//
 #if !defined( WEAPON_SELECTION_H )
 #define WEAPON_SELECTION_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

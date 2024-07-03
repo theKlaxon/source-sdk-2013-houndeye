@@ -6,7 +6,7 @@
 
 #ifndef VEHICLE_VIEWBLEND_SHARED_H
 #define VEHICLE_VIEWBLEND_SHARED_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

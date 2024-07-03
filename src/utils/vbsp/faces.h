@@ -7,7 +7,7 @@
 
 #ifndef FACES_H
 #define FACES_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

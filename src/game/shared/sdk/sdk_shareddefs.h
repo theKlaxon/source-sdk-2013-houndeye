@@ -6,7 +6,7 @@
 
 #ifndef SDK_SHAREDDEFS_H
 #define SDK_SHAREDDEFS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

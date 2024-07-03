@@ -8,7 +8,7 @@
 //===========================================================================//
 #if !defined( IVIEWRENDER_H )
 #define IVIEWRENDER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

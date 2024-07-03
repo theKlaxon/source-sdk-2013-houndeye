@@ -7,7 +7,7 @@
 #ifndef MEMSTACK_H
 #define MEMSTACK_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 
@@ -52,7 +52,7 @@ private:
 
 	unsigned m_maxSize;
 	unsigned m_alignment;
-#ifdef _WIN32
+#if IsWindows()
 	unsigned m_commitSize;
 	unsigned m_minCommit;
 #endif

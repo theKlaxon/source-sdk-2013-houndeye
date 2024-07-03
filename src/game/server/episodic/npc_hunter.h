@@ -7,7 +7,7 @@
 #ifndef NPC_HUNTER_H
 #define NPC_HUNTER_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

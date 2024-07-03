@@ -6,7 +6,7 @@
 
 #ifndef TEAM_OBJECTIVERESOURCE_H
 #define TEAM_OBJECTIVERESOURCE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

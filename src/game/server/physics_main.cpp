@@ -822,9 +822,9 @@ void CBaseEntity::PhysicsDispatchThink( BASEPTR thinkFunc ) {
 			if ( pNPC && pNPC->GetCurSchedule() ) {
 				pNPC->ReportOverThinkLimit( time );
 			} else {
-				#ifdef _WIN32
+				#if IsWindows()
 					Msg( "%s(%s) thinking for %.02f ms!!!\n", GetClassname(), typeid( this ).raw_name(), time );
-				#elif POSIX
+				#elif IsPosix()
 					Msg( "%s(%s) thinking for %.02f ms!!!\n", GetClassname(), typeid( this ).name(), time );
 				#else
 					#error "typeinfo"

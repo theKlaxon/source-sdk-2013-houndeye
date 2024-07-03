@@ -8,7 +8,7 @@
 #ifndef CONTROLS_H
 #define CONTROLS_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

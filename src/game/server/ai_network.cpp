@@ -620,7 +620,7 @@ bool CAI_Network::IsConnected(int srcID, int destID)
 	if ( srcZone == AI_NODE_ZONE_UNIVERSAL || destZone == AI_NODE_ZONE_UNIVERSAL ) // only happens in WC edit case
 		return true;
 
-#ifdef DEBUG
+#if IsDebug()
 	if ( srcZone == AI_NODE_ZONE_UNKNOWN || destZone == AI_NODE_ZONE_UNKNOWN )
 	{
 		DevMsg( "Warning: Node found in unknown zone\n" );

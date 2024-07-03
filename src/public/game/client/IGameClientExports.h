@@ -7,7 +7,7 @@
 
 #ifndef IGAMECLIENTEXPORTS_H
 #define IGAMECLIENTEXPORTS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

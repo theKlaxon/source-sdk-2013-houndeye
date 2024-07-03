@@ -1537,7 +1537,7 @@ public:
 	DECLARE_SERVERCLASS();
 
 private:
-#ifdef POSIX
+#if IsPosix()
 	CEnvWindShared m_EnvWindShared; // FIXME - fails to compile as networked var due to operator= problem
 #else
 	CNetworkVarEmbedded( CEnvWindShared, m_EnvWindShared );

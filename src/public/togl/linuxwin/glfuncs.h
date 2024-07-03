@@ -259,7 +259,7 @@ GL_EXT( GL_ARB_buffer_storage, 4, 4 )
 GL_FUNC_VOID( GL_ARB_buffer_storage, false, glBufferStorage, (GLenum target, GLsizeiptr size, const void *data, GLbitfield flags), (target, size, data, flags) )
 
 // This one is an OS extension. We'll add a little helper function to look for it.
-#ifdef _WIN32
+#if IsWindows()
 	GL_EXT(WGL_EXT_swap_control_tear,-1,-1)
 #else
 	GL_EXT(GLX_EXT_swap_control_tear,-1,-1)

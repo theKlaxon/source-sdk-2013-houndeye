@@ -6,7 +6,7 @@
 
 #ifndef VIRTUALMESH_H
 #define VIRTUALMESH_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

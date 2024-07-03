@@ -6,7 +6,7 @@
 
 #ifndef STEAM_API_H
 #define STEAM_API_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -30,7 +30,7 @@
 #include "isteamhtmlsurface.h"
 
 // Steam API export macro
-#if defined( _WIN32 )
+#if IsWindows()
 	#if defined( STEAM_API_EXPORTS )
 	#define S_API extern "C" __declspec( dllexport ) 
 	#elif defined( STEAM_API_NODLL )
@@ -38,13 +38,13 @@
 	#else
 	#define S_API extern "C" __declspec( dllimport ) 
 	#endif // STEAM_API_EXPORTS
-#elif defined( GNUC )
+#elif IsPosix()
 	#if defined( STEAM_API_EXPORTS )
 	#define S_API extern "C" __attribute__ ((visibility("default"))) 
 	#else
 	#define S_API extern "C" 
 	#endif // STEAM_API_EXPORTS
-#else // !WIN32
+#else // !IsWindows()
 	#if defined( STEAM_API_EXPORTS )
 	#define S_API extern "C"  
 	#else
@@ -378,7 +378,7 @@ public:
 	CCallback< thisclass, param > var; void func( param *pParam )
 
 
-#ifdef _WIN32
+#if IsWindows()
 // disable this warning; this pattern need for steam callback registration
 #pragma warning( disable: 4355 )	// 'this' : used in base member initializer list
 #endif

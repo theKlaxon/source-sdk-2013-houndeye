@@ -2332,7 +2332,7 @@ bool CSceneEntity::CheckActors()
 	return true;
 }
 
-#if !defined( _RETAIL )
+#if !IsRetail()
 static ConVar scene_async_prefetch_spew( "scene_async_prefetch_spew", "0", 0, "Display async .ani file loading info." );
 #endif
 
@@ -2344,7 +2344,7 @@ void CSceneEntity::PrefetchAnimBlocks( CChoreoScene *scene )
 	CUtlMap< CChoreoActor *, CBaseFlex *> actorMap( 0, 0, DefLessFunc( CChoreoActor * ) );
 	
 	int spew = 
-#if !defined( _RETAIL )
+#if !IsRetail()
 		scene_async_prefetch_spew.GetInt();
 #else 
 		0;

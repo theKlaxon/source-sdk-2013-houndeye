@@ -9,7 +9,7 @@
 #ifndef ITEXTURE_H
 #define ITEXTURE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

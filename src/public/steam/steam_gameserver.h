@@ -6,7 +6,7 @@
 
 #ifndef STEAM_GAMESERVER_H
 #define STEAM_GAMESERVER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

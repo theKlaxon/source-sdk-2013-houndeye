@@ -6,7 +6,7 @@
 
 #ifndef NPC_HEADCRAB_H
 #define NPC_HEADCRAB_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -26,7 +26,7 @@ public:
 	{
 		// in order to be valid to trace as a group, all four rays must have the same signs in all
 		// of their direction components
-#ifndef NDEBUG
+#if IsDebug()
 		for(int c=1;c<4;c++)
 		{
 			Assert(direction.X(0)*direction.X(c)>=0);

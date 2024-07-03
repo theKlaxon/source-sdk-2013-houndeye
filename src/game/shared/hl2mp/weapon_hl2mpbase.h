@@ -6,7 +6,7 @@
 
 #ifndef WEAPON_HL2MPBASE_H
 #define WEAPON_HL2MPBASE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

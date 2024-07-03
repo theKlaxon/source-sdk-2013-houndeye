@@ -7,7 +7,7 @@
 
 #ifndef ICONPANEL_H
 #define ICONPANEL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -6,7 +6,7 @@
 
 #ifndef VGUI_VIDEO_H
 #define VGUI_VIDEO_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

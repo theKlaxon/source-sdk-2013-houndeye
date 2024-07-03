@@ -4,7 +4,7 @@
 
 #ifndef SHADERAPIHACK_H
 #define SHADERAPIHACK_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

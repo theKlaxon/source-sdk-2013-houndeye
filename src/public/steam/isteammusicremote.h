@@ -2,7 +2,7 @@
 
 #ifndef ISTEAMMUSICREMOTE_H
 #define ISTEAMMUSICREMOTE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

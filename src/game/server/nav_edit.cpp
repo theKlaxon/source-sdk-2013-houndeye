@@ -36,7 +36,7 @@
 ConVar nav_show_area_info( "nav_show_area_info", "0.5", FCVAR_CHEAT, "Duration in seconds to show nav area ID and attributes while editing" );
 ConVar nav_snap_to_grid( "nav_snap_to_grid", "0", FCVAR_CHEAT, "Snap to the nav generation grid when creating new nav areas" );
 ConVar nav_create_place_on_ground( "nav_create_place_on_ground", "0", FCVAR_CHEAT, "If true, nav areas will be placed flush with the ground when created by hand." );
-#ifdef DEBUG
+#if IsDebug()
 ConVar nav_draw_limit( "nav_draw_limit", "50", FCVAR_CHEAT, "The maximum number of areas to draw in edit mode" );
 #else
 ConVar nav_draw_limit( "nav_draw_limit", "500", FCVAR_CHEAT, "The maximum number of areas to draw in edit mode" );

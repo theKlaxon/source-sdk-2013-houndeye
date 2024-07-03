@@ -44,7 +44,7 @@ using sixenseMath::Vector4;
 using sixenseMath::Quat;
 using sixenseMath::Line;
 
-#if defined( WIN32 )
+#if IsWindows()
 #define _WIN32_WINNT 0x0502
 #endif
 #include <winlite.h>
@@ -627,7 +627,7 @@ ConCommand sixense_autosave( "sixense_autosave", SixenseAutosave );
 #ifdef INPUT_EVENTS
 static void sendMouseClick( int click, int release )
 {
-#ifdef WIN32
+#if IsWindows()
 	// Set up the input event struct
 	INPUT input_ev[1]; 
 
@@ -680,7 +680,7 @@ static void sendMouseClick( int click, int release )
 
 static void sendKeyState( char key, int press, int release )
 {
-#ifdef WIN32
+#if IsWindows()
 	// Set up the input event struct
 	INPUT input_ev[1];
 
@@ -715,7 +715,7 @@ static void sendKeyState( char key, int press, int release )
 
 static void sendAbsoluteMouseMove( float x, float y ) 
 {
-#ifdef WIN32
+#if IsWindows()
 	// Set up the input event struct
 	INPUT input_ev[1];
 
@@ -737,7 +737,7 @@ static void sendAbsoluteMouseMove( float x, float y )
 #endif
 
 #if 0
-#ifdef DEBUG
+#if IsDebug()
 extern "C" int sixenseSetDebugParam( const char *param_name, float val );
 extern "C" int sixenseGetDebugParam( const char *param_name, float *val );
 static void inc_debug_val( const CCommand &args )
@@ -3249,7 +3249,7 @@ void SixenseInput::SixenseUpdateMouseCursor()
 		left_clicked = false;
 	}
 
-#ifdef WIN32
+#if IsWindows()
 
 #ifdef PORTAL2
 	const char *window_name = "Portal 2 Sixense MotionPack";
@@ -3379,7 +3379,7 @@ void SixenseInput::SixenseUpdateMouseCursor()
 			norm_coord[0] = clamp<float>( norm_coord[0], 0.0f, 1.0f );
 			norm_coord[1] = clamp<float>( norm_coord[1], 0.0f, 1.0f );
 
-#ifdef WIN32
+#if IsWindows()
 			RECT win_rect;
 			GetWindowRect( GetActiveWindow(), &win_rect );
 

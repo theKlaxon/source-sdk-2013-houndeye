@@ -7,7 +7,7 @@
 #ifndef UTLOBJECTREFERENCE_H
 #define UTLOBJECTREFERENCE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -6,7 +6,7 @@
 
 #ifndef ISTEAMNETWORKING
 #define ISTEAMNETWORKING
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

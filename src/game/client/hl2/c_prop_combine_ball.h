@@ -7,7 +7,7 @@
 #ifndef CPROPCOMBINEBALL_H_
 #define CPROPCOMBINEBALL_H_
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

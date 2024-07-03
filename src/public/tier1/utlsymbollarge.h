@@ -9,7 +9,7 @@
 #ifndef UTLSYMBOLLARGE_H
 #define UTLSYMBOLLARGE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

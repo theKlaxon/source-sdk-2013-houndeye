@@ -6,25 +6,25 @@
 //
 //=============================================================================
 
-#if defined(_WIN32)
-#undef _WIN32_WINNT
+#if IsWindows()
+#un IsWindows()_WINNT
 #define _WIN32_WINNT 0x0502		// ReadDirectoryChangesW
 #endif
 
 #define ASYNC_FILEIO
-#if defined( LINUX )
+#if IsLinux()
 // Linux hasn't got a good AIO library that we have found yet, so lets punt for now
 #undef ASYNC_FILEIO
 #endif
 
-#if defined(_WIN32)
+#if IsWindows()
 //#include <direct.h>
 #include <io.h>
 // unset to force to use stdio implementation 
 #define WIN32_FILEIO
 
 #if defined(ASYNC_FILEIO) 
-#if defined(_WIN32) && !defined(WIN32_FILEIO)
+#if IsWindows() && !defined(WIN32_FILEIO)
 #error "trying to use async io without win32 filesystem API usage, that isn't doable"
 #endif
 #endif
@@ -64,7 +64,7 @@
 #endif
 
 #if defined( ASYNC_FILEIO )
-#ifdef _WIN32
+#if IsWindows()
 #include "winlite.h"
 #endif
 #endif
@@ -162,7 +162,7 @@ void CPathString::PopulateWCharPath()
 	}
 }
 
-#ifdef WIN32
+#if IsWindows()
 struct DirWatcherOverlapped : public OVERLAPPED
 {
 	CDirWatcher *m_pDirWatcher;
@@ -188,7 +188,7 @@ CDirWatcher::CDirWatcher()
 //-----------------------------------------------------------------------------
 CDirWatcher::~CDirWatcher()
 {
-#ifdef WIN32
+#if IsWindows()
 	if ( m_pOverlapped )
 	{
 		// mark the overlapped structure as gone
@@ -215,7 +215,7 @@ CDirWatcher::~CDirWatcher()
 }
 
 
-#ifdef WIN32
+#if IsWindows()
 //-----------------------------------------------------------------------------
 // Purpose: callback watch
 //			gets called on the same thread whenever a SleepEx() occurs
@@ -271,7 +271,7 @@ void CDirWatcher::SetDirToWatch( const char *pchDir )
 		return;
 	
 	CPathString strPath( pchDir );
-#ifdef WIN32
+#if IsWindows()
 	// open the directory
 	m_hFile = ::CreateFileW( strPath.GetWCharPathPrePended(), FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED | FILE_FLAG_BACKUP_SEMANTICS, NULL );
 
@@ -287,7 +287,7 @@ void CDirWatcher::SetDirToWatch( const char *pchDir )
 }
 
 
-#ifdef WIN32
+#if IsWindows()
 //-----------------------------------------------------------------------------
 // Purpose: used by callback functions to push a file onto the list
 //-----------------------------------------------------------------------------
@@ -324,7 +324,7 @@ void CDirWatcher::AddFileToChangeList( const char *pchFile )
 //-----------------------------------------------------------------------------
 bool CDirWatcher::GetChangedFile( CUtlString *psFile )
 {
-#ifdef WIN32
+#if IsWindows()
 	// this will trigger any pending directory reads
 	// this does get hit other places in the code; so the callback can happen at any time
 	::SleepEx( 0, TRUE );

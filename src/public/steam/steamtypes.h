@@ -12,20 +12,20 @@
 	typedef unsigned char uint8;
 #endif
 
-#if defined( __GNUC__ ) && defined(POSIX)
+#if defined( __GNUC__ ) && IsPosix()
 	#if __GNUC__ < 4
 		#error "Steamworks requires GCC 4.X (4.2 or 4.4 have been tested)"
 	#endif
 #endif
 
-#if defined(__x86_64__) || defined(_WIN64)
+#if defined(__x86_64__) || (IsPlatform64Bits() && IsWindows())
 	#define X64BITS
 #endif
 
 typedef unsigned char uint8;
 typedef signed char int8;
 
-#if defined( _WIN32 )
+#if IsWindows()
 	typedef __int16 int16;
 	typedef unsigned __int16 uint16;
 	typedef __int32 int32;

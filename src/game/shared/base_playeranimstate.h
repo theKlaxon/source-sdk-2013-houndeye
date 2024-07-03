@@ -6,7 +6,7 @@
 
 #ifndef BASE_PLAYERANIMSTATE_H
 #define BASE_PLAYERANIMSTATE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

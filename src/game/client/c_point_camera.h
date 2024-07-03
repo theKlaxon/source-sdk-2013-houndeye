@@ -7,7 +7,7 @@
 
 #ifndef C_POINTCAMERA_H
 #define C_POINTCAMERA_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

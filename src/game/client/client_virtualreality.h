@@ -8,7 +8,7 @@
 
 #ifndef CLIENTVIRTUALREALITY_H
 #define CLIENTVIRTUALREALITY_H
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

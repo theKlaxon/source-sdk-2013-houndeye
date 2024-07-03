@@ -312,8 +312,8 @@ bool CAI_LocalNavigator::MoveCalcStop( AILocalMoveGoal_t *pMoveGoal, float distC
 
 //-------------------------------------
 
-#ifdef DEBUG
-#define SetSolveCookie() 	pMoveGoal->solveCookie = __LINE__;
+#if IsDebug()
+	#define SetSolveCookie() 	pMoveGoal->solveCookie = __LINE__;
 #else
 #define SetSolveCookie()	((void)0)
 #endif

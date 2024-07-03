@@ -13,7 +13,7 @@
 #ifndef ISURFACE_V30_H
 #define ISURFACE_V30_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

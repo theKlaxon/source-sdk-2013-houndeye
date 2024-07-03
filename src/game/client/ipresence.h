@@ -6,7 +6,7 @@
 
 #ifndef IPRESENCE_H
 #define IPRESENCE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

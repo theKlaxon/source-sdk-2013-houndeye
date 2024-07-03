@@ -6,7 +6,7 @@
 
 #ifndef VGUI_KEY_TRANSLATION_H
 #define VGUI_KEY_TRANSLATION_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

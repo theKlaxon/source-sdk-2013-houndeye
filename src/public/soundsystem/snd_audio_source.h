@@ -10,7 +10,7 @@
 #ifndef SND_AUDIO_SOURCE_H
 #define SND_AUDIO_SOURCE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

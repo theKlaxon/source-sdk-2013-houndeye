@@ -6,7 +6,7 @@
 
 #ifndef BASECSGRENADE_PROJECTILE_H
 #define BASECSGRENADE_PROJECTILE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

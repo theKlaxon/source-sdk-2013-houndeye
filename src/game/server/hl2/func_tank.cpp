@@ -1172,7 +1172,7 @@ void CFuncTank::ControllerPostFrame( void )
 	
 	Fire( bulletCount, WorldBarrelPosition(), forward, pPlayer, false );
  
-#if defined( WIN32 )
+#if IsWindows()
 	// NVNT apply a punch on the player each time fired
 	HapticPunch(pPlayer,0,0,hap_turret_mag.GetFloat());
 #endif	

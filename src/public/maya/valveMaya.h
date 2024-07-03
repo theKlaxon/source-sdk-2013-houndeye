@@ -1,4 +1,4 @@
-//======= Copyright © 1996-2006, Valve Corporation, All rights reserved. ======
+//======= Copyright ï¿½ 1996-2006, Valve Corporation, All rights reserved. ======
 //
 // Purpose:
 //
@@ -7,7 +7,7 @@
 #ifndef VALVEMAYA_H
 #define VALVEMAYA_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

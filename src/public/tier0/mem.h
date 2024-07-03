@@ -6,9 +6,9 @@
 //=============================================================================//
 #pragma once
 
-#include <stddef.h>
+#include <cstddef>
 
-#if defined( LINUX )
+#if IsLinux()
 	#undef offsetof
 	#define offsetof(s,m)	(size_t)&(((s*)0)->m)
 #endif
@@ -30,7 +30,7 @@
 //-----------------------------------------------------------------------------
 // DLL-exported methods for particular kinds of memory
 //-----------------------------------------------------------------------------
-MEM_INTERFACE void *MemAllocScratch( int nMemSize );
+MEM_INTERFACE void* MemAllocScratch( int nMemSize );
 MEM_INTERFACE void MemFreeScratch();
 
 #if IsLinux()

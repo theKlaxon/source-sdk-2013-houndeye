@@ -7,7 +7,7 @@
 #ifndef TEAM_ROUND_TIMER_H
 #define TEAM_ROUND_TIMER_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

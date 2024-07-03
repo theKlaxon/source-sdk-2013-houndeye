@@ -9,7 +9,7 @@
 #ifndef COMBINE_MINE_H
 #define COMBINE_MINE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -1,7 +1,7 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 #ifndef IN_SIXENSE_GESTURES_H
 #define IN_SIXENSE_GESTURES_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

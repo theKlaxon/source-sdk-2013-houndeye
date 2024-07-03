@@ -285,7 +285,7 @@ public:
 		{
 			fwrite( pMem, size, 1, m_file ); 
 		}
-#ifdef WIN32
+#if IsWindows()
 		else
 		{
 			DWORD numBytesWritten;
@@ -303,7 +303,7 @@ public:
 		}
 		else
 		{
-#ifdef WIN32
+#if IsWindows()
 			return CWin32File::FileTell( m_hFile );
 #else
 			return 0;
@@ -547,7 +547,7 @@ void CZipFile::Reset( void )
 
 	if ( m_hDiskCacheWriteFile != INVALID_HANDLE_VALUE )
 	{
-#ifdef WIN32
+#if IsWindows()
 		CloseHandle( m_hDiskCacheWriteFile );
 		DeleteFile( m_DiskCacheName.String() );
 #else
@@ -771,7 +771,7 @@ void CZipFile::ParseFromBuffer( void *buffer, int bufferlength )
 //-----------------------------------------------------------------------------
 HANDLE CZipFile::ParseFromDisk( const char *pFilename )
 {
-#ifdef WIN32
+#if IsWindows()
 	HANDLE hFile = CreateFile( pFilename, GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
 	if ( hFile == INVALID_HANDLE_VALUE )
 	{
@@ -792,7 +792,7 @@ HANDLE CZipFile::ParseFromDisk( const char *pFilename )
 	if ( fileLen < sizeof( ZIP_EndOfCentralDirRecord ) )
 	{
 		// bad format
-#ifdef WIN32
+#if IsWindows()
 		CloseHandle( hFile );
 #else
 		fclose( (FILE *)hFile );
@@ -840,7 +840,7 @@ HANDLE CZipFile::ParseFromDisk( const char *pFilename )
 	if ( numZipFiles <= 0 )
 	{
 		// No files
-#ifdef WIN32
+#if IsWindows()
 		CloseHandle( hFile );
 #else
 		fclose( (FILE *)hFile );
@@ -867,7 +867,7 @@ HANDLE CZipFile::ParseFromDisk( const char *pFilename )
 		          && zipFileHeader.compressionMethod != IZip::eCompressionType_LZMA ) )
 		{
 			// bad contents
-#ifdef WIN32
+#if IsWindows()
 			CloseHandle( hFile );
 #else
 			fclose( (FILE *)hFile );
@@ -1472,7 +1472,7 @@ void CZipFile::SaveDirectory( IWriteStream& stream )
 
 	if ( m_hDiskCacheWriteFile != INVALID_HANDLE_VALUE )
 	{
-#ifdef WIN32
+#if IsWindows()
 		FlushFileBuffers( m_hDiskCacheWriteFile );
 #else
 		fflush( (FILE *)m_hDiskCacheWriteFile );

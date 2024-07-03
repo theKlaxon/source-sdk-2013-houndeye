@@ -6,7 +6,7 @@
 
 #ifndef GRENADE_HOPWIRE_H
 #define GRENADE_HOPWIRE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

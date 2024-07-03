@@ -2,7 +2,7 @@
 
 #ifndef VOLUME_CLOUDS_HELPER_H
 #define VOLUME_CLOUDS_HELPER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -7,7 +7,7 @@
 #ifndef _VCONFIG_H
 #define _VCONFIG_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -20,7 +20,7 @@
 // For accessing the environment variables we store the current vproject in.
 void SetVConfigRegistrySetting( const char *pName, const char *pValue, bool bNotify = true );
 bool GetVConfigRegistrySetting( const char *pName, char *pReturn, int size );
-#ifdef _WIN32
+#if IsWindows()
 bool RemoveObsoleteVConfigRegistrySetting( const char *pValueName, char *pOldValue = NULL , int size = 0 ); 
 #endif
 bool ConvertObsoleteVConfigRegistrySetting( const char *pValueName );

@@ -4,7 +4,7 @@
 
 #ifndef SCREENSHOT_H
 #define SCREENSHOT_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

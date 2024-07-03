@@ -6,7 +6,7 @@
 
 #ifndef TEXTURE_GROUP_NAMES_H
 #define TEXTURE_GROUP_NAMES_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

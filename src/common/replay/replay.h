@@ -4,7 +4,7 @@
 
 #ifndef REPLAY_H
 #define REPLAY_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

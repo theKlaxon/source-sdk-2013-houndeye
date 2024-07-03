@@ -7,7 +7,7 @@
 #ifndef VMTPREVIEWPANEL_H
 #define VMTPREVIEWPANEL_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

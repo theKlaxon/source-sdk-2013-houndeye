@@ -96,7 +96,7 @@
 // use in Windows/C++.
 
 #if !defined( DWORD )
-#ifdef _WIN32
+#if IsWindows()
 typedef unsigned long DWORD;
 #else
 typedef unsigned int DWORD;

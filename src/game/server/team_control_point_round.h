@@ -6,7 +6,7 @@
 
 #ifndef TEAM_CONTROL_POINT_ROUND_H
 #define TEAM_CONTROL_POINT_ROUND_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

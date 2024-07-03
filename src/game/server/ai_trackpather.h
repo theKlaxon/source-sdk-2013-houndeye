@@ -7,7 +7,7 @@
 #ifndef AI_TRACKPATHER_H
 #define AI_TRACKPATHER_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

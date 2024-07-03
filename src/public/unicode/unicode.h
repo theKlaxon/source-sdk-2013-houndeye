@@ -6,13 +6,13 @@
 
 #ifndef UNICODE_H
 #define UNICODE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
 #include "interface.h"
 
-#ifndef WIN32_LEAN_AND_MEAN
+#if !defined( WIN32_LEAN_AND_MEAN )
 #define WIN32_LEAN_AND_MEAN
 #endif
 

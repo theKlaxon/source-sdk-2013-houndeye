@@ -7,7 +7,7 @@
 
 #if !defined HLTVPANEL_H
 #define HLTVPANEL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

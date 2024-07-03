@@ -6,7 +6,7 @@
 
 #ifndef HUD_BASETIMER_H
 #define HUD_BASETIMER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

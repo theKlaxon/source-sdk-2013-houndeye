@@ -8,7 +8,7 @@
 #ifndef ROTATINGPROGRESSBAR_H
 #define ROTATINGPROGRESSBAR_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

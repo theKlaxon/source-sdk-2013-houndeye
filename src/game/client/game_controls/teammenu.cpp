@@ -275,7 +275,7 @@ void CTeamMenu::LoadMapPage( const char *mapName )
 		data[ bytesRead+1 ] = 0;
 	}
 
-#ifndef WIN32
+#if !IsWindows()
 	if ( ((ucs2 *)memBlock)[0] == 0xFEFF )
 	{
 		// convert the win32 ucs2 data to wchar_t

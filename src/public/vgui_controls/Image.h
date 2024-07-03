@@ -8,7 +8,7 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

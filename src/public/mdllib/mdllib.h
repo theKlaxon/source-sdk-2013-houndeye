@@ -7,7 +7,7 @@
 #ifndef MDLLIB_H
 #define MDLLIB_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

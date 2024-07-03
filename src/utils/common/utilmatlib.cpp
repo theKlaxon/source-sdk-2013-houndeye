@@ -151,7 +151,7 @@ void LoadMaterialSystemInterface( CreateInterfaceFn fileSystemFactory ) {
 	if ( g_pMaterialSystem )
 		return;
 
-#ifdef _POSIX
+#if IsPosix()
 	g_fileSystemFactory = fileSystemFactory;
 	fileSystemFactory = SDLMgrFactoryRedirector;
 #endif

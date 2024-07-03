@@ -9,7 +9,7 @@
 #ifndef UTLSYMBOL_H
 #define UTLSYMBOL_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -204,7 +204,7 @@ public:
 	}
 	
 private:
-#if defined(WIN32) || defined(_WIN32)
+#if IsWindows() || IsWindows()
 	mutable CThreadSpinRWLock m_lock;
 #else
 	mutable CThreadRWLock m_lock;

@@ -6,7 +6,7 @@
 
 #ifndef ISERVERENGINETOOLS_H
 #define ISERVERENGINETOOLS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

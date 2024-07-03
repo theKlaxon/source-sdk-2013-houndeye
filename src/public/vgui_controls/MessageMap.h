@@ -8,7 +8,7 @@
 #ifndef MESSAGEMAP_H
 #define MESSAGEMAP_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -41,14 +41,14 @@ enum DataType_t
 	DATATYPE_HANDLE,  // It's an int, really
 };
 
-#ifdef WIN32
+#if IsWindows()
 class __virtual_inheritance Panel;
 #else
 class Panel;
 #endif
-typedef unsigned int VPANEL;
+using VPANEL = unsigned int;
 
-typedef void (Panel::*MessageFunc_t)(void);
+typedef void (Panel::*MessageFunc_t)();
 
 //-----------------------------------------------------------------------------
 // Purpose: Single item in a message map

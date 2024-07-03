@@ -12,7 +12,7 @@
 #include "ai_movetypes.h"
 #include "ai_obstacle_type.h"
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

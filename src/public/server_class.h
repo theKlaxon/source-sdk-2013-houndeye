@@ -9,7 +9,7 @@
 #ifndef SERVER_CLASS_H
 #define SERVER_CLASS_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

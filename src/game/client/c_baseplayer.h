@@ -8,7 +8,7 @@
 
 #ifndef C_BASEPLAYER_H
 #define C_BASEPLAYER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

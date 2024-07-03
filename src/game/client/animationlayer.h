@@ -6,7 +6,7 @@
 
 #ifndef ANIMATIONLAYER_H
 #define ANIMATIONLAYER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

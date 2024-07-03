@@ -12,7 +12,7 @@
 //=============================================================================//
 #if !defined( IVGUICENTERPRINT_H )
 #define IVGUICENTERPRINT_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

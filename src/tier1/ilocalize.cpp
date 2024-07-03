@@ -1,8 +1,8 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 
-#if defined( WIN32 )
+#if IsWindows()
 	#include <windows.h>
-#elif defined( POSIX )
+#elif IsPosix()
 	#include <iconv.h>
 #endif
 
@@ -16,7 +16,7 @@
 //-----------------------------------------------------------------------------
 int ILocalize::ConvertANSIToUnicode(const char *ansi, wchar_t *unicode, int unicodeBufferSizeInBytes)
 {
-#ifdef POSIX
+#if IsPosix()
 	// Q_UTF8ToUnicode returns the number of bytes. This function is expected to return the number of chars.
 	return Q_UTF8ToUnicode(ansi, unicode, unicodeBufferSizeInBytes) / sizeof( wchar_t );
 #else
@@ -31,7 +31,7 @@ int ILocalize::ConvertANSIToUnicode(const char *ansi, wchar_t *unicode, int unic
 //-----------------------------------------------------------------------------
 int ILocalize::ConvertUnicodeToANSI(const wchar_t *unicode, char *ansi, int ansiBufferSize)
 {
-#ifdef POSIX
+#if IsPosix()
 	return Q_UnicodeToUTF8(unicode, ansi, ansiBufferSize);
 #else
 	int result = WideCharToMultiByte(CP_UTF8, 0, unicode, -1, ansi, ansiBufferSize, NULL, NULL);

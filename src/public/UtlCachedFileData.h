@@ -8,7 +8,7 @@
 
 #ifndef UTLCACHEDFILEDATA_H
 #define UTLCACHEDFILEDATA_H
-#if defined( WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

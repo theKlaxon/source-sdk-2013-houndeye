@@ -6,7 +6,7 @@
 
 #ifndef ISOUNDSYSTEM_H
 #define ISOUNDSYSTEM_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

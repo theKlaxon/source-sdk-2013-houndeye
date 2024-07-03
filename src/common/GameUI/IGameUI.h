@@ -7,7 +7,7 @@
 
 #ifndef IGAMEUI_H
 #define IGAMEUI_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

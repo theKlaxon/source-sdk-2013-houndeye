@@ -7,7 +7,7 @@
 
 #ifndef REPLAYBROWSER_CONFIRMQUITDLG_H
 #define REPLAYBROWSER_CONFIRMQUITDLG_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

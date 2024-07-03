@@ -94,7 +94,7 @@ private:
 
 
 
-#ifdef DEBUG  // stop crashing edit-and-continue
+#if IsDebug()  // stop crashing edit-and-continue
 ALWAYS_INLINE float clamp( float val, float minVal, float maxVal )
 {
 	if ( maxVal < minVal )
@@ -106,7 +106,7 @@ ALWAYS_INLINE float clamp( float val, float minVal, float maxVal )
 	else
 		return val;
 }
-#else // DEBUG
+#else
 ALWAYS_INLINE float clamp( float val, float minVal, float maxVal )
 {
 #if defined(__i386__) || defined(_M_IX86)
@@ -122,7 +122,7 @@ ALWAYS_INLINE float clamp( float val, float minVal, float maxVal )
 #endif
 	return val;
 }
-#endif // DEBUG
+#endif
 
 //
 // Returns a clamped value in the range [min, max].
@@ -1237,12 +1237,12 @@ ALWAYS_INLINE unsigned long RoundFloatToUnsignedLong(float f)
 #else // IsPlatformWindowsPC64()
 	union { unsigned char nResult[8]; unsigned long ulResult; } u;
 
-	#if defined( _WIN32 )
+	#if IsWindows()
 		__asm {
 			fld f
 			fistp       qword ptr u.nResult
 		}
-	#elif POSIX
+	#elif IsPosix()
 		__asm __volatile__ (
 			"fistpl %0;": "=m" (u.nResult): "t" (f) : "st"
 		);

@@ -6,7 +6,7 @@
 
 #ifndef IDATAMODEL_H
 #define IDATAMODEL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

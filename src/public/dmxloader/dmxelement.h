@@ -7,7 +7,7 @@
 #ifndef DMXELEMENT_H
 #define DMXELEMENT_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

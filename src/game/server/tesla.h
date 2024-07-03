@@ -6,7 +6,7 @@
 
 #ifndef TESLA_H
 #define TESLA_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -8,7 +8,7 @@
 #ifndef IVTEX_H
 #define IVTEX_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

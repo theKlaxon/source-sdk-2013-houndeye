@@ -8,7 +8,7 @@
 #ifndef AI_NAVGOALTYPE_H
 #define AI_NAVGOALTYPE_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

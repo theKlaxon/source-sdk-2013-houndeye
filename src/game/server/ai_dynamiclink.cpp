@@ -359,7 +359,7 @@ void CAI_DynamicLink::PurgeDynamicLinks(void)
 		if (!pDynamicLink->IsLinkValid())
 		{
 			// Didn't find the link, so remove it
-#ifdef _WIN32
+#if IsWindows()
 			int nWCSrcID = g_pAINetworkManager->GetEditOps()->m_pNodeIndexTable[pDynamicLink->m_nSrcID];
 			int nWCDstID = g_pAINetworkManager->GetEditOps()->m_pNodeIndexTable[pDynamicLink->m_nDestID];
 			int	status	 = Editor_DeleteNodeLink(nWCSrcID, nWCDstID, false);

@@ -14,7 +14,7 @@
 #include "AI_ResponseSystem.h"
 #include "utldict.h"
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

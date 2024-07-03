@@ -19,7 +19,7 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-#ifdef DEBUG
+#if IsDebug()
 ConVar	ai_draw_motor_movement( "ai_draw_motor_movement","0" );
 #endif
 
@@ -28,7 +28,7 @@ extern float	GetFloorZ(const Vector &origin);
 //-----------------------------------------------------------------------------
 
 // Use these functions to set breakpoints to find out where movement is failing
-#ifdef DEBUG
+#if IsDebug()
 void DebugNoteMovementFailure()
 {
 }
@@ -125,7 +125,7 @@ AIMotorMoveResult_t CAI_Motor::MoveGroundStep( const Vector &newPos, CBaseEntity
 	if ( !bTestZ )
 		testFlags |= AITGM_2D;
 
-#ifdef DEBUG
+#if IsDebug()
 	if ( ai_draw_motor_movement.GetBool() )
 		testFlags |= AITGM_DRAW_RESULTS;
 #endif
@@ -143,8 +143,8 @@ AIMotorMoveResult_t CAI_Motor::MoveGroundStep( const Vector &newPos, CBaseEntity
 	bool bIsBlocked = IsMoveBlocked(moveTrace.fStatus);
 	if ( !bIsBlocked || bAsFarAsCan || bHitTarget )
 	{
-#ifdef DEBUG
-		if ( GetMoveProbe()->CheckStandPosition( GetLocalOrigin(), MASK_NPCSOLID ) && !GetMoveProbe()->CheckStandPosition( moveTrace.vEndPosition, MASK_NPCSOLID ) )
+#if IsDebug()
+	if ( GetMoveProbe()->CheckStandPosition( GetLocalOrigin(), MASK_NPCSOLID ) && !GetMoveProbe()->CheckStandPosition( moveTrace.vEndPosition, MASK_NPCSOLID ) )
 		{
 			DevMsg( 2, "Warning: AI motor probably given invalid instructions\n" );
 		}

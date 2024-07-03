@@ -9,7 +9,7 @@
 
 #ifndef WCHARTYPES_H
 #define WCHARTYPES_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -20,7 +20,7 @@
 // Temporarily turn off Valve defines
 #include "tier0/valve_off.h"
 
-#if !defined(_WCHAR_T_DEFINED) && !defined(GNUC)
+#if !defined(_WCHAR_T_DEFINED) && !defined( COMPILER_GCC )
 typedef unsigned short wchar_t;
 #define _WCHAR_T_DEFINED
 #endif
@@ -57,7 +57,7 @@ typedef wchar_t wchar;
 #define _UNICODE
 #endif
 
-#ifdef _WIN32
+#if IsWindows()
 #include <tchar.h>
 #else
 #define _tcsstr strstr
@@ -88,7 +88,7 @@ typedef char tchar;
 #define TCHAR_IS_CHAR
 #endif
 
-#if defined( _MSC_VER ) || defined( WIN32 )
+#if defined( _MSC_VER ) || IsWindows()
 typedef wchar_t uchar16;
 typedef unsigned int uchar32;
 #else

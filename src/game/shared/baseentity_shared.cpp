@@ -297,11 +297,9 @@ void CBaseEntity::ParseMapData( CEntityMapData *mapData )
 	char keyName[MAPKEY_MAXLENGTH];
 	char value[MAPKEY_MAXLENGTH];
 
-	#if IsDebug()
-	#ifdef GAME_DLL
-	ValidateDataDescription();
-	#endif // GAME_DLL
-	#endif IsDebug()
+	#if IsDebug() && defined( GAME_DLL )
+		ValidateDataDescription();
+	#endif
 
 	// loop through all keys in the data block and pass the info back into the object
 	if ( mapData->GetFirstKey(keyName, value) )
@@ -329,9 +327,9 @@ bool CBaseEntity::KeyValue( const char *szKeyName, const char *szValue )
 
 	if ( FStrEq( szKeyName, "rendercolor" ) || FStrEq( szKeyName, "rendercolor32" ))
 	{
-		color32 tmp;
-		UTIL_StringToColor32( &tmp, szValue );
-		SetRenderColor( tmp.r, tmp.g, tmp.b );
+		Color tmp;
+		UTIL_StringToColor32( tmp, szValue );
+		SetRenderColor( tmp.r(), tmp.g(), tmp.b() );
 		// don't copy alpha, legacy support uses renderamt
 		return true;
 	}
@@ -761,7 +759,7 @@ BASEPTR	CBaseEntity::ThinkSet( BASEPTR func, float thinkTime, const char *szCont
 {
 #if !defined( CLIENT_DLL )
 #if IsDebug()
-#ifdef GNUC
+#if defined( COMPILER_GCC )
 	static_assert( sizeof(func) == 8 );
 #else
 	static_assert( sizeof(func) == 4 );

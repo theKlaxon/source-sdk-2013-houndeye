@@ -6,7 +6,7 @@
 
 #ifndef NPC_BASESCANNER_H
 #define NPC_BASESCANNER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

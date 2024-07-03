@@ -6,7 +6,7 @@
 
 #ifndef IMATERIALSYSTEMSTUB_H
 #define IMATERIALSYSTEMSTUB_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

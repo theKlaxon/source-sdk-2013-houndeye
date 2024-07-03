@@ -6,7 +6,7 @@
 //=============================================================================//
 #include "cbase.h"
 #include "c_baseentity.h"
-#ifdef WIN32
+#if IsWindows()
 #include <typeinfo>
 #endif
 #include "tier0/vprof.h"
@@ -333,7 +333,7 @@ void C_BaseEntity::PhysicsDispatchThink( BASEPTR thinkFunc )
 			else
 #endif
 			{
-#ifdef WIN32
+#if IsWindows()
 				Msg( "CLIENT:  %s(%s) thinking for %.02f ms!!!\n", GetClassname(), typeid(this).raw_name(), time );
 #else
 				Msg( "CLIENT:  %s(%s) thinking for %.02f ms!!!\n", GetClassname(), typeid(this).name(), time );				

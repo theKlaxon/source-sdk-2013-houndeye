@@ -7,7 +7,7 @@
 
 #ifndef NETWORKSTRINGTABLE_CLIENTDLL_H
 #define NETWORKSTRINGTABLE_CLIENTDLL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

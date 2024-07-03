@@ -6,7 +6,7 @@
 
 #ifndef HL2MP_WEAPON_PARSE_H
 #define HL2MP_WEAPON_PARSE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

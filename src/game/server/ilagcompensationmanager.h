@@ -7,7 +7,7 @@
 
 #ifndef ILAGCOMPENSATIONMANAGER_H
 #define ILAGCOMPENSATIONMANAGER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -7,7 +7,7 @@
 
 #ifndef PHYSOBJ_H
 #define PHYSOBJ_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

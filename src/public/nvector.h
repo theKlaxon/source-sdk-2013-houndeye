@@ -7,7 +7,7 @@
 
 #ifndef NVECTOR_H
 #define NVECTOR_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -7,7 +7,7 @@
 //=============================================================================//
 #if !defined( USERCMD_H )
 #define USERCMD_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

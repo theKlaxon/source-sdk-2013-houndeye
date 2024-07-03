@@ -7,7 +7,7 @@
 #ifndef CAMERAUTILS_H
 #define CAMERAUTILS_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

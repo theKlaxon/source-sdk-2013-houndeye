@@ -6,7 +6,7 @@
 
 #ifndef PARTICLE_LITSMOKEEMITTER_H
 #define PARTICLE_LITSMOKEEMITTER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

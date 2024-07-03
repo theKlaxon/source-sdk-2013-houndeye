@@ -11,7 +11,7 @@
 #ifndef VGUI_VIDEO_PLAYER
 #define VGUI_VIDEO_PLAYER
 
-#ifdef _WIN32
+#if IsWindows()
 	#pragma once
 #endif
 

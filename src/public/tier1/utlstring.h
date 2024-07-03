@@ -6,7 +6,7 @@
 
 #ifndef UTLSTRING_H
 #define UTLSTRING_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

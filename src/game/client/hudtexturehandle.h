@@ -6,7 +6,7 @@
 
 #ifndef HUDTEXTUREHANDLE_H
 #define HUDTEXTUREHANDLE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

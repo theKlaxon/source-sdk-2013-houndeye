@@ -9,7 +9,7 @@
 int64 CReliableTimer::sm_nPerformanceFrequency = 0;
 bool CReliableTimer::sm_bUseQPC = false;
 
-#ifdef _WIN32
+#if IsWindows()
 	#include <profileapi.h>
 #endif
 
@@ -23,7 +23,7 @@ CReliableTimer::CReliableTimer() {
 
 	// calculate performance frequency the first time we use a timer
 	if ( 0 == sm_nPerformanceFrequency ) {
-		#ifdef _WIN32
+		#if IsWindows()
 			// Are we on a bad CPU?
 			sm_bUseQPC = false;  // todo
 			const CPUInformation& cpu = *GetCPUInformation();
@@ -45,7 +45,7 @@ CReliableTimer::CReliableTimer() {
 //-----------------------------------------------------------------------------
 int64 CReliableTimer::GetPerformanceCountNow() {
 	//VPROF_BUDGET( "CReliableTimer::GetPerformanceCountNow", VPROF_BUDGETGROUP_OTHER_UNACCOUNTED );
-	#ifdef _WIN32
+	#if IsWindows()
 		if ( sm_bUseQPC ) {
 			LARGE_INTEGER li = { 0 };
 			QueryPerformanceCounter( &li );

@@ -14,7 +14,7 @@
 #ifndef EIFACEV21_H
 #define EIFACEV21_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

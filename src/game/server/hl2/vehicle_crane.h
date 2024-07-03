@@ -12,7 +12,7 @@
 
 #ifndef VEHICLE_CRANE_H
 #define VEHICLE_CRANE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

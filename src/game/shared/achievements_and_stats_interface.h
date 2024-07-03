@@ -7,7 +7,7 @@
 #ifndef ACHIEVEMENTSANDSTATSINTERFACE_H
 #define ACHIEVEMENTSANDSTATSINTERFACE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

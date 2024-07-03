@@ -6,7 +6,7 @@
 
 #ifndef HL2_GAMERULES_H
 #define HL2_GAMERULES_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

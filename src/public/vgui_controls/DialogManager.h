@@ -8,7 +8,7 @@
 #ifndef DIALOGMANAGER_H
 #define DIALOGMANAGER_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

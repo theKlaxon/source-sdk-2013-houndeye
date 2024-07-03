@@ -6,7 +6,7 @@
 
 #ifndef ANORMS_H
 #define ANORMS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

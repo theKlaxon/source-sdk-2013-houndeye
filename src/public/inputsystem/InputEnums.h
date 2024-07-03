@@ -6,7 +6,7 @@
 
 #ifndef INPUTENUMS_H
 #define INPUTENUMS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -26,7 +26,7 @@ enum
 	MAX_NOVINT_DEVICES = 2,
 };
 
-#if defined( LINUX )
+#if IsLinux()
 // Linux has a slightly different mapping order on the joystick axes
 enum JoystickAxis_t
 {

@@ -4,7 +4,7 @@
 
 #ifndef IREPLAYPERFORMANCECONTROLLER_H
 #define IREPLAYPERFORMANCECONTROLLER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

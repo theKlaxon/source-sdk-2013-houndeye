@@ -22,7 +22,7 @@
 #include "ai_behavior_passenger_companion.h"
 #endif
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

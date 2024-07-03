@@ -206,7 +206,7 @@ int CAI_Expresser::GetVoicePitch() const
 	return m_voicePitch + random->RandomInt(0,3);
 }
 
-#ifdef DEBUG
+#if IsDebug()
 static int g_nExpressers;
 #endif
 
@@ -219,7 +219,7 @@ CAI_Expresser::CAI_Expresser( CBaseFlex *pOuter )
 	m_flStopTalkTimeWithoutDelay( 0 ),
 	m_voicePitch( 100 )
 {
-#ifdef DEBUG
+#if IsDebug()
 	g_nExpressers++;
 #endif
 }
@@ -234,8 +234,8 @@ CAI_Expresser::~CAI_Expresser()
 		if ( pSemaphore->GetOwner() == GetOuter() )
 			pSemaphore->Release();
 
-#ifdef DEBUG
-		g_nExpressers--;
+#if IsDebug()
+	g_nExpressers--;
 		if ( g_nExpressers == 0 && pSemaphore->GetOwner() )
 			DevMsg( 2, "Speech semaphore being held by non-talker entity\n" );
 #endif

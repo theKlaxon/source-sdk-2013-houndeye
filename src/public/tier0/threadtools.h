@@ -35,7 +35,7 @@
 
 // #define THREAD_PROFILER 1
 
-#if !defined( _RETAIL )
+#if !IsRetail()
 	#define THREAD_MUTEX_TRACING_SUPPORTED
 	#if IsWindows() && IsDebug()
 		#define THREAD_MUTEX_TRACING_ENABLED
@@ -234,7 +234,7 @@ inline void const* ThreadInterlockedCompareExchangePointerToConst( void const* v
 inline bool ThreadInterlockedAssignPointerToConstIf( void const* volatile* p, void const* value, void const* comperand ) { return ThreadInterlockedAssignPointerIf( const_cast<void* volatile*>( p ), const_cast<void*>( value ), const_cast<void*>( comperand ) ); }
 
 #if IsPlatform64Bits()
-	#if defined( _WIN32 )
+	#if IsWindows()
 		typedef __m128i int128;
 		inline int128 int128_zero() { return _mm_setzero_si128(); }
 	#else
@@ -645,7 +645,7 @@ private:
 	CThreadMutex( const CThreadMutex& );
 	CThreadMutex& operator=( const CThreadMutex& );
 
-	#if defined( _WIN32 )
+	#if IsWindows()
 		// Efficient solution to breaking the windows.h dependency, invariant is tested.
 		#ifdef _WIN64
 			#define TT_SIZEOF_CRITICALSECTION 40
@@ -653,7 +653,7 @@ private:
 			#define TT_SIZEOF_CRITICALSECTION 24
 		#endif// _WIN64
 		byte m_CriticalSection[ TT_SIZEOF_CRITICALSECTION ];
-	#elif defined( POSIX )
+	#elif IsPosix()
 		pthread_mutex_t m_Mutex;
 		pthread_mutexattr_t m_Attr;
 	#else
@@ -936,7 +936,7 @@ struct CAutoLockTypeDeducer<sizeof( CThreadNullMutex )> {
 #define AUTO_LOCK_( type, mutex ) \
 	CAutoLockT<type> UNIQUE_ID( static_cast<const type&>( mutex ) )
 
-#if defined( GNUC )
+#if defined( COMPILER_GCC )
 	template<typename T>
 	T strip_cv_quals_for_mutex( T& );
 	template<typename T>

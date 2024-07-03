@@ -6,7 +6,7 @@
 //=============================================================================//
 #if !defined( HUD_MACROS_H )
 #define HUD_MACROS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

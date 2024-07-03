@@ -8,7 +8,7 @@
 #ifndef C_FUNC_REFLECTIVE_GLASS
 #define C_FUNC_REFLECTIVE_GLASS
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

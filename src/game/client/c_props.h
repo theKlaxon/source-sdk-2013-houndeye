@@ -6,7 +6,7 @@
 
 #ifndef C_PROPS_H
 #define C_PROPS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

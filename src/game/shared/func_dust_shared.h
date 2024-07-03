@@ -7,7 +7,7 @@
 
 #ifndef FUNC_DUST_SHARED_H
 #define FUNC_DUST_SHARED_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -6,7 +6,7 @@
 
 #ifndef TEAM_TRAIN_WATCHER_H
 #define TEAM_TRAIN_WATCHER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

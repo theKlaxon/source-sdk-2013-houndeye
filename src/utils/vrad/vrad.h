@@ -29,7 +29,7 @@
 #include "worldsize.h"
 
 
-#ifdef _WIN32
+#if IsWindows()
 	#include <windows.h>
 #endif
 

@@ -4,7 +4,7 @@
 //
 //=============================================================================//
 
-#if defined( _WIN32 )
+#if IsWindows()
 #define WIN_32_LEAN_AND_MEAN
 #include <windows.h>
 #define VA_COMMIT_FLAGS MEM_COMMIT
@@ -16,7 +16,7 @@
 #include "utlmap.h"
 #include "tier0/memdbgon.h"
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma warning(disable:4073)
 #pragma init_seg(lib)
 #endif
@@ -33,7 +33,7 @@ CMemoryStack::CMemoryStack()
 	m_pAllocLimit( NULL ),
 	m_pCommitLimit( NULL ),
 	m_alignment( 16 ),
-#if defined(_WIN32)
+#if IsWindows()
  	m_commitSize( 0 ),
 	m_minCommit( 0 ),
 #endif
@@ -61,7 +61,7 @@ bool CMemoryStack::Init( unsigned maxSize, unsigned commitSize, unsigned initial
 	Assert( m_alignment == alignment );
 	Assert( m_maxSize > 0 );
 
-#if defined(_WIN32)
+#if IsWindows()
 	if ( commitSize != 0 )
 	{
 		m_commitSize = commitSize;
@@ -120,7 +120,7 @@ void CMemoryStack::Term()
 	FreeAll();
 	if ( m_pBase )
 	{
-#if defined(_WIN32)
+#if IsWindows()
 		VirtualFree( m_pBase, 0, MEM_RELEASE );
 #else
 		MemAlloc_FreeAligned( m_pBase );
@@ -133,7 +133,7 @@ void CMemoryStack::Term()
 
 int CMemoryStack::GetSize()
 { 
-#ifdef _WIN32
+#if IsWindows()
 	return m_pCommitLimit - m_pBase; 
 #else
 	return m_maxSize;
@@ -145,7 +145,7 @@ int CMemoryStack::GetSize()
 
 bool CMemoryStack::CommitTo( byte *pNextAlloc ) RESTRICT
 {
-#if defined(_WIN32)
+#if IsWindows()
 	unsigned char *	pNewCommitLimit = AlignValue( pNextAlloc, m_commitSize );
 	unsigned 		commitSize 		= pNewCommitLimit - m_pCommitLimit;
 	
@@ -184,7 +184,7 @@ void CMemoryStack::FreeToAllocPoint( MemoryStackMark_t mark, bool bDecommit )
 	{
 		if ( bDecommit )
 		{
-#if defined(_WIN32)
+#if IsWindows()
 			unsigned char *pDecommitPoint = AlignValue( (unsigned char *)pAllocPoint, m_commitSize );
 
 			if ( pDecommitPoint < m_pBase + m_minCommit )
@@ -220,7 +220,7 @@ void CMemoryStack::FreeAll( bool bDecommit )
 	{
 		if ( bDecommit )
 		{
-#if defined(_WIN32)
+#if IsWindows()
 			MemAlloc_RegisterExternalDeallocation( CMemoryStack, GetBase(), GetSize() );
 
 			VirtualFree( m_pBase, m_pCommitLimit - m_pBase, MEM_DECOMMIT );

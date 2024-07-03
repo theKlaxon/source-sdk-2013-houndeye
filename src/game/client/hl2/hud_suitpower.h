@@ -6,7 +6,7 @@
 //=============================================================================//
 #if !defined( HUD_SUITPOWER_H )
 #define HUD_SUITPOWER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

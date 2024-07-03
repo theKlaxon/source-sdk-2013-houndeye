@@ -7,7 +7,7 @@
 
 #ifndef ENGINE_ICOLLIDEABLE_H
 #define ENGINE_ICOLLIDEABLE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

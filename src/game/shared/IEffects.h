@@ -8,7 +8,7 @@
 #ifndef IEFFECTS_H
 #define IEFFECTS_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

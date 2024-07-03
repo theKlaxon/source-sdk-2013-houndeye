@@ -6,7 +6,7 @@
 
 #ifndef TEMPENTITY_H
 #define TEMPENTITY_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

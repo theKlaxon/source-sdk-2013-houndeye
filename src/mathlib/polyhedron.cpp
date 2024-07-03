@@ -39,7 +39,7 @@ void DumpPlaneToGlView( const float *pPlane, float fGrayScale, const char *pszFi
 void DumpLineToGLView( const Vector &vPoint1, const Vector &vColor1, const Vector &vPoint2, const Vector &vColor2, float fThickness, FILE *pFile );
 void DumpAABBToGLView( const Vector &vCenter, const Vector &vExtents, const Vector &vColor, FILE *pFile );
 
-#if defined( ENABLE_DEBUG_POLYHEDRON_DUMPS ) && defined( WIN32 )
+#if defined( ENABLE_DEBUG_POLYHEDRON_DUMPS ) && IsWindows()
 #include "winlite.h"
 #endif
 
@@ -1331,7 +1331,7 @@ CPolyhedron *ClipLinkedGeometry( GeneratePolyhedronFromPlanes_UnorderedPolygonLL
 						float fInvTotalDist = 1.0f/(pDeadPoint->fPlaneDist - pLivingPoint->fPlaneDist); //subtraction because the living index is known to be negative
 						pNewPoint->ptPosition = (pLivingPoint->ptPosition * (pDeadPoint->fPlaneDist * fInvTotalDist)) - (pDeadPoint->ptPosition * (pLivingPoint->fPlaneDist * fInvTotalDist));
 
-#if ( 0 && defined( _DEBUG ) )
+#if ( 0 && IsDebug() )
 						float fDebugDist = vNormal.Dot( pNewPoint->ptPosition ) - fPlaneDist; //just for looking at in watch windows
 						AssertMsg_DumpPolyhedron( fabs( fDebugDist ) < fOnPlaneEpsilon, "Generated split point is far from plane" );
 

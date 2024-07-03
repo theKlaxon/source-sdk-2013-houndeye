@@ -6,7 +6,7 @@
 
 #ifndef FX_BLOOD_H
 #define FX_BLOOD_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -8,7 +8,7 @@
 #ifndef ACHIEVEMENT_SAVERESTORE_H
 #define ACHIEVEMENT_SAVERESTORE_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

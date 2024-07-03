@@ -4,7 +4,7 @@
 
 #ifndef IREPLAYSYSTEM_H
 #define IREPLAYSYSTEM_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

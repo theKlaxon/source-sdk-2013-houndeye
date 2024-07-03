@@ -6,7 +6,7 @@
 
 #ifndef SENTENCE_H
 #define SENTENCE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -23,7 +23,7 @@ class CUtlBuffer;
 // Purpose: A sample point
 //-----------------------------------------------------------------------------
 // Can't do this due to backward compat issues
-//#ifdef _WIN32
+//#if IsWindows()
 //#pragma pack (1)
 //#endif
 
@@ -292,7 +292,7 @@ private:
 	friend class PhonemeEditor;
 };
 
-//#ifdef _WIN32
+//#if IsWindows()
 //#pragma pack ()
 //#endif
 

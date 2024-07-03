@@ -10,7 +10,7 @@
 #ifndef AI_AMMODEF_H
 #define AI_AMMODEF_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

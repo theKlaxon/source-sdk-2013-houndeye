@@ -6,7 +6,7 @@
 //=============================================================================//
 #ifndef PROPS_H
 #define PROPS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

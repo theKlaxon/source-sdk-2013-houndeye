@@ -6,7 +6,7 @@
 
 #ifndef MONSTERMAKER_H
 #define MONSTERMAKER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

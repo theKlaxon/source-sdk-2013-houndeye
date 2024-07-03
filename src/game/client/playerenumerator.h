@@ -7,7 +7,7 @@
 
 #ifndef PLAYERENUMERATOR_H
 #define PLAYERENUMERATOR_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

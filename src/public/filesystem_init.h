@@ -6,7 +6,7 @@
 
 #ifndef FILESYSTEM_INIT_H
 #define FILESYSTEM_INIT_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -21,10 +21,10 @@
 #define	GAMEDIR_TOKEN		"VProject"
 
 
-#if defined( _WIN32 ) || defined( WIN32 )
-#define PATHSEPARATOR(c) ((c) == '\\' || (c) == '/')
-#else	//_WIN32
-#define PATHSEPARATOR(c) ((c) == '/')
+#if IsWindows()
+	#define PATHSEPARATOR(c) ((c) == '\\' || (c) == '/')
+#else
+	#define PATHSEPARATOR(c) ((c) == '/')
 #endif	//_WIN32
 
 

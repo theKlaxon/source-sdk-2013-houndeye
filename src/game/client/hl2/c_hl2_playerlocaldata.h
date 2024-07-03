@@ -8,7 +8,7 @@
 
 #if !defined( C_HL2_PLAYERLOCALDATA_H )
 #define C_HL2_PLAYERLOCALDATA_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

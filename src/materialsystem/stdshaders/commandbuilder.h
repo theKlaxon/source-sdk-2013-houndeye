@@ -16,7 +16,7 @@
 #include "BaseVSShader.h"
 #include "shaderapi/ishaderapi.h"
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

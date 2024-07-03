@@ -37,7 +37,7 @@
 	#endif
 
 	#ifdef DX_TO_GL_ABSTRACTION
-		#ifndef WIN32
+		#if !IsWindows()
 			#define Debugger DebuggerBreak
 		#endif
 		#undef CurrentTime

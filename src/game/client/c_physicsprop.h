@@ -6,7 +6,7 @@
 
 #ifndef C_PHYSICSPROP_H
 #define C_PHYSICSPROP_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

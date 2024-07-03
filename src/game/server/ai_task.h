@@ -7,7 +7,7 @@
 
 #ifndef AI_TASK_H
 #define AI_TASK_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

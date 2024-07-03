@@ -552,7 +552,7 @@ public:
 		{
 			EmitCloseCaption( filter, entindex, params, ep );
 		}
-#if defined( WIN32 )
+#if IsWindows()
 		// NVNT notify the haptics system of this sound
 		HapticProcessSound(ep.m_pSoundName, entindex);
 #endif
@@ -1025,7 +1025,7 @@ CON_COMMAND_F( sv_soundemitter_flush, "Flushes the sounds.txt system (server onl
 	S_SoundEmitterSystemFlush( );
 }
 
-#if !defined(_RETAIL)
+#if !IsRetail()
 
 #if !defined( CLIENT_DLL ) 
 

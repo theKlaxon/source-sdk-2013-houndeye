@@ -8,7 +8,7 @@
 #ifndef AI_WAYPOINT_H
 #define AI_WAYPOINT_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 
@@ -76,10 +76,10 @@ public:
 
 	void AssertValid() const
 	{
-#ifdef DEBUG
-		Assert( !pNext || pNext->pPrev == this );
-		Assert( !pPrev || pPrev->pNext == this );
-#endif
+		#if IsDebug()
+			Assert( !pNext || pNext->pPrev == this );
+			Assert( !pPrev || pPrev->pNext == this );
+		#endif
 	}
 
 
@@ -228,7 +228,7 @@ private:
 };
 
 // ----------------------------------------------------------------------------
-#ifdef DEBUG
+#if IsDebug()
 void AssertRouteValid( AI_Waypoint_t* route );
 #else
 #define AssertRouteValid( route ) ((void)0)

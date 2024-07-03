@@ -754,8 +754,8 @@ void CNPC_Citizen::FixupMattWeapon()
 		pWeapon->SetName( AllocPooledString( "matt_weapon" ) );
 		DispatchSpawn( pWeapon );
 
-#ifdef DEBUG
-		extern bool g_bReceivedChainedActivate;
+#if IsDebug()
+	extern bool g_bReceivedChainedActivate;
 		g_bReceivedChainedActivate = false;
 #endif
 		pWeapon->Activate();

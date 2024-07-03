@@ -2305,8 +2305,7 @@ DEFINE_FIELD( m_iCurrentQueueCount, FIELD_INTEGER ),
 
 	DEFINE_THINKFUNC( QueueThink ),
 	DEFINE_THINKFUNC( MoveQueueUpThink ),
-
-	END_DATADESC()
+END_DATADESC();
 
 #define QUEUE_THINK_CONTEXT "ActBusyQueueThinkContext"
 #define QUEUE_MOVEUP_THINK_CONTEXT "ActBusyQueueMoveUpThinkContext"

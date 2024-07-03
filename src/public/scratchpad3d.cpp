@@ -427,9 +427,9 @@ void CScratchPad3D::Clear()
 	
 	while( ( fp = m_pFileSystem->Open(m_pFilename, "wb") ) == NULL )
 	{
-#ifdef _WIN32
+#if IsWindows()
 		Sleep( 5 );
-#elif POSIX
+#elif IsPosix()
 		usleep( 5 );
 #endif
 	}
@@ -446,9 +446,9 @@ void CScratchPad3D::Flush()
 
 	while( ( fp = m_pFileSystem->Open(m_pFilename, "ab+") ) == NULL )
 	{
-#ifdef _WIN32
+#if IsWindows()
 		Sleep( 5 );
-#elif POSIX
+#elif IsPosix()
 		usleep( 5 );
 #endif
 	}

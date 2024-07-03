@@ -16,7 +16,7 @@
 #include "tier0/valve_off.h"
 #include "wchartypes.h"
 
-#if defined( POSIX )
+#if IsPosix()
 	// need this for _alloca
 	#include <alloca.h>
 	#include <unistd.h>
@@ -28,22 +28,6 @@
 
 // need this for memset
 #include <cstring>
-
-#if defined( _RETAIL )
-	#define IsRetail() true
-	#undef _RETAIL
-#else
-	#define IsRetail() false
-#endif
-
-
-#if defined( _DEBUG )
-	#define IsRelease() false
-	#define IsDebug() true
-#else
-	#define IsRelease() true
-	#define IsDebug() false
-#endif
 
 //-----------------------------------------------------------------------------
 // Set up platform type defines.
@@ -57,13 +41,9 @@
 #define IsPC() true
 #define IsConsole() false
 
-#if defined( _WIN32 )
-	#define IsLinux() false
-	#define IsPosix() false
+#if IsWindows()
 	#define PLATFORM_WINDOWS 1
-	#define IsWindows() true
 
-	#define IS_WINDOWS_PC
 	#define PLATFORM_WINDOWS_PC 1  // Windows PC
 	#if defined( _WIN64 )
 		#define IsPlatformWindowsPC64() true
@@ -80,19 +60,10 @@
 	#else
 		#define IsPlatformOpenGL() false
 	#endif
-#elif defined( POSIX )
-	// no windows over here!
-	#define IsWindows() false
+#elif IsPosix()
 	#define IsPlatformWindowsPC64() false
 	#define IsPlatformWindowsPC32() false
 
-	#if defined( LINUX )
-		#define IsLinux() true
-	#else
-		#define IsLinux() false
-	#endif
-
-	#define IsPosix() true
 	#define IsPlatformOpenGL() true
 	#define __cdecl  // override __cdecl to be nothing, used in some places (for now >:3) NOLINT(*-reserved-identifier)
 #else
@@ -343,7 +314,7 @@ FIXME: Enable this when we no longer fear change =)
 	#define id386 1
 #else
 	#define id386 0
-#endif// __i386__
+#endif
 
 // decls for aligning data
 #if IsWindows()
@@ -596,10 +567,10 @@ FIXME: Enable this when we no longer fear change =)
 		#undef _snprintf
 	#endif
 	#define _snprintf snprintf
-	#define GetProcAddress( ptr, name ) ( {                                \
+	#define GetProcAddress( ptr, name ) ({                                 \
 		static_assert( std::is_same_v<decltype( ptr ), HMODULE> == true ); \
 		dlsym( reinterpret_cast<void*>( ptr ), name );                     \
-	} )
+	})
 	#define _chdir chdir
 	#define _strnicmp strnicmp
 	#define strnicmp strncasecmp
@@ -1028,7 +999,7 @@ PLATFORM_INTERFACE void Plat_ApplyHardwareDataBreakpointsToNewThread( unsigned l
 // Process related functions
 //-----------------------------------------------------------------------------
 PLATFORM_INTERFACE const tchar* Plat_GetCommandLine();
-#if ! IsWindows()
+#if !IsWindows()
 	// helper function for OS's that don't have a ::GetCommandLine() call
 	PLATFORM_INTERFACE void Plat_SetCommandLine( const char* cmdLine );
 #endif
@@ -1063,7 +1034,7 @@ PLATFORM_INTERFACE void* Plat_SimpleLog( const tchar* file, int line );
 //-----------------------------------------------------------------------------
 // Returns true if debugger attached, false otherwise
 //-----------------------------------------------------------------------------
-#if defined( _WIN32 ) || defined( LINUX )
+#if IsWindows() || IsLinux()
 	PLATFORM_INTERFACE bool Plat_IsInDebugSession();
 	PLATFORM_INTERFACE void Plat_DebugString( const char* );
 #else

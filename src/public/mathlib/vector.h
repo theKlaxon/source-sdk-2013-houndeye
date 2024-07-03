@@ -9,7 +9,7 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -48,7 +48,7 @@
 #ifdef VECTOR_PARANOIA
 #define CHECK_VALID( _v)	Assert( (_v).IsValid() )
 #else
-#ifdef GNUC
+#if defined( COMPILER_GCC )
 #define CHECK_VALID( _v)
 #else
 #define CHECK_VALID( _v)	0
@@ -2206,24 +2206,25 @@ inline void _SSE_RSqrtInline( float a, float* out )
 // FIXME: Change this back to a #define once we get rid of the vec_t version
 ALWAYS_INLINE float VectorNormalize( Vector& vec )
 {
-#ifndef DEBUG // stop crashing my edit-and-continue!
-	#if defined(__i386__) || defined(_M_IX86)
-		#define DO_SSE_OPTIMIZATION
+	#if !IsDebug() // stop crashing my edit-and-continue!
+		#if defined(__i386__) || defined(_M_IX86)
+			#define DO_SSE_OPTIMIZATION
+		#endif
 	#endif
-#endif
 
-#if defined( DO_SSE_OPTIMIZATION )
-	float sqrlen = vec.LengthSqr() + 1.0e-10f, invlen;
-	_SSE_RSqrtInline(sqrlen, &invlen);
-	vec.x *= invlen;
-	vec.y *= invlen;
-	vec.z *= invlen;
-	return sqrlen * invlen;
-#else
-	using NormalizeFuncType = float FASTCALL (Vector& v);
-	extern NormalizeFuncType* pfVectorNormalize;
-	return (*pfVectorNormalize)(vec);
-#endif
+	#if defined( DO_SSE_OPTIMIZATION )
+		float sqrlen = vec.LengthSqr() + 1.0e-10f, invlen;
+		_SSE_RSqrtInline(sqrlen, &invlen);
+		vec.x *= invlen;
+		vec.y *= invlen;
+		vec.z *= invlen;
+		return sqrlen * invlen;
+		#undef DO_SSE_OPTIMIZATION
+	#else
+		using NormalizeFuncType = float FASTCALL (Vector& v);
+		extern NormalizeFuncType* pfVectorNormalize;
+		return (*pfVectorNormalize)(vec);
+	#endif
 }
 
 // FIXME: Obsolete version of VectorNormalize, once we remove all the friggin float*s

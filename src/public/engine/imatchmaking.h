@@ -6,7 +6,7 @@
 
 #ifndef IMATCHMAKING_H
 #define IMATCHMAKING_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

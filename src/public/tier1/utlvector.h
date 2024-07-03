@@ -11,7 +11,7 @@
 #ifndef UTLVECTOR_H
 #define UTLVECTOR_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

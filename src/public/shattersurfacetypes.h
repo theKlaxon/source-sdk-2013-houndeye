@@ -7,7 +7,7 @@
 //=============================================================================//
 #if !defined ( SHATTERSURFACETYPES_H )
 #define SHATTERSURFACETYPES_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

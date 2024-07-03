@@ -8,7 +8,7 @@
 #ifndef ISURFACE_H
 #define ISURFACE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

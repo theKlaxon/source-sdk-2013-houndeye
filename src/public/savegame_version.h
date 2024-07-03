@@ -6,7 +6,7 @@
 //=============================================================================//
 #if !defined( SAVEGAME_VERSION_H )
 #define SAVEGAME_VERSION_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

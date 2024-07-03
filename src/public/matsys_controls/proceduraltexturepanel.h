@@ -7,7 +7,7 @@
 #ifndef PROCEDURALTEXTUREPANEL_H
 #define PROCEDURALTEXTUREPANEL_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

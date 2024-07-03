@@ -6,7 +6,7 @@
 //=====================================================================================//
 #ifndef SCENE_IMAGE_FILE_H
 #define SCENE_IMAGE_FILE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

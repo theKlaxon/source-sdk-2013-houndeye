@@ -6,7 +6,7 @@
 //=============================================================================//
 #if !defined( C_CORPSE_H )
 #define C_CORPSE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -6,7 +6,7 @@
 
 #ifndef SDK_PLAYERCLASS_INFO_PARSE_H
 #define SDK_PLAYERCLASS_INFO_PARSE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

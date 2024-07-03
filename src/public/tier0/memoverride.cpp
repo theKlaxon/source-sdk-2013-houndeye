@@ -10,7 +10,7 @@
 #if !defined( STEAM ) && !defined( NO_MALLOC_OVERRIDE )
 	#undef PROTECTED_THINGS_ENABLE// allow use of _vsnprintf
 
-	#if defined( _WIN32 )
+	#if IsWindows()
 		#include <windef.h>
 		#include <heapapi.h>
 		#include <memoryapi.h>
@@ -18,7 +18,7 @@
         #include <processthreadsapi.h>
 	#endif
 
-	#if defined( _WIN32 )
+	#if IsWindows()
 		// START: Taken from <crtdbg.h>
 		typedef void* _HFILE;
 		#define _NORMAL_BLOCK 1
@@ -37,14 +37,14 @@
 		#include <string.h>
 
 		// Turn this back off in release mode.
-		#if defined( NDEBUG )
+		#if defined( _NDEBUG )
 			#undef _DEBUG
 		#endif
-	#elif POSIX
+	#elif IsPosix()
 		#define __cdecl
 	#endif
 
-	#if defined( _WIN32 )
+	#if IsWindows()
 		const char* MakeModuleFileName() {
 			if ( g_pMemAlloc->IsDebugHeap() ) {
 				char* pszModuleName = (char*) HeapAlloc( GetProcessHeap(), 0, MAX_PATH );// small leak, debug only
@@ -99,7 +99,7 @@
 	//-----------------------------------------------------------------------------
 	// Standard functions in the CRT that we're going to override to call our allocator
 	//-----------------------------------------------------------------------------
-	#if defined( _WIN32 ) && !defined( _STATIC_LINKED )
+	#if IsWindows() && !defined( _STATIC_LINKED )
 		#if !defined( _CRTNOALIAS )
 			#define _CRTNOALIAS//__declspec(noalias)
 		#endif
@@ -262,7 +262,7 @@
 				return 0;
 			}
 
-			#if defined( _WIN32 )
+			#if IsWindows()
 				int __cdecl _heapwalk( _HEAPINFO* ) {
 					return 0;
 				}
@@ -345,7 +345,7 @@
 	// link to a debug static lib!!!
 	//-----------------------------------------------------------------------------
 	#if !defined( _STATIC_LINKED )
-		#if defined( _WIN32 )
+		#if IsWindows()
 
 			// This here just hides the internal file names, etc of allocations
 			// made in the c runtime library
@@ -370,7 +370,7 @@
 			};
 
 			#define AttribIfCrt() CAttibCRT _attrib( nBlockUse )
-		#elif defined( POSIX )
+		#elif IsPosix()
 			#define AttribIfCrt()
 		#endif// _WIN32
 
@@ -420,7 +420,7 @@
 			}
 
 			size_t __cdecl _msize_dbg( void* pMem, int nBlockUse ) {
-				#if defined( _WIN32 )
+				#if IsWindows()
 					return _msize( pMem );
 				#elif POSIX
 					Assert( "_msize_dbg unsupported" );
@@ -429,7 +429,7 @@
 			}
 
 
-			#if defined( _WIN32 )
+			#if IsWindows()
 				#if defined( _DEBUG ) && _MSC_VER >= 1300
 					// X360TBD: aligned and offset allocations may be important on the 360
 
@@ -504,7 +504,7 @@
 		//-----------------------------------------------------------------------------
 		// Override some the _CRT debugging allocation methods in MSVC
 		//-----------------------------------------------------------------------------
-		#if defined( _WIN32 )
+		#if IsWindows()
 
 		extern "C" {
 			int _CrtDumpMemoryLeaks( void ) {
@@ -812,17 +812,15 @@
 
 		// Most files include this file, so when it's used it adds an extra .ValveDbg section,
 		// to help identify debug binaries.
-		#if defined( _WIN32 )
-			#if !defined( NDEBUG )// _DEBUG
-				#pragma data_seg( "ValveDBG" )
-				volatile const char* DBG = "*** DEBUG STUB ***";
-			#endif
+		#if IsWindows() && !defined( _NDEBUG )// _DEBUG
+			#pragma data_seg( "ValveDBG" )
+			volatile const char* DBG = "*** DEBUG STUB ***";
 		#endif
 
 	#endif
 
 	// Extras added prevent dbgheap.obj from being included - DAL
-	#if defined( _WIN32 )
+	#if IsWindows()
 		extern "C" {
 			size_t __crtDebugFillThreshold = 0;
 

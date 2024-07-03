@@ -278,7 +278,7 @@ bool GameData::Load(const char *pszFilename)
 {
 	TokenReader tr;
 
-	#ifdef _WIN32
+	#if IsWindows()
 		if(GetFileAttributes(pszFilename) == 0xffffffff)
 			return FALSE;
 	#endif

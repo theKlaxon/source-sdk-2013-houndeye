@@ -34,10 +34,9 @@
 // 1 means it's possible and resulted from being a debug build
 // 2 means it's possible and resulted from being manually forced on for a release build
 
-#ifdef POSIX
+#if IsPosix()
 	#ifndef GLMDEBUG
-		#ifdef DEBUG
-			#define GLMDEBUG 1	// normally 1 here, testing
+		#if IsDebug()			#define GLMDEBUG 1	// normally 1 here, testing
 		#else
 			// #define GLMDEBUG 2			// don't check this in enabled..
 		#endif

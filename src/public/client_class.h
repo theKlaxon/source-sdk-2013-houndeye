@@ -12,7 +12,7 @@
 //=============================================================================//
 #if !defined( CLIENT_CLASS_H )
 #define CLIENT_CLASS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -7,7 +7,7 @@
 
 #ifndef HUD_BASE_ACCOUNT_H
 #define HUD_BASE_ACCOUNT_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

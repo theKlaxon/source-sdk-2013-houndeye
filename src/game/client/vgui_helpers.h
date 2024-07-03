@@ -7,7 +7,7 @@
 
 #ifndef VGUI_HELPERS_H
 #define VGUI_HELPERS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

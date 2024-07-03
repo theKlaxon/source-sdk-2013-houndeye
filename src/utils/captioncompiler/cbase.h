@@ -6,7 +6,7 @@
 
 #ifndef CBASE_H
 #define CBASE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

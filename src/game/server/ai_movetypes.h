@@ -7,7 +7,7 @@
 #ifndef AI_MOVETYPES_H
 #define AI_MOVETYPES_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 
@@ -20,7 +20,7 @@ class CAI_Path;
 //
 // Use this function to set breakpoints to find out where movement is failing
 //
-#ifdef DEBUG
+#if IsDebug()
 extern void DebugNoteMovementFailure();
 #define DebugNoteMovementFailureIfBlocked( moveResult ) if ( !IsMoveBlocked( moveResult ) ) ((void)0); else DebugNoteMovementFailure()
 #else
@@ -41,7 +41,7 @@ enum AIMoveResult_t
 };
 
 
-#ifdef DEBUG
+#if IsDebug()
 extern AIMoveResult_t DbgResult( AIMoveResult_t result );
 #else
 inline AIMoveResult_t DbgResult( AIMoveResult_t result ) { return result; } // inline not macro for compiler typing
@@ -154,7 +154,7 @@ struct AILocalMoveGoal_t
 	AIMoveTrace_t	directTrace;
 	AIMoveTrace_t	thinkTrace;
 
-#ifdef DEBUG
+#if IsDebug()
 	int				solveCookie;
 #endif
 };

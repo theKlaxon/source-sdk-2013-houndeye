@@ -93,12 +93,12 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined( WIN32 )
+#if IsWindows()
 #define STRICT
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <tchar.h>
-#elif defined(POSIX)
+#elif IsPosix()
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -110,7 +110,7 @@
 #include <string.h>
 #include "zip/XUnzip.h"
 
-#if defined(POSIX)
+#if IsPosix()
 #define _tcslen strlen
 #define _tcscpy strcpy
 #define _tcscat strcat
@@ -144,7 +144,7 @@ bool WriteFile( void *handle, void *buf, unsigned int towrite, unsigned int *wri
 #define FILE_ATTRIBUTE_READONLY	 0
 #define FILE_ATTRIBUTE_SYSTEM    0
 typedef unsigned char BYTE;
-#endif // POSIX
+#endif // IsPosix()
 
 
 // THIS FILE is almost entirely based upon code by Jean-loup Gailly
@@ -661,8 +661,8 @@ const char * const z_errmsg[10] = { // indexed by 2-zlib_error
 #undef Tracec
 #undef Tracecv
 
-#ifdef DEBUG
-  int z_verbose = 0;
+#if IsDebug()
+ int z_verbose = 0;
   void z_error (char *m) {fprintf(stderr, "%s\n", m); exit(1);}
 #  define Assert(cond,msg) {if(!(cond)) z_error(msg);}
 #  define Trace(x) {if (z_verbose>=0) fprintf x ;}
@@ -2771,7 +2771,7 @@ LUFILE *lufopen(void *z,unsigned int len,DWORD flags,ZRESULT *err)
 		{ 
 			HANDLE hf = z;
 			bool res;
-#ifdef _WIN32		
+#if IsWindows()
 			res = DuplicateHandle(GetCurrentProcess(),hf,GetCurrentProcess(),&h,0,FALSE,DUPLICATE_SAME_ACCESS) == TRUE;
 #else
 			h = (void*) dup( (int)hf );
@@ -2785,7 +2785,7 @@ LUFILE *lufopen(void *z,unsigned int len,DWORD flags,ZRESULT *err)
 		}
 		else
 		{ 
-#ifdef _WIN32
+#if IsWindows()
 			h = CreateFile((const TCHAR *)z, GENERIC_READ, FILE_SHARE_READ, 
 					NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 #else
@@ -2797,7 +2797,7 @@ LUFILE *lufopen(void *z,unsigned int len,DWORD flags,ZRESULT *err)
 				return NULL;
 			}
 		}
-#ifdef _WIN32
+#if IsWindows()
 		DWORD type = GetFileType(h);
 		canseek = (type==FILE_TYPE_DISK);
 #else
@@ -3884,7 +3884,7 @@ int unzReadCurrentFile (unzFile file, void *buf, unsigned len);
 int unzCloseCurrentFile (unzFile file);
 
 
-#ifdef _WIN32
+#if IsWindows()
 FILETIME timet2filetime(const time_t timer)
 { struct tm *tm = gmtime(&timer);
   SYSTEMTIME st;
@@ -3923,7 +3923,7 @@ ZRESULT TUnzip::Open(void *z,unsigned int len,DWORD flags)
 { 
 	if (uf!=0 || currentfile!=-1) 
 		return ZR_NOTINITED;
-#ifdef _WIN32
+#if IsWindows()
 	GetCurrentDirectory(MAX_PATH,rootdir);
 	_tcscat(rootdir,_T("\\"));
 	if (flags==ZIP_HANDLE)
@@ -3952,7 +3952,7 @@ ZRESULT TUnzip::Get(int index,ZIPENTRY *ze)
   { ze->index = uf->gi.number_entry;
     ze->name[0]=0;
     ze->attr=0;
-#ifdef _WIN32
+#if IsWindows()
     ze->atime.dwLowDateTime=0; ze->atime.dwHighDateTime=0;
     ze->ctime.dwLowDateTime=0; ze->ctime.dwHighDateTime=0;
     ze->mtime.dwLowDateTime=0; ze->mtime.dwHighDateTime=0;
@@ -4004,7 +4004,7 @@ ZRESULT TUnzip::Get(int index,ZIPENTRY *ze)
   ze->comp_size = ufi.compressed_size;
   ze->unc_size = ufi.uncompressed_size;
   //
-#ifdef _WIN32
+#if IsWindows()
   WORD dostime = (WORD)(ufi.dosDate&0xFFFF);
   WORD dosdate = (WORD)((ufi.dosDate>>16)&0xFFFF);
   FILETIME ft;
@@ -4027,7 +4027,7 @@ ZRESULT TUnzip::Get(int index,ZIPENTRY *ze)
     epos+=5;
     if (hasmtime)
     { time_t mtime = *(time_t*)(extra+epos); epos+=4;
-#ifdef _WIN32
+#if IsWindows()
       ze->mtime = timet2filetime(mtime);
 #else
 	  ze->mtime = mtime;
@@ -4035,7 +4035,7 @@ ZRESULT TUnzip::Get(int index,ZIPENTRY *ze)
     }
     if (hasatime)
     { time_t atime = *(time_t*)(extra+epos); epos+=4;
-#ifdef _WIN32
+#if IsWindows()
       ze->atime = timet2filetime(atime);
 #else
 	  ze->atime = atime;
@@ -4043,7 +4043,7 @@ ZRESULT TUnzip::Get(int index,ZIPENTRY *ze)
     }
     if (hasctime)
     { time_t ctime = *(time_t*)(extra+epos); 
-#ifdef _WIN32
+#if IsWindows()
       ze->ctime = timet2filetime(ctime);
 #else
 	  ze->ctime = ctime;
@@ -4190,7 +4190,7 @@ ZRESULT TUnzip::Unzip(int index,void *dst,unsigned int len,DWORD flags)
 			if (!isabsolute) 
 				EnsureDirectory(rootdir,dir);
 		}
-#ifdef _WIN32
+#if IsWindows()
 		h = ::CreateFile((const TCHAR*)dst, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 
 				ze.attr, NULL);
 #else
@@ -4225,7 +4225,7 @@ ZRESULT TUnzip::Unzip(int index,void *dst,unsigned int len,DWORD flags)
 	}
 	bool settime=false;
 
-#ifdef _WIN32
+#if IsWindows()
 	DWORD type = GetFileType(h); 
 	if (type==FILE_TYPE_DISK && !haderr) 
 		settime=true;
@@ -4237,7 +4237,7 @@ ZRESULT TUnzip::Unzip(int index,void *dst,unsigned int len,DWORD flags)
 
 	if (settime) 
 	{
-#ifdef _WIN32
+#if IsWindows()
 		SetFileTime(h,&ze.ctime,&ze.atime,&ze.mtime);
 #else
 		struct timeval tv[2];

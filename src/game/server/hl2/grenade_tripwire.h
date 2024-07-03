@@ -10,7 +10,7 @@
 #ifndef	TRIPWIRE_H
 #define	TRIPWIRE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

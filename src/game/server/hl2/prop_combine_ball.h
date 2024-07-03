@@ -6,7 +6,7 @@
 
 #ifndef PROP_COMBINE_BALL_H
 #define PROP_COMBINE_BALL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

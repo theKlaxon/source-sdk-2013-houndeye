@@ -6,7 +6,7 @@
 
 #ifndef PHYSICS_BONE_FOLLOWER_H
 #define PHYSICS_BONE_FOLLOWER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

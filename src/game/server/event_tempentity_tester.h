@@ -8,7 +8,7 @@
 //=============================================================================//
 #if !defined( EVENT_TEMPENTITY_TESTER_H )
 #define EVENT_TEMPENTITY_TESTER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

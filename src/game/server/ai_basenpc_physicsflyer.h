@@ -7,7 +7,7 @@
 
 #ifndef AI_BASENPC_PHYSICSFLYER_H
 #define AI_BASENPC_PHYSICSFLYER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

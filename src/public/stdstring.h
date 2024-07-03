@@ -7,7 +7,7 @@
 
 #include "isaverestore.h"
 
-#if defined( _WIN32 )
+#if IsWindows()
 	#pragma warning( push )
 	#include <yvals.h>// warnings get enabled in yvals.h
 	#pragma warning( disable : 4663 )
@@ -19,7 +19,7 @@
 
 #include <string>
 
-#if defined( _WIN32 )
+#if IsWindows()
 	#pragma warning( pop )
 #endif
 

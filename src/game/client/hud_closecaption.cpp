@@ -1654,7 +1654,7 @@ void CHudCloseCaption::AddWorkUnit( CCloseCaptionItem *item,
 {
 	params.Finalize( vgui::surface()->GetFontTall( params.font ) );
 
-#ifdef WIN32
+#if IsWindows()
 	if ( wcslen( params.stream ) > 0 )
 #else
 	// params.stream is still in ucs2 format here so just do a basic zero compare for length or just space
@@ -2025,7 +2025,7 @@ public:
 			if ( entry.blockNum != nBlockNum )
 				continue;
 
-#ifdef WIN32
+#if IsWindows()
 			const wchar_t *pIn = ( const wchar_t *)&pData->m_pBlockData[ entry.offset ];
 			caption->stream = new wchar_t[ entry.length >> 1 ];
 			memcpy( (void *)caption->stream, pIn, entry.length );

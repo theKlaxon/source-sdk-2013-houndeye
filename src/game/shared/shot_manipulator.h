@@ -6,7 +6,7 @@
 
 #ifndef SHOT_MANIPULATOR_H
 #define SHOT_MANIPULATOR_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -10,11 +10,11 @@
 #define WINLITE_H
 #pragma once
 
-#ifdef _WIN32
+#if IsWindows()
 // 
 // Prevent tons of unused windows definitions
 //
-#ifndef WIN32_LEAN_AND_MEAN
+#if !defined( WIN32_LEAN_AND_MEAN )
 #define WIN32_LEAN_AND_MEAN
 #endif
 #define NOWINRES

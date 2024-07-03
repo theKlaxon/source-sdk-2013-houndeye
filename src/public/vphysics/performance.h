@@ -6,7 +6,7 @@
 
 #ifndef PERFORMANCE_H
 #define PERFORMANCE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

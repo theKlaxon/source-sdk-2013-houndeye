@@ -9,7 +9,7 @@
 #ifndef TIER1_ILOCALIZE_H
 #define TIER1_ILOCALIZE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -18,7 +18,7 @@
 
 // unicode character type
 // for more unicode manipulation functions #include <wchar.h>
-#if !defined(_WCHAR_T_DEFINED) && !defined(GNUC)
+#if !defined(_WCHAR_T_DEFINED) && !defined( COMPILER_GCC )
 typedef unsigned short wchar_t;
 #define _WCHAR_T_DEFINED
 #endif

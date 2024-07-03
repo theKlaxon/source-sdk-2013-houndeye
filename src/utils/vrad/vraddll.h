@@ -7,7 +7,7 @@
 
 #ifndef VRADDLL_H
 #define VRADDLL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

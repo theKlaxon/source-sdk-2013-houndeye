@@ -68,7 +68,7 @@
 #include "tier0/icommandline.h"
 #include "datacache/imdlcache.h"
 #include "engine/iserverplugin.h"
-#ifdef _WIN32
+#if IsWindows()
 #include "ienginevgui.h"
 #endif
 #include "ragdoll_shared.h"
@@ -618,7 +618,7 @@ bool CServerGameDLL::DLLInit( CreateInterfaceFn appSystemFactory,
 	// If not running dedicated, grab the engine vgui interface
 	if ( !engine->IsDedicatedServer() )
 	{
-#ifdef _WIN32
+#if IsWindows()
 		// This interface is optional, and is only valid when running with -tools
 		serverenginetools = ( IServerEngineTools * )appSystemFactory( VSERVERENGINETOOLS_INTERFACE_VERSION, NULL );
 #endif
@@ -1048,7 +1048,7 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 // Purpose: called after every level change and load game, iterates through all the
 //			active entities and gives them a chance to fix up their state
 //-----------------------------------------------------------------------------
-#ifdef DEBUG
+#if IsDebug()
 bool g_bReceivedChainedActivate;
 bool g_bCheckForChainedActivate;
 #define BeginCheckChainedActivate() if (0) ; else { g_bCheckForChainedActivate = true; g_bReceivedChainedActivate = false; }

@@ -1,4 +1,4 @@
-//======= Copyright © 1996-2006, Valve Corporation, All rights reserved. ======
+//======= Copyright ï¿½ 1996-2006, Valve Corporation, All rights reserved. ======
 //
 // Purpose: Utility classes for creating, registering & deregistering
 //          Maya MPx* derived classes
@@ -7,7 +7,7 @@
 
 #ifndef VSMAYAMPXFACTORY_H
 #define VSMAYAMPXFACTORY_H
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

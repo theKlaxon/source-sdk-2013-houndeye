@@ -11,7 +11,7 @@
 #include <limits.h>
 #include "weapon_proficiency.h"
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

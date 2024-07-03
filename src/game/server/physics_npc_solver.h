@@ -6,7 +6,7 @@
 
 #ifndef PHYSICS_NPC_SOLVER_H
 #define PHYSICS_NPC_SOLVER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

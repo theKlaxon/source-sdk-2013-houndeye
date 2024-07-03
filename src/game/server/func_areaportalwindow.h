@@ -7,7 +7,7 @@
 
 #ifndef FUNC_AREAPORTALWINDOW_H
 #define FUNC_AREAPORTALWINDOW_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

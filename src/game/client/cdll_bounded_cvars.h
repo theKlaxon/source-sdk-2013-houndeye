@@ -7,7 +7,7 @@
 
 #ifndef CDLL_BOUNDED_CVARS_H
 #define CDLL_BOUNDED_CVARS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

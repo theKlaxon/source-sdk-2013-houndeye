@@ -4,7 +4,7 @@
 
 #ifndef REPLAYTIME_H
 #define REPLAYTIME_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

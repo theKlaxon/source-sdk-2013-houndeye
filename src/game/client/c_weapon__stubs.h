@@ -7,7 +7,7 @@
 
 #ifndef C_WEAPON__STUBS_H
 #define C_WEAPON__STUBS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

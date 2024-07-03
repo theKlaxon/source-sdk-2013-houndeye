@@ -8,7 +8,7 @@
 #ifndef VTF_H
 #define VTF_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -444,7 +444,7 @@ struct VTFFileHeaderV7_1_t : public VTFFileBaseHeader_t
 	unsigned int	flags;
 	unsigned short	numFrames;
 	unsigned short	startFrame;
-#if !defined( POSIX )
+#if !IsPosix()
 	VectorAligned	reflectivity;
 #else
 	// must manually align in order to maintain pack(1) expected layout with existing binaries
@@ -513,7 +513,7 @@ struct VTFFileHeaderV7_3_t : public VTFFileHeaderV7_2_t
 	char			pad4[3];
 	unsigned int	numResources;
 
-#if defined( POSIX )
+#if IsPosix()
 	// must manually align in order to maintain pack(1) expected layout with existing binaries
 	char			pad5[8];
 #endif

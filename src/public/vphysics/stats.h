@@ -6,7 +6,7 @@
 
 #ifndef STATS_H
 #define STATS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

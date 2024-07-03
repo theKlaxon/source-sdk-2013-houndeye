@@ -8,7 +8,7 @@
 #ifndef IHTML_H
 #define IHTML_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

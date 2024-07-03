@@ -6,7 +6,7 @@
 
 #ifndef WEAPON_STRIDERBUSTER_H
 #define WEAPON_STRIDERBUSTER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

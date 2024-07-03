@@ -10,7 +10,7 @@
 #ifndef BSPFLAGS_H
 #define BSPFLAGS_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

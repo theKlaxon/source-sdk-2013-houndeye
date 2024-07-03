@@ -6,7 +6,7 @@
 
 #ifndef PARTICLES_EZ_H
 #define PARTICLES_EZ_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

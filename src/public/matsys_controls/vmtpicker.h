@@ -6,7 +6,7 @@
 
 #ifndef VMTPICKER_H
 #define VMTPICKER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

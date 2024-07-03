@@ -7,7 +7,7 @@
 //=============================================================================//
 #if !defined( VGUI_BASEPANEL_H )
 #define VGUI_BASEPANEL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

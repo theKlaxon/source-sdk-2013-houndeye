@@ -7,7 +7,7 @@
 #ifndef MESHUTILS_H
 #define MESHUTILS_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

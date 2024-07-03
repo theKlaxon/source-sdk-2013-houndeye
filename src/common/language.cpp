@@ -169,7 +169,7 @@ const char *GetLangugeCLocaleName( ELanguage eLang )
 	if ( eLang == k_Lang_None )
 		return "";
 
-#ifdef _WIN32
+#if IsWindows()
 	// table for Win32 is here: http://msdn.microsoft.com/en-us/library/hzz3tw78(v=VS.80).aspx
 	// shortname works except for chinese
 

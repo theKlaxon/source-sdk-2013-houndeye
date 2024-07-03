@@ -7,7 +7,7 @@
 #ifndef IMAGEFORMAT_H
 #define IMAGEFORMAT_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -86,7 +86,7 @@ enum ImageFormat
 	NUM_IMAGE_FORMATS
 };
 
-#if defined( POSIX  ) || defined( DX_TO_GL_ABSTRACTION )
+#if IsPosix() || defined( DX_TO_GL_ABSTRACTION )
 typedef enum _D3DFORMAT
 	{
 		D3DFMT_INDEX16,

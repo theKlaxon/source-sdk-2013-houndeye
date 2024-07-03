@@ -6,7 +6,7 @@
 
 #ifndef PROGRESSBAR_H
 #define PROGRESSBAR_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

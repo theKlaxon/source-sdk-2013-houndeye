@@ -4,7 +4,7 @@
 
 #ifndef IREPLAYSERIALIIZEABLE_H
 #define IREPLAYSERIALIIZEABLE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

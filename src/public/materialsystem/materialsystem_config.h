@@ -7,7 +7,7 @@
 
 #ifndef MATERIALSYSTEM_CONFIG_H
 #define MATERIALSYSTEM_CONFIG_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

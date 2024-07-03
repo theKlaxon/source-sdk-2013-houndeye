@@ -33,7 +33,7 @@
 	#include "hl2mp_gameinterface.h"
 	#include "hl2mp_cvars.h"
 
-#ifdef DEBUG	
+#if IsDebug()
 	#include "hl2mp_bot_temp.h"
 #endif
 
@@ -950,8 +950,7 @@ CAmmoDef *GetAmmoDef()
 
 #else
 
-#ifdef DEBUG
-
+#if IsDebug()
 	// Handler for the "bot" command.
 	void Bot_f()
 	{		

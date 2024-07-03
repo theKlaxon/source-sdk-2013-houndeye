@@ -281,11 +281,11 @@ bool CAI_MoveSolver::HaveRegulationForObstacle( CBaseEntity *pEntity)
 // Commands and tests
 //
 
-#ifdef DEBUG
+#if IsDebug()
 CON_COMMAND(ai_test_move_solver, "Tests the AI move solver system")
 {
-#ifdef DEBUG
-	const float EPS = 0.001;
+#if IsDebug()
+		const float EPS = 0.001;
 #endif
 	DevMsg( "Beginning move solver tests...\n" );
 

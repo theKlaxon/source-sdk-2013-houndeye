@@ -2718,7 +2718,7 @@ void CAI_FollowManager::ChangeFormation( AI_FollowManagerInfoHandle_t& hInfo, AI
 	
 	RedistributeSlots( pGroup );
 	
-#ifdef DEBUG
+#if IsDebug()
 	h = pGroup->followers.Head();
 	while ( h != pGroup->followers.InvalidIndex() )
 	{

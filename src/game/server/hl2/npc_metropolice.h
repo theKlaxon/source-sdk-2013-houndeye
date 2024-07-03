@@ -6,7 +6,7 @@
 
 #ifndef NPC_METROPOLICE_H
 #define NPC_METROPOLICE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -6,7 +6,7 @@
 //=============================================================================//
 #ifndef SCENEENTITY_H
 #define SCENEENTITY_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

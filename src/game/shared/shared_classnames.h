@@ -7,7 +7,7 @@
 
 #ifndef SHARED_CLASSNAMES_H
 #define SHARED_CLASSNAMES_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

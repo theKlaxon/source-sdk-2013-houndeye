@@ -6,7 +6,7 @@
 
 #ifndef PLAYER_CONTROLLER_H
 #define PLAYER_CONTROLLER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

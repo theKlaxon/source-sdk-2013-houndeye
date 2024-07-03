@@ -8,7 +8,7 @@
 #ifndef IVEHICLE_H
 #define IVEHICLE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

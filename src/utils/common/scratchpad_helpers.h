@@ -6,7 +6,7 @@
 
 #ifndef SCRATCHPAD_HELPERS_H
 #define SCRATCHPAD_HELPERS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

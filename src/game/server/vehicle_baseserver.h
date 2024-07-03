@@ -6,7 +6,7 @@
 
 #ifndef VEHICLE_BASESERVER_H
 #define VEHICLE_BASESERVER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

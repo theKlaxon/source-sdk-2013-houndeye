@@ -13,7 +13,7 @@
 
 #if !defined( FXFLECKS_H )
 #define FXFLECKS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

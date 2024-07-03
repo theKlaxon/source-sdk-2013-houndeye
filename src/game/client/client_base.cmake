@@ -1205,6 +1205,7 @@ function( target_use_client_base target EXCLUDE_SOURCES )
 			"${LIBPUBLIC}/matsys_controls${CMAKE_STATIC_LIBRARY_SUFFIX}"
 			tier1
 			tier2
+			${ASRC_vstdlib2}
 			tier3
 			vgui_controls
 			"${LIBPUBLIC}/vtf${CMAKE_STATIC_LIBRARY_SUFFIX}"

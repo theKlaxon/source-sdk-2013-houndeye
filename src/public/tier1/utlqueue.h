@@ -7,7 +7,7 @@
 
 #ifndef UTLQUEUE_H
 #define UTLQUEUE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

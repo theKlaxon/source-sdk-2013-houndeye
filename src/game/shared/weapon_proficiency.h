@@ -7,7 +7,7 @@
 #ifndef WEAPON_PROFICIENCY_H
 #define WEAPON_PROFICIENCY_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

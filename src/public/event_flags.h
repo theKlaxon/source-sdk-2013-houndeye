@@ -7,7 +7,7 @@
 #ifndef EVENT_FLAGS_H
 #define EVENT_FLAGS_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

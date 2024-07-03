@@ -6,7 +6,7 @@
 
 #ifndef MACRO_TEXTURE_H
 #define MACRO_TEXTURE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

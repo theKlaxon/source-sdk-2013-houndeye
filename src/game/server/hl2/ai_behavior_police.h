@@ -6,7 +6,7 @@
 
 #ifndef AI_BEHAVIOR_POLICE_H
 #define AI_BEHAVIOR_POLICE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

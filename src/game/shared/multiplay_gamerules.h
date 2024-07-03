@@ -6,7 +6,7 @@
 
 #ifndef MULTIPLAY_GAMERULES_H
 #define MULTIPLAY_GAMERULES_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -8,7 +8,7 @@
 #ifndef BUTTONCODE_H
 #define BUTTONCODE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

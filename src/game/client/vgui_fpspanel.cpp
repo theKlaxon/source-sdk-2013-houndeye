@@ -399,7 +399,7 @@ public:
 static CFPS g_FPSPanel;
 IFPSPanel *fps = ( IFPSPanel * )&g_FPSPanel;
 
-#if defined( TRACK_BLOCKING_IO ) && !defined( _RETAIL )
+#if defined( TRACK_BLOCKING_IO ) && !IsRetail()
 
 static ConVar cl_blocking_threshold( "cl_blocking_threshold", "0.000", 0, "If file ops take more than this amount of time, add to 'spewblocking' history list" );
 

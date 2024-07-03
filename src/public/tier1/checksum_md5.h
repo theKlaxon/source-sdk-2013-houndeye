@@ -7,7 +7,7 @@
 #ifndef CHECKSUM_MD5_H
 #define CHECKSUM_MD5_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

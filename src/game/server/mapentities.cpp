@@ -188,9 +188,9 @@ static void SortSpawnListByHierarchy( int nEntities, HierarchicalSpawn_t *pSpawn
 	// Sort the entities (other than the world) by hierarchy depth, in order to spawn them in
 	// that order. This insures that each entity's parent spawns before it does so that
 	// it can properly set up anything that relies on hierarchy.
-#ifdef _WIN32
+#if IsWindows()
 	qsort(&pSpawnList[0], nEntities, sizeof(pSpawnList[0]), (int (__cdecl *)(const void *, const void *))CompareSpawnOrder);
-#elif POSIX
+#elif IsPosix()
 	qsort(&pSpawnList[0], nEntities, sizeof(pSpawnList[0]), (int (*)(const void *, const void *))CompareSpawnOrder);
 #endif
 	delete g_pClassnameSpawnPriority;

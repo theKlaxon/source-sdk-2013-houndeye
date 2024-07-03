@@ -13,7 +13,7 @@
 #define FPS_STABILIZE_TIME_RELOAD_MATERIALS 10.0
 #define FPS_MEASURE_TIME 2.0
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

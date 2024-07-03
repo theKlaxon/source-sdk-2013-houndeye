@@ -7,7 +7,7 @@
 
 #ifndef NPC_BULLSEYE_H
 #define NPC_BULLSEYE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

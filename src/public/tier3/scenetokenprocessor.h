@@ -6,7 +6,7 @@
 
 #ifndef SCENETOKENPROCESSOR_H
 #define SCENETOKENPROCESSOR_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -9,7 +9,7 @@
 
 #if !defined(_STATIC_LINKED) || defined(_SHARED_LIB)
 
-#if  defined(_WIN32)
+#if  IsWindows()
 #include <windows.h>
 #endif
 #include <stdio.h>
@@ -180,7 +180,7 @@ EditorSendResult_t Editor_EndSession(bool bShowUI)
 //-----------------------------------------------------------------------------
 EditorSendResult_t Editor_SendCommand(const char *pszCommand, bool bShowUI)
 {
-#ifdef _WIN32
+#if IsWindows()
 	HWND hwnd = FindWindow("Worldcraft_ShellMessageWnd", "Worldcraft_ShellMessageWnd");
 	if (hwnd != NULL)
 	{

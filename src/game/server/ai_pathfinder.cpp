@@ -1827,7 +1827,7 @@ AI_Waypoint_t *CAI_Pathfinder::BuildNodeRoute(const Vector &vStart, const Vector
 //-----------------------------------------------------------------------------
 // Test the triangulation route...
 //-----------------------------------------------------------------------------
-#ifdef _WIN32
+#if IsWindows()
 #pragma warning (disable:4701)
 #endif
 
@@ -1860,7 +1860,7 @@ bool CAI_Pathfinder::TestTriangulationRoute( Navigation_t navType, const Vector&
 	return bPathClear;
 }
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma warning (default:4701)
 #endif
 

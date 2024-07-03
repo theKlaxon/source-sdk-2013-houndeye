@@ -9,7 +9,7 @@
 #ifndef ISHADOWMGR_H
 #define ISHADOWMGR_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

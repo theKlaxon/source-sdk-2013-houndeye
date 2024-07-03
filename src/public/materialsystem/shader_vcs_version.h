@@ -6,7 +6,7 @@
 
 #ifndef SHADER_VCS_VERSION_H
 #define SHADER_VCS_VERSION_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

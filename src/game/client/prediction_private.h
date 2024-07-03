@@ -12,7 +12,7 @@
 //=============================================================================//
 #if !defined( PREDICTION_PRIVATE_H )
 #define PREDICTION_PRIVATE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

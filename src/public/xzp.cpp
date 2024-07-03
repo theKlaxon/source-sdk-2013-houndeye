@@ -9,7 +9,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <malloc.h>
-#ifdef _WIN32
+#if IsWindows()
 #include <process.h>
 #include <io.h>
 #endif
@@ -21,7 +21,7 @@
 #include "tier1/strtools.h"
 #include "tier2/riff.h"
 
-#if defined( _WIN32 )
+#if IsWindows()
 #include <windows.h>
 #endif
 

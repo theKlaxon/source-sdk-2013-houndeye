@@ -6,7 +6,7 @@
 
 #ifndef WEAPON_WATERBULLET_H
 #define WEAPON_WATERBULLET_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

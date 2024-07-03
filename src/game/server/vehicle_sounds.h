@@ -6,7 +6,7 @@
 
 #ifndef VEHICLE_SOUNDS_H
 #define VEHICLE_SOUNDS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

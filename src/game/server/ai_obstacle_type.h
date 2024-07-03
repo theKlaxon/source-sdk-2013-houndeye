@@ -7,7 +7,7 @@
 #ifndef AI_OBSTACLE_TYPE_H
 #define AI_OBSTACLE_TYPE_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

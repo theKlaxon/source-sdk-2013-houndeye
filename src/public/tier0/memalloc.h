@@ -10,7 +10,7 @@
 
 // These memory debugging switches aren't relevant under Linux builds since memoverride.cpp
 // isn't built into Linux projects
-#if !defined( _WIN32 )
+#if !IsWindows()
 	// Define this in release to get memory tracking even in release builds
 	//#define USE_MEM_DEBUG 1
 #endif
@@ -493,7 +493,7 @@
 
 
 // linux memory tracking via hooks.
-#if defined( POSIX ) && !defined( NO_HOOK_MALLOC )
+#if IsPosix() && !defined( NO_HOOK_MALLOC )
 	// throw a message into the memory log
 	PLATFORM_INTERFACE void MemoryLogMessage( char const* s );
 	PLATFORM_INTERFACE void EnableMemoryLogging( bool bOnOff );
@@ -518,7 +518,7 @@
 
 #endif
 
-#if defined( POSIX )
+#if IsPosix()
 	// ApproximateProcessMemoryUsage returns the approximate memory footprint of this process.
 	PLATFORM_INTERFACE
 	size_t ApproximateProcessMemoryUsage();

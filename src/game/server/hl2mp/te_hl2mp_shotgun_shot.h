@@ -6,7 +6,7 @@
 
 #ifndef TE_HL2MP_SHOTGUN_SHOT_H
 #define TE_HL2MP_SHOTGUN_SHOT_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

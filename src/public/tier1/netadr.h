@@ -8,7 +8,7 @@
 // netadr.h
 #ifndef NETADR_H
 #define NETADR_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

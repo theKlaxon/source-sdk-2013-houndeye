@@ -8,7 +8,7 @@
 #ifndef ISCHEME_H
 #define ISCHEME_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

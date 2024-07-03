@@ -1,7 +1,7 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 #if !defined( CLIENTSTEAMCONTEXT_H )
 #define CLIENTSTEAMCONTEXT_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -6,7 +6,7 @@
 
 #ifndef BUTTONS_H
 #define BUTTONS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

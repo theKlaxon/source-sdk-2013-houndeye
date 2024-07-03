@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: Interface for dealing with vgui focus issues across all plugins
 //
@@ -8,7 +8,7 @@
 #ifndef IMAYAVGUI_H
 #define IMAYAVGUI_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

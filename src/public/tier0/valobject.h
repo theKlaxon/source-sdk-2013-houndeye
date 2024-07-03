@@ -9,7 +9,7 @@
 
 #ifndef VALOBJECT_H
 #define VALOBJECT_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

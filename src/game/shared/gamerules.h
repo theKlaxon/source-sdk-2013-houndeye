@@ -7,7 +7,7 @@
 
 #ifndef GAMERULES_H
 #define GAMERULES_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -4,7 +4,7 @@
 
 #ifndef IREPLAYCONTEXT_H
 #define IREPLAYCONTEXT_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

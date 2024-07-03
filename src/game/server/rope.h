@@ -7,7 +7,7 @@
 
 #ifndef ROPE_H
 #define ROPE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -7,7 +7,7 @@
 //=============================================================================//
 #if !defined( PROTO_VERSION_H )
 #define PROTO_VERSION_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

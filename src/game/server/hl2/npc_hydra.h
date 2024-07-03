@@ -8,7 +8,7 @@
 #ifndef NPC_HYDRA_H
 #define NPC_HYDRA_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

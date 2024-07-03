@@ -8,7 +8,7 @@
 #ifndef C_VGUISCREEN_H
 #define C_VGUISCREEN_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -3,8 +3,6 @@
 // Purpose:
 //
 //=============================================================================//
-
-
 #include "cbase.h"
 #include "fmtstr.h"
 #include "filesystem.h"
@@ -28,6 +26,8 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
+
+#undef sprintf
 
 // Increment this to force rebuilding of all networks
 #define	 AINET_VERSION_NUMBER	37
@@ -1047,7 +1047,7 @@ void CAI_NetworkManager::DelayedInit( void )
 		// --------------------------------------------
 		else if ( !m_bDontSaveGraph && ( !CAI_NetworkManager::NetworksLoaded() || engine->IsInEditMode() ) )
 		{
-#ifdef _WIN32
+#if IsWindows()
 			// --------------------------------------------------------
 			// If in edit mode start WC session and make sure we are
 			// running the same map in WC and the engine
@@ -1990,7 +1990,7 @@ CAI_NetworkEditTools::~CAI_NetworkEditTools()
 	// --------------------------------------------------------
 	// If in edit mode tell WC I'm ending my session
 	// --------------------------------------------------------
-#ifdef _WIN32
+#if IsWindows()
 	Editor_EndSession(false);
 #endif
 	delete[] m_pNodeIndexTable;
@@ -2055,7 +2055,7 @@ void CAI_NetworkBuilder::InitZones( CAI_Network *pNetwork )
 		}
 	}
 
-#ifdef DEBUG
+#if IsDebug()
 	for (i = 0; i < nNodes; i++)
 	{	
 		Assert( ppNodes[i]->GetZone() != AI_NODE_ZONE_UNKNOWN );
@@ -2893,7 +2893,7 @@ void CAI_NetworkBuilder::InitNeighbors(CAI_Network *pNetwork, CAI_Node *pNode)
 
 static bool IsInLineForClimb( const Vector &srcPos, const Vector &srcFacing, const Vector &destPos, const Vector &destFacing )
 {
-#ifdef DEBUG
+#if IsDebug()
 	Vector normSrcFacing( srcFacing ), normDestFacing( destFacing );
 
 	VectorNormalize( normSrcFacing );

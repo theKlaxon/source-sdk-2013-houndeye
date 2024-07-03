@@ -6,7 +6,7 @@
 
 #ifndef ENV_PLAYER_SURFACE_TRIGGER_H
 #define ENV_PLAYER_SURFACE_TRIGGER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

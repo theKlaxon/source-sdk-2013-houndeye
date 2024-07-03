@@ -76,10 +76,10 @@ private:
 	void *m_pFileInfo;
 	friend class CDirWatcherFriend;
 
-#ifdef LINUX
+#if IsLinux()
 	void AddFileToChangeList( const char *pchFile );
 #endif
-#ifdef WIN32
+#if IsWindows()
 	// used by callback functions to push a file onto the list
 	void AddFileToChangeList( const char *pchFile );
 	void PostDirWatch();

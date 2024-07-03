@@ -119,73 +119,73 @@ void HookHapticMessages(void)
 }
 
 // Defined in haptics_utils
-#ifdef WIN32
+#if IsWindows()
 void HapticsHandleMsg_HapSetDrag( float drag );
 void HapticsHandleMsg_HapSetConst( Vector const &constant );
 void HapticsHandleMsg_SPHapWeapEvent( int iActivity );
 void HapticsHandleMsg_HapPunch( QAngle const &angle );
 void HapticsHandleMsg_HapDmg( float pitch, float yaw, float damage, int damageType );
 void HapticsHandleMsg_HapMeleeContact();
-#endif // WIN32
+#endif // IsWindows()
 
 void __MsgFunc_HapSetDrag( bf_read &msg )
 {
-#ifdef WIN32
+#if IsWindows()
 	float drag = msg.ReadFloat();
 	HapticsHandleMsg_HapSetDrag( drag );
-#endif // WIN32
+#endif // IsWindows()
 }
 
 //Might be able to handle this better...
 void __MsgFunc_HapSetConst( bf_read &msg )
 {
-#ifdef WIN32
+#if IsWindows()
 	Vector constant;
 	constant.x = msg.ReadShort();
 	constant.y = msg.ReadShort();
 	constant.z = msg.ReadShort();
 
 	HapticsHandleMsg_HapSetConst( constant );
-#endif // WIN32
+#endif // IsWindows()
 }
 
 void __MsgFunc_SPHapWeapEvent( bf_read &msg )
 {
-#ifdef WIN32
+#if IsWindows()
 	int iActivity = msg.ReadLong();
 
 	HapticsHandleMsg_SPHapWeapEvent( iActivity );
-#endif // WIN32
+#endif // IsWindows()
 }
 
 void __MsgFunc_HapPunch( bf_read &msg )
 {
-#ifdef WIN32
+#if IsWindows()
 	float x = msg.ReadFloat();
 	float y = msg.ReadFloat();
 	float z = msg.ReadFloat();
 
 	HapticsHandleMsg_HapPunch( QAngle(x,y,z) );
-#endif // WIN32
+#endif // IsWindows()
 }
 
 void __MsgFunc_HapDmg( bf_read &msg )
 {
-#ifdef WIN32
+#if IsWindows()
 	float pitch = msg.ReadFloat();
 	float yaw = msg.ReadFloat();
 	float damage = msg.ReadFloat();
 	int damageType = msg.ReadLong();
 
 	HapticsHandleMsg_HapDmg( pitch, yaw, damage, damageType );
-#endif // WIN32
+#endif // IsWindows()
 }
 
 void __MsgFunc_HapMeleeContact( bf_read &msg )
 {
-#ifdef WIN32
+#if IsWindows()
 	HapticsHandleMsg_HapMeleeContact();
-#endif // WIN32
+#endif // IsWindows()
 }
 #endif // CLIENT_DLL
 

@@ -14,7 +14,7 @@
 #ifndef HARDWAREVERTS_H
 #define HARDWAREVERTS_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

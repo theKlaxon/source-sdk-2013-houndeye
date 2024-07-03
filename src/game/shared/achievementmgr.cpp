@@ -5,7 +5,7 @@
 //=============================================================================
 
 #include "cbase.h"
-#ifdef _WIN32
+#if IsWindows()
 #include "winerror.h"
 #endif
 #include "achievementmgr.h"

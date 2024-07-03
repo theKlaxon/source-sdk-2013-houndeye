@@ -15,7 +15,7 @@
 #ifndef IMAGEPACKER_H
 #define IMAGEPACKER_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

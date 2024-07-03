@@ -1,4 +1,4 @@
-//====== Copyright © 1996-2004, Valve Corporation, All rights reserved. =======
+//====== Copyright ï¿½ 1996-2004, Valve Corporation, All rights reserved. =======
 //
 // Purpose: 
 //
@@ -6,7 +6,7 @@
 
 #ifndef UTLBINARYBLOCK_H
 #define UTLBINARYBLOCK_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

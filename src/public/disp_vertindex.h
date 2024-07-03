@@ -7,7 +7,7 @@
 
 #ifndef DISP_VERTINDEX_H
 #define DISP_VERTINDEX_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

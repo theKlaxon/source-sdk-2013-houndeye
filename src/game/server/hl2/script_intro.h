@@ -6,7 +6,7 @@
 
 #ifndef SCRIPT_INTRO_H
 #define SCRIPT_INTRO_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

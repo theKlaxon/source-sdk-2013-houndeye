@@ -6,7 +6,7 @@
 //===========================================================================//
 #if !defined( BEAMDRAW_H )
 #define BEAMDRAW_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

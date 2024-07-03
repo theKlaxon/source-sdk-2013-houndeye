@@ -9,7 +9,7 @@
 #ifndef UNITLIB_H
 #define UNITLIB_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
  

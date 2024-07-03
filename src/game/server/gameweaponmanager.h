@@ -7,7 +7,7 @@
 #ifndef GAMEWEAPONMANAGER_H
 #define GAMEWEAPONMANAGER_H
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

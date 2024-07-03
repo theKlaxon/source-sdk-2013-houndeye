@@ -9,7 +9,7 @@
 #ifndef ISERVERPLUGIN_H
 #define ISERVERPLUGIN_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -9,7 +9,7 @@
 #ifndef SPHERICAL_GEOMETRY_H
 #define SPHERICAL_GEOMETRY_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

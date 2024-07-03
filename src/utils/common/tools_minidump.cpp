@@ -6,7 +6,7 @@
 //=============================================================================//
 
 /*
-#if defined( _WIN32 )
+#if IsWindows()
 	#include <windows.h>
 	#include <dbghelp.h>
 #endif

@@ -7,16 +7,8 @@
 // @Note (toml 12-02-02): For now, all of the methods in the types defined here
 // are inline to permit simple cross-DLL usage
 //=============================================================================//
-
-#ifndef SAVERESTORETYPES_H
-#define SAVERESTORETYPES_H
-
-#if defined( _WIN32 )
 #pragma once
-#endif
-
 #include "tier1/utlhash.h"
-
 #include <string_t.h> // NULL_STRING define
 struct edict_t;
 
@@ -63,7 +55,7 @@ public:
 	const char *StringFromSymbol( int token );
 
 private:
-#ifndef _WIN32
+#if !IsWindows()
 	unsigned _rotr ( unsigned val, int shift);
 #endif
 	unsigned int HashString( const char *pszToken );
@@ -511,7 +503,7 @@ inline const char *CSaveRestoreSegment::StringFromSymbol( int token )
 	return "<<illegal>>";
 }
 
-#ifndef _WIN32
+#if !IsWindows()
 inline unsigned CSaveRestoreSegment::_rotr ( unsigned val, int shift)
 {
 		unsigned lobit;        /* non-zero means lo bit set */
@@ -543,5 +535,3 @@ inline unsigned int CSaveRestoreSegment::HashString( const char *pszToken )
 }
 
 //=============================================================================
-
-#endif // SAVERESTORETYPES_H

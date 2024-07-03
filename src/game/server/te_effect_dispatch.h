@@ -7,7 +7,7 @@
 
 #ifndef TE_EFFECT_DISPATCH_H
 #define TE_EFFECT_DISPATCH_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

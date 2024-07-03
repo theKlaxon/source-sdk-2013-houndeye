@@ -6,7 +6,7 @@
 
 #ifndef PHYS_CONTROLLER_H
 #define PHYS_CONTROLLER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

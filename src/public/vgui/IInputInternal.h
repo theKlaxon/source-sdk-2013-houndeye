@@ -7,7 +7,7 @@
 
 #ifndef IINPUTINTERNAL_H
 #define IINPUTINTERNAL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

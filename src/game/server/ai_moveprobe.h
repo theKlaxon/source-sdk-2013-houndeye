@@ -11,7 +11,7 @@
 #include "ai_navtype.h"
 #include "ai_movetypes.h"
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

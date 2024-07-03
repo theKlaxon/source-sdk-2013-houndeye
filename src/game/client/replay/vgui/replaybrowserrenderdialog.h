@@ -7,7 +7,7 @@
 
 #ifndef REPLAYBROWSER_RENDERDIALOG_H
 #define REPLAYBROWSER_RENDERDIALOG_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

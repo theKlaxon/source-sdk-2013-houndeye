@@ -10,7 +10,7 @@
 
 #ifndef DISP_POWERINFO_H
 #define DISP_POWERINFO_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

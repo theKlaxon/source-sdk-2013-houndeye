@@ -6,7 +6,7 @@
 
 #ifndef BASEPRESENCE_H
 #define BASEPRESENCE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

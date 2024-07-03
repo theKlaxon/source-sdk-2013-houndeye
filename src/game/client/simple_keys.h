@@ -6,7 +6,7 @@
 
 #ifndef SIMPLE_KEYS_H
 #define SIMPLE_KEYS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

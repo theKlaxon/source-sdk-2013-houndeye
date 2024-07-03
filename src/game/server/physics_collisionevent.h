@@ -11,7 +11,7 @@
 #ifndef PHYSICS_COLLISIONEVENT_H
 #define PHYSICS_COLLISIONEVENT_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

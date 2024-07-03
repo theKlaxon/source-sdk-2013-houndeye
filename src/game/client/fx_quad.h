@@ -11,7 +11,7 @@
 
 #ifndef FX_QUAD_H
 #define FX_QUAD_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

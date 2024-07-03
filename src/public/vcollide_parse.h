@@ -7,7 +7,7 @@
 
 #ifndef VCOLLIDE_PARSE_H
 #define VCOLLIDE_PARSE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -6,7 +6,7 @@
 
 #ifndef IMATSYSTEMSURFACEV5_H
 #define IMATSYSTEMSURFACEV5_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

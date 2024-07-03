@@ -22,7 +22,7 @@ IProcessUtils *g_pProcessUtils = 0;
 static bool s_bConnected = false;
 
 // for utlsortvector.h
-#ifndef _WIN32
+#if !IsWindows()
 	void *g_pUtlSortVectorQSortContext = NULL;
 #endif
 

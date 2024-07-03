@@ -9,7 +9,7 @@
 
 #if !defined( CL_ANIMEVENT_H )
 #define CL_ANIMEVENT_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -6,7 +6,7 @@
 
 #ifndef VPHYSICSUPDATEAI_H
 #define VPHYSICSUPDATEAI_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

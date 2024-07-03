@@ -8,7 +8,7 @@
 #ifndef C_BASEANIMATING_H
 #define C_BASEANIMATING_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

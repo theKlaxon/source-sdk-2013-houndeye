@@ -377,9 +377,9 @@ CReplayBrowserThumbnail *CReplayListPanel::FindThumbnailAtCursor( int x, int y )
 	return NULL;
 }
 
-#if defined( WIN32 )
+#if IsWindows()
 	#define Q_wcstok( text, delimiters, context ) wcstok( text, delimiters ); context;
-#elif defined( LINUX )
+#elif IsLinux()
 	#define Q_wcstok( text, delimiters, context ) wcstok( text, delimiters, context )
 #endif
 

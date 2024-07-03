@@ -8,7 +8,7 @@
 #ifndef VEHICLE_APC_H
 #define VEHICLE_APC_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

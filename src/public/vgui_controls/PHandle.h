@@ -8,7 +8,7 @@
 #ifndef PHANDLE_H
 #define PHANDLE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

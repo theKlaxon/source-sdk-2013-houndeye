@@ -9,7 +9,7 @@
 #ifndef GAMEBSPFILE_H
 #define GAMEBSPFILE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

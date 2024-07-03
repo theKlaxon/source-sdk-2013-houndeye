@@ -9,7 +9,7 @@
 
 #ifndef WEAPON_FLAREGUN_H
 #define WEAPON_FLAREGUN_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

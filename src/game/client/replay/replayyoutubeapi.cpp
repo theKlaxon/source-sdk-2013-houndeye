@@ -551,7 +551,7 @@ public:
 				char szSessionId[32];
 
 				// Write session ID as hex (this code taken from KeyValues.cpp, modified).
-#ifdef WIN32
+#if IsWindows()
 				Q_snprintf( szSessionId, sizeof( szSessionId ), "%I64X", uSessionId );
 #else
 				Q_snprintf( szSessionId, sizeof( szSessionId ), "%llX", uSessionId );

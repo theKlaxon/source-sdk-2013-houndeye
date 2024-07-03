@@ -6,7 +6,7 @@
 
 #ifndef KEYBOARDEDITORDIALOG_H
 #define KEYBOARDEDITORDIALOG_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

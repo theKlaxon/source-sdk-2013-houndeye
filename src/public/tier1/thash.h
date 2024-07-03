@@ -7,7 +7,7 @@
 
 #ifndef THASH_H
 #define THASH_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -264,7 +264,7 @@ Data *CTHash<Data,I>::PvRecordInsertInternal( RecHdr_t *pRecHdr, I unKey )
 		s_bPerfWarning = true;
 		AssertMsg( false, "Performance warning: too many items, not enough buckets" );
 		Msg( "not enough buckets in thash class %s (%d records, %d buckets)\n",
-#ifdef _WIN32
+#if IsWindows()
 		 typeid(*this).raw_name(),
 #else
 		typeid(*this).name(),

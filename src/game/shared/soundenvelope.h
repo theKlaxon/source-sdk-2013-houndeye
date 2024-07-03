@@ -10,7 +10,7 @@
 #ifndef SOUNDENVELOPE_H
 #define SOUNDENVELOPE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

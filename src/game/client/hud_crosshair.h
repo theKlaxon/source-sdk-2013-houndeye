@@ -7,7 +7,7 @@
 
 #ifndef HUD_CROSSHAIR_H
 #define HUD_CROSSHAIR_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -9,7 +9,7 @@
 #ifndef IREPLAYSERVER_H
 #define IREPLAYSERVER_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

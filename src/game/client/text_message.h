@@ -6,7 +6,7 @@
 //=============================================================================//
 #if !defined( TEXT_MESSAGE_H )
 #define TEXT_MESSAGE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

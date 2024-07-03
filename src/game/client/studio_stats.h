@@ -7,7 +7,7 @@
 #ifndef __STUDIO_STATS_H
 #define __STUDIO_STATS_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

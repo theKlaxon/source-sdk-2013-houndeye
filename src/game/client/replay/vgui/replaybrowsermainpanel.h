@@ -9,7 +9,7 @@
 
 #ifndef REPLAYBROWSER_MAIN_PANEL_H
 #define REPLAYBROWSER_MAIN_PANEL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

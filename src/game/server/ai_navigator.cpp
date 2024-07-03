@@ -56,7 +56,7 @@ ConVar ai_vehicle_avoidance("ai_vehicle_avoidance", "1", FCVAR_CHEAT );
 ConVar ai_debug_nav("ai_debug_nav", "0");
 #endif
 
-#ifdef DEBUG
+#if IsDebug()
 ConVar ai_test_nav_failure_handling("ai_test_nav_failure_handling", "0");
 int g_PathFailureCounter;
 int g_MoveFailureCounter;
@@ -69,7 +69,7 @@ int g_MoveFailureCounter;
 
 //-----------------------------------------------------------------------------
 
-#ifdef DEBUG
+#if IsDebug()
 bool g_fTestSteering = 0;
 #endif
 
@@ -1221,7 +1221,7 @@ float CAI_Navigator::GetPathTimeToGoal()
 
 AI_PathNode_t CAI_Navigator::GetNearestNode()
 {
-#ifdef WIN32
+#if IsWindows()
 	static_assert( (int)AIN_NO_NODE == NO_NODE );
 #endif
 	return (AI_PathNode_t)( GetPathfinder()->NearestNodeToNPC() );
@@ -1274,7 +1274,7 @@ void CAI_Navigator::OnNavFailed( bool bMovement )
 	if ( bMovement )
 		GetOuter()->OnMovementFailed();
 
-#ifdef DEBUG
+#if IsDebug()
 	if ( CurWaypointIsGoal() )
 	{
 		float flWaypointDist = ComputePathDistance( GetNavType(), GetLocalOrigin(), GetPath()->ActualGoalPosition() );
@@ -2723,7 +2723,7 @@ void CAI_Navigator::AdvancePath()
 // Purpose: 
 //-----------------------------------------------------------------------------
 
-#ifdef DEBUG
+#if IsDebug()
 ConVar ai_disable_path_simplification( "ai_disable_path_simplification","0" );
 #define IsSimplifyPathDisabled() ai_disable_path_simplification.GetBool()
 #else

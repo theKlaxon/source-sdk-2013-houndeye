@@ -7,7 +7,7 @@
 
 #ifndef CONSOLEDIALOG_H
 #define CONSOLEDIALOG_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

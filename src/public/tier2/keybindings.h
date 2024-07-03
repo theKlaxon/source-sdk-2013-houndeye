@@ -9,7 +9,7 @@
 #ifndef KEYBINDINGS_H
 #define KEYBINDINGS_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

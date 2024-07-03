@@ -6,7 +6,7 @@
 
 #ifndef ISTEAMUSERSTATS_H
 #define ISTEAMUSERSTATS_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

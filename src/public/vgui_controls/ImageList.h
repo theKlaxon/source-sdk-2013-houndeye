@@ -8,7 +8,7 @@
 #ifndef IMAGELIST_H
 #define IMAGELIST_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

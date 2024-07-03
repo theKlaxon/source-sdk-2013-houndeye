@@ -5,7 +5,7 @@
 //=============================================================================//
 #ifndef CL2CACHE_H
 #define CL2CACHE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

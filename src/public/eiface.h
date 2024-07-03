@@ -9,7 +9,7 @@
 #ifndef EIFACE_H
 #define EIFACE_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
@@ -67,7 +67,7 @@ typedef struct player_info_s player_info_t;
 // defines
 //-----------------------------------------------------------------------------
 
-#ifdef _WIN32
+#if IsWindows()
 #define DLLEXPORT __stdcall
 #else
 #define DLLEXPORT /* */

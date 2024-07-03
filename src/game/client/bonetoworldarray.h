@@ -9,7 +9,7 @@
 
 #include "tier0/tslist.h"
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 

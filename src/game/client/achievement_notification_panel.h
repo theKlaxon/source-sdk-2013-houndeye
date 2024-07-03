@@ -7,7 +7,7 @@
 
 #ifndef ACHIEVEMENT_NOTIFICATION_PANEL_H
 #define ACHIEVEMENT_NOTIFICATION_PANEL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

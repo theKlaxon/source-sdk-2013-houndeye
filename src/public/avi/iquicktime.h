@@ -10,7 +10,7 @@
 #ifndef IQUICKTIME_H
 #define IQUICKTIME_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

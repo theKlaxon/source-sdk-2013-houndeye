@@ -8,7 +8,7 @@
 #ifndef PROGRESSBOX_H
 #define PROGRESSBOX_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -3,7 +3,7 @@
 
 #include "Precomp.h"
 
-#ifdef _WIN32
+#if IsWindows()
 #include <windows.h>
 #endif
 #include <stdlib.h>
@@ -44,7 +44,7 @@ void MyFree(void *address)
   free(address);
 }
 
-#ifdef _WIN32
+#if IsWindows()
 
 void *MidAlloc(size_t size)
 {

@@ -6,7 +6,7 @@
 //=============================================================================//
 #ifndef ICHOREOEVENTCALLBACK_H
 #define ICHOREOEVENTCALLBACK_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -10,19 +10,19 @@
 #include <cstdarg>
 #include <cstdio>
 
-#if defined( POSIX )
+#if IsPosix()
 	#include <cctype>
 	#include <iconv.h>
 	#include <cstdlib>
 	#include <unistd.h>
 	#define _getcwd getcwd
-#elif defined( _WIN32 )
+#elif IsWindows()
 	#include <direct.h>
 	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
 #endif
 
-#if defined( _WIN32 )
+#if IsWindows()
 	#ifndef CP_UTF8
 		#define CP_UTF8 65001
 	#endif
@@ -657,9 +657,9 @@ int V_snwprintf( wchar_t* pDest, int maxLen, const wchar_t* pFormat, ... ) {
 	va_list marker;
 
 	va_start( marker, pFormat );
-	#ifdef _WIN32
+	#if IsWindows()
 		int len = _vsnwprintf( pDest, maxLen, pFormat, marker );
-	#elif POSIX
+	#elif IsPosix()
 		int len = vswprintf( pDest, maxLen, pFormat, marker );
 	#else
 		#error "define vsnwprintf type."
@@ -679,9 +679,9 @@ int V_snwprintf( wchar_t* pDest, int maxLen, const wchar_t* pFormat, ... ) {
 int V_vsnwprintf( wchar_t* pDest, int maxLen, const wchar_t* pFormat, va_list params ) {
 	Assert( maxLen > 0 );
 
-	#ifdef _WIN32
+	#if IsWindows()
 		int len = _vsnwprintf( pDest, maxLen, pFormat, params );
-	#elif POSIX
+	#elif IsPosix()
 		int len = vswprintf( pDest, maxLen, pFormat, params );
 	#else
 		#error "define vsnwprintf type."
@@ -707,9 +707,9 @@ int V_snprintf( char* pDest, int maxLen, const char* pFormat, ... ) {
 	va_list marker;
 
 	va_start( marker, pFormat );
-	#ifdef _WIN32
+	#if IsWindows()
 		int len = _vsnprintf( pDest, maxLen, pFormat, marker );
-	#elif POSIX
+	#elif IsPosix()
 		int len = vsnprintf( pDest, maxLen, pFormat, marker );
 	#else
 		#error "define vsnprintf type."
@@ -1208,7 +1208,7 @@ int _V_UCS2ToUnicode( const ucs2* pUCS2, wchar_t* pUnicode, int cubDestSizeInByt
 	AssertValidReadPtr( pUCS2 );
 
 	pUnicode[ 0 ] = 0;
-	#ifdef _WIN32
+	#if IsWindows()
 		int cchResult = V_wcslen( pUCS2 );
 		V_memcpy( pUnicode, pUCS2, cubDestSizeInBytes );
 	#else
@@ -1240,7 +1240,7 @@ int _V_UCS2ToUnicode( const ucs2* pUCS2, wchar_t* pUnicode, int cubDestSizeInByt
 // Purpose: Converts a wchar_t string into a UCS2 string -noop on windows
 //-----------------------------------------------------------------------------
 int _V_UnicodeToUCS2( const wchar_t* pUnicode, int cubSrcInBytes, char* pUCS2, int cubDestSizeInBytes ) {
-	#ifdef _WIN32
+	#if IsWindows()
 		// Figure out which buffer is smaller and convert from bytes to character
 		// counts.
 		int cchResult = std::min( static_cast<size_t>( cubSrcInBytes ) / sizeof( wchar_t ), cubDestSizeInBytes / sizeof( wchar_t ) );
@@ -1248,7 +1248,7 @@ int _V_UnicodeToUCS2( const wchar_t* pUnicode, int cubSrcInBytes, char* pUCS2, i
 		wcsncpy( pDest, pUnicode, cchResult );
 		// Make sure we NULL-terminate.
 		pDest[ cchResult - 1 ] = 0;
-	#elif defined( POSIX )
+	#elif IsPosix()
 		iconv_t conv_t = iconv_open( "UCS-2LE", "UTF-32LE" );
 		size_t cchResult = -1;
 		size_t nLenUnicde = cubSrcInBytes;
@@ -1278,10 +1278,10 @@ int _V_UCS2ToUTF8( const ucs2* pUCS2, char* pUTF8, int cubDestSizeInBytes ) {
 	AssertValidReadPtr( pUCS2 );
 
 	pUTF8[ 0 ] = 0;
-	#ifdef _WIN32
+	#if IsWindows()
 		// under win32 wchar_t == ucs2, sigh
 		int cchResult = WideCharToMultiByte( CP_UTF8, 0, pUCS2, -1, pUTF8, cubDestSizeInBytes, NULL, NULL );
-	#elif defined( POSIX )
+	#elif IsPosix()
 		iconv_t conv_t = iconv_open( "UTF-8", "UCS-2LE" );
 		size_t cchResult = -1;
 
@@ -1608,10 +1608,10 @@ void V_StripFilename( char* path ) {
 	path[ length ] = 0;
 }
 
-#ifdef _WIN32
+#if IsWindows()
 	#define CORRECT_PATH_SEPARATOR '\\'
 	#define INCORRECT_PATH_SEPARATOR '/'
-#elif POSIX
+#elif IsPosix()
 	#define CORRECT_PATH_SEPARATOR '/'
 	#define INCORRECT_PATH_SEPARATOR '\\'
 #endif
@@ -2013,7 +2013,7 @@ static bool CopyToMaxChars( char* pOut, int outSize, const char* pIn, int nChars
 void V_FixupPathName( char* pOut, size_t nOutLen, const char* pPath ) {
 	V_strncpy( pOut, pPath, nOutLen );
 	V_RemoveDotSlashes( pOut, CORRECT_PATH_SEPARATOR, true );
-	#ifdef WIN32
+	#if IsWindows()
 		V_strlower( pOut );
 	#endif
 }
@@ -2195,7 +2195,7 @@ void V_StrRight( const char* pStr, int nChars, char* pOut, int outSize ) {
 //-----------------------------------------------------------------------------
 void V_strtowcs( const char* pString, int nInSize, wchar_t* pWString, int nOutSizeInBytes ) {
 	Assert( nOutSizeInBytes >= sizeof( pWString[ 0 ] ) );
-	#ifdef _WIN32
+	#if IsWindows()
 		int nOutSizeInChars = nOutSizeInBytes / sizeof( pWString[ 0 ] );
 		int result = MultiByteToWideChar( CP_UTF8, 0, pString, nInSize, pWString, nOutSizeInChars );
 		// If the string completely fails to fit then MultiByteToWideChar will return 0.
@@ -2218,7 +2218,7 @@ void V_strtowcs( const char* pString, int nInSize, wchar_t* pWString, int nOutSi
 			// MultiByteToWideChar will only do that if nInSize includes the source null-terminator!
 			pWString[ result ] = 0;
 		}
-	#elif POSIX
+	#elif IsPosix()
 		if ( mbstowcs( pWString, pString, nOutSizeInBytes / sizeof( pWString[ 0 ] ) ) <= 0 ) {
 			*pWString = 0;
 		}
@@ -2226,7 +2226,7 @@ void V_strtowcs( const char* pString, int nInSize, wchar_t* pWString, int nOutSi
 }
 
 void V_wcstostr( const wchar_t* pWString, int nInSize, char* pString, int nOutSizeInChars ) {
-	#ifdef _WIN32
+	#if IsWindows()
 		int result = WideCharToMultiByte( CP_UTF8, 0, pWString, nInSize, pString, nOutSizeInChars, NULL, NULL );
 		// If the string completely fails to fit then MultiByteToWideChar will return 0.
 		// If the string exactly fits but with no room for a null-terminator then MultiByteToWideChar
@@ -2247,7 +2247,7 @@ void V_wcstostr( const wchar_t* pWString, int nInSize, char* pString, int nOutSi
 			// MultiByteToWideChar will only do that if nInSize includes the source null-terminator!
 			pString[ result ] = '\0';
 		}
-	#elif POSIX
+	#elif IsPosix()
 		if ( wcstombs( pString, pWString, nOutSizeInChars ) <= 0 ) {
 			*pString = '\0';
 		}
@@ -2469,7 +2469,7 @@ size_t Q_URLDecodeRaw( char* pchDecodeDest, int nDecodeDestLen, const char* pchE
 	return Q_URLDecodeInternal( pchDecodeDest, nDecodeDestLen, pchEncodedSource, nEncodedSourceLen, false );
 }
 
-#if defined( LINUX )
+#if IsLinux()
 	extern "C" void qsort_s( void* base, size_t num, size_t width, int ( *compare )( void*, const void*, const void* ), void* context );
 #endif
 

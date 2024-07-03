@@ -6,7 +6,7 @@
 
 #ifndef TOOLS_MINIDUMP_H
 #define TOOLS_MINIDUMP_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

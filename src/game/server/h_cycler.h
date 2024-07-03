@@ -6,7 +6,7 @@
 
 #ifndef H_CYCLER_H
 #define H_CYCLER_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

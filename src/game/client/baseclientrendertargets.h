@@ -17,7 +17,7 @@
 //=============================================================================//
 #ifndef CLIENTRENDERTARTETS_H_
 #define CLIENTRENDERTARTETS_H_
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

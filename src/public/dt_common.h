@@ -9,7 +9,7 @@
 #ifndef DATATABLE_COMMON_H
 #define DATATABLE_COMMON_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif	
 
@@ -18,7 +18,7 @@
 #include "tier1/strtools.h"
 #include <stddef.h>
 
-#ifdef LINUX
+#if IsLinux()
 #undef offsetof
 #define offsetof(s,m)	(size_t)&(((s *)0)->m)
 #endif

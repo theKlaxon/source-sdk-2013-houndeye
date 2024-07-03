@@ -10,7 +10,7 @@
 #include "simtimer.h"
 #include "ai_component.h"
 
-#if defined( _WIN32 )
+#if IsWindows()
 #pragma once
 #endif
 
@@ -75,7 +75,7 @@ public:
 
 	bool TargetMoved( CBaseEntity *pEntity )
 	{
-		if ( IsMarkSet() && pEntity != NULL )
+		if ( IsMarkSet() && pEntity != nullptr )
 		{
 			float distance = ( m_vMark - pEntity->GetAbsOrigin() ).Length();
 			if ( distance > m_flMarkTolerance )
@@ -98,10 +98,7 @@ public:
 	Vector GetMarkPos() { return m_vMark; }
 	
 private:
-	enum
-	{
-		NO_MARK = -1
-	};
+	static const constexpr auto NO_MARK = -1.f;
 	
 	Vector			   m_vMark;
 	float			   m_flMarkTolerance;

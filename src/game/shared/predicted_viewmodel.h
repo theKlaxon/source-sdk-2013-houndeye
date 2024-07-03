@@ -7,7 +7,7 @@
 
 #ifndef PREDICTED_VIEWMODEL_H
 #define PREDICTED_VIEWMODEL_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

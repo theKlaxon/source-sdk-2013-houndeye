@@ -19,7 +19,7 @@
 #include <vgui/ISystem.h>
 #include <filesystem.h>
 
-#ifdef WIN32
+#if IsWindows()
 #include <direct.h>
 #include <stdio.h>
 #include <io.h>

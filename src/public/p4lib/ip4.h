@@ -6,7 +6,7 @@
 
 #ifndef IP4_H
 #define IP4_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

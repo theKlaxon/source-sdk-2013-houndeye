@@ -9,13 +9,13 @@
 #ifndef PIXELWRITER_H
 #define PIXELWRITER_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
-#ifdef _WIN32
+#if IsWindows()
 #define FORCEINLINE_PIXEL ALWAYS_INLINE
-#elif POSIX
+#elif IsPosix()
 #define FORCEINLINE_PIXEL inline
 #else
 #error "implement me"

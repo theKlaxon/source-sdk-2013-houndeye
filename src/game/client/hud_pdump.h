@@ -6,7 +6,7 @@
 
 #ifndef HUD_PDUMP_H
 #define HUD_PDUMP_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

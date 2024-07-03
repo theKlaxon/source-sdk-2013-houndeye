@@ -7,7 +7,7 @@
 
 #ifndef C_AI_BASENPC_H
 #define C_AI_BASENPC_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

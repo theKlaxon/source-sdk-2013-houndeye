@@ -443,7 +443,7 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 			gun_angles[PITCH] = -max_gun_pitch; 
 		}
 
-#ifdef WIN32 // ShouldFlipViewModel comes up unresolved on osx? Mabye because it's defined inline? fixme
+#if IsWindows() // ShouldFlipViewModel comes up unresolved on osx? Mabye because it's defined inline? fixme
 		if( ShouldFlipViewModel() ) 
 		{
 			gun_angles[YAW] *= -1.0f;

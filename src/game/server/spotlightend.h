@@ -10,7 +10,7 @@
 #ifndef	SPOTLIGHTEND_H
 #define	SPOTLIGHTEND_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

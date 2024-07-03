@@ -6,7 +6,7 @@
 
 #ifndef VIEWPORT_PANEL_NAMES_H
 #define VIEWPORT_PANEL_NAMES_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

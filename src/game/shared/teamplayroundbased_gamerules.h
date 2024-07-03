@@ -6,7 +6,7 @@
 
 #ifndef TEAMPLAYROUNDBASED_GAMERULES_H
 #define TEAMPLAYROUNDBASED_GAMERULES_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

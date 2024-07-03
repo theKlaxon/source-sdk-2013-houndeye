@@ -8,7 +8,7 @@
 #ifndef PROPERTYDIALOG_H
 #define PROPERTYDIALOG_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

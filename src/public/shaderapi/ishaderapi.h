@@ -9,7 +9,7 @@
 #ifndef ISHADERAPI_H
 #define ISHADERAPI_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

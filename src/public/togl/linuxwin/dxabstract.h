@@ -1418,7 +1418,7 @@ TOGL_INTERFACE HRESULT D3DXCompileShader(
 #else
 
 	//USE_ACTUAL_DX
-	#ifndef WIN32
+	#if !IsWindows()
 	#error sorry man
 	#endif
 

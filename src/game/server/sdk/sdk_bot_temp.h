@@ -7,7 +7,7 @@
 
 #ifndef SDK_BOT_TEMP_H
 #define SDK_BOT_TEMP_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

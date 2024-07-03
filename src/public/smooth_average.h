@@ -6,7 +6,7 @@
 
 #ifndef SMOOTH_AVERAGE_H
 #define SMOOTH_AVERAGE_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

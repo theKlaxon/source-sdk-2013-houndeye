@@ -5,10 +5,10 @@
 //=============================================================================//
 
 
-#if defined(_WIN32)
+#if IsWindows()
 #include "winlite.h"
 extern HMODULE win32DLLHandle;
-#elif defined(POSIX)
+#elif IsPosix()
 #include <stdio.h>
 #include "tier0/dbg.h"
 #endif
@@ -18,9 +18,9 @@ extern HMODULE win32DLLHandle;
 
 void *GetGameModuleHandle()
 {
-#if defined(_WIN32)
+#if IsWindows()
 	return (void *)win32DLLHandle;
-#elif defined(POSIX)
+#elif IsPosix()
 	Assert(0);
 	return NULL; // NOT implemented
 #else

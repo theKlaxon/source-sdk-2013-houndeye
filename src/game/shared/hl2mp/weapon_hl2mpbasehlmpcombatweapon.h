@@ -1,7 +1,7 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 #ifndef WEAPON_BASEHL2MPCOMBATWEAPON_SHARED_H
 #define WEAPON_BASEHL2MPCOMBATWEAPON_SHARED_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

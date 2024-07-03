@@ -3,7 +3,7 @@
 #include "map_shared.h"
 #include "fgdlib/fgdlib.h"
 #include "manifest.h"
-#if defined( _WIN32 )
+#if IsWindows()
 	#include <winbase.h>
 #else
 	#include <unistd.h>

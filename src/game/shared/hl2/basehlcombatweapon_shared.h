@@ -8,7 +8,7 @@
 
 #ifndef BASEHLCOMBATWEAPON_SHARED_H
 #define BASEHLCOMBATWEAPON_SHARED_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

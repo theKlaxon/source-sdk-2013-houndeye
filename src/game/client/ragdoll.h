@@ -10,7 +10,7 @@
 #ifndef RAGDOLL_H
 #define RAGDOLL_H
 
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

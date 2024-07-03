@@ -7,7 +7,7 @@
 
 #ifndef AI_ACTIVITY_H
 #define AI_ACTIVITY_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

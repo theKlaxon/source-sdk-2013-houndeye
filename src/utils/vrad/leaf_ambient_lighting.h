@@ -6,7 +6,7 @@
 
 #ifndef LEAF_AMBIENT_LIGHTING_H
 #define LEAF_AMBIENT_LIGHTING_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -6,7 +6,7 @@
 
 #ifndef AI_CRITERIA_H
 #define AI_CRITERIA_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 

@@ -7,7 +7,7 @@
 
 #ifndef MAPDATA_SHARED_H
 #define MAPDATA_SHARED_H
-#ifdef _WIN32
+#if IsWindows()
 #pragma once
 #endif
 
