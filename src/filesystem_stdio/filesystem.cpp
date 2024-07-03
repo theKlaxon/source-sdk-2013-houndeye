@@ -318,10 +318,21 @@ CSysModule* CFileSystemStdio::LoadModule( const char* pFileName, const char* pPa
 void CFileSystemStdio::UnloadModule( CSysModule * pModule ) { AssertUnreachable(); }
 
 // ---- File searching operations -----
-const char* CFileSystemStdio::FindFirst( const char* pWildCard, FileFindHandle_t* pHandle ) { AssertMsg( false, "FindFirst: %s, %p", pWildCard, pHandle ); return {}; }
-const char* CFileSystemStdio::FindNext( FileFindHandle_t handle ) { AssertUnreachable(); return {}; }
-bool CFileSystemStdio::FindIsDirectory( FileFindHandle_t handle ) { AssertUnreachable(); return {}; }
-void CFileSystemStdio::FindClose( FileFindHandle_t handle ) { AssertUnreachable(); }
+const char* CFileSystemStdio::FindFirst( const char* pWildCard, FileFindHandle_t* pHandle ) {
+	AssertMsg( false, "FindFirst: %s, %p", pWildCard, pHandle );
+	return {};
+}
+const char* CFileSystemStdio::FindNext( FileFindHandle_t handle ) {
+	AssertUnreachable();
+	return {};
+}
+bool CFileSystemStdio::FindIsDirectory( FileFindHandle_t handle ) {
+	AssertUnreachable();
+	return {};
+}
+void CFileSystemStdio::FindClose( FileFindHandle_t handle ) {
+	AssertUnreachable();
+}
 
 const char* CFileSystemStdio::FindFirstEx( const char* pWildCard, const char* pPathID, FileFindHandle_t* pHandle ) { AssertUnreachable(); return {}; }
 

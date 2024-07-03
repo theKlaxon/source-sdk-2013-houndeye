@@ -6,9 +6,8 @@
 
 class CPlainSystemClient : public ISystemClient {
 public:
-	// NOTE: This is PRIVATE
 	CPlainSystemClient( int id, std::string absolute, const char* path );
-	static auto Open( int id, std::string absolute, const char* path ) -> std::shared_ptr<ISystemClient>;
+	static auto Open( int id, const std::string& absolute, const char* path ) -> std::shared_ptr<ISystemClient>;
 	[[nodiscard]]
 	auto GetNativePath() const -> const char* override;
 	[[nodiscard]]
@@ -27,7 +26,7 @@ public: // FS interaction
 	auto Remove( const FileDescriptor* handle ) -> void override;
 	auto Stat  ( const FileDescriptor* handle ) -> StatData override;
 private:
-	int m_iId;
+	const int m_iId;
 	const char* m_szNativePath;
-	std::string m_szNativeAbsolutePath;
+	const std::string m_szNativeAbsolutePath;
 };

@@ -58,7 +58,8 @@ public: // IFileSystem
 	// Steam operations
 	//--------------------------------------------------------
 
-	[[nodiscard]] bool IsSteam() const override;
+	[[nodiscard]]
+	bool IsSteam() const override;
 
 	// Supplying an extra app id will mount this app in addition
 	// to the one specified in the environment variable "steamappid"
@@ -412,7 +413,6 @@ private:
 			this->m_ClientIDs = other.m_ClientIDs;
 			this->m_bRequestOnly = other.m_bRequestOnly;
 		}
-
 		~SearchPath() {
 			for ( auto& system : this->m_Clients )
 				system->Shutdown();

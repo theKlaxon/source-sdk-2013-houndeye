@@ -3,22 +3,19 @@
 //
 #include "plainsystemclient.hpp"
 
-#include <cstdio>
 #include <fcntl.h>
 #include <filesystem>
+#include <utility>
 
 #include "dbg.h"
 
-CPlainSystemClient::CPlainSystemClient( int id, std::string absolute, const char* path ) {
-	this->m_iId = id;
-	this->m_szNativePath = path;
-	this->m_szNativeAbsolutePath = std::move( absolute );
-}
-auto CPlainSystemClient::Open( int id, std::string absolute, const char* path ) -> std::shared_ptr<ISystemClient> {
+CPlainSystemClient::CPlainSystemClient( int id, std::string absolute, const char* path )
+	: m_iId( id ), m_szNativePath( path ), m_szNativeAbsolutePath( std::move( absolute ) ) { }
+auto CPlainSystemClient::Open( int id, const std::string& absolute, const char* path ) -> std::shared_ptr<ISystemClient> {
 	if (! std::filesystem::exists( absolute ) )
 		return {};
-
-	return std::make_shared<CPlainSystemClient>( id, std::move( absolute ), path );
+	fopen( "", "" );
+	return std::make_shared<CPlainSystemClient>( id, absolute , path );
 }
 auto CPlainSystemClient::GetNativePath() const -> const char* {
 	return this->m_szNativePath;
@@ -35,10 +32,11 @@ auto CPlainSystemClient::Shutdown() -> void { }
 auto CPlainSystemClient::Flush( const FileDescriptor* desc ) -> bool {
 	AssertFatalMsg( desc, "Was given a `NULL` file handle!" );
 
-	return fflush( reinterpret_cast<FILE*>( desc->m_Handle ) ) == 0;
+	AssertUnreachable();
+	return {};
 }
 auto CPlainSystemClient::Walk( uint16_t nwname, const char* wname ) -> void {
-
+	readdir(  )
 }
 auto CPlainSystemClient::Open( const char* path, OpenMode mode ) -> FileDescriptor* {
 	AssertFatalMsg( path, "Was given a `NULL` file path!" );
@@ -85,13 +83,13 @@ auto CPlainSystemClient::Read( const FileDescriptor* desc, void* buffer, uint32_
 	AssertFatalMsg( desc, "Was given a `NULL` file handle!" );
 	AssertFatalMsg( buffer, "Was given a `NULL` buffer ptr!" );
 
-	return pread64( static_cast<int>( desc->m_Handle ), buffer, count, desc->m_Offset );
+	return pread64( static_cast<int>( desc->m_Handle ), buffer, count, static_cast<__off64_t>( desc->m_Offset ) );
 }
 auto CPlainSystemClient::Write( const FileDescriptor* desc, void const* buffer, uint32_t count ) -> int32_t {
 	AssertFatalMsg( desc, "Was given a `NULL` file handle!" );
 	AssertFatalMsg( buffer, "Was given a `NULL` buffer ptr!" );
 
-	return pwrite64( static_cast<int>( desc->m_Handle ), buffer, count, desc->m_Offset );
+	return pwrite64( static_cast<int>( desc->m_Handle ), buffer, count, static_cast<__off64_t>( desc->m_Offset ) );
 }
 auto CPlainSystemClient::Remove( const FileDescriptor* desc ) -> void {
 }
