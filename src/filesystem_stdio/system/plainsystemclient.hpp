@@ -17,14 +17,14 @@ public:
 	auto Shutdown() -> void override;
 public: // FS interaction
 	auto Flush ( const FileDescriptor* handle ) -> bool override;
-	auto Walk  ( uint16_t nwname, const char* wname ) -> void override;
+	auto Walk  ( const FileDescriptor* desc, const WalkEntry*& entry ) -> void override;
 	auto Open  ( const char* path, OpenMode mode ) -> FileDescriptor* override;
 	auto Close ( const FileDescriptor* handle ) -> void override;
-	auto Create( const char* path, dirmode_t perm, OpenMode mode ) -> FileDescriptor* override;
+	auto Create( const char* path, FileType type, OpenMode mode ) -> FileDescriptor* override;
 	auto Read  ( const FileDescriptor* handle, void* buffer, uint32_t count ) -> int32_t override;
 	auto Write ( const FileDescriptor* handle, void const* buffer, uint32_t count ) -> int32_t override;
 	auto Remove( const FileDescriptor* handle ) -> void override;
-	auto Stat  ( const FileDescriptor* handle ) -> StatData override;
+	auto Stat  ( const FileDescriptor* handle ) -> std::optional<StatData> override;
 private:
 	const int m_iId;
 	const char* m_szNativePath;

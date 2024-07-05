@@ -2,7 +2,6 @@
 // Created by ENDERZOMBI102 on 13/02/2024.
 //
 #include "basefilesystem.hpp"
-
 #include <cstdio>
 #if IsPosix()
 	#include <sys/stat.h>

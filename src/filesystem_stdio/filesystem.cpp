@@ -2,7 +2,6 @@
 // Created by ENDERZOMBI102 on 22/02/2024.
 //
 #include "platform.h"
-
 #if IsWindows()
 	#include <direct.h>
 #endif
@@ -137,7 +136,7 @@ void CFileSystemStdio::Close( FileHandle_t file ) {
 
 void CFileSystemStdio::Seek( FileHandle_t file, int pos, FileSystemSeek_t seekType ) {
 	auto desc{ const_cast<FileDescriptor*>( static_cast<const FileDescriptor*>( file ) ) };
-	auto size{ desc->m_System.lock()->Stat( desc ).length };
+	auto size{ desc->m_System.lock()->Stat( desc )->m_Length };
 
 	switch ( seekType ) {
 		case FILESYSTEM_SEEK_CURRENT:
@@ -152,9 +151,40 @@ void CFileSystemStdio::Seek( FileHandle_t file, int pos, FileSystemSeek_t seekTy
 			break;
 	}
 }
-unsigned int CFileSystemStdio::Tell( FileHandle_t file ) { AssertUnreachable(); return {}; }
-unsigned int CFileSystemStdio::Size( FileHandle_t file ) { AssertUnreachable(); return {}; }
-unsigned int CFileSystemStdio::Size( const char* pFileName, const char* pPathID ) { AssertUnreachable(); return {}; }
+unsigned int CFileSystemStdio::Tell( FileHandle_t file ) {
+	auto desc{ static_cast<FileDescriptor*>( file ) };
+
+	return static_cast<int32>( desc->m_Offset );
+}
+unsigned int CFileSystemStdio::Size( FileHandle_t file ) {
+	// if we already know the size, just return it
+	auto desc{ static_cast<FileDescriptor*>( file ) };
+	if ( desc->m_Size != -1 )
+		return desc->m_Size;
+
+	// stat the file, "handle" error
+	auto statMaybe{ desc->m_System.lock()->Stat( desc ) };
+	if (! statMaybe ) {
+		return -1;
+	}
+
+	// save size and return it
+	desc->m_Size = static_cast<int64>( statMaybe.value().m_Length );
+	return desc->m_Size;
+}
+unsigned int CFileSystemStdio::Size( const char* pFileName, const char* pPathID ) {
+	// open file
+	auto desc{ static_cast<FileDescriptor*>( Open( pFileName, "r", pPathID ) ) };
+
+	// get size
+	auto size{ Size( desc ) };
+
+	// close file
+	Close( desc );
+
+	// return size
+	return size;
+}
 
 void CFileSystemStdio::Flush( FileHandle_t file ) { AssertUnreachable(); }
 bool CFileSystemStdio::Precache( const char* pFileName, const char* pPathID ) { AssertUnreachable(); return {}; }

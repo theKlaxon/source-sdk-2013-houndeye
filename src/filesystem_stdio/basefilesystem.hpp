@@ -2,7 +2,6 @@
 // Created by ENDERZOMBI102 on 13/02/2024.
 //
 #pragma once
-
 #include "filesystem.h"
 
 class CBaseFileSystemStdio : public IBaseFileSystem {
