@@ -51,23 +51,23 @@ static constexpr auto parseOpenMode( const char *pMode ) -> OpenMode {
 // ---------------
 // AppSystem
 // ---------------
-bool CFileSystemStdio::Connect( CreateInterfaceFn factory ) {
+auto CFileSystemStdio::Connect( CreateInterfaceFn factory ) -> bool {
 	return true;
 }
-void CFileSystemStdio::Disconnect() { }
-void* CFileSystemStdio::QueryInterface( const char* pInterfaceName ) {
+auto CFileSystemStdio::Disconnect() -> void { }
+auto CFileSystemStdio::QueryInterface( const char* pInterfaceName ) -> void* {
 	if ( strcmp( pInterfaceName, FILESYSTEM_INTERFACE_VERSION ) == 0 )
 		return &g_FullFileSystem;
 
 	return nullptr;
 }
-InitReturnVal_t CFileSystemStdio::Init() {
+auto CFileSystemStdio::Init() -> InitReturnVal_t {
 	if ( this->m_bInitialized )
 		return InitReturnVal_t::INIT_OK;
 
 	return InitReturnVal_t::INIT_OK;
 }
-void CFileSystemStdio::Shutdown() {
+auto CFileSystemStdio::Shutdown() -> void {
 	FileDescriptor::CleanupArena();
 }
 
@@ -279,7 +279,6 @@ void CFileSystemStdio::RemoveAllSearchPaths() {
 	this->m_SearchPaths.clear();
 }
 
-// TODO: Is this the correct behavior?
 void CFileSystemStdio::RemoveSearchPaths( const char* szPathID ) {
 	// is it a real search path?
 	if (! this->m_SearchPaths.contains( szPathID ) )
