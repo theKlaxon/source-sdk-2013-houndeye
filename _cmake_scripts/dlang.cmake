@@ -5,7 +5,7 @@ set( LIBD_RUNTIME_NAME "${CMAKE_SHARED_LIBRARY_PREFIX}druntime-ldc-shared${CMAKE
 
 function( setup_dlang )
 	# some people might not want to use D
-	if ( DEFINED NO_DLANG )
+	if ( NO_DLANG )
 		return()
 	endif ()
 
@@ -27,14 +27,13 @@ function( add_dlang_project )
 	cmake_parse_arguments( DLP "" "NAMED;IN" "" ${ARGN} )
 
 	# some people might not want to use D
-	if ( DEFINED NO_DLANG )
+	if ( NO_DLANG )
+		# we still need to add a target, else stuff depending on it will not work
+		add_custom_target( ${DLP_NAMED} COMMAND "" DEPENDS USES_TERMINAL )
 		return()
 	endif ()
 
 	# add D target
-	if ( NOT DEFINED "LDC2_RUNTIME_ROOT" )
-		setup_dlang()
-	endif ()
 	add_custom_target( ${DLP_NAMED}
 		COMMAND
 			dub build --quiet --arch=x86
