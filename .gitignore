@@ -3,6 +3,10 @@
 build/
 cmake-*/
 .dub/
+.vs/
+
+# CMake
+CMakeUserPresets.json
 
 # CLion
 .idea
