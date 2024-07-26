@@ -70,6 +70,7 @@ set( MSVC_C_AND_CXX_COMPILE_OPTIONS
 	/Zc:__cplusplus
 	/Zc:preprocessor
 	/Zc:inline
+	/FI${CMAKE_CURRENT_LIST_DIR}/defines.hpp
 
 	# We'll be permissive for now
 #	/permissive-

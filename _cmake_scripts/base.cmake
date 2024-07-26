@@ -45,8 +45,8 @@ add_compile_definitions(
 # `Is*` "function" defines
 add_compile_options(
 	"-DIsWindows()=$<BOOL:${WIN32}>"
-	"-DIsLinux()=$<BOOL:${LINUX}>"
 	"-DIsPosix()=$<BOOL:${IS_POSIX}>"
+	"-DIsLinux()=$<BOOL:${LINUX}>"
 	"-DIsRetail()=$<BOOL:${RETAIL}>"
 	"-DIsDebug()=$<BOOL:$<CONFIG:Debug>>"
 	"-DIsRelease()=$<BOOL:$<CONFIG:Release>>"
