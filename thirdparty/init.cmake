@@ -33,8 +33,6 @@ set( SDL_SENSOR OFF )
 set( SDL_LOCALE OFF )
 set( SDL_MISC   OFF )
 submodule( SDL "SDL" )
-# ----- VPKEdit -----
-set( VPKEDIT_BUILD_CLI OFF )
-set( VPKEDIT_BUILD_GUI OFF )
-set( VPKEDIT_BUILD_INSTALLER OFF )
-submodule( VPKEdit "VPKEdit" )
+# ----- SourcePP -----
+set( SOURCEPP_BUILD_C_WRAPPERS OFF CACHE INTERNAL "" )
+submodule( SourcePP "sourcepp" )

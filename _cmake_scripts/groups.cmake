@@ -77,6 +77,7 @@ elseif (${BUILD_GROUP} STREQUAL "compilers")
 	include("${SRCDIR}/utils/vvis/vvis_dll.cmake")
 	include("${SRCDIR}/utils/vvis_launcher/vvis_launcher.cmake")
 	include("${SRCDIR}/filesystem_stdio/filesystem_stdio.cmake")
+
 elseif (${BUILD_GROUP} STREQUAL "shaders")
 	include("${SRCDIR}/tier0/tier0.cmake")
 	include("${SRCDIR}/mathlib/mathlib.cmake")

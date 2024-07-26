@@ -2,27 +2,47 @@
     "version": 6,
     "cmakeMinimumRequired": {
         "major": 3,
-        "minor": 23,
+        "minor": 27,
         "patch": 0
     },
     "include": [ ],
     "configurePresets": [
         {
             "name": "linux",
+            "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/_cmake_scripts/toolchain/x86-linux.cmake"
             }
         },
         {
             "name": "windows-gnu",
+            "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/_cmake_scripts/toolchain/x86-windows-gnu.cmake"
             }
         },
         {
-            "name": "windows",
+            "name": "windows-msvc",
+            "hidden": true,
+            "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/_cmake_scripts/toolchain/x86-windows.cmake"
+            }
+        },
+        {
+            "name": "windows-msvc-everything",
+            "hidden": false,
+            "inherits": [ "windows-msvc" ],
+            "cacheVariables": {
+                "BUILD_GROUP": "everything"
+            }
+        },
+        {
+            "name": "windows-msvc-game",
+            "hidden": false,
+            "inherits": [ "windows-msvc" ],
+            "cacheVariables": {
+                "BUILD_GROUP": "game"
             }
         }
     ]

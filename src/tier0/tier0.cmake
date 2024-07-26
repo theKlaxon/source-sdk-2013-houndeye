@@ -57,10 +57,12 @@ set( TIER0_SOURCE_FILES
 
 add_library( tier02 SHARED ${TIER0_SOURCE_FILES} )
 target_compile_definitions( tier02
-	PRIVATE TIER0_DLL_EXPORT
+	PRIVATE
+		TIER0_DLL_EXPORT
 )
 target_link_libraries( tier02
-	PRIVATE SDL3-shared
+	PRIVATE
+		SDL3::SDL3-shared
 )
 link_to_bin( TARGET tier02 )
 declare_library( TARGET tier02 )

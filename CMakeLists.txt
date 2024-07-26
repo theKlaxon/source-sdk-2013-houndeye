@@ -1,5 +1,8 @@
-cmake_minimum_required(VERSION 3.27 FATAL_ERROR)
+cmake_minimum_required( VERSION 3.27 FATAL_ERROR )
 
+if( CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR )
+	message( FATAL_ERROR "Prevented in-tree build. Please create a `build` directory and run \"cmake -S ${CMAKE_SOURCE_DIR} -B .\" from there" )
+endif()
 if ( APPLE )
 	message( FATAL_ERROR "Aurora Source has discontinued OSX support, please use either Windows or Linux." )
 endif()
@@ -16,7 +19,7 @@ project(
 		VERSION 0.1.0
 		DESCRIPTION "A \"branch\" of the source engine, forked off SDK 2013's codebase."
 		HOMEPAGE_URL "https://github.com/ENDERZOMBI102/Aurora-Source"
-		LANGUAGES CXX C
+		LANGUAGES CXX C ASM
 )
 
 # For some reason, checking if CMAKE_BUILD_TYPE is defined is unreliable
