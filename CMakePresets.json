@@ -10,22 +10,19 @@
         {
             "name": "linux",
             "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/_cmake_scripts/toolchain/x86-linux.cmake",
-                "CUDAToolkit_ROOT": "$ENV{CUDA_ROOT}"
+                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/_cmake_scripts/toolchain/x86-linux.cmake"
             }
         },
         {
             "name": "windows-gnu",
             "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/_cmake_scripts/toolchain/x86-windows-gnu.cmake",
-                "CUDAToolkit_ROOT":  "$ENV{CUDA_ROOT}"
+                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/_cmake_scripts/toolchain/x86-windows-gnu.cmake"
             }
         },
         {
             "name": "windows",
             "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/_cmake_scripts/toolchain/x86-windows.cmake",
-                "CUDAToolkit_ROOT":  "$ENV{CUDA_ROOT}"
+                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/_cmake_scripts/toolchain/x86-windows.cmake"
             }
         }
     ]
