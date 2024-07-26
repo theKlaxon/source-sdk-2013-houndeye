@@ -5,8 +5,6 @@ if ( MSVC_TOOLSET_VERSION LESS 140 )
 	message( FATAL_ERROR "MSVC must use toolset 140 (2015) or greater" )
 endif()
 
-enable_language( ASM_MASM )  # Fix bug in cmake not knowing how to handle objects
-
 # No frame pointer optimization
 set( NOFPO 1 )
 
@@ -70,7 +68,7 @@ set( MSVC_C_AND_CXX_COMPILE_OPTIONS
 	/Zc:__cplusplus
 	/Zc:preprocessor
 	/Zc:inline
-	/FI${CMAKE_CURRENT_LIST_DIR}/defines.hpp
+	/FI${CMAKE_CURRENT_LIST_DIR}/defines.hpp # because msvc is fucking idiotic
 
 	# We'll be permissive for now
 #	/permissive-

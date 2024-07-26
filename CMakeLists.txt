@@ -19,7 +19,7 @@ project(
 		VERSION 0.1.0
 		DESCRIPTION "A \"branch\" of the source engine, forked off SDK 2013's codebase."
 		HOMEPAGE_URL "https://github.com/ENDERZOMBI102/Aurora-Source"
-		LANGUAGES CXX C ASM
+		LANGUAGES CXX C ASM ASM_MASM
 )
 
 # For some reason, checking if CMAKE_BUILD_TYPE is defined is unreliable
@@ -39,10 +39,10 @@ set(CMAKE_INSTALL_RPATH $ORIGIN)
 set(CMAKE_BUILD_WITH_INSTALL_RPATH 1)
 
 # This is a way to emulate groups.vgc
-set(BUILD_GROUP "game" CACHE STRING "Build Group")
+set( BUILD_GROUP "game" CACHE STRING "Build Group" )
 
 # For the CMake GUIs that support a combobox list
-set_property(CACHE BUILD_GROUP PROPERTY STRINGS
+set_property( CACHE BUILD_GROUP PROPERTY STRINGS
 	"everything"
 	"game"
 	"shaders"

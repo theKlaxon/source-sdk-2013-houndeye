@@ -16,7 +16,7 @@ elseif ( UNIX )
 	if ( LINUX )
 		set( IS_LINUX 1 )
 	endif()
-	set( CMAKE_IMPORT_LIBRARY_SUFFIX ".so" )
+	set( CMAKE_IMPORT_LIBRARY_SUFFIX ".a" )
 endif()
 
 option( RETAIL "Build in retail mode" OFF )
@@ -43,12 +43,23 @@ add_compile_definitions(
 )
 
 # `Is*` "function" defines
-add_compile_options(
-	"-DIsWindows()=$<BOOL:${WIN32}>"
-	"-DIsPosix()=$<BOOL:${IS_POSIX}>"
-	"-DIsLinux()=$<BOOL:${LINUX}>"
-	"-DIsRetail()=$<BOOL:${RETAIL}>"
-	"-DIsDebug()=$<BOOL:$<CONFIG:Debug>>"
-	"-DIsRelease()=$<BOOL:$<CONFIG:Release>>"
-)
-
+if ( MSVC )
+	# msvc doesn't support providing "function" defines via cli...
+	add_compile_options(
+		"-DIsWindows=$<BOOL:${WIN32}>"
+		"-DIsPosix=$<BOOL:${IS_POSIX}>"
+		"-DIsLinux=$<BOOL:${LINUX}>"
+		"-DIsRetail=$<BOOL:${RETAIL}>"
+		"-DIsDebug=$<BOOL:$<CONFIG:Debug>>"
+		"-DIsRelease=$<BOOL:$<CONFIG:Release>>"
+	)
+else ()
+	add_compile_options(
+		"-DIsWindows()=$<BOOL:${WIN32}>"
+		"-DIsPosix()=$<BOOL:${IS_POSIX}>"
+		"-DIsLinux()=$<BOOL:${LINUX}>"
+		"-DIsRetail()=$<BOOL:${RETAIL}>"
+		"-DIsDebug()=$<BOOL:$<CONFIG:Debug>>"
+		"-DIsRelease()=$<BOOL:$<CONFIG:Release>>"
+	)
+endif ()

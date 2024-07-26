@@ -11,7 +11,7 @@ set( CMAKE_AR "zig-lib" )
 set( CMAKE_RC_COMPILER "zig-rc" )
 set( CMAKE_RANLIB "zig-ranlib" )
 
-set( CMAKE_C_COMPILER "zig-cc" )
+set( CMAKE_C_COMPILER "zig-cxx" )
 set( CMAKE_C_COMPILER_TARGET "x86-windows-gnu" )
 set( CMAKE_C_FLAGS "-fms-compatibility" )
 set( CMAKE_CXX_COMPILER "zig-cxx" )
