@@ -14,7 +14,7 @@ message( NOTICE "Running CMake v${CMAKE_VERSION}" )
 project(
 	AuroraSource
 		VERSION 0.1.0
-		DESCRIPTION "A fork of the Source SDK 2013 with many things"
+		DESCRIPTION "A \"branch\" of the source engine, forked off SDK 2013's codebase."
 		HOMEPAGE_URL "https://github.com/ENDERZOMBI102/Aurora-Source"
 		LANGUAGES CXX C
 )
