@@ -10,8 +10,6 @@ add_compile_definitions(
 
 if ( MSVC )
 	include( "${CMAKE_CURRENT_LIST_DIR}/msvc_base.cmake" )
-elseif ( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" )
-	add_compile_options( "-fms-extensions" )
 endif()
 
 list( APPEND ADDITIONAL_SOURCES_EXE
