@@ -4,7 +4,7 @@
 #ifndef __7Z_FILE_H
 #define __7Z_FILE_H
 
-#if IsWindows()
+#ifdef _WIN32
 #define USE_WINDOWS_FILE
 #endif
 

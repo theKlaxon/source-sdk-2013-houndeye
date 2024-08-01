@@ -1,118 +1,92 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
-
-#ifndef RANGECHECKEDVAR_H
-#define RANGECHECKEDVAR_H
-#if IsWindows()
 #pragma once
-#endif
-
-
+#include "mathlib/vector.h"
 #include "tier0/dbg.h"
 #include "tier0/threadtools.h"
-#include "mathlib/vector.h"
-#include <float.h>
+#include <cfloat>
 
 
 // Use this to disable range checks within a scope.
-class CDisableRangeChecks
-{
+class CDisableRangeChecks {
 public:
 	CDisableRangeChecks();
 	~CDisableRangeChecks();
 };
 
 
-template< class T >
-inline void RangeCheck( const T &value, int minValue, int maxValue )
-{
-#if IsDebug()
-	extern bool g_bDoRangeChecks;
-	if ( ThreadInMainThread() && g_bDoRangeChecks )
-	{
-		// Ignore the min/max stuff for now.. just make sure it's not a NAN.
-		Assert( _finite( value ) );
-	}
-#endif
+template<class T>
+inline void RangeCheck( const T& value, int minValue, int maxValue ) {
+	#if IsDebug()
+		extern bool g_bDoRangeChecks;
+		if ( ThreadInMainThread() && g_bDoRangeChecks ) {
+			// Ignore the min/max stuff for now.. just make sure it's not a NAN.
+			Assert( _finite( value ) );
+		}
+	#endif
 }
 
-inline void RangeCheck( const Vector &value, int minValue, int maxValue )
-{
-#if IsDebug()
-	RangeCheck( value.x, minValue, maxValue );
-	RangeCheck( value.y, minValue, maxValue );
-	RangeCheck( value.z, minValue, maxValue );
-#endif
+inline void RangeCheck( const Vector& value, int minValue, int maxValue ) {
+	#if IsDebug()
+		RangeCheck( value.x, minValue, maxValue );
+		RangeCheck( value.y, minValue, maxValue );
+		RangeCheck( value.z, minValue, maxValue );
+	#endif
 }
 
 
-template< class T, int minValue, int maxValue, int startValue >
-class CRangeCheckedVar
-{
+template<class T, int minValue, int maxValue, int startValue>
+class CRangeCheckedVar {
 public:
-
-	inline CRangeCheckedVar()
-	{
+	inline CRangeCheckedVar() {
 		m_Val = startValue;
 	}
 
-	inline CRangeCheckedVar( const T &value )
-	{
+	inline CRangeCheckedVar( const T& value ) {
 		*this = value;
 	}
 
-	T GetRaw() const
-	{
+	T GetRaw() const {
 		return m_Val;
 	}
 
 	// Clamp the value to its limits. Interpolation code uses this after interpolating.
-	inline void Clamp()
-	{
+	inline void Clamp() {
 		if ( m_Val < minValue )
 			m_Val = minValue;
 		else if ( m_Val > maxValue )
 			m_Val = maxValue;
 	}
 
-	inline operator const T&() const
-	{
+	inline operator const T&() const {
 		return m_Val;
 	}
 
-	inline CRangeCheckedVar<T, minValue, maxValue, startValue>& operator=( const T &value )
-	{
+	inline CRangeCheckedVar<T, minValue, maxValue, startValue>& operator=( const T& value ) {
 		RangeCheck( value, minValue, maxValue );
 		m_Val = value;
 		return *this;
 	}
 
-	inline CRangeCheckedVar<T, minValue, maxValue, startValue>& operator+=( const T &value )
-	{
-		return (*this = m_Val + value);
+	inline CRangeCheckedVar<T, minValue, maxValue, startValue>& operator+=( const T& value ) {
+		return ( *this = m_Val + value );
 	}
 
-	inline CRangeCheckedVar<T, minValue, maxValue, startValue>& operator-=( const T &value )
-	{
-		return (*this = m_Val - value);
+	inline CRangeCheckedVar<T, minValue, maxValue, startValue>& operator-=( const T& value ) {
+		return ( *this = m_Val - value );
 	}
 
-	inline CRangeCheckedVar<T, minValue, maxValue, startValue>& operator*=( const T &value )
-	{
-		return (*this = m_Val * value);
+	inline CRangeCheckedVar<T, minValue, maxValue, startValue>& operator*=( const T& value ) {
+		return ( *this = m_Val * value );
 	}
 
-	inline CRangeCheckedVar<T, minValue, maxValue, startValue>& operator/=( const T &value )
-	{
-		return (*this = m_Val / value);
+	inline CRangeCheckedVar<T, minValue, maxValue, startValue>& operator/=( const T& value ) {
+		return ( *this = m_Val / value );
 	}
 
 private:
-
 	T m_Val;
 };
-
-#endif // RANGECHECKEDVAR_H

@@ -127,15 +127,12 @@ ALWAYS_INLINE float clamp( float val, float minVal, float maxVal )
 //
 // Returns a clamped value in the range [min, max].
 //
-template< class T >
-inline T clamp( T const &val, T const &minVal, T const &maxVal )
-{
-	if ( maxVal < minVal )
+template<class T>
+inline auto clamp( T const &val, T const &minVal, T const &maxVal ) -> T {
+	if ( maxVal < minVal || val > maxVal )
 		return maxVal;
 	else if( val < minVal )
 		return minVal;
-	else if( val > maxVal )
-		return maxVal;
 	else
 		return val;
 }

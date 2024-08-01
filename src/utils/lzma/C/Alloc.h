@@ -13,7 +13,7 @@ extern "C" {
 void *MyAlloc(size_t size);
 void MyFree(void *address);
 
-#if IsWindows()
+#ifdef _WIN32
 
 void SetLargePageSize();
 

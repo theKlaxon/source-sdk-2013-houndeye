@@ -12,19 +12,19 @@
 // by including memdbgoff.h)
 // SPECIAL NOTE #2: This must be the final include in a .cpp or .h file!!!
 
-#if !defined(STEAM) && !defined(NO_MALLOC_OVERRIDE)
-	#if IsDebug() && !defined(USE_MEM_DEBUG)
+#if !defined( STEAM ) && !defined( NO_MALLOC_OVERRIDE )
+	#if defined( PLATFORM_DEBUG ) && !defined( USE_MEM_DEBUG )
 		#define USE_MEM_DEBUG 1
 	#endif
 
-	#if defined(NO_HOOK_MALLOC)
+	#if defined( NO_HOOK_MALLOC )
 		#undef USE_MEM_DEBUG
 	#endif
 
 	// If debug build or ndebug and not already included MS custom alloc files, or already included this file
-	#if ( IsDebug() || !defined(_INC_CRTDBG) ) || defined(MEMDBGON_H)
+	#if ( defined( PLATFORM_DEBUG ) || !defined( _INC_CRTDBG ) ) || defined( MEMDBGON_H )
 		#include "basetypes.h"
-		#if IsWindows()
+		#if defined( PLATFORM_WINDOWS )
 			#include <tchar.h>
 		#else
 			#include <wchar.h>
@@ -35,7 +35,7 @@
 		#include "memalloc.h"
 
 		#if defined(USE_MEM_DEBUG)
-			#if IsPosix()
+			#if defined( PPLATFORM_POSIX )
 				#define _NORMAL_BLOCK 1
 
 				#include <cstddef>

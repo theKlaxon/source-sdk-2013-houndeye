@@ -88,20 +88,20 @@
 #include "toolframework_client.h"
 #include "hltvcamera.h"
 #if defined( REPLAY_ENABLED )
-#include "replay/replaycamera.h"
-#include "replay/replay_ragdoll.h"
-#include "qlimits.h"
-#include "replay/replay.h"
-#include "replay/ireplaysystem.h"
-#include "replay/iclientreplay.h"
-#include "replay/ienginereplay.h"
-#include "replay/ireplaymanager.h"
-#include "replay/ireplayscreenshotmanager.h"
-#include "replay/iclientreplaycontext.h"
-#include "replay/vgui/replayconfirmquitdlg.h"
-#include "replay/vgui/replaybrowsermainpanel.h"
-#include "replay/vgui/replayinputpanel.h"
-#include "replay/vgui/replayperformanceeditor.h"
+	#include "replay/replaycamera.h"
+	#include "replay/replay_ragdoll.h"
+	#include "qlimits.h"
+	#include "replay/replay.h"
+	#include "replay/ireplaysystem.h"
+	#include "replay/iclientreplay.h"
+	#include "replay/ienginereplay.h"
+	#include "replay/ireplaymanager.h"
+	#include "replay/ireplayscreenshotmanager.h"
+	#include "replay/iclientreplaycontext.h"
+	#include "replay/vgui/replayconfirmquitdlg.h"
+	#include "replay/vgui/replaybrowsermainpanel.h"
+	#include "replay/vgui/replayinputpanel.h"
+	#include "replay/vgui/replayperformanceeditor.h"
 #endif
 #include "vgui/ILocalize.h"
 #include "vgui/IVGui.h"
@@ -112,10 +112,10 @@
 #include "gamestats.h"
 #include "particle_parse.h"
 #if defined( TF_CLIENT_DLL )
-#include "rtime.h"
-#include "tf_hud_disconnect_prompt.h"
-#include "../engine/audio/public/sound.h"
-#include "tf_shared_content_manager.h"
+	#include "rtime.h"
+	#include "tf_hud_disconnect_prompt.h"
+	#include "../engine/audio/public/sound.h"
+	#include "tf_shared_content_manager.h"
 #endif
 #include "clientsteamcontext.h"
 #include "renamed_recvtable_compat.h"
@@ -131,20 +131,19 @@
 #include "haptics/haptic_msgs.h"
 
 #if defined( TF_CLIENT_DLL )
-#include "abuse_report.h"
+	#include "abuse_report.h"
 #endif
 
 #ifdef USES_ECON_ITEMS
-#include "econ_item_system.h"
+	#include "econ_item_system.h"
 #endif // USES_ECON_ITEMS
 
 #if defined( TF_CLIENT_DLL )
-#include "econ/tool_items/custom_texture_cache.h"
-
+	#include "econ/tool_items/custom_texture_cache.h"
 #endif
 
 #ifdef WORKSHOP_IMPORT_ENABLED
-#include "fbxsystem/fbxsystem.h"
+	#include "fbxsystem/fbxsystem.h"
 #endif
 
 extern vgui::IInputInternal *g_InputInternal;
@@ -162,15 +161,15 @@ extern vgui::IInputInternal *g_InputInternal;
 
 
 #ifdef PORTAL
-#include "PortalRender.h"
+	#include "PortalRender.h"
 #endif
 
 #ifdef SIXENSE
-#include "sixense/in_sixense.h"
+	#include "sixense/in_sixense.h"
 #endif
+#include "shaderapihack.hpp"
 
 // memdbgon must be the last include file in a .cpp file!!!
-#include "shaderapihack.hpp"
 #include "tier0/memdbgon.h"
 
 extern IClientMode *GetClientModeNormal();

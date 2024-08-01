@@ -31,5 +31,4 @@ set( SDL_MISC   OFF )
 submodule( SDL "SDL" )
 # ----- SourcePP -----
 set( SOURCEPP_BUILD_C_WRAPPERS OFF CACHE INTERNAL "" )
-set( SOURCEPP_USE_VTFPP OFF CACHE INTERNAL "" ) # FIXME: doesn't work on windows-gnu
 submodule( SourcePP "sourcepp" )

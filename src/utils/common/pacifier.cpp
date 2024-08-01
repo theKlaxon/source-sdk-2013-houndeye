@@ -4,17 +4,15 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#include <stdio.h>
-#include "basetypes.h"
 #include "pacifier.h"
+#include "basetypes.h"
+#include "mathlib/mathlib.h"
 #include "tier0/dbg.h"
+#include <cstdio>
 
 
 static int g_LastPacifierDrawn = -1;
 static bool g_bPacifierSuppressed = false;
-
-#define clamp(a,b,c) ( (a) > (c) ? (c) : ( (a) < (b) ? (b) : (a) ) )
 
 void StartPacifier( char const *pPrefix )
 {

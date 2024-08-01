@@ -25,21 +25,18 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 #include <algorithm>
-#if IsWindows()
-#pragma warning(disable:4530) // warning C4530: C++ exception handler used, but unwind semantics are not enabled. Specify /EHsc
+#if defined( COMPILER_MSVC )
+	#pragma warning(disable:4530) // warning C4530: C++ exception handler used, but unwind semantics are not enabled. Specify /EHsc
 #endif //_WIN32
 #include <string>
 
 #include "snappy-stubs-internal.h"
 
 namespace snappy {
-
-void Varint::Append32(string* s, uint32 value) {
-  char buf[Varint::kMax32];
-  const char* p = Varint::Encode32(buf, value);
-  s->append(buf, p - buf);
-}
-
+	void Varint::Append32( string* s, uint32 value ) {
+		char buf[ Varint::kMax32 ];
+		const char* p = Varint::Encode32( buf, value );
+		s->append( buf, p - buf );
+	}
 }  // namespace snappy

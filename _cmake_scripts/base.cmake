@@ -5,6 +5,7 @@
 set( IS_WINDOWS 0 )
 set( IS_LINUX 0 )
 set( IS_POSIX 0 )
+set( IS_64BIT 0 )
 
 set( IS_SOURCESDK 1 )
 
@@ -40,26 +41,11 @@ add_compile_definitions(
 	$<$<CXX_COMPILER_ID:Clang>:COMPILER_CLANG=1>
 	_DLL_EXT=${CMAKE_SHARED_LIBRARY_SUFFIX}
 	USE_SDL # We use SDL instead of whatever windows provides
+	$<${IS_WINDOWS}:PLATFORM_WINDOWS>
+	$<${IS_POSIX}:PLATFORM_POSIX>
+	$<${IS_LINUX}:PLATFORM_LINUX>
+	$<${IS_64BIT}:PLATFORM_64BITS>
+	$<$<BOOL:$<CONFIG:Debug>>:PLATFORM_DEBUG>
+	$<$<BOOL:${RETAIL}>:PLATFORM_RETAIL>
+	$<$<BOOL:$<CONFIG:Release>>:PLATFORM_RELEASE>
 )
-
-# `Is*` "function" defines
-if ( MSVC )
-	# msvc doesn't support providing "function" defines via cli...
-	add_compile_options(
-		"-DIsWindows=$<BOOL:${WIN32}>"
-		"-DIsPosix=$<BOOL:${IS_POSIX}>"
-		"-DIsLinux=$<BOOL:${LINUX}>"
-		"-DIsRetail=$<BOOL:${RETAIL}>"
-		"-DIsDebug=$<BOOL:$<CONFIG:Debug>>"
-		"-DIsRelease=$<BOOL:$<CONFIG:Release>>"
-	)
-else ()
-	add_compile_options(
-		"-DIsWindows()=$<BOOL:${WIN32}>"
-		"-DIsPosix()=$<BOOL:${IS_POSIX}>"
-		"-DIsLinux()=$<BOOL:${LINUX}>"
-		"-DIsRetail()=$<BOOL:${RETAIL}>"
-		"-DIsDebug()=$<BOOL:$<CONFIG:Debug>>"
-		"-DIsRelease()=$<BOOL:$<CONFIG:Release>>"
-	)
-endif ()

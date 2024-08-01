@@ -5,24 +5,18 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-
-#ifndef WCHARTYPES_H
-#define WCHARTYPES_H
-#if IsWindows()
 #pragma once
-#endif
 
-#ifdef _INC_TCHAR
-#error ("Must include tier0 type headers before tchar.h")
+#if defined( _INC_TCHAR )
+	#error ("Must include tier0 type headers before tchar.h")
 #endif
 
 // Temporarily turn off Valve defines
 #include "tier0/valve_off.h"
 
-#if !defined(_WCHAR_T_DEFINED) && !defined( COMPILER_GCC )
-typedef unsigned short wchar_t;
-#define _WCHAR_T_DEFINED
+#if !defined( _WCHAR_T_DEFINED ) && !defined( COMPILER_GCC )
+	typedef unsigned short wchar_t;
+	#define _WCHAR_T_DEFINED
 #endif
 
 // char8
@@ -50,60 +44,55 @@ typedef wchar_t wchar;
 #define WIDEN(x) WIDEN2(x)
 #define __WFILE__ WIDEN(__FILE__)
 
-#ifdef STEAM
-#ifndef _UNICODE
-#define FORCED_UNICODE
-#endif
-#define _UNICODE
+#if defined( STEAM )
+	#ifndef _UNICODE
+	#define FORCED_UNICODE
+	#endif
+	#define _UNICODE
 #endif
 
-#if IsWindows()
-#include <tchar.h>
+#if defined( PLATFORM_WINDOWS )
+	#include <tchar.h>
 #else
-#define _tcsstr strstr
-#define _tcsicmp stricmp
-#define _tcscmp strcmp
-#define _tcscpy strcpy
-#define _tcsncpy strncpy
-#define _tcsrchr strrchr
-#define _tcslen strlen
-#define _tfopen fopen
-#define _stprintf sprintf 
-#define _ftprintf fprintf
-#define _vsntprintf _vsnprintf
-#define _tprintf printf
-#define _sntprintf _snprintf
-#define _T(s) s
+	#define _tcsstr strstr
+	#define _tcsicmp stricmp
+	#define _tcscmp strcmp
+	#define _tcscpy strcpy
+	#define _tcsncpy strncpy
+	#define _tcsrchr strrchr
+	#define _tcslen strlen
+	#define _tfopen fopen
+	#define _stprintf sprintf
+	#define _ftprintf fprintf
+	#define _vsntprintf _vsnprintf
+	#define _tprintf printf
+	#define _sntprintf _snprintf
+	#define _T(s) s
 #endif
 
-#if defined(_UNICODE)
-typedef wchar tchar;
-#define tstring wstring
-#define __TFILE__ __WFILE__
-#define TCHAR_IS_WCHAR
+#if defined( _UNICODE )
+	typedef wchar tchar;
+	#define tstring wstring
+	#define __TFILE__ __WFILE__
+	#define TCHAR_IS_WCHAR
 #else
-typedef char tchar;
-#define tstring string
-#define __TFILE__ __FILE__
-#define TCHAR_IS_CHAR
+	typedef char tchar;
+	#define tstring string
+	#define __TFILE__ __FILE__
+	#define TCHAR_IS_CHAR
 #endif
 
-#if defined( _MSC_VER ) || IsWindows()
-typedef wchar_t uchar16;
-typedef unsigned int uchar32;
+#if defined( COMPILER_MSVC ) || defined( PLATFORM_WINDOWS )
+	typedef wchar_t uchar16;
+	typedef unsigned int uchar32;
 #else
-typedef unsigned short uchar16;
-typedef wchar_t uchar32;
+	typedef unsigned short uchar16;
+	typedef wchar_t uchar32;
 #endif
 
-#ifdef FORCED_UNICODE
-#undef _UNICODE
+#if defined( FORCED_UNICODE )
+	#undef _UNICODE
 #endif
 
 // Turn valve defines back on
 #include "tier0/valve_on.h"
-
-
-#endif // WCHARTYPES
-
-

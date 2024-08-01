@@ -4,12 +4,7 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef CBASE_H
-#define CBASE_H
-#if IsWindows()
 #pragma once
-#endif
 
 struct studiohdr_t;
 
@@ -54,5 +49,3 @@ struct studiohdr_t;
 #include "cdll_client_int.h"
 #include "worldsize.h"
 #include "engine/ivmodelinfo.h"
-
-#endif // CBASE_H

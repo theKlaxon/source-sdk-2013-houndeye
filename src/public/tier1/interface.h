@@ -28,17 +28,6 @@
 // via the lib's primary module (usually the lib's interface exposure)
 // therby stitching all of that lib's code/data together for eventual final exe link inclusion.
 #pragma once
-
-#if IsLinux()
-	#include <dlfcn.h>// dlopen, dlclose, et al
-	#include <unistd.h>
-
-	#if defined( _snprintf )
-		#undef _snprintf
-	#endif
-	#define _snprintf snprintf
-#endif
-
 // TODO: move interface.cpp into tier0 library.
 #include "tier0/platform.h"
 

@@ -3,13 +3,13 @@
 // Purpose:
 //
 //===========================================================================//
-#if IsWindows()
+#if defined( PLATFORM_WINDOWS )
 	#include <libloaderapi.h>
 	#include <errhandlingapi.h>
 	#include <windef.h>
 	#include <winbase.h>
-	#include <direct.h>// getcwd
-#elif IsPosix()
+	#include <direct.h> // getcwd
+#elif defined( PLATFORM_POSIX )
 	#include <dlfcn.h>
 	#include <unistd.h>
 	#include <type_traits>

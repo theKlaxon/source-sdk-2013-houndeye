@@ -4,7 +4,7 @@
 #ifndef __7Z_THREADS_H
 #define __7Z_THREADS_H
 
-#if IsWindows()
+#ifdef _WIN32
 #include <windows.h>
 #endif
 

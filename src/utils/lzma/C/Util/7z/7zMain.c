@@ -15,7 +15,7 @@
 
 #ifndef USE_WINDOWS_FILE
 /* for mkdir */
-#if IsWindows()
+#if defined(_WIN32)
 #include <direct.h>
 #else
 #include <sys/stat.h>
@@ -102,7 +102,7 @@ static SRes Utf16_To_Utf8Buf(CBuf *dest, const UInt16 *src, size_t srcLen)
 #endif
 
 static SRes Utf16_To_Char(CBuf *buf, const UInt16 *s
-    #if IsWindows()
+    #if defined(_WIN32)
     , UINT codePage
     #endif
     )
@@ -110,7 +110,7 @@ static SRes Utf16_To_Char(CBuf *buf, const UInt16 *s
   unsigned len = 0;
   for (len = 0; s[len] != 0; len++);
 
-  #if IsWindows()
+  #if defined(_WIN32)
   {
     unsigned size = len * 3 + 100;
     if (!Buf_EnsureSize(buf, size))
@@ -135,7 +135,7 @@ static SRes Utf16_To_Char(CBuf *buf, const UInt16 *s
   #endif
 }
 
-#if IsWindows()
+#if defined(_WIN32)
   #ifndef USE_WINDOWS_FILE
     static UINT g_FileCodePage = CP_ACP;
   #endif
@@ -158,7 +158,7 @@ static WRes MyCreateDir(const UInt16 *name)
   RINOK(Utf16_To_Char(&buf, name MY_FILE_CODE_PAGE_PARAM));
 
   res =
-  #if IsWindows()
+  #if defined(_WIN32)
   _mkdir((const char *)buf.data)
   #else
   mkdir((const char *)buf.data, 0777)
@@ -191,7 +191,7 @@ static SRes PrintString(const UInt16 *s)
   SRes res;
   Buf_Init(&buf);
   res = Utf16_To_Char(&buf, s
-      #if IsWindows()
+      #if defined(_WIN32)
       , CP_OEMCP
       #endif
       );
@@ -335,7 +335,7 @@ int MY_CDECL main(int numargs, char *args[])
     return 1;
   }
 
-  #if IsWindows() && !defined(USE_WINDOWS_FILE) && !defined(UNDER_CE)
+  #if defined(_WIN32) && !defined(USE_WINDOWS_FILE) && !defined(UNDER_CE)
   g_FileCodePage = AreFileApisANSI() ? CP_ACP : CP_OEMCP;
   #endif
 

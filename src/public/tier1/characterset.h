@@ -7,18 +7,11 @@
 // $Date:         $
 // $NoKeywords: $
 //===========================================================================//
-
-#ifndef CHARACTERSET_H
-#define CHARACTERSET_H
-
-#if IsWindows()
 #pragma once
-#endif
 
 
-struct characterset_t
-{
-	char set[256];
+struct characterset_t {
+	char set[ 256 ];
 };
 
 
@@ -28,16 +21,13 @@ struct characterset_t
 // Input  : *pSetBuffer - pointer to the buffer for the group
 //			*pSetString - list of characters to flag
 //-----------------------------------------------------------------------------
-extern void CharacterSetBuild( characterset_t *pSetBuffer, const char *pSetString );
+extern void CharacterSetBuild( characterset_t* pSetBuffer, const char* pSetString );
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Input  : *pSetBuffer - pre-build group buffer
 //			character - character to lookup
 // Output : int - 1 if the character was in the set
 //-----------------------------------------------------------------------------
-#define IN_CHARACTERSET( SetBuffer, character )		((SetBuffer).set[ (unsigned char) (character) ])
-
-
-#endif // CHARACTERSET_H
+#define IN_CHARACTERSET( SetBuffer, character ) ( ( SetBuffer ).set[ (unsigned char) ( character ) ] )

@@ -24,7 +24,7 @@
 #undef DBGFLAG_ASSERTDLG
 #undef DBGFLAG_STRINGS
 
-#if IsDebug() || defined( RELEASEASSERTS )
+#if defined( PLATFORM_DEBUG ) || defined( RELEASEASSERTS )
 	//-----------------------------------------------------------------------------
 	// Default flags for debug builds
 	//-----------------------------------------------------------------------------

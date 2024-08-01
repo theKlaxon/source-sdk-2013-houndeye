@@ -5,15 +5,14 @@
 // $NoKeywords: $
 //=============================================================================//
 #pragma once
-
 #include <cstddef>
+#include "tier0/platform.h"
 
 #if IsLinux()
 	#undef offsetof
 	#define offsetof(s,m)	(size_t)&(((s*)0)->m)
 #endif
 
-#include "tier0/platform.h"
 
 #if !defined(STATIC_TIER0) && !defined(_STATIC_LINKED)
 	#ifdef TIER0_DLL_EXPORT

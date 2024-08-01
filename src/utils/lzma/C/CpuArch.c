@@ -163,7 +163,7 @@ Bool CPU_Is_InOrder()
   return True;
 }
 
-#if !defined(MY_CPU_AMD64) && IsWindows()
+#if !defined(MY_CPU_AMD64) && defined(_WIN32)
 #include <windows.h>
 static Bool CPU_Sys_Is_SSE_Supported()
 {

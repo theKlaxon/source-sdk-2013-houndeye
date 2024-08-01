@@ -1077,7 +1077,7 @@ static SRes SzReadFileNames(const Byte *data, size_t size, UInt32 numFiles, size
     if (pos == size)
       return SZ_ERROR_ARCHIVE;
     for (p = data + pos;
-      #if IsWindows()
+      #ifdef _WIN32
       *(const UInt16 *)p != 0
       #else
       p[0] != 0 || p[1] != 0

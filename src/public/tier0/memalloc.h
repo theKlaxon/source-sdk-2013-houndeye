@@ -7,6 +7,7 @@
 // $NoKeywords: $
 //=============================================================================//
 #pragma once
+#include "tier0/platform.h"
 
 // These memory debugging switches aren't relevant under Linux builds since memoverride.cpp
 // isn't built into Linux projects

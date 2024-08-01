@@ -18,12 +18,12 @@
             "name": "windows-gnu",
             "generator": "Ninja",
             "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/_cmake_scripts/toolchain/x86-windows-gnu.cmake"
+                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/_cmake_scripts/toolchain/x86-windows-gnu.cmake",
+                "CMAKE_SYSTEM_NAME": "Windows"
             }
         },
         {
             "name": "windows-msvc",
-            "hidden": true,
             "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/_cmake_scripts/toolchain/x86-windows.cmake"
@@ -31,7 +31,6 @@
         },
         {
             "name": "windows-msvc-everything",
-            "hidden": false,
             "inherits": [ "windows-msvc" ],
             "cacheVariables": {
                 "BUILD_GROUP": "everything"
@@ -39,7 +38,6 @@
         },
         {
             "name": "windows-msvc-game",
-            "hidden": false,
             "inherits": [ "windows-msvc" ],
             "cacheVariables": {
                 "BUILD_GROUP": "game"

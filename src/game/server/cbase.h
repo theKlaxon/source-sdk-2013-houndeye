@@ -6,7 +6,7 @@
 //=============================================================================//
 #pragma once
 
-#if IsWindows()
+#if defined( COMPILER_MSVC )
 	// Silence certain warnings
 	#pragma warning( disable : 4244 )// int or float down-conversion
 	#pragma warning( disable : 4305 )// int or float data truncation

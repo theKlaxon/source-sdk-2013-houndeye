@@ -10,19 +10,17 @@
 #include <cstdarg>
 #include <cstdio>
 
-#if IsPosix()
+#if defined( PLATFORM_POSIX )
 	#include <cctype>
 	#include <iconv.h>
 	#include <cstdlib>
 	#include <unistd.h>
 	#define _getcwd getcwd
-#elif IsWindows()
+#elif defined( PLATFORM_WINDOWS )
 	#include <direct.h>
-	#define WIN32_LEAN_AND_MEAN
-	#include <windows.h>
 #endif
 
-#if IsWindows()
+#if defined( PLATFORM_WINDOWS )
 	#ifndef CP_UTF8
 		#define CP_UTF8 65001
 	#endif

@@ -10,7 +10,7 @@
 
 #ifdef _SZ_ALLOC_DEBUG
 
-#if IsWindows()
+#ifdef _WIN32
 #include <windows.h>
 #endif
 
@@ -53,7 +53,7 @@ void *SzAllocTemp(void *p, size_t size)
   #ifdef _SZ_ALLOC_DEBUG
   fprintf(stderr, "\nAlloc_temp %10d bytes;  count = %10d", size, g_allocCountTemp);
   g_allocCountTemp++;
-  #if IsWindows()
+  #ifdef _WIN32
   return HeapAlloc(GetProcessHeap(), 0, size);
   #endif
   #endif
@@ -69,7 +69,7 @@ void SzFreeTemp(void *p, void *address)
     g_allocCountTemp--;
     fprintf(stderr, "\nFree_temp; count = %10d", g_allocCountTemp);
   }
-  #if IsWindows()
+  #ifdef _WIN32
   HeapFree(GetProcessHeap(), 0, address);
   return;
   #endif

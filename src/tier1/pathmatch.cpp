@@ -34,7 +34,7 @@
 // STEAM3.../src/lib/linux32/release/pathmatch.o - steam3 checked in version
 // STEAM3.../src/devtools/makefile_base_posix.mak - look for the _WRAP references
 
-#if IsLinux()
+#if defined( PLATFORM_LINUX )
 	#include <cstdio>
 	#include <cstdlib>
 	#include <cstring>

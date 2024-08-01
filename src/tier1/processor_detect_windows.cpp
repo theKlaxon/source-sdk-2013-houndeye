@@ -7,12 +7,12 @@
 //=============================================================================//
 #include "tier1/processor_detect.h"
 
-#if defined( WIN64 )
+#if defined( PLATFORM_64BITS )
 	bool CheckMMXTechnology( void ) { return false; }
 	bool CheckSSETechnology( void ) { return false; }
 	bool CheckSSE2Technology( void ) { return false; }
 	bool Check3DNowTechnology( void ) { return false; }
-#elif IsWindows()
+#elif defined( PLATFORM_WINDOWS )
 	#pragma optimize( "", off )
 	#pragma warning( disable : 4800 )//'int' : forcing value to bool 'true' or 'false' (performance warning)
 

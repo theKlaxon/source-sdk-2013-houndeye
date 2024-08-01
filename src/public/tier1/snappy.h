@@ -39,12 +39,13 @@
 #ifndef UTIL_SNAPPY_SNAPPY_H__
 #define UTIL_SNAPPY_SNAPPY_H__
 
-// fletcherd@valvesoftware.com: Added this kludge.  We really need to stop #defining this in our code.
-#undef min
-#undef max
+// check for #defined min/max, they shouldn't be here
+#if defined( mix ) || defined( max )
+	#error "Don't define min/max"
+#endif
 
-#include <stddef.h>
-#if IsWindows()
+#include <cstddef>
+#if defined( _WIN32 )
 #pragma warning(disable:4530) // warning C4530: C++ exception handler used, but unwind semantics are not enabled. Specify /EHsc
 #endif //_WIN32
 #include <string>

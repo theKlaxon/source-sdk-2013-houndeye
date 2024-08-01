@@ -16,15 +16,8 @@
 	#include <cmath>
 	#include <cwctype>
 #endif
-
 #include <cstring>
 #include <cstdlib>
-
-#ifdef _WIN64
-	#define str_size unsigned int
-#else
-	#define str_size size_t
-#endif
 
 template< class T, class I > class CUtlMemory;
 template< class T, class A > class CUtlVector;
@@ -33,55 +26,49 @@ template< class T, class A > class CUtlVector;
 //-----------------------------------------------------------------------------
 // Portable versions of standard string functions
 //-----------------------------------------------------------------------------
-void	_V_memset	( const char* file, int line, void *dest, int fill, int count );
-void	_V_memcpy	( const char* file, int line, void *dest, const void *src, int count );
-void	_V_memmove	( const char* file, int line, void *dest, const void *src, int count );
-int		_V_memcmp	( const char* file, int line, const void *m1, const void *m2, int count );
-int		_V_strlen	( const char* file, int line, const char *str );
-void	_V_strcpy	( const char* file, int line, char *dest, const char *src );
-char*	_V_strrchr	( const char* file, int line, const char *s, char c );
-int		_V_strcmp	( const char* file, int line, const char *s1, const char *s2 );
-int		_V_wcscmp	( const char* file, int line, const wchar_t *s1, const wchar_t *s2 );
-char*	_V_strstr	( const char* file, int line, const char *s1, const char *search );
-int		_V_wcslen	( const char* file, int line, const wchar_t *pwch );
-wchar_t*	_V_wcslower (const char* file, int line, wchar_t *start);
-wchar_t*	_V_wcsupr (const char* file, int line, wchar_t *start);
+void     _V_memset  ( const char* file, int line, void *dest, int fill, int count );
+void     _V_memcpy  ( const char* file, int line, void *dest, const void *src, int count );
+void     _V_memmove ( const char* file, int line, void *dest, const void *src, int count );
+int      _V_memcmp  ( const char* file, int line, const void *m1, const void *m2, int count );
+int      _V_strlen  ( const char* file, int line, const char *str );
+void     _V_strcpy  ( const char* file, int line, char *dest, const char *src );
+char*    _V_strrchr ( const char* file, int line, const char *s, char c );
+int      _V_strcmp  ( const char* file, int line, const char *s1, const char *s2 );
+int      _V_wcscmp  ( const char* file, int line, const wchar_t *s1, const wchar_t *s2 );
+char*    _V_strstr  ( const char* file, int line, const char *s1, const char *search );
+int      _V_wcslen  ( const char* file, int line, const wchar_t *pwch );
+wchar_t* _V_wcslower( const char* file, int line, wchar_t *star );
+wchar_t* _V_wcsupr  ( const char* file, int line, wchar_t *star );
 
 // ASCII-optimized functions which fall back to CRT only when necessary
-char *V_strupr( char *start );
-char *V_strlower( char *start );
-int V_stricmp( const char *s1, const char *s2 );
-int	V_strncmp( const char *s1, const char *s2, int count );
-int V_strnicmp( const char *s1, const char *s2, int n );
+char* V_strupr  ( char *start );
+char* V_strlower( char *start );
+int   V_stricmp ( const char *s1, const char *s2 );
+int   V_strncmp ( const char *s1, const char *s2, int count );
+int   V_strnicmp( const char *s1, const char *s2, int n );
 
 #if IsPosix()
-	inline char *strupr( char *start )
-	{
+	inline char *strupr( char *start ) {
 		return V_strupr( start );
 	}
 
-	inline char *strlwr( char *start )
-	{
+	inline char *strlwr( char *start ) {
 		return V_strlower( start );
 	}
 
-	inline wchar_t *_wcslwr( wchar_t *start )
-	{
+	inline wchar_t *_wcslwr( wchar_t *start ) {
 		wchar_t *str = start;
-		while( str && *str )
-		{
+		while( str && *str ) {
 			*str = (wchar_t)towlower(static_cast<wint_t>(*str));
 			str++;
 		}
 		return start;
 	};
 
-	inline wchar_t *_wcsupr( wchar_t *start )
-	{
+	inline wchar_t *_wcsupr( wchar_t *start ) {
 		wchar_t *str = start;
-		while( str && *str )
-		{
-			*str = (wchar_t)towupper(static_cast<wint_t>(*str));
+		while( str && *str ) {
+			*str = static_cast<wchar_t>( towupper( static_cast<wint_t>(*str) ) );
 			str++;
 		}
 		return start;
@@ -90,47 +77,46 @@ int V_strnicmp( const char *s1, const char *s2, int n );
 
 
 #if IsDebug()
-	#define V_memset(dest, fill, count)		_V_memset   (__FILE__, __LINE__, (dest), (fill), (count))
-	#define V_memcpy(dest, src, count)		_V_memcpy	(__FILE__, __LINE__, (dest), (src), (count))
-	#define V_memmove(dest, src, count)		_V_memmove	(__FILE__, __LINE__, (dest), (src), (count))
-	#define V_memcmp(m1, m2, count)			_V_memcmp	(__FILE__, __LINE__, (m1), (m2), (count))
-	#define V_strlen(str)					_V_strlen	(__FILE__, __LINE__, (str))
-	#define V_strcpy(dest, src)				_V_strcpy	(__FILE__, __LINE__, (dest), (src))
-	#define V_strrchr(s, c)					_V_strrchr	(__FILE__, __LINE__, (s), (c))
-	#define V_strcmp(s1, s2)				_V_strcmp	(__FILE__, __LINE__, (s1), (s2))
-	#define V_wcscmp(s1, s2)				_V_wcscmp	(__FILE__, __LINE__, (s1), (s2))
-	#define V_strstr(s1, search )			_V_strstr	(__FILE__, __LINE__, (s1), (search) )
-	#define V_wcslen(pwch)					_V_wcslen	(__FILE__, __LINE__, (pwch))
-	#define V_wcslower(start)				_V_wcslower (__FILE__, __LINE__, (start))
-	#define V_wcsupr(start)					_V_wcsupr	(__FILE__, __LINE__, (start))
+	#define V_memset(dest, fill, count)		_V_memset  (__FILE__, __LINE__, (dest), (fill), (count))
+	#define V_memcpy(dest, src, count)		_V_memcpy  (__FILE__, __LINE__, (dest), (src), (count))
+	#define V_memmove(dest, src, count)		_V_memmove (__FILE__, __LINE__, (dest), (src), (count))
+	#define V_memcmp(m1, m2, count)			_V_memcmp  (__FILE__, __LINE__, (m1), (m2), (count))
+	#define V_strlen(str)					_V_strlen  (__FILE__, __LINE__, (str))
+	#define V_strcpy(dest, src)				_V_strcpy  (__FILE__, __LINE__, (dest), (src))
+	#define V_strrchr(s, c)					_V_strrchr (__FILE__, __LINE__, (s), (c))
+	#define V_strcmp(s1, s2)				_V_strcmp  (__FILE__, __LINE__, (s1), (s2))
+	#define V_wcscmp(s1, s2)				_V_wcscmp  (__FILE__, __LINE__, (s1), (s2))
+	#define V_strstr(s1, search )			_V_strstr  (__FILE__, __LINE__, (s1), (search) )
+	#define V_wcslen(pwch)					_V_wcslen  (__FILE__, __LINE__, (pwch))
+	#define V_wcslower(start)				_V_wcslower(__FILE__, __LINE__, (start))
+	#define V_wcsupr(start)					_V_wcsupr  (__FILE__, __LINE__, (start))
 #else
-	inline void		V_memset (void *dest, int fill, int count)			{ memset( dest, fill, count ); }
-	inline void		V_memcpy (void *dest, const void *src, int count)	{ memcpy( dest, src, count ); }
-	inline void		V_memmove (void *dest, const void *src, int count)	{ memmove( dest, src, count ); }
-	inline int		V_memcmp (const void *m1, const void *m2, int count){ return memcmp( m1, m2, count ); }
-	inline int		V_strlen (const char *str)							{ return (int) strlen ( str ); }
-	inline void		V_strcpy (char *dest, const char *src)				{ strcpy( dest, src ); }
-	inline int		V_wcslen(const wchar_t *pwch)						{ return (int)wcslen(pwch); }
-	inline char*	V_strrchr (const char *s, char c)					{ return (char*)strrchr( s, c ); }
-	inline int		V_strcmp (const char *s1, const char *s2)			{ return strcmp( s1, s2 ); }
-	inline int		V_wcscmp (const wchar_t *s1, const wchar_t *s2)		{ return wcscmp( s1, s2 ); }
-	inline char*	V_strstr( const char *s1, const char *search )		{ return (char*)strstr( s1, search ); }
-	inline wchar_t*	V_wcslower (wchar_t *start)							{ return _wcslwr( start ); }
-	inline wchar_t*	V_wcsupr (wchar_t *start)							{ return _wcsupr( start ); }
+	inline void     V_memset (void *dest, int fill, int count)          { memset( dest, fill, count ); }
+	inline void     V_memcpy (void *dest, const void *src, int count)   { memcpy( dest, src, count ); }
+	inline void     V_memmove (void *dest, const void *src, int count)  { memmove( dest, src, count ); }
+	inline int      V_memcmp (const void *m1, const void *m2, int count){ return memcmp( m1, m2, count ); }
+	inline int      V_strlen (const char *str)                          { return (int) strlen ( str ); }
+	inline void     V_strcpy (char *dest, const char *src)              { strcpy( dest, src ); }
+	inline int      V_wcslen(const wchar_t *pwch)                       { return (int)wcslen(pwch); }
+	inline char*    V_strrchr (const char *s, char c)                   { return (char*)strrchr( s, c ); }
+	inline int      V_strcmp (const char *s1, const char *s2)           { return strcmp( s1, s2 ); }
+	inline int      V_wcscmp (const wchar_t *s1, const wchar_t *s2)     { return wcscmp( s1, s2 ); }
+	inline char*    V_strstr( const char *s1, const char *search )      { return (char*)strstr( s1, search ); }
+	inline wchar_t* V_wcslower (wchar_t *start)                         { return _wcslwr( start ); }
+	inline wchar_t* V_wcsupr (wchar_t *start)                           { return _wcsupr( start ); }
 #endif
 
-int			V_atoi (const char *str);
-int64 		V_atoi64(const char *str);
-uint64 		V_atoui64(const char *str);
-float		V_atof (const char *str);
-char*		V_stristr( char* pStr, const char* pSearch );
-const char*	V_stristr( const char* pStr, const char* pSearch );
-const char*	V_strnistr( const char* pStr, const char* pSearch, int n );
-const char*	V_strnchr( const char* pStr, char c, int n );
-inline int V_strcasecmp (const char *s1, const char *s2) { return V_stricmp(s1, s2); }
-inline int V_strncasecmp (const char *s1, const char *s2, int n) { return V_strnicmp(s1, s2, n); }
-void		V_qsort_s( void *base, size_t num, size_t width, int ( __cdecl *compare )(void *, const void *,
-const void *), void *context );
+int         V_atoi       ( const char *str);
+int64       V_atoi64     ( const char *str);
+uint64      V_atoui64    ( const char *str);
+float       V_atof       ( const char *str);
+char*       V_stristr    ( char* pStr, const char* pSearch );
+const char* V_stristr    ( const char* pStr, const char* pSearch );
+const char* V_strnistr   ( const char* pStr, const char* pSearch, int n );
+const char* V_strnchr    ( const char* pStr, char c, int n );
+inline int  V_strcasecmp ( const char *s1, const char *s2) { return V_stricmp(s1, s2); }
+inline int  V_strncasecmp( const char *s1, const char *s2, int n) { return V_strnicmp(s1, s2, n); }
+void        V_qsort_s    ( void *base, size_t num, size_t width, int ( __cdecl *compare )(void *, const void *, const void *), void *context );
 
 
 // returns string immediately following prefix, (ie str+strlen(prefix)) or NULL if prefix not found

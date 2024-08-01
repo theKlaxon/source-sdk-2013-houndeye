@@ -3,22 +3,16 @@
 // Purpose: Abstract away and help with platform-specific code.
 //
 // $NoKeywords: $
+// TODO: Move as much as possible to CMake, less moving parts are good
 //
 //===========================================================================//
 #pragma once
-// TODO: Move as much as possible to CMake, less moving parts are good
-
-#if defined( __x86_64__ ) || defined( _WIN64 )
-	#define PLATFORM_64BITS 1 // this should technically go away as for merge, but it used so nop out
-#endif
-
 #include "basetypes.h"
 #include "tier0/valve_off.h"
 #include "wchartypes.h"
 
-#if IsPosix()
-	// need this for _alloca
-	#include <alloca.h>
+#if defined( PLATFORM_POSIX )
+	#include <alloca.h> // need this for _alloca
 	#include <unistd.h>
 	#include <ctime>
 #endif
@@ -32,40 +26,64 @@
 //-----------------------------------------------------------------------------
 // Set up platform type defines.
 //-----------------------------------------------------------------------------
-#ifdef PLATFORM_64BITS
+#if defined( PLATFORM_64BITS )
 	#define IsPlatform64Bits() true
 #else
 	#define IsPlatform64Bits() false
 #endif
+#if defined( PLATFORM_DEBUG )
+	#define IsDebug() true
+#else
+	#define IsDebug() false
+#endif
+#if defined( PLATFORM_RETAIL )
+	#define IsRetail() true
+#else
+	#define IsRetail() false
+#endif
+#if defined( PLATFORM_RELEASE )
+	#define IsRelease() true
+#else
+	#define IsRelease() false
+#endif
 
 #define IsPC() true
 #define IsConsole() false
+#define IsWindows() false
+#define IsPlatformWindowsPC32() false
+#define IsPlatformWindowsPC64() false
+#define IsPlatformOpenGL() false
+#define IsPosix() false
+#define IsLinux() false
 
-#if IsWindows()
-	#define PLATFORM_WINDOWS 1
+#if defined( PLATFORM_WINDOWS )
+	#undef IsWindows
+	#define IsWindows() true
 
-	#define PLATFORM_WINDOWS_PC 1  // Windows PC
-	#if defined( _WIN64 )
+	#if defined( PLATFORM_64BITS )
+		#undef IsPlatformWindowsPC64
 		#define IsPlatformWindowsPC64() true
-		#define IsPlatformWindowsPC32() false
-		#define PLATFORM_WINDOWS_PC64 1
 	#else
-		#define IsPlatformWindowsPC64() false
+		#undef IsPlatformWindowsPC32
 		#define IsPlatformWindowsPC32() true
-		#define PLATFORM_WINDOWS_PC32 1
 	#endif
 	// Adding IsPlatformOpenGL() to help fix a bunch of code that was using IsPosix() to infer if the DX->GL translation layer was being used.
 	#if defined( DX_TO_GL_ABSTRACTION )
+		#udnef IsPlatformOpenGL
 		#define IsPlatformOpenGL() true
-	#else
-		#define IsPlatformOpenGL() false
 	#endif
-#elif IsPosix()
-	#define IsPlatformWindowsPC64() false
-	#define IsPlatformWindowsPC32() false
+#elif defined( PLATFORM_POSIX )
+	#undef IsPosix
+	#define IsPosix() true
 
+	#undef IsPlatformOpenGL
 	#define IsPlatformOpenGL() true
 	#define __cdecl  // override __cdecl to be nothing, used in some places (for now >:3) NOLINT(*-reserved-identifier)
+
+	#if defined( PLATFORM_LINUX )
+		#undef IsLinux
+		#define IsLinux() true
+	#endif
 #else
 	#error "Unsupported platform, please implement!"
 #endif
@@ -87,11 +105,11 @@ typedef signed char int8;
 		typedef   signed __int32  intp;
 		typedef unsigned __int32 uintp;
 	#endif
-#elif IsPosix()
-	typedef   signed short int16;
-	typedef unsigned short uint16;
-	typedef   signed int int32;
-	typedef unsigned int uint32;
+#else
+	typedef   signed short     int16;
+	typedef unsigned short     uint16;
+	typedef   signed int       int32;
+	typedef unsigned int       uint32;
 	typedef   signed long long int64;
 	typedef unsigned long long uint64;
 	#if IsPlatform64Bits()

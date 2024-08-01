@@ -26,7 +26,7 @@ set( TIER1_SOURCE_FILES
 	"${TIER1_DIR}/NetAdr.cpp"
 	"${TIER1_DIR}/splitstring.cpp"
 
-	"$<${IS_WINDOWS}:${TIER1_DIR}/processor_detect.cpp>"
+	"$<${IS_WINDOWS}:${TIER1_DIR}/processor_detect_windows.cpp>"
 	"$<${IS_POSIX}:${TIER1_DIR}/processor_detect_linux.cpp>"
 
 	"$<${IS_LINUX}:${TIER1_DIR}/qsort_s.cpp>"
