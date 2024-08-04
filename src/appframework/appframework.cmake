@@ -3,7 +3,7 @@
 set( APPFRAMEWORK_DIR ${CMAKE_CURRENT_LIST_DIR} )
 set( APPFRAMEWORK_SOURCE_FILES
 	# Sources
-	"${APPFRAMEWORK_DIR}/iappsystemgroup.cpp"
+	"${APPFRAMEWORK_DIR}/appsystemgroup.cpp"
 
 	# Public units
 	"${SRCDIR}/public/filesystem_init.cpp"

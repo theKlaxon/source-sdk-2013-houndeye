@@ -1,9 +1,7 @@
 # serverplugin_empty.cmake
 
-set(SERVERPLUGIN_EMPTY_DIR ${CMAKE_CURRENT_LIST_DIR})
-set(
-	SERVERPLUGIN_EMPTY_SOURCE_FILES
-
+set( SERVERPLUGIN_EMPTY_DIR ${CMAKE_CURRENT_LIST_DIR} )
+set( SERVERPLUGIN_EMPTY_SOURCE_FILES
 	"${SERVERPLUGIN_EMPTY_DIR}/serverplugin_bot.cpp"
 	"${SERVERPLUGIN_EMPTY_DIR}/serverplugin_empty.cpp"
 
@@ -29,29 +27,30 @@ set(
 	"${SRCDIR}/public/vstdlib/vstdlib.h"
 )
 
-add_library(serverplugin_empty MODULE ${SERVERPLUGIN_EMPTY_SOURCE_FILES})
-
-set_target_properties(
-	serverplugin_empty
+add_library( serverplugin_empty MODULE ${SERVERPLUGIN_EMPTY_SOURCE_FILES} )
+set_target_properties( serverplugin_empty
 	PROPERTIES
-	PREFIX ""
-	LIBRARY_OUTPUT_DIRECTORY "${GAMEDIR}/bin"
+		PREFIX ""
+		LIBRARY_OUTPUT_DIRECTORY "${GAMEDIR}/bin"
 )
 
-target_include_directories(
-	serverplugin_empty PRIVATE
-	"${SRCDIR}/game/server"
-	"${SRCDIR}/game/shared"
+target_include_directories( serverplugin_empty
+	PRIVATE
+		"${SRCDIR}/game/server"
+		"${SRCDIR}/game/shared"
 )
 
-target_compile_definitions(
-	serverplugin_empty PRIVATE
-	serverplugin_emptyONLY
-	_MBCS
+target_compile_definitions( serverplugin_empty
+	PRIVATE
+		serverplugin_emptyONLY
+		_MBCS
 )
 
-target_link_libraries(
-	serverplugin_empty PRIVATE
-	mathlib
-	"${LIBPUBLIC}/tier2${CMAKE_STATIC_LIBRARY_SUFFIX}"
+target_link_libraries( serverplugin_empty
+	PRIVATE
+		mathlib
+		tier0
+		vstdlib
+		tier1
+		tier2
 )

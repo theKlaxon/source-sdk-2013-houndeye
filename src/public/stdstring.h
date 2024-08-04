@@ -4,7 +4,6 @@
 //
 //=============================================================================//
 #pragma once
-
 #include "isaverestore.h"
 
 #if IsWindows()
@@ -31,16 +30,17 @@ public:
 
 	// save data type interface
 	virtual void Save( const SaveRestoreFieldInfo_t& fieldInfo, ISave* pSave ) {
-		std::string* pString = (std::string*) fieldInfo.pField;
+		auto* pString = static_cast<std::string*>( fieldInfo.pField );
 		Assert( pString->length() < MAX_SAVE_LEN - 1 );
-		if ( pString->length() < MAX_SAVE_LEN - 1 )
+		if ( pString->length() < MAX_SAVE_LEN - 1 ) {
 			pSave->WriteString( pString->c_str() );
-		else
+		} else {
 			pSave->WriteString( "<<invalid>>" );
+		}
 	}
 
 	virtual void Restore( const SaveRestoreFieldInfo_t& fieldInfo, IRestore* pRestore ) {
-		std::string* pString = (std::string*) fieldInfo.pField;
+		auto* pString = static_cast<std::string*>( fieldInfo.pField );
 		char szString[ MAX_SAVE_LEN ];
 		pRestore->ReadString( szString, sizeof( szString ), 0 );
 		szString[ MAX_SAVE_LEN - 1 ] = 0;
@@ -48,12 +48,12 @@ public:
 	}
 
 	virtual void MakeEmpty( const SaveRestoreFieldInfo_t& fieldInfo ) {
-		std::string* pString = (std::string*) fieldInfo.pField;
+		auto* pString = static_cast<std::string*>( fieldInfo.pField );
 		pString->erase();
 	}
 
 	virtual bool IsEmpty( const SaveRestoreFieldInfo_t& fieldInfo ) {
-		std::string* pString = (std::string*) fieldInfo.pField;
+		auto* pString = static_cast<std::string*>( fieldInfo.pField );
 		return pString->empty();
 	}
 };
