@@ -2772,7 +2772,7 @@ LUFILE *lufopen(void *z,unsigned int len,DWORD flags,ZRESULT *err)
 			HANDLE hf = z;
 			bool res;
 #if IsWindows()
-			res = DuplicateHandle(GetCurrentProcess(),hf,GetCurrentProcess(),&h,0,FALSE,DUPLICATE_SAME_ACCESS) == TRUE;
+			res = DuplicateHandle(GetCurrentProcess(),hf,GetCurrentProcess(),&h,0,false,DUPLICATE_SAME_ACCESS) == true;
 #else
 			h = (void*) dup( (int)hf );
 			res = (int) dup >= 0;

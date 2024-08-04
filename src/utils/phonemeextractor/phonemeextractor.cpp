@@ -399,7 +399,7 @@ void PrintAlternates( ISpRecoResult* cpResult, void (*pfnPrint)( const char *fmt
 				for ( ULONG r = 0 ; r < ulCount; r++ )
 				{
 					CSpDynamicString dstrText;
-					hr = rgPhraseAlt[ r ]->GetText( (ULONG)SP_GETWHOLEPHRASE, (ULONG)SP_GETWHOLEPHRASE, TRUE, &dstrText, NULL);
+					hr = rgPhraseAlt[ r ]->GetText( (ULONG)SP_GETWHOLEPHRASE, (ULONG)SP_GETWHOLEPHRASE, true, &dstrText, NULL);
 					Assert( !FAILED( hr ) );
 
 					pfnPrint( "[ ALT ]" );
@@ -585,7 +585,7 @@ SR_RESULT ExtractPhonemes( const char *wavname, CSpDynamicString& text, CSentenc
 
 	SPSTATEHANDLE hStateRoot;
 	// create/re-create Root level rule of grammar
-	hr = cpRecoGrammar->GetRule(L"Root", 0, SPRAF_TopLevel | SPRAF_Active, TRUE, &hStateRoot);
+	hr = cpRecoGrammar->GetRule(L"Root", 0, SPRAF_TopLevel | SPRAF_Active, true, &hStateRoot);
 	if ( FAILED( hr ) )
 	{
 		pfnPrint( "Error:  SAPI 5.1 Unable to create root rule\n" );
@@ -679,8 +679,8 @@ SR_RESULT ExtractPhonemes( const char *wavname, CSpDynamicString& text, CSentenc
 		return result;
 	}
 	// connect wav input to recognizer
-	// SAPI will negotiate mismatched engine/input audio formats using system audio codecs, so second parameter is not important - use default of TRUE
-	hr = cpRecognizer->SetInput(cpInputStream, TRUE);
+	// SAPI will negotiate mismatched engine/input audio formats using system audio codecs, so second parameter is not important - use default of true
+	hr = cpRecognizer->SetInput(cpInputStream, true);
 	if ( FAILED( hr ) )
 	{
 		pfnPrint( "Error:  SAPI 5.1 Unable to associate input stream\n" );
@@ -718,7 +718,7 @@ SR_RESULT ExtractPhonemes( const char *wavname, CSpDynamicString& text, CSentenc
 
 	// while events occur, continue processing
 	// timeout should be greater than the audio stream length, or a reasonable amount of time expected to pass before no more recognitions are expected in an audio stream
-	BOOL fEndStreamReached = FALSE;
+	BOOL fEndStreamReached = false;
 	while (!fEndStreamReached && S_OK == cpRecoContext->WaitForNotifyEvent( SR_WAVTIMEOUT ))
 	{
 		CSpEvent spEvent;
@@ -786,7 +786,7 @@ SR_RESULT ExtractPhonemes( const char *wavname, CSpDynamicString& text, CSentenc
                     else
                     {
 						// Hypothesis or recognition success
-                        cpResult->GetText( (ULONG)SP_GETWHOLEPHRASE, (ULONG)SP_GETWHOLEPHRASE, TRUE, &dstrText, NULL);
+                        cpResult->GetText( (ULONG)SP_GETWHOLEPHRASE, (ULONG)SP_GETWHOLEPHRASE, true, &dstrText, NULL);
 
 						EnumeratePhonemes( cpPhoneConv, cpResult, sentence );
 
@@ -803,7 +803,7 @@ SR_RESULT ExtractPhonemes( const char *wavname, CSpDynamicString& text, CSentenc
 				break;
 				// end of the wav file was reached by the speech recognition engine
             case SPEI_END_SR_STREAM:
-				fEndStreamReached = TRUE;
+				fEndStreamReached = true;
 				break;
 			}
 			

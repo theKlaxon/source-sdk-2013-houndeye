@@ -29,7 +29,7 @@ bool CThreadPool::Start( const ThreadPoolStartParams_t& startParams ) {
 bool CThreadPool::Stop( int timeout ) {
 	this->m_Exit.Set();
 	#if IsWindows()
-		return WaitForMultipleObjects( m_Threads.Count(), (HANDLE*) m_Threads.Base(), TRUE, timeout );
+		return WaitForMultipleObjects( m_Threads.Count(), (HANDLE*) m_Threads.Base(), true, timeout );
 	#else
 		auto flag{ true };
 		// FIXME: Timeout is not accumulated!
@@ -212,7 +212,7 @@ unsigned CThreadPool::PoolThreadFunc( void* pParam ) {
 
 	DWORD waitResult;
 
-	while ( ( waitResult = WaitForMultipleObjects( ARRAYSIZE( waitHandles ), waitHandles, FALSE, INFINITE ) ) != WAIT_FAILED ) {
+	while ( ( waitResult = WaitForMultipleObjects( ARRAYSIZE( waitHandles ), waitHandles, false, INFINITE ) ) != WAIT_FAILED ) {
 		switch ( waitResult - WAIT_OBJECT_0 ) {
 			case 0: {
 				pOwner->m_IdleEvents[ iThread ].Reset();
@@ -356,14 +356,14 @@ int CThreadPool::Run() {
 	waitHandles[ JOB_REQUEST ] = GetJobSignalHandle();
 
 	while ( !bExit &&
-			( waitResult = WaitForMultipleObjects( 2, waitHandles, FALSE, INFINITE ) ) != WAIT_FAILED ) {
+			( waitResult = WaitForMultipleObjects( 2, waitHandles, false, INFINITE ) ) != WAIT_FAILED ) {
 		switch ( waitResult - WAIT_OBJECT_0 ) {
 				// It's a call from the master thread...
 			case CALL_FROM_MASTER: {
 				switch ( GetCallParam() ) {
 					case AF_EXIT:
 						Reply( true );
-						bExit = TRUE;
+						bExit = true;
 						break;
 
 					case AF_SUSPEND:

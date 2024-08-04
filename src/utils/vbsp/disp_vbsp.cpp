@@ -646,9 +646,9 @@ void DispGetFaceInfo( mapbrush_t *pBrush )
 			pSide->pMapDisp->face.w = CopyWinding( pSide->winding );
 			pSide->pMapDisp->face.contents = pBrush->contents;
 
-			pSide->pMapDisp->face.merged = FALSE;
-			pSide->pMapDisp->face.split[0] = FALSE;
-			pSide->pMapDisp->face.split[1] = FALSE;
+			pSide->pMapDisp->face.merged = false;
+			pSide->pMapDisp->face.split[0] = false;
+			pSide->pMapDisp->face.split[1] = false;
 
 			pSide->pMapDisp->entitynum = pBrush->entitynum;
 			pSide->pMapDisp->brushSideID = pSide->id;

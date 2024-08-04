@@ -24,12 +24,12 @@ extern "C" {
 	unsigned char* LZMA_Compress( unsigned char* pInput, unsigned int inputSize, unsigned int* pOutputSize );
 
 	//-----------------------------------------------------------------------------
-	// Decoding glue. Returns TRUE if succesful.
+	// Decoding glue. Returns true if succesful.
 	//-----------------------------------------------------------------------------
 	bool LZMA_Uncompress( unsigned char* pInput, unsigned char** ppOutput, unsigned int* pOutputSize );
 
 	//-----------------------------------------------------------------------------
-	// Decoding helper, returns TRUE if buffer is LZMA compressed.
+	// Decoding helper, returns true if buffer is LZMA compressed.
 	//-----------------------------------------------------------------------------
 	bool LZMA_IsCompressed( unsigned char* pInput );
 

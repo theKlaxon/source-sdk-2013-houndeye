@@ -927,7 +927,7 @@ void WriteBSP (node_t *headnode, face_t *pLeafFaceList )
 		if( entityIndex == entity_num )
 		{
 			EmitFaceVertexes( NULL, &mapdispinfo[i].face );
-			EmitFace( &mapdispinfo[i].face, FALSE );
+			EmitFace( &mapdispinfo[i].face, false );
 		}
 	}
 

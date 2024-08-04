@@ -817,7 +817,7 @@ bool CNPC_Assassin::FValidateHintType ( CAI_Hint *pHint )
 		break;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------------

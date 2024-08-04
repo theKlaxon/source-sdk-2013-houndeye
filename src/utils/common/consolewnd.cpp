@@ -163,7 +163,7 @@ void CConsoleWnd::PrintToConsole( const char *pMsg )
 
 		int nLen = (int)SendMessage( m_hEditControl, EM_GETLIMITTEXT, 0, 0 );
 		SendMessage( m_hEditControl, EM_SETSEL, 0, nLen );
-		SendMessage( m_hEditControl, EM_REPLACESEL, FALSE, (LPARAM)"" );
+		SendMessage( m_hEditControl, EM_REPLACESEL, false, (LPARAM)"" );
 	}		
 
 	FormatAndSendToEditControl( m_hEditControl, pMsg );
@@ -277,7 +277,7 @@ void SendToEditControl( HWND hEditControl, const char *pText )
 {
 	int nLen = (int)SendMessage( hEditControl, EM_GETLIMITTEXT, 0, 0 );
 	SendMessage( hEditControl, EM_SETSEL, nLen, nLen );
-	SendMessage( hEditControl, EM_REPLACESEL, FALSE, (LPARAM)pText );
+	SendMessage( hEditControl, EM_REPLACESEL, false, (LPARAM)pText );
 }
 
 

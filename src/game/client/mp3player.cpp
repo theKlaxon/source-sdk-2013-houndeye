@@ -1374,7 +1374,7 @@ void CMP3Player::GetLocalCopyOfSong( const MP3File_t &mp3, char *outsong, size_t
 
 		// !!!HACK HACK:
 		// Total hack right now, using windows OS calls to copy file to full destination
-		int success = ::CopyFileA( sourcepath, destpath, TRUE );
+		int success = ::CopyFileA( sourcepath, destpath, true );
 		if ( success > 0 )
 		{
 			Q_snprintf( outsong, outlen, "_mp3/%s.mp3", hexname );

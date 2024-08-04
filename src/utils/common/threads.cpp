@@ -199,7 +199,7 @@ void RunThreads_Start( RunThreadsFn fn, void* pUserData, ERunThreadsPriority ePr
 
 void RunThreads_End() {
 	#if IsWindows()
-		WaitForMultipleObjects( numthreads, g_ThreadHandles, TRUE, INFINITE );
+		WaitForMultipleObjects( numthreads, g_ThreadHandles, true, INFINITE );
 	#endif
 	for ( auto handle : g_ThreadHandles ) {
 		#if IsWindows()

@@ -228,7 +228,7 @@ void CBaseButton::Press( CBaseEntity *pActivator, BUTTON_CODE eCode )
 	if (m_bLocked)
 	{
 		// play button locked sound
-		PlayLockSounds(this, &m_ls, TRUE, TRUE);
+		PlayLockSounds(this, &m_ls, true, true);
 		return;
 	}
 
@@ -419,8 +419,8 @@ void CBaseButton::Spawn( )
 		m_vecPosition2 = m_vecPosition1;
 	}
 
-	m_fStayPushed = (m_flWait == -1 ? TRUE : FALSE);
-	m_fRotating = FALSE;
+	m_fStayPushed = (m_flWait == -1 ? true : false);
+	m_fRotating = false;
 
 	if (HasSpawnFlags(SF_BUTTON_LOCKED))
 	{
@@ -494,7 +494,7 @@ void CBaseButton::ButtonSpark ( void )
 //-----------------------------------------------------------------------------
 bool CBaseButton::OnUseLocked( CBaseEntity *pActivator )
 {
-	PlayLockSounds(this, &m_ls, TRUE, TRUE);
+	PlayLockSounds(this, &m_ls, true, true);
 
 	if ( gpGlobals->curtime > m_flUseLockedTime )
 	{
@@ -611,7 +611,7 @@ void CBaseButton::ButtonTouch( CBaseEntity *pOther )
 	if (!UTIL_IsMasterTriggered(m_sMaster, pOther) || m_bLocked)
 	{
 		// play button locked sound
-		PlayLockSounds(this, &m_ls, TRUE, TRUE);
+		PlayLockSounds(this, &m_ls, true, true);
 		return;
 	}
 
@@ -667,13 +667,13 @@ void CBaseButton::ButtonActivate( void )
 	if (!UTIL_IsMasterTriggered(m_sMaster, m_hActivator) || m_bLocked)
 	{
 		// button is locked, play locked sound
-		PlayLockSounds(this, &m_ls, TRUE, TRUE);
+		PlayLockSounds(this, &m_ls, true, true);
 		return;
 	}
 	else
 	{
 		// button is unlocked, play unlocked sound
-		PlayLockSounds(this, &m_ls, FALSE, TRUE);
+		PlayLockSounds(this, &m_ls, false, true);
 	}
 
 	ASSERT(m_toggle_state == TS_AT_BOTTOM);
@@ -893,8 +893,8 @@ void CRotButton::Spawn( void )
 	m_vecAngle2	= GetLocalAngles() + m_vecMoveAng * m_flMoveDistance;
 	ASSERTSZ(m_vecAngle1 != m_vecAngle2, "rotating button start/end positions are equal\n");
 
-	m_fStayPushed = (m_flWait == -1 ? TRUE : FALSE);
-	m_fRotating = TRUE;
+	m_fStayPushed = (m_flWait == -1 ? true : false);
+	m_fRotating = true;
 
 	SetUse(&CRotButton::ButtonUse);
 

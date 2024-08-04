@@ -69,7 +69,7 @@ GDinputvariable::GDinputvariable(void)
 	m_szDefault[0] = 0;
 	m_nDefault = 0;
 	m_szValue[0] = 0;
-	m_bReportable = FALSE;
+	m_bReportable = false;
 	m_bReadOnly = false;
 	m_pszDescription = nullptr;
 }
@@ -85,7 +85,7 @@ GDinputvariable::GDinputvariable( const char *szType, const char *szName )
 	m_szDefault[0] = 0;
 	m_nDefault = 0;
 	m_szValue[0] = 0;
-	m_bReportable = FALSE;
+	m_bReportable = false;
 	m_bReadOnly = false;
 	m_pszDescription = nullptr;
 
@@ -160,7 +160,7 @@ trtoken_t GDinputvariable::GetStoreAsFromType(GDIV_TYPE eType)
 		}
 	}
 
-	Assert(FALSE);
+	Assert(false);
 	return(STRING);
 }
 
@@ -205,7 +205,7 @@ const char *GDinputvariable::GetTypeText(void)
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Input  : tr - 
-// Output : Returns TRUE on success, FALSE on failure.
+// Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 BOOL GDinputvariable::InitFromTokens(TokenReader& tr)
 {
@@ -213,12 +213,12 @@ BOOL GDinputvariable::InitFromTokens(TokenReader& tr)
 
 	if (!GDGetToken(tr, m_szName, sizeof(m_szName), IDENT))
 	{
-		return FALSE;
+		return false;
 	}
 
 	if (!GDSkipToken(tr, OPERATOR, "("))
 	{
-		return FALSE;
+		return false;
 	}
 
 	// check for "reportable" marker
@@ -238,12 +238,12 @@ BOOL GDinputvariable::InitFromTokens(TokenReader& tr)
 	// get type
 	if (!GDGetToken(tr, szToken, sizeof(szToken), IDENT))
 	{
-		return FALSE;
+		return false;
 	}
 
 	if (!GDSkipToken(tr, OPERATOR, ")"))
 	{
-		return FALSE;
+		return false;
 	}
 
 	//
@@ -253,7 +253,7 @@ BOOL GDinputvariable::InitFromTokens(TokenReader& tr)
 	if (m_eType == ivBadType)
 	{
 		GDError(tr, "'%s' is not a valid variable type", szToken);
-		return FALSE;
+		return false;
 	}
 
 	//
@@ -288,7 +288,7 @@ BOOL GDinputvariable::InitFromTokens(TokenReader& tr)
 		if (m_eType == ivFlags)
 		{
 			GDError(tr, "flag sets do not have long names");
-			return FALSE;
+			return false;
 		}
 
 		//
@@ -296,7 +296,7 @@ BOOL GDinputvariable::InitFromTokens(TokenReader& tr)
 		//
 		if (!GDGetToken(tr, m_szLongName, sizeof(m_szLongName), STRING))
 		{
-			return(FALSE);
+			return(false);
 		}
 
 		//
@@ -337,14 +337,14 @@ BOOL GDinputvariable::InitFromTokens(TokenReader& tr)
 				{
 					if (!GDGetToken(tr, m_szDefault, sizeof(m_szDefault), STRING))
 					{
-						return(FALSE);
+						return(false);
 					}
 				}
 				else if (eStoreAs == INTEGER)
 				{
 					if (!GDGetToken(tr, szToken, sizeof(szToken), INTEGER))
 					{
-						return(FALSE);
+						return(false);
 					}
 
 					m_nDefault = atoi(szToken);
@@ -379,7 +379,7 @@ BOOL GDinputvariable::InitFromTokens(TokenReader& tr)
 			}
 			if (!GDGetTokenDynamic(tr, &m_pszDescription, STRING))
 			{
-				return(FALSE);
+				return(false);
 			}
 
 			//
@@ -407,26 +407,26 @@ BOOL GDinputvariable::InitFromTokens(TokenReader& tr)
 			// Can't define a flags or choices variable without providing any flags or choices.
 			//
 			GDError(tr, "no %s specified", m_eType == ivFlags ? "flags" : "choices");
-			return(FALSE);
+			return(false);
 		}
-		return(TRUE);
+		return(true);
 	}
 
 	if (!GDSkipToken(tr, OPERATOR, "="))
 	{
-		return(FALSE);
+		return(false);
 	}
 
 	if (m_eType != ivFlags && m_eType != ivChoices)
 	{
 		GDError(tr, "didn't expect '=' here");
-		return(FALSE);
+		return(false);
 	}
 
 	// should be '[' to start flags/choices
 	if (!GDSkipToken(tr, OPERATOR, "["))
 	{
-		return(FALSE);
+		return(false);
 	}
 
 	// get flags?
@@ -449,28 +449,28 @@ BOOL GDinputvariable::InitFromTokens(TokenReader& tr)
 			// colon..
 			if (!GDSkipToken(tr, OPERATOR, ":"))
 			{
-				return FALSE;
+				return false;
 			}
 
 			// get description
 			if (!GDGetToken(tr, szToken, sizeof(szToken), STRING))
 			{
-				return FALSE;
+				return false;
 			}
 			strcpy(ivi.szCaption, szToken);
 
 			// colon..
 			if (!GDSkipToken(tr, OPERATOR, ":"))
 			{
-				return FALSE;
+				return false;
 			}
 
 			// get default setting
 			if (!GDGetToken(tr, szToken, sizeof(szToken), INTEGER))
 			{
-				return FALSE;
+				return false;
 			}
-			ivi.bDefault = atoi(szToken) ? TRUE : FALSE;
+			ivi.bDefault = atoi(szToken) ? true : false;
 
 			// add item to array of items
 			m_Items.AddToTail(ivi);
@@ -506,13 +506,13 @@ BOOL GDinputvariable::InitFromTokens(TokenReader& tr)
 			// colon
 			if (!GDSkipToken(tr, OPERATOR, ":"))
 			{
-				return FALSE;
+				return false;
 			}
 
 			// get description
 			if (!GDGetToken(tr, szToken, sizeof(szToken), STRING))
 			{
-				return FALSE;
+				return false;
 			}
 
 			strcpy(ivi.szCaption, szToken);
@@ -523,10 +523,10 @@ BOOL GDinputvariable::InitFromTokens(TokenReader& tr)
 
 	if (!GDSkipToken(tr, OPERATOR, "]"))
 	{
-		return FALSE;
+		return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 
@@ -552,12 +552,12 @@ void GDinputvariable::FromKeyValue(MDkeyvalue *pkv)
 //-----------------------------------------------------------------------------
 // Purpose: Determines whether the given flag is set (assuming this is an ivFlags).
 // Input  : uCheck - Flag to check.
-// Output : Returns TRUE if flag is set, FALSE if not.
+// Output : Returns true if flag is set, false if not.
 //-----------------------------------------------------------------------------
 BOOL GDinputvariable::IsFlagSet(unsigned int uCheck)
 {
 	Assert(m_eType == ivFlags);
-	return (((unsigned int)m_nValue & uCheck) == uCheck) ? TRUE : FALSE;
+	return (((unsigned int)m_nValue & uCheck) == uCheck) ? true : false;
 }
 
 
@@ -609,7 +609,7 @@ void GDinputvariable::Merge(GDinputvariable &Other)
 //-----------------------------------------------------------------------------
 // Purpose: Determines whether the given flag is set (assuming this is an ivFlags).
 // Input  : uFlags - Flags to set.
-//			bSet - TRUE to set the flags, FALSE to clear them.
+//			bSet - true to set the flags, false to clear them.
 //-----------------------------------------------------------------------------
 void GDinputvariable::SetFlag(unsigned int uFlags, BOOL bSet)
 {

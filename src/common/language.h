@@ -3,16 +3,10 @@
 // Purpose: represent a canonical list of the languages we support, 
 //
 //=============================================================================
-
-#ifndef LANG_H
-#define LANG_H
-#if IsWindows()
 #pragma once
-#endif
 
 // if you change this enum also change language.cpp:s_LanguageNames
-enum ELanguage
-{
+enum ELanguage {
 	k_Lang_None = -1,
 	k_Lang_First = 0,
 	k_Lang_English = 0,
@@ -46,11 +40,9 @@ enum ELanguage
 
 #define FOR_EACH_LANGUAGE( eLang )		for ( int eLang = (int)k_Lang_First; eLang < k_Lang_MAX; ++eLang )
 
-ELanguage PchLanguageToELanguage(const char *pchShortName, ELanguage eDefault = k_Lang_English);
+ELanguage PchLanguageToELanguage( const char *pchShortName, ELanguage eDefault = k_Lang_English );
 ELanguage PchLanguageICUCodeToELanguage( const char *pchICUCode, ELanguage eDefault = k_Lang_English );
 const char *GetLanguageShortName( ELanguage eLang );
 const char *GetLanguageICUName( ELanguage eLang );
 const char *GetLanguageVGUILocalization( ELanguage eLang );
 const char *GetLanguageName( ELanguage eLang );
-
-#endif /* LANG_H */

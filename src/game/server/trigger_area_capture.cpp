@@ -1101,8 +1101,8 @@ void CTriggerAreaCapture::InputSetControlPoint( inputdata_t &inputdata )
 
 //-----------------------------------------------------------------------------
 // Purpose: Check if this player's death causes a block
-// return FALSE if the player is not in this area
-// return TRUE otherwise ( eg player is in area, but his death does not cause break )
+// return false if the player is not in this area
+// return true otherwise ( eg player is in area, but his death does not cause break )
 //-----------------------------------------------------------------------------
 bool CTriggerAreaCapture::CheckIfDeathCausesBlock( CBaseMultiplayerPlayer *pVictim, CBaseMultiplayerPlayer *pKiller )
 {

@@ -529,7 +529,7 @@ void MakePatchForFace( int fn, winding_t* w ) {
 
 
 	#ifdef STATIC_FOG
-		patch->fog = FALSE;
+		patch->fog = false;
 	#endif
 
 	patch->winding = w;
@@ -2429,7 +2429,7 @@ int RunVRAD( int argc, char** argv ) {
 
 	Msg( "\n      Valve Radiosity Simulator     \n" );
 
-	verbose = true;// Originally FALSE
+	verbose = true;// Originally false
 
 	bool onlydetail;
 	int i = ParseCommandLine( argc, argv, &onlydetail );

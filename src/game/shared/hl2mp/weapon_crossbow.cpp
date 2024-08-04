@@ -664,7 +664,7 @@ void CWeaponCrossbow::FireBolt( void )
 	if ( !m_iClip1 && pOwner->GetAmmoCount( m_iPrimaryAmmoType ) <= 0 )
 	{
 		// HEV suit - indicate out of ammo condition
-		pOwner->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
+		pOwner->SetSuitUpdate("!HEV_AMO0", false, 0);
 	}
 
 	m_flNextPrimaryAttack = m_flNextSecondaryAttack	= gpGlobals->curtime + 0.75;

@@ -77,34 +77,29 @@ inline T AlignValue( T val, uintptr_t alignment ) {
 	// unexpected side-effects or more expensive code. Even the clamp (all
 	// lower-case) function can generate more expensive code because of the
 	// mixed types involved.
-	template< class T >
-	T Clamp( T const &val, T const &minVal, T const &maxVal ) {
-		if( val < minVal )
+	template<class T>
+	T Clamp( T const& val, T const& minVal, T const& maxVal ) {
+		if ( val < minVal ) {
 			return minVal;
-		else if( val > maxVal )
+		} else if ( val > maxVal ) {
 			return maxVal;
-		else
-			return val;
+		}
+		return val;
 	}
 
 	// This is the preferred Min operator. Using the MIN macro can lead to unexpected
 	// side-effects or more expensive code.
-	template< class T >
-	T Min( T const &val1, T const &val2 ) {
+	template<class T>
+	T Min( T const& val1, T const& val2 ) {
 		return val1 < val2 ? val1 : val2;
 	}
 
 	// This is the preferred Max operator. Using the MAX macro can lead to unexpected
 	// side-effects or more expensive code.
-	template< class T >
-	T Max( T const &val1, T const &val2 ) {
+	template<class T>
+	T Max( T const& val1, T const& val2 ) {
 		return val1 > val2 ? val1 : val2;
 	}
-#endif
-
-#ifndef FALSE
-	#define FALSE 0
-	#define TRUE (!FALSE)
 #endif
 
 
@@ -118,9 +113,9 @@ typedef unsigned char BYTE;
 typedef unsigned char byte;
 typedef unsigned short word;
 #if defined( PLATFORM_WINDOWS )
-	typedef wchar_t ucs2; // under windows wchar_t is ucs2
+	using ucs2 = wchar_t; // under windows wchar_t is ucs2
 #else
-	typedef unsigned short ucs2;
+	using ucs2 = unsigned short;
 #endif
 
 enum ThreeState_t {
@@ -176,7 +171,7 @@ inline unsigned long FloatAbsBits( vec_t f ) {
 	#endif
 	extern "C" float fabsf(_In_ float);
 #else
-	#include <math.h>
+	#include <cmath>
 #endif
 
 inline float FloatMakeNegative( vec_t f ) {
@@ -218,11 +213,6 @@ struct colorVec {
 	unsigned r, g, b, a;
 };
 
-
-#ifndef NOTE_UNUSED
-	#define NOTE_UNUSED(x)	(void)(x)	// for pesky compiler / lint warnings
-#endif
-
 struct vrect_t {
 	int				x,y,width,height;
 	vrect_t			*pnext;
@@ -254,10 +244,9 @@ struct interval_t {
 // 32-bit pointer handles.
 
 // Typesafe 8-bit and 16-bit handles.
-template< class HandleType >
+template<class HandleType>
 class CBaseIntHandle {
 public:
-	
 	inline bool			operator==( const CBaseIntHandle &other )	{ return m_Handle == other.m_Handle; }
 	inline bool			operator!=( const CBaseIntHandle &other )	{ return m_Handle != other.m_Handle; }
 
@@ -267,20 +256,18 @@ public:
 	inline void			SetHandleValue( HandleType val )	{ m_Handle = val; }
 
 	typedef HandleType	HANDLE_TYPE;
-
 protected:
 	HandleType	m_Handle;
 };
 
-template< class DummyType >
-class CIntHandle16 : public CBaseIntHandle< unsigned short > {
+template<class DummyType>
+class CIntHandle16 : public CBaseIntHandle<unsigned short> {
 public:
 	inline			CIntHandle16() {}
 
 	static inline	CIntHandle16<DummyType> MakeHandle( HANDLE_TYPE val ) {
 		return CIntHandle16<DummyType>( val );
 	}
-
 protected:
 	inline			CIntHandle16( HANDLE_TYPE val ) {
 		m_Handle = val;
@@ -288,8 +275,8 @@ protected:
 };
 
 
-template< class DummyType >
-class CIntHandle32 : public CBaseIntHandle< unsigned long > {
+template<class DummyType>
+class CIntHandle32 : public CBaseIntHandle<unsigned long> {
 public:
 	inline			CIntHandle32() {}
 

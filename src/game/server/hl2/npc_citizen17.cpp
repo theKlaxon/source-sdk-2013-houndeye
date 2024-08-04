@@ -2507,8 +2507,8 @@ bool CNPC_Citizen::SpeakCommandResponse( AIConcept_t _concept, const char *modif
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: return TRUE if the commander mode should try to give this order
-//			to more people. return FALSE otherwise. For instance, we don't
+// Purpose: return true if the commander mode should try to give this order
+//			to more people. return false otherwise. For instance, we don't
 //			try to send all 3 selectedcitizens to pick up the same gun.
 //-----------------------------------------------------------------------------
 bool CNPC_Citizen::TargetOrder( CBaseEntity *pTarget, CAI_BaseNPC **Allies, int numAllies )

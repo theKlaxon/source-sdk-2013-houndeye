@@ -232,7 +232,7 @@ bool CGameRules::CanHavePlayerItem( CBasePlayer *pPlayer, CBaseCombatWeapon *pWe
 			// have the gun if we aren't already carrying one of this type
 			if ( pPlayer->Weapon_OwnsThisType( pWeapon ) )
 			{
-				return FALSE;
+				return false;
 			}
 		}
 	}
@@ -241,12 +241,12 @@ bool CGameRules::CanHavePlayerItem( CBasePlayer *pPlayer, CBaseCombatWeapon *pWe
 		// weapon doesn't use ammo, don't take another if you already have it.
 		if ( pPlayer->Weapon_OwnsThisType( pWeapon ) )
 		{
-			return FALSE;
+			return false;
 		}
 	}
 */
 	// note: will fall through to here if GetItemInfo doesn't fill the struct!
-	return TRUE;
+	return true;
 }
 
 //=========================================================

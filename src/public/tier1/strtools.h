@@ -142,8 +142,8 @@ template< bool CASE_SENSITIVE > inline bool _V_strEndsWithInner( const char *pSt
 }
 
 // Does 'pStr' end with 'pSuffix'? (case sensitive/insensitive variants)
-inline bool V_strEndsWith(  const char *pStr, const char *pSuffix ) { return _V_strEndsWithInner<TRUE>(  pStr, pSuffix ); }
-inline bool V_striEndsWith( const char *pStr, const char *pSuffix ) { return _V_strEndsWithInner<FALSE>( pStr, pSuffix ); }
+inline bool V_strEndsWith(  const char *pStr, const char *pSuffix ) { return _V_strEndsWithInner<true>(  pStr, pSuffix ); }
+inline bool V_striEndsWith( const char *pStr, const char *pSuffix ) { return _V_strEndsWithInner<false>( pStr, pSuffix ); }
 
 
 // Normalizes a float string in place.  

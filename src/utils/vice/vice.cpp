@@ -137,7 +137,7 @@ bool Process_File( char *pInputBaseName, int maxlen )
 	g_pFullFileSystem->Write( temp, fileSize, f ); // read into local buffer
 	g_pFullFileSystem->Close( f );	// close file after reading
 	
-	return TRUE;
+	return true;
 }
 
 int main(int argc, char* argv[])

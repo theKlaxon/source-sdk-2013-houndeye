@@ -78,7 +78,7 @@ struct GLMRendererInfoFields
 	   kCGLRPRendererCount       = 128		number of renderers in the CGLRendererInfoObj under examination
 
 	   kCGLRPOffScreen           =  53,		D/C
-	   kCGLRPRobust              =  75,		FALSE or D/C - aka we're asking for no-fallback
+	   kCGLRPRobust              =  75,		false or D/C - aka we're asking for no-fallback
 	   kCGLRPBackingStore        =  76,		D/C
 	   kCGLRPMPSafe              =  78,		D/C
 	   kCGLRPMultiScreen         =  81,		D/C

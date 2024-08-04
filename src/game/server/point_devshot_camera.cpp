@@ -119,7 +119,7 @@ void CPointDevShotCamera::DevShotThink_Setup( void )
 	engine->ClientCommand( pPlayer->edict(), "notarget" );
 
 	pPlayer->AddSolidFlags( FSOLID_NOT_SOLID );
-	pPlayer->EnableControl(FALSE);
+	pPlayer->EnableControl(false);
 	pPlayer->SetViewEntity( this );
 	pPlayer->SetFOV( this, m_iFOV );
 

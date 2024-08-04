@@ -89,7 +89,7 @@ static unsigned FindItem(const char **items, unsigned num, const wchar_t *s, uns
 static BOOL WINAPI HandlerRoutine(DWORD ctrlType)
 {
   ctrlType = ctrlType;
-  return TRUE;
+  return true;
 }
 #endif
 
@@ -250,7 +250,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   Bool useShellExecute = True;
 
   #ifdef _CONSOLE
-  SetConsoleCtrlHandler(HandlerRoutine, TRUE);
+  SetConsoleCtrlHandler(HandlerRoutine, true);
   #else
   hInstance = hInstance;
   hPrevInstance = hPrevInstance;
@@ -572,7 +572,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
       wcscat(cmdLine, cmdLineParams);
       memset(&si, 0, sizeof(si));
       si.cb = sizeof(si);
-      if (CreateProcessW(NULL, cmdLine, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi) == 0)
+      if (CreateProcessW(NULL, cmdLine, NULL, NULL, false, 0, NULL, NULL, &si, &pi) == 0)
         res = SZ_ERROR_FAIL;
       else
       {

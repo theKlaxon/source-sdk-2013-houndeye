@@ -346,7 +346,7 @@ public:
 
 	virtual QAngle			BodyAngles();
 	virtual Vector			BodyTarget( const Vector &posSrc, bool bNoisy);
-	virtual bool			ShouldFadeOnDeath( void ) { return FALSE; }
+	virtual bool			ShouldFadeOnDeath( void ) { return false; }
 	
 	virtual const impactdamagetable_t &GetPhysicsImpactDamageTable();
 	virtual int				OnTakeDamage_Alive( const CTakeDamageInfo &info );
@@ -358,9 +358,9 @@ public:
 
 	bool					IsHLTV( void ) const { return pl.hltv; }
 	bool					IsReplay( void ) const { return pl.replay; }
-	virtual	bool			IsPlayer( void ) const { return true; }			// Spectators return TRUE for this, use IsObserver to separate cases
-	virtual bool			IsNetClient( void ) const { return true; }		// Bots should return FALSE for this, they can't receive NET messages
-																			// Spectators should return TRUE for this
+	virtual	bool			IsPlayer( void ) const { return true; }			// Spectators return true for this, use IsObserver to separate cases
+	virtual bool			IsNetClient( void ) const { return true; }		// Bots should return false for this, they can't receive NET messages
+																			// Spectators should return true for this
 
 	virtual bool			IsFakeClient( void ) const;
 
@@ -1024,7 +1024,7 @@ private:
 
 	bool					m_fInitHUD;				// True when deferred HUD restart msg needs to be sent
 	bool					m_fGameHUDInitialized;
-	bool					m_fWeapon;				// Set this to FALSE to force a reset of the current weapon HUD info
+	bool					m_fWeapon;				// Set this to false to force a reset of the current weapon HUD info
 
 	int						m_iUpdateTime;		// stores the number of frame ticks before sending HUD update messages
 	int						m_iClientBattery;	// the Battery currently known by the client.  If this changes, send a new

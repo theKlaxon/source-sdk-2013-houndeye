@@ -233,7 +233,7 @@ int CTripmineGrenade::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 		SetThink( SUB_Remove );
 		SetNextThink( gpGlobals->curtime + 0.1f );
 		KillBeam();
-		return FALSE;
+		return false;
 	}
 	return BaseClass::OnTakeDamage_Alive( info );
 }

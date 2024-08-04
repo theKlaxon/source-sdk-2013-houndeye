@@ -2199,7 +2199,7 @@ public:
 	virtual void ProcessSceneEvents( void );
 
 	// Don't treat as a live target
-	virtual bool IsAlive( void ) { return FALSE; }
+	virtual bool IsAlive( void ) { return false; }
 
 	float m_flextime;
 	LocalFlexController_t m_flexnum;

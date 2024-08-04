@@ -312,7 +312,7 @@ void CNPC_CScanner::Activate()
 	BaseClass::Activate();
 
 	// Have to do this here because sprites do not go across level transitions
-	m_pEyeFlash = CSprite::SpriteCreate( "sprites/blueflare1.vmt", GetLocalOrigin(), FALSE );
+	m_pEyeFlash = CSprite::SpriteCreate( "sprites/blueflare1.vmt", GetLocalOrigin(), false );
 	m_pEyeFlash->SetTransparency( kRenderGlow, 255, 255, 255, 0, kRenderFxNoDissipation );
 	m_pEyeFlash->SetAttachment( this, LookupAttachment( SCANNER_ATTACHMENT_LIGHT ) );
 	m_pEyeFlash->SetBrightness( 0 );
@@ -423,7 +423,7 @@ void CNPC_CScanner::Event_Killed( const CTakeDamageInfo &info )
 //-----------------------------------------------------------------------------
 // Purpose: Tells use whether or not the NPC cares about a given type of hint node.
 // Input  : sHint - 
-// Output : TRUE if the NPC is interested in this hint type, FALSE if not.
+// Output : true if the NPC is interested in this hint type, false if not.
 //-----------------------------------------------------------------------------
 bool CNPC_CScanner::FValidateHintType(CAI_Hint *pHint)
 {

@@ -1241,7 +1241,7 @@ const char *CHL2MPRules::GetChatFormat( bool bTeamOnly, CBasePlayer *pPlayer )
 	const char *pszFormat = NULL;
 
 	// team only
-	if ( bTeamOnly == TRUE )
+	if ( bTeamOnly == true )
 	{
 		if ( pPlayer->GetTeamNumber() == TEAM_SPECTATOR )
 		{

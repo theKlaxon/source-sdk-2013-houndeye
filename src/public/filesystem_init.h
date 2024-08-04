@@ -73,7 +73,7 @@ public:
 	// can load the main steam caches (like for Counter-Strike or Half-Life 2), and also load the
 	// caches that include tools-specific materials (materials\editor, materials\debug, etc).
 	//
-	// (default: true - should be FALSE for the engine)
+	// (default: true - should be false for the engine)
 	bool			m_bToolsMode;
 
 	// If this is true, and m_bToolsMode is false, then it will append the path to steam.dll to the

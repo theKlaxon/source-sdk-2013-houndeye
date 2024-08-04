@@ -1507,11 +1507,11 @@ void CFuncTank::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE use
 bool CFuncTank::InRange( float range )
 {
 	if ( range < m_minRange )
-		return FALSE;
+		return false;
 	if ( (m_maxRange > 0) && (range > m_maxRange) )
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -2214,7 +2214,7 @@ void CFuncTank::Fire( int bulletCount, const Vector &barrelEnd, const Vector &fo
 	{
 		if ( m_iszSpriteSmoke != NULL_STRING )
 		{
-			CSprite *pSprite = CSprite::SpriteCreate( STRING(m_iszSpriteSmoke), barrelEnd, TRUE );
+			CSprite *pSprite = CSprite::SpriteCreate( STRING(m_iszSpriteSmoke), barrelEnd, true );
 			pSprite->AnimateAndDie( random->RandomFloat( 15.0, 20.0 ) );
 			pSprite->SetTransparency( kRenderTransAlpha, m_clrRender->r(), m_clrRender->g(), m_clrRender->b(), 255, kRenderFxNone );
 
@@ -2224,7 +2224,7 @@ void CFuncTank::Fire( int bulletCount, const Vector &barrelEnd, const Vector &fo
 		}
 		if ( m_iszSpriteFlash != NULL_STRING )
 		{
-			CSprite *pSprite = CSprite::SpriteCreate( STRING(m_iszSpriteFlash), barrelEnd, TRUE );
+			CSprite *pSprite = CSprite::SpriteCreate( STRING(m_iszSpriteFlash), barrelEnd, true );
 			pSprite->AnimateAndDie( 5 );
 			pSprite->SetTransparency( kRenderTransAdd, 255, 255, 255, 255, kRenderFxNoDissipation );
 			pSprite->SetScale( m_spriteScale );

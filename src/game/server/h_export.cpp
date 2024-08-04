@@ -31,7 +31,7 @@ BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved )
 	if ( sizeof(inputfunc_t) != sizeof(int) )
 	{
 		Assert( sizeof(inputfunc_t) == sizeof(int) );
-		return FALSE;
+		return false;
 	}
 
 	if ( fdwReason == DLL_PROCESS_ATTACH )
@@ -41,7 +41,7 @@ BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved )
 	else if ( fdwReason == DLL_PROCESS_DETACH )
     {
     }
-	return TRUE;
+	return true;
 }
 
 #endif

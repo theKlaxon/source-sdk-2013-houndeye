@@ -344,7 +344,7 @@ void CWeaponSniperRifle::PrimaryAttack( void )
 		// Indicate out of ammo condition if we run out of ammo.
 		if (!m_iClip1 && pPlayer->GetAmmoCount(m_iPrimaryAmmoType) <= 0)
 		{
-			pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0); 
+			pPlayer->SetSuitUpdate("!HEV_AMO0", false, 0);
 		}
 	}
 

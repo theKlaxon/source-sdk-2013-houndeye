@@ -629,7 +629,7 @@ bool VMPI_Stats_Init_Worker( const char *pHostName, const char *pDBName, const c
 	}
 
 	// Now create a thread that samples perf data and stores it in the database.
-	g_hPerfThreadExitEvent = CreateEvent( NULL, FALSE, FALSE, NULL );
+	g_hPerfThreadExitEvent = CreateEvent( NULL, false, false, NULL );
 	g_hPerfThread = CreateThread(
 		NULL,
 		0,
@@ -758,7 +758,7 @@ void RunJobWatchApp( char *pCmdLine )
 				pCmdLine, 
 				NULL,							// security
 				NULL,
-				TRUE,
+				true,
 				0,			// flags
 				NULL,							// environment
 				dirName,							// current directory

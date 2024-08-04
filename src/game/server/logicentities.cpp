@@ -87,7 +87,7 @@ void CLogicCompareInteger::InputValue( inputdata_t &inputdata )
 	{
 		// TODO: need to add this event with a lower priority, so it gets called after all inputs have arrived
 		g_EventQueue.AddEvent( this, "CompareValues", 0, inputdata.pActivator, this, inputdata.nOutputID );
-		m_AllIntCompares.m_bUpdatedThisFrame = TRUE;
+		m_AllIntCompares.m_bUpdatedThisFrame = true;
 	}
 }
 
@@ -97,7 +97,7 @@ void CLogicCompareInteger::InputValue( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CLogicCompareInteger::InputCompareValues( inputdata_t &inputdata )
 {
-	m_AllIntCompares.m_bUpdatedThisFrame = FALSE;
+	m_AllIntCompares.m_bUpdatedThisFrame = false;
 
 	// loop through all the values comparing them
 	int value = m_iIntegerValue;
@@ -265,7 +265,7 @@ void CTimerEntity::ResetTimer( void )
 //-----------------------------------------------------------------------------
 void CTimerEntity::Enable( void )
 {
-	m_iDisabled = FALSE;
+	m_iDisabled = false;
 	ResetTimer();
 }
 
@@ -275,7 +275,7 @@ void CTimerEntity::Enable( void )
 //-----------------------------------------------------------------------------
 void CTimerEntity::Disable( void )
 {
-	m_iDisabled = TRUE;
+	m_iDisabled = true;
 	SetNextThink( TICK_NEVER_THINK );
 }
 
@@ -2248,7 +2248,7 @@ int CLogicBranch::DrawDebugTextOverlays( void )
 		char tempstr[512];
 
 		// print refire time
-		Q_snprintf( tempstr, sizeof(tempstr), "Branch value: %s", (m_bInValue) ? "TRUE" : "FALSE" );
+		Q_snprintf( tempstr, sizeof(tempstr), "Branch value: %s", (m_bInValue) ? "true" : "false" );
 		EntityText( text_offset, tempstr, 0 );
 		text_offset++;
 	}
@@ -2737,7 +2737,7 @@ int CLogicBranchList::DrawDebugTextOverlays( void )
 			CLogicBranch *pBranch = (CLogicBranch *)m_LogicBranchList.Element( i ).Get();
 			if ( pBranch )
 			{
-				Q_snprintf( tempstr, sizeof(tempstr), "Branch (%s): %s", STRING(pBranch->GetEntityName()), (pBranch->GetLogicBranchState()) ? "TRUE" : "FALSE" );
+				Q_snprintf( tempstr, sizeof(tempstr), "Branch (%s): %s", STRING(pBranch->GetEntityName()), (pBranch->GetLogicBranchState()) ? "true" : "false" );
 				EntityText( text_offset, tempstr, 0 );
 				text_offset++;
 			}

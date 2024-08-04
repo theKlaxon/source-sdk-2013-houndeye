@@ -774,22 +774,22 @@ typedef enum _D3DQUERYTYPE
 
 typedef enum _D3DRENDERSTATETYPE 
 {
-    D3DRS_ZENABLE                   = 7,    /* D3DZBUFFERTYPE (or TRUE/FALSE for legacy) */
+    D3DRS_ZENABLE                   = 7,    /* D3DZBUFFERTYPE (or true/false for legacy) */
     D3DRS_FILLMODE                  = 8,    /* D3DFILLMODE */
     D3DRS_SHADEMODE                 = 9,    /* D3DSHADEMODE */
-    D3DRS_ZWRITEENABLE              = 14,   /* TRUE to enable z writes */
-    D3DRS_ALPHATESTENABLE           = 15,   /* TRUE to enable alpha tests */
-    D3DRS_LASTPIXEL                 = 16,   /* TRUE for last-pixel on lines */
+    D3DRS_ZWRITEENABLE              = 14,   /* true to enable z writes */
+    D3DRS_ALPHATESTENABLE           = 15,   /* true to enable alpha tests */
+    D3DRS_LASTPIXEL                 = 16,   /* true for last-pixel on lines */
     D3DRS_SRCBLEND                  = 19,   /* D3DBLEND */
     D3DRS_DESTBLEND                 = 20,   /* D3DBLEND */
     D3DRS_CULLMODE                  = 22,   /* D3DCULL */
     D3DRS_ZFUNC                     = 23,   /* D3DCMPFUNC */
     D3DRS_ALPHAREF                  = 24,   /* D3DFIXED */
     D3DRS_ALPHAFUNC                 = 25,   /* D3DCMPFUNC */
-    D3DRS_DITHERENABLE              = 26,   /* TRUE to enable dithering */
-    D3DRS_ALPHABLENDENABLE          = 27,   /* TRUE to enable alpha blending */
-    D3DRS_FOGENABLE                 = 28,   /* TRUE to enable fog blending */
-    D3DRS_SPECULARENABLE            = 29,   /* TRUE to enable specular */
+    D3DRS_DITHERENABLE              = 26,   /* true to enable dithering */
+    D3DRS_ALPHABLENDENABLE          = 27,   /* true to enable alpha blending */
+    D3DRS_FOGENABLE                 = 28,   /* true to enable fog blending */
+    D3DRS_SPECULARENABLE            = 29,   /* true to enable specular */
     D3DRS_FOGCOLOR                  = 34,   /* D3DCOLOR */
     D3DRS_FOGTABLEMODE              = 35,   /* D3DFOGMODE */
     D3DRS_FOGSTART                  = 36,   /* Fog start (for both vertex and pixel fog) */
@@ -873,10 +873,10 @@ typedef enum _D3DRENDERSTATETYPE
     D3DRS_WRAP13                    = 203,
     D3DRS_WRAP14                    = 204,
     D3DRS_WRAP15                    = 205,
-    D3DRS_SEPARATEALPHABLENDENABLE  = 206,  /* TRUE to enable a separate blending function for the alpha channel */
-    D3DRS_SRCBLENDALPHA             = 207,  /* SRC blend factor for the alpha channel when D3DRS_SEPARATEDESTALPHAENABLE is TRUE */
-    D3DRS_DESTBLENDALPHA            = 208,  /* DST blend factor for the alpha channel when D3DRS_SEPARATEDESTALPHAENABLE is TRUE */
-    D3DRS_BLENDOPALPHA              = 209,  /* Blending operation for the alpha channel when D3DRS_SEPARATEDESTALPHAENABLE is TRUE */
+    D3DRS_SEPARATEALPHABLENDENABLE  = 206,  /* true to enable a separate blending function for the alpha channel */
+    D3DRS_SRCBLENDALPHA             = 207,  /* SRC blend factor for the alpha channel when D3DRS_SEPARATEDESTALPHAENABLE is true */
+    D3DRS_DESTBLENDALPHA            = 208,  /* DST blend factor for the alpha channel when D3DRS_SEPARATEDESTALPHAENABLE is true */
+    D3DRS_BLENDOPALPHA              = 209,  /* Blending operation for the alpha channel when D3DRS_SEPARATEDESTALPHAENABLE is true */
 
 
     D3DRS_FORCE_DWORD               = 0x7fffffff, /* force 32-bit size enum */

@@ -33,13 +33,13 @@ protected:
 	size_t m_nStride;
 	
 public:
-	ALWAYS_INLINE CStridedPtr<T>( void *pData, size_t nByteStride )
+	ALWAYS_INLINE CStridedPtr( void *pData, size_t nByteStride )
 	{
 		m_pData = reinterpret_cast<T *>( pData );
 		m_nStride = nByteStride / sizeof( T );
 	}
 
-	ALWAYS_INLINE CStridedPtr<T>( void ) {}
+	ALWAYS_INLINE CStridedPtr( void ) {}
 	T *operator->(void) const
 	{
 		return m_pData;
@@ -55,7 +55,7 @@ public:
 		return m_pData;
 	}
 
-	ALWAYS_INLINE CStridedPtr<T> & operator++(void)
+	ALWAYS_INLINE CStridedPtr<T>& operator++(void)
 	{
 		m_pData += m_nStride;
 		return *this;

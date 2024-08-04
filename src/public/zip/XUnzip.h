@@ -230,7 +230,7 @@ ZRESULT GetZipItemW(HZIP hz, int index, ZIPENTRYW *ze);
 //
 // Parameters:  hz      - handle of open zip archive
 //              name    - name of file to look for inside zip archive
-//              ic      - TRUE = case insensitive
+//              ic      - true = case insensitive
 //              index   - pointer to index number returned, or -1
 //              ze      - pointer to a ZIPENTRY (if ANSI) or ZIPENTRYW struct
 //                        (if Unicode)

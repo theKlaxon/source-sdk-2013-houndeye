@@ -862,7 +862,7 @@ static void DrawVertexLitGeneric_DX9_Internal( CBaseVSShader *pShader, IMaterial
 
 		if ( pShaderAPI && ( (! pContextData ) || ( pContextData->m_bMaterialVarsChanged ) ) )
 		{
-/*^*/ // 		printf("\t\t[3] pShaderAPI && ( (! pContextData ) || ( pContextData->m_bMaterialVarsChanged ) )  TRUE \n");
+/*^*/ // 		printf("\t\t[3] pShaderAPI && ( (! pContextData ) || ( pContextData->m_bMaterialVarsChanged ) )  true \n");
 			if ( ! pContextData )								// make sure allocated
 			{
 				++g_nSnapShots;

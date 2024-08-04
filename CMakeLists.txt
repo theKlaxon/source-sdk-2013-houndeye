@@ -19,7 +19,7 @@ project(
 		VERSION 0.1.0
 		DESCRIPTION "A \"branch\" of the source engine, forked off SDK 2013's codebase."
 		HOMEPAGE_URL "https://github.com/ENDERZOMBI102/Aurora-Source"
-		LANGUAGES CXX C ASM ASM_MASM
+		LANGUAGES CXX C ASM
 )
 
 # For some reason, checking if CMAKE_BUILD_TYPE is defined is unreliable

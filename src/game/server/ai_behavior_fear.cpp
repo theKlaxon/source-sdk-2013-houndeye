@@ -165,8 +165,8 @@ void CAI_FearBehavior::RunTask( const Task_t *pTask )
 
 //-----------------------------------------------------------------------------
 // Purpose: 
-// Output : TRUE if I have an enemy and that enemy would attack me if it could
-// Notes  : Returns FALSE if the enemy is neutral or likes me.
+// Output : true if I have an enemy and that enemy would attack me if it could
+// Notes  : Returns false if the enemy is neutral or likes me.
 //-----------------------------------------------------------------------------
 bool CAI_FearBehavior::EnemyDislikesMe()
 {

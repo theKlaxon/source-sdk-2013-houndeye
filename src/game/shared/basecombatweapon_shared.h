@@ -61,7 +61,7 @@ class CUserCmd;
 // e.g.
 //	acttable_t	CWeaponStunstick::m_acttable[] = 
 //	{
-//		{ ACT_MELEE_ATTACK1, ACT_MELEE_ATTACK_SWING, TRUE },
+//		{ ACT_MELEE_ATTACK1, ACT_MELEE_ATTACK_SWING, true },
 //	};
 //
 // The stunstick overrides the ACT_MELEE_ATTACK1 activity, replacing it with ACT_MELEE_ATTACK_SWING.
@@ -245,7 +245,7 @@ public:
 	bool					UsesSecondaryAmmo( void );					// returns true if the weapon actually uses secondary ammo
 	void					GiveDefaultAmmo( void );
 	
-	virtual bool			CanHolster( void ) const { return TRUE; };		// returns true if the weapon can be holstered
+	virtual bool			CanHolster( void ) const { return true; };		// returns true if the weapon can be holstered
 	virtual bool			DefaultDeploy( char *szViewModel, char *szWeaponModel, int iActivity, char *szAnimExt );
 	virtual bool			CanDeploy( void ) { return true; }			// return true if the weapon's allowed to deploy
 	virtual bool			Deploy( void );								// returns true is deploy was successful

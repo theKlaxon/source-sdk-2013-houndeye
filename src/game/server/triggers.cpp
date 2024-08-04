@@ -3137,7 +3137,7 @@ void CTriggerCamera::Enable( void )
 
 	if (HasSpawnFlags(SF_CAMERA_PLAYER_TAKECONTROL ) )
 	{
-		((CBasePlayer*)m_hPlayer.Get())->EnableControl(FALSE);
+		((CBasePlayer*)m_hPlayer.Get())->EnableControl(false);
 	}
 
 	if ( m_sPath != NULL_STRING )
@@ -3222,7 +3222,7 @@ void CTriggerCamera::Disable( void )
 		}
 
 		((CBasePlayer*)m_hPlayer.Get())->SetViewEntity( m_hPlayer );
-		((CBasePlayer*)m_hPlayer.Get())->EnableControl(TRUE);
+		((CBasePlayer*)m_hPlayer.Get())->EnableControl(true);
 
 		// Restore the player's viewmodel
 		if ( ((CBasePlayer*)m_hPlayer.Get())->GetActiveWeapon() )

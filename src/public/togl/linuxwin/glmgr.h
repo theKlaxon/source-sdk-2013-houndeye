@@ -107,7 +107,7 @@ class GLMDisplayParams
 	uint				m_multiSampleCount;		// 0 means no MSAA, 2 means 2x MSAA, etc
 		// uint				m_multiSampleQuality;	// no MSAA quality control yet
 		
-	bool				m_enableAutoDepthStencil;	// generally set to 'TRUE' per CShaderDeviceDx8::SetPresentParameters
+	bool				m_enableAutoDepthStencil;	// generally set to 'true' per CShaderDeviceDx8::SetPresentParameters
 	D3DFORMAT			m_autoDepthStencilFormat;
 	
 	uint				m_fsRefreshHz;			// if full screen, this refresh rate (likely 0 for LCD's)

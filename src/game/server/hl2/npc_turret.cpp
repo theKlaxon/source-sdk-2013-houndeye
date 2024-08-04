@@ -73,7 +73,7 @@ public:
 	virtual Class_T		Classify(void);
 
 	int BloodColor( void ) { return DONT_BLEED; }
-	bool Event_Gibbed( void ) { return FALSE; }	// UNDONE: Throw turret gibs?
+	bool Event_Gibbed( void ) { return false; }	// UNDONE: Throw turret gibs?
 
 	Vector	EyeOffset( Activity nActivity );
 	Vector	EyePosition( void );
@@ -323,7 +323,7 @@ void CBaseTurret::InputToggle( inputdata_t &inputdata )
 	{
 		SetEnemy( NULL );
 		SetNextThink( gpGlobals->curtime + 0.1f );
-		m_iAutoStart = FALSE;// switching off a turret disables autostart
+		m_iAutoStart = false;// switching off a turret disables autostart
 		//!!!! this should spin down first!!BUGBUG
 		SetThink(Retire);
 	}
@@ -334,7 +334,7 @@ void CBaseTurret::InputToggle( inputdata_t &inputdata )
 		// if the turret is flagged as an autoactivate turret, re-enable its ability open self.
 		if ( m_spawnflags & SF_NPC_TURRET_AUTOACTIVATE )
 		{
-			m_iAutoStart = TRUE;
+			m_iAutoStart = true;
 		}
 		
 		SetThink(Deploy);
@@ -480,11 +480,11 @@ void CBaseTurret::ActiveThink(void)
 	// Is the Gun looking at the target
 	if (DotProduct(vecLOS, vecMuzzleDir) <= 0.9848) // 10 degree slop
 	{
-		fAttack = FALSE;
+		fAttack = false;
 	}
 	else
 	{
-		fAttack = TRUE;
+		fAttack = true;
 	}
 
 	// fire the gun
@@ -930,7 +930,7 @@ void CCeilingTurret::Spawn()
 	
 	SetThink(Initialize);	
 
-	m_pEyeGlow = CSprite::SpriteCreate( TURRET_GLOW_SPRITE, GetOrigin(), FALSE );
+	m_pEyeGlow = CSprite::SpriteCreate( TURRET_GLOW_SPRITE, GetOrigin(), false );
 	m_pEyeGlow->SetTransparency( kRenderGlow, 255, 0, 0, 0, kRenderFxNoDissipation );
 	m_pEyeGlow->SetAttachment( this, 2 );
 	m_eyeBrightness = 0;

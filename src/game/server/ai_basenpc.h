@@ -1529,12 +1529,12 @@ public:
 	inline void Remember( int iMemory ) { m_afMemory |= iMemory; }
 	inline void Forget( int iMemory ) { m_afMemory &= ~iMemory; }
 	inline bool HasMemory( int iMemory ) {
-		if ( m_afMemory & iMemory ) return TRUE;
-		return FALSE;
+		if ( m_afMemory & iMemory ) return true;
+		return false;
 	}
 	inline bool HasAllMemories( int iMemory ) {
-		if ( ( m_afMemory & iMemory ) == iMemory ) return TRUE;
-		return FALSE;
+		if ( ( m_afMemory & iMemory ) == iMemory ) return true;
+		return false;
 	}
 
 	virtual CAI_Enemies* GetEnemies();

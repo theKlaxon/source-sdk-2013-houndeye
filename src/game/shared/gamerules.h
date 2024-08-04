@@ -262,7 +262,7 @@ public:
 
 // Functions to verify the single/multiplayer status of a game
 	virtual bool IsDeathmatch( void ) = 0;//is this a deathmatch game?
-	virtual bool IsTeamplay( void ) { return FALSE; };// is this deathmatch game being played with team rules?
+	virtual bool IsTeamplay( void ) { return false; };// is this deathmatch game being played with team rules?
 	virtual bool IsCoOp( void ) = 0;// is this a coop game?
 	virtual const char *GetGameDescription( void ) { return "Half-Life 2"; }  // this is the game name that gets seen in the server browser
 	
@@ -273,15 +273,15 @@ public:
 	
 // Client damage rules
 	virtual float FlPlayerFallDamage( CBasePlayer *pPlayer ) = 0;// this client just hit the ground after a fall. How much damage?
-	virtual bool  FPlayerCanTakeDamage( CBasePlayer *pPlayer, CBaseEntity *pAttacker, const CTakeDamageInfo &info ) {return TRUE;};// can this player take damage from this attacker?
-	virtual bool ShouldAutoAim( CBasePlayer *pPlayer, edict_t *target ) { return TRUE; }
+	virtual bool  FPlayerCanTakeDamage( CBasePlayer *pPlayer, CBaseEntity *pAttacker, const CTakeDamageInfo &info ) {return true;};// can this player take damage from this attacker?
+	virtual bool ShouldAutoAim( CBasePlayer *pPlayer, edict_t *target ) { return true; }
 	virtual float GetAutoAimScale( CBasePlayer *pPlayer ) { return 1.0f; }
 	virtual int	GetAutoAimMode()	{ return AUTOAIM_ON; }
 
 	virtual bool ShouldUseRobustRadiusDamage(CBaseEntity *pEntity) { return false; }
 	virtual void  RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrc, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore );
 	// Let the game rules specify if fall death should fade screen to black
-	virtual bool  FlPlayerFallDeathDoesScreenFade( CBasePlayer *pl ) { return TRUE; }
+	virtual bool  FlPlayerFallDeathDoesScreenFade( CBasePlayer *pl ) { return true; }
 
 	virtual bool AllowDamage( CBaseEntity *pVictim, const CTakeDamageInfo &info ) = 0;
 
@@ -294,8 +294,8 @@ public:
 	virtual CBaseEntity *GetPlayerSpawnSpot( CBasePlayer *pPlayer );// Place this player on their spawnspot and face them the proper direction.
 	virtual bool IsSpawnPointValid( CBaseEntity *pSpot, CBasePlayer *pPlayer );
 
-	virtual bool AllowAutoTargetCrosshair( void ) { return TRUE; };
-	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args );  // handles the user commands;  returns TRUE if command handled properly
+	virtual bool AllowAutoTargetCrosshair( void ) { return true; };
+	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args );  // handles the user commands;  returns true if command handled properly
 	virtual void ClientSettingsChanged( CBasePlayer *pPlayer );		 // the player has changed cvars
 
 // Client kills/scoring
@@ -362,8 +362,8 @@ public:
 	virtual void UpdateClientData( CBasePlayer *pPlayer ) { };
 
 // Sounds
-	virtual bool PlayTextureSounds( void ) { return TRUE; }
-	virtual bool PlayFootstepSounds( CBasePlayer *pl ) { return TRUE; }
+	virtual bool PlayTextureSounds( void ) { return true; }
+	virtual bool PlayFootstepSounds( CBasePlayer *pl ) { return true; }
 
 // NPCs
 	virtual bool FAllowNPCs( void ) = 0;//are NPCs allowed

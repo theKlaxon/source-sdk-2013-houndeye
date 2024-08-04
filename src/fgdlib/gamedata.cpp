@@ -175,7 +175,7 @@ bool GDError(TokenReader &tr, const char *error, ...)
 //				and token type read is different, the operation will fail.
 //			pszExpecting - The token string that we are expecting. If this string
 //				is not nullptr and the token string read is different, the operation will fail.
-// Output : Returns TRUE if the operation succeeded, FALSE if there was an error.
+// Output : Returns true if the operation succeeded, false if there was an error.
 //			If there was an error, the error will be reported in the message window.
 //-----------------------------------------------------------------------------
 bool GDGetToken(TokenReader &tr, char *pszStore, int nSize, trtoken_t ttexpecting, const char *pszExpecting)
@@ -198,7 +198,7 @@ bool GDGetToken(TokenReader &tr, char *pszStore, int nSize, trtoken_t ttexpectin
 //				and token type read is different, the operation will fail.
 //			pszExpecting - The token string that we are expecting. If this string
 //				is not nullptr and the token string read is different, the operation will fail.
-// Output : Returns TRUE if the operation succeeded, FALSE if there was an error.
+// Output : Returns true if the operation succeeded, false if there was an error.
 //			If there was an error, the error will be reported in the message window.
 //-----------------------------------------------------------------------------
 bool GDSkipToken(TokenReader &tr, trtoken_t ttexpecting, const char *pszExpecting)
@@ -272,7 +272,7 @@ void GameData::ClearData()
 //-----------------------------------------------------------------------------
 // Purpose: Loads a gamedata (FGD) file into this object.
 // Input  : pszFilename - 
-// Output : Returns TRUE on success, FALSE on failure.
+// Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool GameData::Load(const char *pszFilename)
 {
@@ -280,7 +280,7 @@ bool GameData::Load(const char *pszFilename)
 
 	#if IsWindows()
 		if(GetFileAttributes(pszFilename) == 0xffffffff)
-			return FALSE;
+			return false;
 	#endif
 
 	if(!tr.Open(pszFilename))
@@ -780,7 +780,7 @@ bool GameData::LoadFGDMaterialExclusions( TokenReader &tr )
 	//
 	if ( !GDSkipToken( tr, OPERATOR, "]" ) )
 	{
-		return( FALSE );
+		return( false );
 	}
 
 	return true;
@@ -804,7 +804,7 @@ bool GameData::LoadFGDAutoVisGroups( TokenReader &tr )
 		// We expect a name
 		if ( !GDGetToken( tr, szToken, sizeof( szToken ), STRING ) )
 		{
-			return( FALSE );
+			return( false );
 		}
 		
 		gindex = m_FGDAutoVisGroups.AddToTail();
@@ -813,7 +813,7 @@ bool GameData::LoadFGDAutoVisGroups( TokenReader &tr )
 		// We expect a Class
 		if ( !GDSkipToken( tr, OPERATOR, "[" ) )
 		{
-			return( FALSE );
+			return( false );
 		}
 	}
 
@@ -827,7 +827,7 @@ bool GameData::LoadFGDAutoVisGroups( TokenReader &tr )
 
 			if ( !GDSkipToken( tr, OPERATOR, "[" ) )
 			{
-				return( FALSE );
+				return( false );
 			}
 
 			// Parse objects/entities -- func_detail, point_template, light_spot
@@ -840,7 +840,7 @@ bool GameData::LoadFGDAutoVisGroups( TokenReader &tr )
 
 				if ( !GDGetToken( tr, szToken, sizeof( szToken ), STRING ) )
 				{
-					return( FALSE );
+					return( false );
 				}
 
 				m_FGDAutoVisGroups[gindex].m_Classes[cindex].szEntities.CopyAndAddToTail( szToken );
@@ -849,7 +849,7 @@ bool GameData::LoadFGDAutoVisGroups( TokenReader &tr )
 
 			if ( !GDSkipToken( tr, OPERATOR, "]" ) )
 			{
-				return( FALSE );
+				return( false );
 			}
 
 			// See if we have another Class coming up
@@ -861,7 +861,7 @@ bool GameData::LoadFGDAutoVisGroups( TokenReader &tr )
 			// If no more Classes, we now expect a terminating ']'
 			if ( !GDSkipToken( tr, OPERATOR, "]" ) )
 			{
-				return( FALSE );
+				return( false );
 			}
 
 			// We're done
@@ -872,14 +872,14 @@ bool GameData::LoadFGDAutoVisGroups( TokenReader &tr )
 		{
 			if ( !GDSkipToken( tr, OPERATOR, "]" ) )
 			{
-				return( FALSE );
+				return( false );
 			}
 		}
 	}
 
 	// Safety net
 	GDError( tr, "Malformed AutoVisGroup -- Last processed:  %s", szToken );
-	return( FALSE );
+	return( false );
 }
 
 // memdbgon must be the last include file in a .cpp file!!!

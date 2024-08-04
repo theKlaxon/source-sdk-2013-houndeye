@@ -19,7 +19,7 @@
 
 //float flRandom = random->RandomFloat(0,1);
 
-bool g_fDrawLines = FALSE;
+bool g_fDrawLines = false;
 
 
 //=========================================================
@@ -33,7 +33,7 @@ bool FBoxVisible( CBaseEntity *pLooker, CBaseEntity *pTarget, Vector &vecTargetO
 	// don't look through water
 	if ((pLooker->GetWaterLevel() != 3 && pTarget->GetWaterLevel() == 3) 
 		|| (pLooker->GetWaterLevel() == 3 && pTarget->GetWaterLevel() == 0))
-		return FALSE;
+		return false;
 
 	trace_t tr;
 	Vector	vecLookerOrigin = pLooker->EyePosition();//look through the NPC's 'eyes'
@@ -49,10 +49,10 @@ bool FBoxVisible( CBaseEntity *pLooker, CBaseEntity *pTarget, Vector &vecTargetO
 		if (tr.fraction == 1.0)
 		{
 			vecTargetOrigin = vecTarget;
-			return TRUE;// line of sight is valid.
+			return true;// line of sight is valid.
 		}
 	}
-	return FALSE;// Line of sight is not established
+	return false;// Line of sight is not established
 }
 
 

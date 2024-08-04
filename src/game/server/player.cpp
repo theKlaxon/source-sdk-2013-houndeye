@@ -2261,7 +2261,7 @@ bool CBasePlayer::StartObserverMode(int mode)
 		GetActiveWeapon()->Holster();
 
 	// clear out the suit message cache so we don't keep chattering
-    SetSuitUpdate(NULL, FALSE, 0);
+    SetSuitUpdate(NULL, false, 0);
 
 	SetGroundEntity( (CBaseEntity *)NULL );
 	

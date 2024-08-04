@@ -127,7 +127,7 @@ public:
 	virtual bool IsCoOp( void );
 
 // Client connection/disconnection
-	// If ClientConnected returns FALSE, the connection is rejected and the user is provided the reason specified in
+	// If ClientConnected returns false, the connection is rejected and the user is provided the reason specified in
 	//  svRejectReason
 	// Only the client's name and remote address are provided to the dll for verification.
 	virtual bool ClientConnected( edict_t *pEntity, const char *pszName, const char *pszAddress, char *reject, int maxrejectlen );
@@ -192,7 +192,7 @@ public:
 	virtual int PlayerRelationship( CBaseEntity *pPlayer, CBaseEntity *pTarget );
 	virtual bool PlayerCanHearChat( CBasePlayer *pListener, CBasePlayer *pSpeaker );
 
-	virtual bool PlayTextureSounds( void ) { return FALSE; }
+	virtual bool PlayTextureSounds( void ) { return false; }
 	virtual bool PlayFootstepSounds( CBasePlayer *pl );
 
 // NPCs

@@ -5,21 +5,9 @@
 // $NoKeywords: $
 //=============================================================================//
 #pragma once
-
-#include "tier0/basetypes.h"
-
-#if IsWindows()
-	#pragma warning( push, 1 )
-	#pragma warning( disable : 4701 4702 4530 )
-#endif
-
 #include <fstream>
-
-#if IsWindows()
-	#pragma warning( pop )
-#endif
-
-#include <assert.h>
+#include "tier0/platform.h"
+#include "tier0/basetypes.h"
 
 
 enum trtoken_t {
@@ -56,8 +44,7 @@ public:
 	const char* Error( char* error, ... );
 	trtoken_t PeekTokenType( char* = nullptr, int maxlen = 0 );
 
-	inline int GetErrorCount();
-
+	inline int GetErrorCount() const;
 private:
 	// compiler can't generate an assignment operator since descended from std::ifstream
 	inline TokenReader( TokenReader const& );
@@ -79,6 +66,6 @@ private:
 //-----------------------------------------------------------------------------
 // Purpose: Returns the total number of parsing errors since this file was opened.
 //-----------------------------------------------------------------------------
-int TokenReader::GetErrorCount() {
-	return ( m_nErrorCount );
+int TokenReader::GetErrorCount() const {
+	return m_nErrorCount;
 }

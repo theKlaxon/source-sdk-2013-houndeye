@@ -330,7 +330,7 @@ void CWeaponShotgun::PrimaryAttack( void )
 	if (!m_iClip1 && pPlayer->GetAmmoCount(m_iPrimaryAmmoType) <= 0)
 	{
 		// HEV suit - indicate out of ammo condition
-		pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0); 
+		pPlayer->SetSuitUpdate("!HEV_AMO0", false, 0);
 	}
 
 	m_bNeedPump = true;
@@ -379,7 +379,7 @@ void CWeaponShotgun::SecondaryAttack( void )
 	if (!m_iClip1 && pPlayer->GetAmmoCount(m_iPrimaryAmmoType) <= 0)
 	{
 		// HEV suit - indicate out of ammo condition
-		pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0); 
+		pPlayer->SetSuitUpdate("!HEV_AMO0", false, 0);
 	}
 
 	m_bNeedPump = true;

@@ -37,12 +37,12 @@ public:
 	{
 		if ( pPlayer->m_fLongJump )
 		{
-			return FALSE;
+			return false;
 		}
 
 		if ( pPlayer->IsSuitEquipped() )
 		{
-			pPlayer->m_fLongJump = TRUE;// player now has longjump module
+			pPlayer->m_fLongJump = true;// player now has longjump module
 
 			CSingleUserRecipientFilter user( pPlayer );
 			user.MakeReliable();

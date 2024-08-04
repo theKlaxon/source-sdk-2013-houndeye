@@ -162,7 +162,7 @@ void PlayLockSounds(CBaseEntity *pEdict, locksound_t *pls, int flocked, int fbut
 																0, 
 																100, 
 																pls->iLockedSentence, 
-																FALSE);
+																false);
 			pls->iUnlockedSentence = 0;
 
 			// make sure we don't keep calling last sentence in list
@@ -203,7 +203,7 @@ void PlayLockSounds(CBaseEntity *pEdict, locksound_t *pls, int flocked, int fbut
 			int iprev = pls->iUnlockedSentence;
 			
 			pls->iUnlockedSentence = SENTENCEG_PlaySequentialSz(pEdict->edict(), STRING(pls->sUnlockedSentence), 
-					  0.85, SNDLVL_NORM, 0, 100, pls->iUnlockedSentence, FALSE);
+					  0.85, SNDLVL_NORM, 0, 100, pls->iUnlockedSentence, false);
 			pls->iLockedSentence = 0;
 
 			// make sure we don't keep calling last sentence in list
@@ -630,7 +630,7 @@ void CBaseDoor::DoorTouch( CBaseEntity *pOther )
 #ifdef HL1_DLL
 		if( m_toggle_state == TS_AT_BOTTOM )
 		{
-			PlayLockSounds(this, &m_ls, TRUE, FALSE);
+			PlayLockSounds(this, &m_ls, true, false);
 		}
 #endif//HL1_DLL
 
@@ -641,13 +641,13 @@ void CBaseDoor::DoorTouch( CBaseEntity *pOther )
 	// play 'locked' sound.
 	if (m_sMaster != NULL_STRING && !UTIL_IsMasterTriggered(m_sMaster, pOther))
 	{
-		PlayLockSounds(this, &m_ls, TRUE, FALSE);
+		PlayLockSounds(this, &m_ls, true, false);
 	}
 
 	if (m_bLocked)
 	{
 		m_OnLockedUse.FireOutput( pOther, pOther );
-		PlayLockSounds(this, &m_ls, TRUE, FALSE);
+		PlayLockSounds(this, &m_ls, true, false);
 		return; 
 	}
 	
@@ -725,7 +725,7 @@ void CBaseDoor::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE use
 	// We can't +use this if it can't be +used
 	if ( m_hActivator != NULL && m_hActivator->IsPlayer() && HasSpawnFlags( SF_DOOR_PUSE ) == false )
 	{
-		PlayLockSounds( this, &m_ls, TRUE, FALSE );
+		PlayLockSounds( this, &m_ls, true, false );
 		return;
 	}
 
@@ -754,7 +754,7 @@ void CBaseDoor::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE use
 		if (m_bLocked)
 		{
 			m_OnLockedUse.FireOutput( pActivator, pCaller );
-			PlayLockSounds(this, &m_ls, TRUE, FALSE);
+			PlayLockSounds(this, &m_ls, true, false);
 		}
 		else
 		{
@@ -923,7 +923,7 @@ int CBaseDoor::DoorActivate( )
 	{
 		// door should open
 		// play door unlock sounds
-		PlayLockSounds(this, &m_ls, FALSE, FALSE);
+		PlayLockSounds(this, &m_ls, false, false);
 
 		if ( m_toggle_state != TS_AT_TOP && m_toggle_state != TS_GOING_UP )
 		{

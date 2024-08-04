@@ -42,7 +42,7 @@ public:
 	bool MyTouch( CBasePlayer *pPlayer )
 	{
 		if ( pPlayer->IsSuitEquipped() )
-			return FALSE;
+			return false;
 
 		if ( m_spawnflags & SF_SUIT_SHORTLOGON )
 			UTIL_EmitSoundSuit(pPlayer->edict(), "!HEV_A0");		// short version of suit logon,

@@ -175,8 +175,8 @@ void GDclass::AddBase(GDclass *pBase)
 //			pBase - 
 //			iBaseIndex - 
 //			iVarIndex - 
-// Output : Returns TRUE if the pVar pointer was copied directly into this GDClass,
-//			FALSE if not. If this function returns TRUE, pVar should not be
+// Output : Returns true if the pVar pointer was copied directly into this GDClass,
+//			false if not. If this function returns true, pVar should not be
 //			deleted by the caller.
 //-----------------------------------------------------------------------------
 BOOL GDclass::AddVariable(GDinputvariable *pVar, GDclass *pBase, int iBaseIndex, int iVarIndex)
@@ -345,7 +345,7 @@ CClassOutput *GDclass::FindOutput(const char *szName)
 //			derived from this class.
 // Input  : pfMins - Receives minimum X, Y, and Z coordinates for the class.
 //			pfMaxs - Receives maximum X, Y, and Z coordinates for the class.
-// Output : Returns TRUE if this class has a specified bounding box, FALSE if not.
+// Output : Returns true if this class has a specified bounding box, false if not.
 //-----------------------------------------------------------------------------
 BOOL GDclass::GetBoundBox(Vector& pfMins, Vector& pfMaxs)
 {
@@ -392,7 +392,7 @@ CClassOutput *GDclass::GetOutput(int nIndex)
 // Purpose: 
 // Input  : tr - 
 //			pGD - 
-// Output : Returns TRUE if worth continuing, FALSE otherwise.	
+// Output : Returns true if worth continuing, false otherwise.
 //-----------------------------------------------------------------------------
 BOOL GDclass::InitFromTokens(TokenReader& tr, GameData *pGD)
 {
@@ -412,7 +412,7 @@ BOOL GDclass::InitFromTokens(TokenReader& tr, GameData *pGD)
 	//
 	if (!ParseSpecifiers(tr))
 	{
-		return(FALSE);
+		return(false);
 	}
 
 	//
@@ -420,7 +420,7 @@ BOOL GDclass::InitFromTokens(TokenReader& tr, GameData *pGD)
 	//
 	if (!GDSkipToken(tr, OPERATOR, "="))
 	{
-		return(FALSE);
+		return(false);
 	}
 
 	//
@@ -428,7 +428,7 @@ BOOL GDclass::InitFromTokens(TokenReader& tr, GameData *pGD)
 	//
 	if (!GDGetToken(tr, m_szName, sizeof(m_szName), IDENT))
 	{
-		return(FALSE);
+		return(false);
 	}
 
 	//
@@ -451,7 +451,7 @@ BOOL GDclass::InitFromTokens(TokenReader& tr, GameData *pGD)
 		// Load description
 		if (!GDGetTokenDynamic(tr, &m_pszDescription, STRING))
 		{
-			return(FALSE);
+			return(false);
 		}
 	}
 
@@ -460,7 +460,7 @@ BOOL GDclass::InitFromTokens(TokenReader& tr, GameData *pGD)
 	//
 	if (!GDSkipToken(tr, OPERATOR, "["))
 	{
-		return(FALSE);
+		return(false);
 	}
 
 	//
@@ -468,7 +468,7 @@ BOOL GDclass::InitFromTokens(TokenReader& tr, GameData *pGD)
 	//
 	if (!ParseVariables(tr))
 	{
-		return(FALSE);
+		return(false);
 	}
 
 	//
@@ -476,10 +476,10 @@ BOOL GDclass::InitFromTokens(TokenReader& tr, GameData *pGD)
 	//
 	if (!GDSkipToken(tr, OPERATOR, "]"))
 	{
-		return(FALSE);
+		return(false);
 	}
 
-	return(TRUE);
+	return(true);
 }
 
 

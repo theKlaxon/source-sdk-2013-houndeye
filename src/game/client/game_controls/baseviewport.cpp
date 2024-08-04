@@ -539,7 +539,7 @@ void CBaseViewport::UpdateSpectatorPanel()
 	m_pSpectatorGUI->UpdateSpectatorPlayerList();
 }  */
 
-// Return TRUE if the HUD's allowed to print text messages
+// Return true if the HUD's allowed to print text messages
 bool CBaseViewport::AllowedToPrintText( void )
 {
 

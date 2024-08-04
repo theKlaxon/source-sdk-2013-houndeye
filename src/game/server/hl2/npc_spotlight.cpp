@@ -327,7 +327,7 @@ void CNPC_Spotlight::Event_Killed( const CTakeDamageInfo &info )
 //-----------------------------------------------------------------------------
 // Purpose: Tells use whether or not the NPC cares about a given type of hint node.
 // Input  : sHint - 
-// Output : TRUE if the NPC is interested in this hint type, FALSE if not.
+// Output : true if the NPC is interested in this hint type, false if not.
 //-----------------------------------------------------------------------------
 bool CNPC_Spotlight::FValidateHintType(CAI_Hint *pHint)
 {

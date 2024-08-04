@@ -87,7 +87,7 @@ void CMumbleSystem::LevelInitPostEntity()
 		return;
 
 #if IsWindows()
-	g_hMapObject = OpenFileMappingW( FILE_MAP_ALL_ACCESS, FALSE, L"MumbleLink" );
+	g_hMapObject = OpenFileMappingW( FILE_MAP_ALL_ACCESS, false, L"MumbleLink" );
 	if ( g_hMapObject == NULL )
 		return;
 

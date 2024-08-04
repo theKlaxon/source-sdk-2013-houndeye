@@ -37,7 +37,7 @@ set( TIER0_SOURCE_FILES
 	"${SRCDIR}/public/tier0/memoverride.cpp"
 	"${SRCDIR}/public/tier0/minidump.h"
 	"${SRCDIR}/public/tier0/platform.h"
-	"${SRCDIR}/public/tier0/pointeroverride.asm"
+#	$<$<BOOL:${WIN32}>:"${SRCDIR}/public/tier0/pointeroverride.asm">
 	"${SRCDIR}/public/tier0/progressbar.h"
 	"${SRCDIR}/public/tier0/protected_things.h"
 	"${SRCDIR}/public/tier0/stacktools.h"

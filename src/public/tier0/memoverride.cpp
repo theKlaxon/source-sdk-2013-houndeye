@@ -574,7 +574,7 @@
 
 			int __cdecl _CrtMemDifference( _CrtMemState* pState, const _CrtMemState* oldState, const _CrtMemState* newState ) {
 				DebuggerBreak();
-				return FALSE;
+				return false;
 			}
 
 			void __cdecl _CrtMemDumpStatistics( const _CrtMemState* pState ) {
@@ -772,7 +772,7 @@
 					}
 				#endif /* defined( _DEBUG ) || defined( USE_MEM_DEBUG ) */
 
-				extern "C" int __crtDebugCheckCount = FALSE;
+				extern "C" int __crtDebugCheckCount = false;
 
 				extern "C" int __cdecl _CrtSetCheckCount( int fCheckCount ) {
 					int oldCheckCount = __crtDebugCheckCount;
@@ -864,7 +864,7 @@
 			}
 
 			static int __cdecl CheckBytes( unsigned char* pb, unsigned char bCheck, size_t nSize ) {
-				int bOkay = TRUE;
+				int bOkay = true;
 				return bOkay;
 			}
 

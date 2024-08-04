@@ -323,7 +323,7 @@ bool Sys_RunningWithDebugModules() {
 		char chMemoryName[ MAX_PATH ];
 		DebugKernelMemoryObjectName( chMemoryName );
 
-		HANDLE hObject = OpenFileMapping( FILE_MAP_READ, FALSE, chMemoryName );
+		HANDLE hObject = OpenFileMapping( FILE_MAP_READ, false, chMemoryName );
 		if ( hObject && hObject != INVALID_HANDLE_VALUE )
 		{
 			CloseHandle( hObject );

@@ -5,6 +5,8 @@ if ( MSVC_TOOLSET_VERSION LESS 140 )
 	message( FATAL_ERROR "MSVC must use toolset 140 (2015) or greater" )
 endif()
 
+enable_language( ASM_MASM )
+
 # No frame pointer optimization
 set( NOFPO 1 )
 

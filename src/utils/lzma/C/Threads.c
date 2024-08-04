@@ -51,15 +51,15 @@ WRes Thread_Create(CThread *p, THREAD_FUNC_TYPE func, LPVOID param)
 
 WRes Event_Create(CEvent *p, BOOL manualReset, int signaled)
 {
-  *p = CreateEvent(NULL, manualReset, (signaled ? TRUE : FALSE), NULL);
+  *p = CreateEvent(NULL, manualReset, (signaled ? true : false), NULL);
   return HandleToWRes(*p);
 }
 
 WRes Event_Set(CEvent *p) { return BOOLToWRes(SetEvent(*p)); }
 WRes Event_Reset(CEvent *p) { return BOOLToWRes(ResetEvent(*p)); }
 
-WRes ManualResetEvent_Create(CManualResetEvent *p, int signaled) { return Event_Create(p, TRUE, signaled); }
-WRes AutoResetEvent_Create(CAutoResetEvent *p, int signaled) { return Event_Create(p, FALSE, signaled); }
+WRes ManualResetEvent_Create(CManualResetEvent *p, int signaled) { return Event_Create(p, true, signaled); }
+WRes AutoResetEvent_Create(CAutoResetEvent *p, int signaled) { return Event_Create(p, false, signaled); }
 WRes ManualResetEvent_CreateNotSignaled(CManualResetEvent *p) { return ManualResetEvent_Create(p, 0); }
 WRes AutoResetEvent_CreateNotSignaled(CAutoResetEvent *p) { return AutoResetEvent_Create(p, 0); }
 

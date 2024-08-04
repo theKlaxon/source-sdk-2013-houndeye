@@ -889,15 +889,15 @@ void CNPC_Stalker::StartAttackBeam( void )
 		{
 			case STALKER_BEAM_LOW:
 				m_pBeam->SetColor( 255, 0, 0 );
-				m_pLightGlow = CSprite::SpriteCreate( "sprites/redglow1.vmt", GetAbsOrigin(), FALSE );
+				m_pLightGlow = CSprite::SpriteCreate( "sprites/redglow1.vmt", GetAbsOrigin(), false );
 				break;
 			case STALKER_BEAM_MED:
 				m_pBeam->SetColor( 255, 50, 0 );
-				m_pLightGlow = CSprite::SpriteCreate( "sprites/orangeglow1.vmt", GetAbsOrigin(), FALSE );
+				m_pLightGlow = CSprite::SpriteCreate( "sprites/orangeglow1.vmt", GetAbsOrigin(), false );
 				break;
 			case STALKER_BEAM_HIGH:
 				m_pBeam->SetColor( 255, 150, 0 );
-				m_pLightGlow = CSprite::SpriteCreate( "sprites/yellowglow1.vmt", GetAbsOrigin(), FALSE );
+				m_pLightGlow = CSprite::SpriteCreate( "sprites/yellowglow1.vmt", GetAbsOrigin(), false );
 				break;
 		}
 
@@ -1291,7 +1291,7 @@ void CNPC_Stalker::HandleAnimEvent( animevent_t *pEvent )
 //-----------------------------------------------------------------------------
 // Purpose: Tells use whether or not the NPC cares about a given type of hint node.
 // Input  : sHint - 
-// Output : TRUE if the NPC is interested in this hint type, FALSE if not.
+// Output : true if the NPC is interested in this hint type, false if not.
 //-----------------------------------------------------------------------------
 bool CNPC_Stalker::FValidateHintType(CAI_Hint *pHint)
 {

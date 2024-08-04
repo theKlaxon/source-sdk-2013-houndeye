@@ -523,7 +523,7 @@ void CInput::Init_ForceFeedback()
 	dwd.diph.dwHeaderSize = sizeof(DIPROPHEADER);
 	dwd.diph.dwObj        = 0;
 	dwd.diph.dwHow        = DIPH_DEVICE;
-	dwd.dwData            = FALSE;
+	dwd.dwData            = false;
 
 	if ( !ff_autocenter.GetBool() )
 	{

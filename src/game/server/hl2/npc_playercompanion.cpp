@@ -1225,11 +1225,11 @@ void CNPC_PlayerCompanion::PrepareReadinessRemap( void )
 						// This is the new way to say that we don't care, the tri-state was abandoned (jdw)
 						ActRemap.m_fUsageBits &= ~bits_REMAP_AIMING;
 					}
-					else if ( !stricmp( pKeyValue, "TRS_FALSE" ) || !stricmp( pKeyValue, "FALSE" ) )
+					else if ( !stricmp( pKeyValue, "TRS_FALSE" ) || !stricmp( pKeyValue, "false" ) )
 					{
 						ActRemap.m_bAiming = false;
 					}
-					else if ( !stricmp( pKeyValue, "TRS_TRUE" ) || !stricmp( pKeyValue, "TRUE" ) )
+					else if ( !stricmp( pKeyValue, "TRS_TRUE" ) || !stricmp( pKeyValue, "true" ) )
 					{
 						ActRemap.m_bAiming = true;
 					}
@@ -1238,11 +1238,11 @@ void CNPC_PlayerCompanion::PrepareReadinessRemap( void )
 				{
 					ActRemap.m_fUsageBits |= bits_REMAP_WEAPON_REQUIRED;
 
-					if ( !stricmp( pKeyValue, "TRUE" ) )
+					if ( !stricmp( pKeyValue, "true" ) )
 					{
 						ActRemap.m_bWeaponRequired = true;
 					}
-					else if ( !stricmp( pKeyValue, "FALSE" ) )
+					else if ( !stricmp( pKeyValue, "false" ) )
 					{
 						ActRemap.m_bWeaponRequired = false;
 					}
@@ -1251,11 +1251,11 @@ void CNPC_PlayerCompanion::PrepareReadinessRemap( void )
 				{
 					ActRemap.m_fUsageBits |= bits_REMAP_IN_VEHICLE;
 
-					if ( !stricmp( pKeyValue, "TRUE" ) )
+					if ( !stricmp( pKeyValue, "true" ) )
 					{
 						ActRemap.m_bInVehicle = true;
 					}
-					else if ( !stricmp( pKeyValue, "FALSE" ) )
+					else if ( !stricmp( pKeyValue, "false" ) )
 					{
 						ActRemap.m_bInVehicle = false;
 					}

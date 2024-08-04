@@ -822,7 +822,7 @@ void CReplayRenderer::CompositeAndLayoffFrame( int nFrame )
 		if ( m_nTimeStep == nMotionBlurTimeSteps )
 		{
 			#ifdef TRACE_REPLAY_STATE_MACHINE
-				Msg( "  TStep=Max, Append=TRUE ... ");
+				Msg( "  TStep=Max, Append=true ... ");
 			#endif 
 			
 			m_nTimeStep = 0;

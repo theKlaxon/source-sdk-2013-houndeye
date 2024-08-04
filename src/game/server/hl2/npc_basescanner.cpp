@@ -1606,7 +1606,7 @@ void CNPC_BaseScanner::DeathSound( const CTakeDamageInfo &info )
 
 //-----------------------------------------------------------------------------
 // Purpose: Overridden so that scanners play battle sounds while fighting.
-// Output : Returns TRUE on success, FALSE on failure.
+// Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CNPC_BaseScanner::ShouldPlayIdleSound( void )
 {

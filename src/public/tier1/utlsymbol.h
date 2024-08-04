@@ -5,14 +5,7 @@
 // $Header: $
 // $NoKeywords: $
 //===========================================================================//
-
-#ifndef UTLSYMBOL_H
-#define UTLSYMBOL_H
-
-#if IsWindows()
 #pragma once
-#endif
-
 #include "tier0/threadtools.h"
 #include "tier1/utlrbtree.h"
 #include "tier1/utlvector.h"
@@ -264,6 +257,3 @@ private:
 	HashTable* m_Strings;
 	mutable CThreadSpinRWLock m_lock;
 };
-
-
-#endif // UTLSYMBOL_H

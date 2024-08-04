@@ -225,7 +225,7 @@ public:
 	void		ReadFile( void );
 	void		WriteFile( void );
 
-	void		OpenInEditor( bool foreground=false );			// pass TRUE if you would like the editor to pop to foreground
+	void		OpenInEditor( bool foreground=false );			// pass true if you would like the editor to pop to foreground
 	
 	/// how about a "wait for change" method..
 

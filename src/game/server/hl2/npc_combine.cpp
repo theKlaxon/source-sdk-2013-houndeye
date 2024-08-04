@@ -1983,7 +1983,7 @@ int CNPC_Combine::SelectScheduleAttack()
 			// little time and give the player a chance to turn.
 			if ( MySquadLeader()->m_fEnemyEluded && !HasConditions ( bits_COND_ENEMY_FACING_ME ) )
 			{
-				MySquadLeader()->m_fEnemyEluded = FALSE;
+				MySquadLeader()->m_fEnemyEluded = false;
 				return SCHED_GRUNT_FOUND_ENEMY;
 			}
 		}

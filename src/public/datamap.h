@@ -118,7 +118,7 @@ DECLARE_FIELD_SIZE( FIELD_MATERIALINDEX, sizeof( int ) )
 
 
 #define ARRAYSIZE2D( p ) ( sizeof( p ) / sizeof( p[ 0 ][ 0 ] ) )
-#define SIZE_OF_ARRAY( p ) _ARRAYSIZE( p )
+#define SIZE_OF_ARRAY( p ) ARRAYSIZE( p )
 
 #define _FIELD( name, fieldtype, count, flags, mapname, tolerance ) \
 	{ fieldtype, #name, { static_cast<int>( offsetof( classNameTypedef, name ) ), 0 }, count, flags, mapname, NULL, NULL, NULL, sizeof( ( (classNameTypedef*) 0 )->name ), NULL, 0, tolerance }

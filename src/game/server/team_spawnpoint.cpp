@@ -72,7 +72,7 @@ bool CTeamSpawnPoint::IsValid( CBasePlayer *pPlayer )
 //-----------------------------------------------------------------------------
 void CTeamSpawnPoint::InputEnable( inputdata_t &inputdata )
 {
-	m_iDisabled = FALSE;
+	m_iDisabled = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -80,7 +80,7 @@ void CTeamSpawnPoint::InputEnable( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CTeamSpawnPoint::InputDisable( inputdata_t &inputdata )
 {
-	m_iDisabled = TRUE;
+	m_iDisabled = true;
 }
 
 

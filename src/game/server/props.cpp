@@ -3899,14 +3899,14 @@ void CBasePropDoor::OnUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 		if (m_bLocked)
 		{
 			PropSetSequence(SelectWeightedSequence((Activity)ACT_DOOR_LOCKED));
-			PlayLockSounds(this, &m_ls, TRUE, FALSE);
+			PlayLockSounds(this, &m_ls, true, false);
 			m_OnLockedUse.FireOutput( pActivator, pCaller );
 		}
 		else
 		{
 			m_hActivator = pActivator;
 
-			PlayLockSounds(this, &m_ls, FALSE, FALSE);
+			PlayLockSounds(this, &m_ls, false, false);
 			int nSequence = SelectWeightedSequence((Activity)ACT_DOOR_OPEN);
 			PropSetSequence(nSequence);
 

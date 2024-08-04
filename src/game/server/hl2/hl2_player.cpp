@@ -1845,7 +1845,7 @@ void CHL2_Player::SuitPower_Initialize( void )
 //-----------------------------------------------------------------------------
 // Purpose: Interface to drain power from the suit's power supply.
 // Input:	Amount of charge to remove (expressed as percentage of full charge)
-// Output:	Returns TRUE if successful, FALSE if not enough power available.
+// Output:	Returns true if successful, false if not enough power available.
 //-----------------------------------------------------------------------------
 bool CHL2_Player::SuitPower_Drain( float flPower )
 {
@@ -1991,7 +1991,7 @@ bool CHL2_Player::ApplyBattery( float powerMultiplier )
 		Q_snprintf( szcharge,sizeof(szcharge),"!HEV_%1dP", pct );
 		
 		//UTIL_EmitSoundSuit(edict(), szcharge);
-		//SetSuitUpdate(szcharge, FALSE, SUIT_NEXT_IN_30SEC);
+		//SetSuitUpdate(szcharge, false, SUIT_NEXT_IN_30SEC);
 		return true;		
 	}
 	return false;

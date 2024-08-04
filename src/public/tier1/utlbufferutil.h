@@ -6,14 +6,7 @@
 //
 // Utilities for serialization/unserialization buffer
 //=============================================================================//
-
-#ifndef UTLBUFFERUTIL_H
-#define UTLBUFFERUTIL_H
-
-#if IsWindows()
 #pragma once
-#endif
-
 #include "tier1/utlvector.h"
 #include "tier1/utlbuffer.h"
 
@@ -186,7 +179,3 @@ bool Unserialize( CUtlBuffer &buf, CUtlVector<T> &dest )
 	}
 	return true;
 }
-
-
-#endif // UTLBUFFERUTIL_H
-

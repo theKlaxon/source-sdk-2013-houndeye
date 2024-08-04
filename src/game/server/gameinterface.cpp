@@ -2500,7 +2500,7 @@ EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CServerGameClients, IServerGameClients, INTERF
 //			reject - output - fill in with the reason why
 //			maxrejectlen -- sizeof output buffer
 //			the player was not allowed to connect.
-// Output : Returns TRUE if player is allowed to join, FALSE if connection is denied.
+// Output : Returns true if player is allowed to join, false if connection is denied.
 //-----------------------------------------------------------------------------
 bool CServerGameClients::ClientConnect( edict_t *pEdict, const char *pszName, const char *pszAddress, char *reject, int maxrejectlen )
 {	

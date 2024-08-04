@@ -234,7 +234,7 @@ bool Is64BitOS() {
 		return true;
     #elif IsWindows()
         using LPFN_ISWOW64PROCESS = BOOL (WINAPI *) (HANDLE, PBOOL);
-		auto isWow64{ FALSE };
+		auto isWow64{ false };
 		static auto fnIsWow64Process{ reinterpret_cast<LPFN_ISWOW64PROCESS>( GetProcAddress( GetModuleHandle( "kernel32" ), "IsWow64Process" ) ) };
 
 		return fnIsWow64Process && fnIsWow64Process( GetCurrentProcess(), &isWow64 ) && isWow64;

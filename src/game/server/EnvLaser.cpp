@@ -56,7 +56,7 @@ void CEnvLaser::Spawn( void )
 
 	if ( !m_pSprite && m_iszSpriteName != NULL_STRING )
 	{
-		m_pSprite = CSprite::SpriteCreate( STRING(m_iszSpriteName), GetAbsOrigin(), TRUE );
+		m_pSprite = CSprite::SpriteCreate( STRING(m_iszSpriteName), GetAbsOrigin(), true );
 	}
 	else
 	{

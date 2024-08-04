@@ -35,7 +35,7 @@ public:
 	}
 	bool MyTouch( CBasePlayer *pPlayer )
 	{
-		pPlayer->SetSuitUpdate("!HEV_DET4", FALSE, SUIT_NEXT_IN_1MIN);
+		pPlayer->SetSuitUpdate("!HEV_DET4", false, SUIT_NEXT_IN_1MIN);
 		
 		pPlayer->m_rgItems[ITEM_ANTIDOTE] += 1;
 		return true;

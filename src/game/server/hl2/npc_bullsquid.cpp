@@ -136,7 +136,7 @@ void CNPC_Bullsquid::Spawn()
 	CapabilitiesClear();
 	CapabilitiesAdd( bits_CAP_MOVE_GROUND | bits_CAP_INNATE_RANGE_ATTACK1 | bits_CAP_INNATE_MELEE_ATTACK1 | bits_CAP_INNATE_MELEE_ATTACK2 );
 	
-	m_fCanThreatDisplay	= TRUE;
+	m_fCanThreatDisplay	= true;
 	m_flNextSpitTime = gpGlobals->curtime;
 
 	NPCInit();
@@ -697,7 +697,7 @@ int CNPC_Bullsquid::SelectSchedule( void )
 				if ( m_fCanThreatDisplay && IRelationType( GetEnemy() ) == D_HT && FClassnameIs( GetEnemy(), "monster_headcrab" ) )
 				{
 					// this means squid sees a headcrab!
-					m_fCanThreatDisplay = FALSE;// only do the headcrab dance once per lifetime.
+					m_fCanThreatDisplay = false;// only do the headcrab dance once per lifetime.
 					return SCHED_SQUID_SEECRAB;
 				}
 				else

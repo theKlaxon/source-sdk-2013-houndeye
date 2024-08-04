@@ -2389,7 +2389,7 @@ ZRESULT TZip::Create(void *z,unsigned int len,DWORD flags)
 	else if (flags==ZIP_HANDLE)
 	{ 
 		HANDLE hf = (HANDLE)z;
-		BOOL res = DuplicateHandle(GetCurrentProcess(),hf,GetCurrentProcess(),&hfout,0,FALSE,DUPLICATE_SAME_ACCESS);
+		BOOL res = DuplicateHandle(GetCurrentProcess(),hf,GetCurrentProcess(),&hfout,0,false,DUPLICATE_SAME_ACCESS);
 		if (!res) 
 			return ZR_NODUPH;
 		// now we have our own hfout, which we must close. And the caller will close hf
@@ -2655,7 +2655,7 @@ ZRESULT TZip::ideflate(TZipFileInfo *zfi)
   // be initted each time, and which didn't, but that's kind of difficult.
   // Maybe for the next version...
   //
-  bi_init(state,buf, sizeof(buf), TRUE); // it used to be just 1024-size, not 16384 as here
+  bi_init(state,buf, sizeof(buf), true); // it used to be just 1024-size, not 16384 as here
   ct_init(state,&zfi->att);
   lm_init(state,state.level, &zfi->flg);
   ulg sz = deflate(state);

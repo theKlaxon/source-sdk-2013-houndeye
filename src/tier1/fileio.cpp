@@ -200,7 +200,7 @@ CDirWatcher::~CDirWatcher()
 	{
 		// make sure we flush any pending I/O's on the handle
 		::CancelIo( m_hFile );
-		::SleepEx( 0, TRUE );
+		::SleepEx( 0, true );
 		// close the handle
 		::CloseHandle( m_hFile );
 	}
@@ -298,7 +298,7 @@ void CDirWatcher::PostDirWatch()
 	pDirWatcherOverlapped->m_pDirWatcher = this;
 
 	DWORD dwBytes;
-	::ReadDirectoryChangesW( m_hFile, m_pFileInfo, k_cubDirWatchBufferSize, TRUE, FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_FILE_NAME, &dwBytes, (OVERLAPPED *)m_pOverlapped, &CDirWatcherFriend::DirWatchCallback );
+	::ReadDirectoryChangesW( m_hFile, m_pFileInfo, k_cubDirWatchBufferSize, true, FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_FILE_NAME, &dwBytes, (OVERLAPPED *)m_pOverlapped, &CDirWatcherFriend::DirWatchCallback );
 }
 #endif
 
@@ -327,7 +327,7 @@ bool CDirWatcher::GetChangedFile( CUtlString *psFile )
 #if IsWindows()
 	// this will trigger any pending directory reads
 	// this does get hit other places in the code; so the callback can happen at any time
-	::SleepEx( 0, TRUE );
+	::SleepEx( 0, true );
 #endif
 
 	if ( !m_listChangedFiles.Count() )

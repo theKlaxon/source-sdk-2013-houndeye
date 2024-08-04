@@ -1703,7 +1703,7 @@ public:
 	virtual HANDLE			ParseFromDisk( const char *pFilename ) override;
 
 	// Forces a specific alignment size for all subsequent file operations, overriding files' previous alignment size.
-	// Return to using files' individual alignment sizes by passing FALSE.
+	// Return to using files' individual alignment sizes by passing false.
 	virtual void			ForceAlignment( bool aligned, bool bCompatibleFormat, unsigned int alignmentSize ) override;
 
 	// Sets the endianess of the zip

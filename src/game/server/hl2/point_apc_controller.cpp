@@ -44,7 +44,7 @@ public:
 	// Bmodels don't go across transitions
 	virtual int	ObjectCaps( void ) { return BaseClass::ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
 
-	inline bool IsActive( void ) { return (m_spawnflags & SF_TANK_ACTIVE)?TRUE:FALSE; }
+	inline bool IsActive( void ) { return (m_spawnflags & SF_TANK_ACTIVE)?true:false; }
 
 	// Input handlers.
 	void InputActivate( inputdata_t &inputdata );
@@ -265,11 +265,11 @@ void CAPCController::Precache( void )
 bool CAPCController::InRange( float range )
 {
 	if ( range < m_minRange )
-		return FALSE;
+		return false;
 	if ( m_maxRange > 0 && range > m_maxRange )
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
 
@@ -323,7 +323,7 @@ QAngle CAPCController::AimBarrelAt( const Vector &parentTarget )
 void CAPCController::TrackTarget( void )
 {
 	trace_t tr;
-	bool updateTime = FALSE, lineOfSight;
+	bool updateTime = false, lineOfSight;
 	QAngle angles;
 	Vector barrelEnd;
 	CBaseEntity *pTarget = NULL;
@@ -370,16 +370,16 @@ void CAPCController::TrackTarget( void )
 
 	UTIL_TraceLine( barrelEnd, worldTargetPosition, MASK_BLOCKLOS, this, COLLISION_GROUP_NONE, &tr );
 
-	lineOfSight = FALSE;
+	lineOfSight = false;
 	// No line of sight, don't track
 	if ( tr.fraction == 1.0 || tr.m_pEnt == pTarget )
 	{
-		lineOfSight = TRUE;
+		lineOfSight = true;
 
 		CBaseEntity *pInstance = pTarget;
 		if ( InRange( range ) && pInstance && pInstance->IsAlive() )
 		{
-			updateTime = TRUE;
+			updateTime = true;
 
 			// Sight position is BodyTarget with no noise (so gun doesn't bob up and down)
 			m_sightOrigin = pInstance->BodyTarget( GetLocalOrigin(), false );
@@ -417,7 +417,7 @@ void CAPCController::TrackTarget( void )
 
 	AngleVectors(angles, &forward);
 
-	if ( lineOfSight == TRUE )
+	if ( lineOfSight == true )
 	{
 		// FIXME: This will ultimately have to deal with NPCs being in the vehicle as well
 		// See if the target is in a vehicle. If so, check its relationship

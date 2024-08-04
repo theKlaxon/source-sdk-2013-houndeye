@@ -307,7 +307,7 @@ void CNPC_CombineCamera::Spawn()
 
 	SetModel(COMBINE_CAMERA_MODEL);
 
-	m_pEyeFlash = CSprite::SpriteCreate(COMBINE_CAMERA_FLASH_SPRITE, GetLocalOrigin(), FALSE);
+	m_pEyeFlash = CSprite::SpriteCreate(COMBINE_CAMERA_FLASH_SPRITE, GetLocalOrigin(), false);
 	m_pEyeFlash->SetTransparency(kRenderGlow, 255, 255, 255, 0, kRenderFxNoDissipation);
 	m_pEyeFlash->SetAttachment(this, 2);
 	m_pEyeFlash->SetBrightness(0);

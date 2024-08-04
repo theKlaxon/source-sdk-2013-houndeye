@@ -170,7 +170,7 @@ void CFuncBrush::TurnOff( void )
 	}
 
 	AddEffects( EF_NODRAW );
-	m_iDisabled = TRUE;
+	m_iDisabled = true;
 }
 
 
