@@ -20,10 +20,8 @@
 	#include <direct.h>
 #endif
 
-#if defined( PLATFORM_WINDOWS )
-	#ifndef CP_UTF8
-		#define CP_UTF8 65001
-	#endif
+#if defined( PLATFORM_WINDOWS ) && !defined( CP_UTF8 )
+	#define CP_UTF8 65001
 #endif
 #include "tier0/basetypes.h"
 #include "tier0/dbg.h"

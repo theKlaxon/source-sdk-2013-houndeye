@@ -41,9 +41,11 @@ elseif ( ${BUILD_GROUP} STREQUAL "everything" )
 	include( "${SRCDIR}/game/server/server_${BUILD_GAME}.cmake" )
 	include( "${SRCDIR}/materialsystem/stdshaders/game_shader_dx9_${BUILD_GAME}.cmake" )
 
+	include( "${SRCDIR}/utils/captioncompiler/captioncompiler.cmake" )
+
+
 	if ( ${IS_WINDOWS} )
 		# those are still windows-only for now...
-		include( "${SRCDIR}/utils/captioncompiler/captioncompiler.cmake" )
 		include( "${SRCDIR}/utils/height2normal/height2normal.cmake" )
 		include( "${SRCDIR}/utils/motionmapper/motionmapper.cmake" )
 #		include( "${SRCDIR}/utils/qc_eyes/qc_eyes.cmake" )

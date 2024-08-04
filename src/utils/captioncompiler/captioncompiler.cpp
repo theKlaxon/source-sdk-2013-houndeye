@@ -3,25 +3,24 @@
 // Purpose: vcd_sound_check.cpp : Defines the entry point for the console application.
 //
 //===========================================================================//
-#include <stdio.h>
-#include <windows.h>
-#include "tier0/dbg.h"
-#include "tier1/utldict.h"
-#include "filesystem.h"
-#include "cmdlib.h"
-#include "scriplib.h"
-#include "vstdlib/random.h"
-#include "tier1/UtlBuffer.h"
-#include "pacifier.h"
-#include "appframework/tier3app.h"
-#include "tier0/icommandline.h"
-#include "vgui/IVGui.h"
-#include "vgui_controls/controls.h"
-#include "vgui/ILocalize.h"
-#include "tier1/checksum_crc.h"
-#include "tier1/UtlSortVector.h"
-#include "tier1/utlmap.h"
 #include "captioncompiler.h"
+#include "appframework/tier3app.h"
+#include "cmdlib.h"
+#include "filesystem.h"
+#include "pacifier.h"
+#include "scriplib.h"
+#include "tier0/dbg.h"
+#include "tier0/icommandline.h"
+#include "tier1/utlbuffer.h"
+#include "tier1/UtlSortVector.h"
+#include "tier1/checksum_crc.h"
+#include "tier1/utldict.h"
+#include "tier1/utlmap.h"
+#include "vgui/ILocalize.h"
+#include "vgui/IVGui.h"
+#include "vstdlib/random.h"
+#include <cstdio>
+#include "platform.h"
 
 #include "tier0/fasttimer.h"
 
@@ -32,74 +31,64 @@ using namespace vgui;
 
 bool uselogfile = false;
 
-struct AnalysisData
-{
-	CUtlSymbolTable				symbols;
+struct AnalysisData {
+	CUtlSymbolTable symbols;
 };
 
 static AnalysisData g_Analysis;
 
-IBaseFileSystem *filesystem = NULL;
+IBaseFileSystem* filesystem = nullptr;
 
 static bool spewed = false;
 
-SpewRetval_t SpewFunc( SpewType_t type, char const *pMsg )
-{	
+SpewRetval_t SpewFunc( SpewType_t type, char const* pMsg ) {
 	spewed = true;
 
 	printf( "%s", pMsg );
-	OutputDebugString( pMsg );
-	
-	if ( type == SPEW_ERROR )
-	{
+	Plat_DebugString( pMsg );
+
+	if ( type == SPEW_ERROR ) {
 		printf( "\n" );
-		OutputDebugString( "\n" );
+		Plat_DebugString( "\n" );
 	}
 
 	return SPEW_CONTINUE;
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : depth - 
-//			*fmt - 
-//			... - 
+// Purpose:
+// Input  : depth -
+//			*fmt -
+//			... -
 //-----------------------------------------------------------------------------
-void vprint( int depth, const char *fmt, ... )
-{
+void vprint( int depth, const char* fmt, ... ) {
 	char string[ 8192 ];
 	va_list va;
 	va_start( va, fmt );
 	vsprintf( string, fmt, va );
 	va_end( va );
 
-	FILE *fp = NULL;
+	FILE* fp = nullptr;
 
-	if ( uselogfile )
-	{
+	if ( uselogfile ) {
 		fp = fopen( "log.txt", "ab" );
 	}
 
-	while ( depth-- > 0 )
-	{
+	while ( depth-- > 0 ) {
 		printf( "  " );
-		OutputDebugString( "  " );
-		if ( fp )
-		{
+		Plat_DebugString( "  " );
+		if ( fp ) {
 			fprintf( fp, "  " );
 		}
 	}
 
 	::printf( "%s", string );
-	OutputDebugString( string );
+	Plat_DebugString( string );
 
-	if ( fp )
-	{
-		char *p = string;
-		while ( *p )
-		{
-			if ( *p == '\n' )
-			{
+	if ( fp ) {
+		char* p = string;
+		while ( *p ) {
+			if ( *p == '\n' ) {
 				fputc( '\r', fp );
 			}
 			fputc( *p, fp );
@@ -109,32 +98,25 @@ void vprint( int depth, const char *fmt, ... )
 	}
 }
 
-void logprint( char const *logfile, const char *fmt, ... )
-{
+void logprint( char const* logfile, const char* fmt, ... ) {
 	char string[ 8192 ];
 	va_list va;
 	va_start( va, fmt );
 	vsprintf( string, fmt, va );
 	va_end( va );
 
-	FILE *fp = NULL;
+	FILE* fp = nullptr;
 	static bool first = true;
-	if ( first )
-	{
+	if ( first ) {
 		first = false;
 		fp = fopen( logfile, "wb" );
-	}
-	else
-	{
+	} else {
 		fp = fopen( logfile, "ab" );
 	}
-	if ( fp )
-	{
-		char *p = string;
-		while ( *p )
-		{
-			if ( *p == '\n' )
-			{
+	if ( fp ) {
+		char* p = string;
+		while ( *p ) {
+			if ( *p == '\n' ) {
 				fputc( '\r', fp );
 			}
 			fputc( *p, fp );
@@ -145,10 +127,9 @@ void logprint( char const *logfile, const char *fmt, ... )
 }
 
 
-void Con_Printf( const char *fmt, ... )
-{
+void Con_Printf( const char* fmt, ... ) {
 	va_list args;
-	static char output[1024];
+	static char output[ 1024 ];
 
 	va_start( args, fmt );
 	vprintf( fmt, args );
@@ -158,33 +139,30 @@ void Con_Printf( const char *fmt, ... )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-void printusage( void )
-{
-	vprint( 0, "usage:  captioncompiler closecaptionfile.txt\n\
-		\t-v = verbose output\n\
-		\t-l = log to file log.txt\n\
-		\ne.g.:  kvc -l u:/xbox/game/hl2x/resource/closecaption_english.txt" );
+void printusage() {
+	vprint( 0, R"(usage:  captioncompiler closecaptionfile.txt
+	-v = verbose output
+	-l = log to file log.txt
+
+e.g.:  kvc -l u:/xbox/game/hl2x/resource/closecaption_english.txt)" );
 
 	// Exit app
 	exit( 1 );
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-void CheckLogFile( void )
-{
-	if ( uselogfile )
-	{
+void CheckLogFile() {
+	if ( uselogfile ) {
 		_unlink( "log.txt" );
 		vprint( 0, "    Outputting to log.txt\n" );
 	}
 }
 
-void PrintHeader()
-{
+void PrintHeader() {
 	vprint( 0, "Valve Software - captioncompiler.exe (%s)\n", __DATE__ );
 	vprint( 0, "--- Close Caption File compiler ---\n" );
 }
@@ -192,10 +170,8 @@ void PrintHeader()
 //-----------------------------------------------------------------------------
 // The application object
 //-----------------------------------------------------------------------------
-class CCompileCaptionsApp : public CTier3SteamApp
-{
-	typedef CTier3SteamApp BaseClass;
-
+class CCompileCaptionsApp : public CTier3SteamApp {
+	using BaseClass = CTier3SteamApp;
 public:
 	// Methods of IApplication
 	virtual bool Create();
@@ -203,42 +179,37 @@ public:
 	virtual int Main();
 	virtual void PostShutdown();
 	virtual void Destroy();
-
 private:
 	// Sets up the search paths
 	bool SetupSearchPaths();
 
-	void CompileCaptionFile( char const *infile, char const *outfile );
-	void DescribeCaptions( char const *file );
+	void CompileCaptionFile( char const* infile, char const* outfile );
+	void DescribeCaptions( char const* file );
 };
 
 
-bool CCompileCaptionsApp::Create()
-{
+bool CCompileCaptionsApp::Create() {
 	SpewOutputFunc( SpewFunc );
 	SpewActivate( "kvc", 2 );
 
-	AppSystemInfo_t appSystems[] = 
-	{
-		{ "vgui2.dll",				VGUI_IVGUI_INTERFACE_VERSION },
-		{ "", "" }	// Required to terminate the list
+	AppSystemInfo_t appSystems[] {
+		{ "vgui2.dll", VGUI_IVGUI_INTERFACE_VERSION },
+		{ "", "" }// Required to terminate the list
 	};
 
 	return AddSystems( appSystems );
 }
 
-void CCompileCaptionsApp::Destroy()
-{
-}
+void CCompileCaptionsApp::Destroy() { }
 
 
 //-----------------------------------------------------------------------------
 // Sets up the game path
 //-----------------------------------------------------------------------------
-bool CCompileCaptionsApp::SetupSearchPaths()
-{
-	if ( !BaseClass::SetupSearchPaths( NULL, false, true ) )
+bool CCompileCaptionsApp::SetupSearchPaths() {
+	if ( !BaseClass::SetupSearchPaths( nullptr, false, true ) ) {
 		return false;
+	}
 
 	// Set gamedir.
 	Q_MakeAbsolutePath( gamedir, sizeof( gamedir ), GetGameInfoPath() );
@@ -251,37 +222,35 @@ bool CCompileCaptionsApp::SetupSearchPaths()
 //-----------------------------------------------------------------------------
 // Init, shutdown
 //-----------------------------------------------------------------------------
-bool CCompileCaptionsApp::PreInit( )
-{
-	if ( !BaseClass::PreInit() )
+bool CCompileCaptionsApp::PreInit() {
+	if ( !BaseClass::PreInit() ) {
 		return false;
+	}
 
 	g_pFileSystem = g_pFullFileSystem;
-	if ( !g_pFileSystem || !g_pVGui || !g_pVGuiLocalize )
-	{
+	if ( !g_pFileSystem || !g_pVGui || !g_pVGuiLocalize ) {
 		Error( "Unable to load required library interface!\n" );
 		return false;
 	}
 
-//	MathLib_Init( 2.2f, 2.2f, 0.0f, 2.0f, false, false, false, false );
+	//	MathLib_Init( 2.2f, 2.2f, 0.0f, 2.0f, false, false, false, false );
 	g_pFullFileSystem->SetWarningFunc( Warning );
 
 	// Add paths...
-	if ( !SetupSearchPaths() )
+	if ( !SetupSearchPaths() ) {
 		return false;
+	}
 
-	return true; 
+	return true;
 }
 
-void CCompileCaptionsApp::PostShutdown()
-{
-	g_pFileSystem = NULL;
+void CCompileCaptionsApp::PostShutdown() {
+	g_pFileSystem = nullptr;
 	BaseClass::PostShutdown();
 }
 
-void CCompileCaptionsApp::CompileCaptionFile( char const *infile, char const *outfile )
-{
-	StringIndex_t maxindex = (StringIndex_t)-1;
+void CCompileCaptionsApp::CompileCaptionFile( char const* infile, char const* outfile ) {
+	auto maxindex = static_cast<StringIndex_t>( -1 );
 	int maxunicodesize = 0;
 	int totalsize = 0;
 
@@ -293,70 +262,61 @@ void CCompileCaptionsApp::CompileCaptionFile( char const *infile, char const *ou
 
 	int freeSpace = 0;
 
-	CUtlVector< CaptionLookup_t >	directory;
+	CUtlVector<CaptionLookup_t> directory;
 	CUtlBuffer data;
 
-	CUtlRBTree< unsigned int >	hashcollision( 0, 0, DefLessFunc( unsigned int ) );
+	CUtlRBTree<unsigned int> hashcollision( 0, 0, DefLessFunc( unsigned int ) );
 
-	for ( StringIndex_t i = g_pVGuiLocalize->GetFirstStringIndex(); i != INVALID_LOCALIZE_STRING_INDEX; i = g_pVGuiLocalize->GetNextStringIndex( i ), ++c )
-	{
-		char const *entryName = g_pVGuiLocalize->GetNameByIndex( i );
-		CaptionLookup_t entry;
+	for ( StringIndex_t i = g_pVGuiLocalize->GetFirstStringIndex(); i != INVALID_LOCALIZE_STRING_INDEX; i = g_pVGuiLocalize->GetNextStringIndex( i ), ++c ) {
+		char const* entryName = g_pVGuiLocalize->GetNameByIndex( i );
+		CaptionLookup_t entry{};
 		entry.SetHash( entryName );
-		
+
 		// 	vprint( 0, "%d / %d:  %s == %u\n", c, i, g_pVGuiLocalize->GetNameByIndex( i ), entry.hash );
 
-		if ( hashcollision.Find( entry.hash ) != hashcollision.InvalidIndex() )
-		{
+		if ( hashcollision.Find( entry.hash ) != hashcollision.InvalidIndex() ) {
 			Error( "Hash name collision on %s!!!\n", g_pVGuiLocalize->GetNameByIndex( i ) );
 		}
 
 		hashcollision.Insert( entry.hash );
 
-		const wchar_t *text = g_pVGuiLocalize->GetValueByIndex( i );
-		if ( verbose )
-		{
+		const wchar_t* text = g_pVGuiLocalize->GetValueByIndex( i );
+		if ( verbose ) {
 			vprint( 0, "Processing: '%30.30s' = '%S'\n", entryName, text );
 		}
 		int len = text ? ( wcslen( text ) + 1 ) * sizeof( short ) : 0;
-		if ( len > maxunicodesize )
-		{
+		if ( len > maxunicodesize ) {
 			maxindex = i;
 			maxunicodesize = len;
 		}
 
-		if ( len > blockSize )
-		{
+		if ( len > blockSize ) {
 			Error( "Caption text file '%s' contains a single caption '%s' of %d bytes (%d is max), change MAX_BLOCK_SIZE in captioncompiler.h to fix!!!\n", g_pVGuiLocalize->GetNameByIndex( i ),
-				entryName, len, blockSize );
+				   entryName, len, blockSize );
 		}
 		totalsize += len;
 
-		if ( usedBytes + len >= blockSize )
-		{
+		if ( usedBytes + len >= blockSize ) {
 			++curblock;
 
 			int leftover = ( blockSize - usedBytes );
 
 			totalsize += leftover;
 
-            freeSpace += leftover;
+			freeSpace += leftover;
 
-			while ( --leftover >= 0 )
-			{
+			while ( --leftover >= 0 ) {
 				data.PutChar( 0 );
 			}
 
 			usedBytes = len;
 			entry.offset = 0;
 
-			data.Put( (const void *)text, len );
-		}
-		else
-		{
+			data.Put( (const void*) text, len );
+		} else {
 			entry.offset = usedBytes;
 			usedBytes += len;
-			data.Put( (const void *)text, len );
+			data.Put( (const void*) text, len );
 		}
 
 		entry.length = len;
@@ -364,36 +324,34 @@ void CCompileCaptionsApp::CompileCaptionFile( char const *infile, char const *ou
 
 		directory.AddToTail( entry );
 	}
-	
+
 	int leftover = ( blockSize - usedBytes );
 	totalsize += leftover;
 	freeSpace += leftover;
-	while ( --leftover >= 0 )
-	{
+	while ( --leftover >= 0 ) {
 		data.PutChar( 0 );
 	}
 
 	vprint( 0, "Found %i strings in '%s'\n", c, infile );
 
-	if ( maxindex != INVALID_LOCALIZE_STRING_INDEX )
-	{
+	if ( maxindex != INVALID_LOCALIZE_STRING_INDEX ) {
 		vprint( 0, "Longest string '%s' = (%i) bytes average(%.3f)\n%",
-			g_pVGuiLocalize->GetNameByIndex( maxindex ), maxunicodesize, (float)totalsize/(float)c );
+				g_pVGuiLocalize->GetNameByIndex( maxindex ), maxunicodesize, (float) totalsize / (float) c );
 	}
 
 	vprint( 0, "%d blocks (%d bytes each), %d bytes wasted (%.3f per block average), total bytes %d\n",
-		curblock + 1, blockSize, freeSpace, (float)freeSpace/(float)( curblock + 1 ), totalsize );
+			curblock + 1, blockSize, freeSpace, (float) freeSpace / (float) ( curblock + 1 ), totalsize );
 
 	vprint( 0, "directory size %d entries, %d bytes, data size %d bytes\n",
-		directory.Count(), directory.Count() * sizeof( CaptionLookup_t ), data.TellPut() );
+			directory.Count(), directory.Count() * sizeof( CaptionLookup_t ), data.TellPut() );
 
-	CompiledCaptionHeader_t header;
-	header.magic			= COMPILED_CAPTION_FILEID;
-	header.version			= COMPILED_CAPTION_VERSION;
-	header.numblocks		= curblock + 1;
-	header.blocksize		= blockSize;
-	header.directorysize	= directory.Count();
-	header.dataoffset		= 0;
+	CompiledCaptionHeader_t header{};
+	header.magic = COMPILED_CAPTION_FILEID;
+	header.version = COMPILED_CAPTION_VERSION;
+	header.numblocks = curblock + 1;
+	header.blocksize = blockSize;
+	header.directorysize = directory.Count();
+	header.dataoffset = 0;
 
 	// Now write the outfile
 	CUtlBuffer out;
@@ -401,10 +359,9 @@ void CCompileCaptionsApp::CompileCaptionFile( char const *infile, char const *ou
 	out.Put( directory.Base(), directory.Count() * sizeof( CaptionLookup_t ) );
 	int curOffset = out.TellPut();
 	// Round it up to the next 512 byte boundary
-	int nBytesDestBuffer = AlignValue( curOffset, 512 );  // align to HD sector
+	int nBytesDestBuffer = AlignValue( curOffset, 512 );// align to HD sector
 	int nPadding = nBytesDestBuffer - curOffset;
-	while ( --nPadding >= 0 )
-	{
+	while ( --nPadding >= 0 ) {
 		out.PutChar( 0 );
 	}
 	out.Put( data.Base(), data.TellPut() );
@@ -416,95 +373,86 @@ void CCompileCaptionsApp::CompileCaptionFile( char const *infile, char const *ou
 	out.Put( &header, sizeof( header ) );
 	out.SeekPut( CUtlBuffer::SEEK_HEAD, savePos );
 
-	g_pFullFileSystem->WriteFile( outfile, NULL, out );
+	g_pFullFileSystem->WriteFile( outfile, nullptr, out );
 }
 
-void CCompileCaptionsApp::DescribeCaptions( char const *file )
-{
+void CCompileCaptionsApp::DescribeCaptions( char const* file ) {
 	CUtlBuffer buf;
-	if ( !g_pFullFileSystem->ReadFile( file, NULL, buf ) )
-	{
+	if ( !g_pFullFileSystem->ReadFile( file, nullptr, buf ) ) {
 		Error( "Unable to read '%s' into buffer\n", file );
 	}
 
-	CompiledCaptionHeader_t header;
+	CompiledCaptionHeader_t header{};
 	buf.Get( &header, sizeof( header ) );
-	if ( header.magic != COMPILED_CAPTION_FILEID )
+	if ( header.magic != COMPILED_CAPTION_FILEID ) {
 		Error( "Invalid file id for %s\n", file );
-	if ( header.version != COMPILED_CAPTION_VERSION )
+	}
+	if ( header.version != COMPILED_CAPTION_VERSION ) {
 		Error( "Invalid file version for %s\n", file );
+	}
 
 	// Read the directory
-	CUtlSortVector< CaptionLookup_t, CCaptionLookupLess > directory;
+	CUtlSortVector<CaptionLookup_t, CCaptionLookupLess> directory;
 	directory.EnsureCapacity( header.directorysize );
-	directory.CopyArray( (const CaptionLookup_t *)buf.PeekGet(), header.directorysize );
+	directory.CopyArray( (const CaptionLookup_t*) buf.PeekGet(), header.directorysize );
 	directory.RedoSort( true );
 	buf.SeekGet( CUtlBuffer::SEEK_HEAD, header.dataoffset );
 
 	int i;
-	CUtlVector< CaptionBlock_t >	blocks;
-	for ( i = 0; i < header.numblocks; ++i )
-	{
+	CUtlVector<CaptionBlock_t> blocks;
+	for ( i = 0; i < header.numblocks; ++i ) {
 		CaptionBlock_t& newBlock = blocks[ blocks.AddToTail() ];
 		Q_memset( newBlock.data, 0, sizeof( newBlock.data ) );
 		buf.Get( newBlock.data, header.blocksize );
 	}
 
-	CUtlMap< unsigned int, StringIndex_t > inverseMap( 0, 0, DefLessFunc( unsigned int ) );
-	for ( StringIndex_t idx = g_pVGuiLocalize->GetFirstStringIndex(); idx != INVALID_LOCALIZE_STRING_INDEX; idx = g_pVGuiLocalize->GetNextStringIndex( idx ) )
-	{
-		const char *name = g_pVGuiLocalize->GetNameByIndex( idx );
-		CaptionLookup_t dummy;
+	CUtlMap<unsigned int, StringIndex_t> inverseMap( 0, 0, DefLessFunc( unsigned int ) );
+	for ( StringIndex_t idx = g_pVGuiLocalize->GetFirstStringIndex(); idx != INVALID_LOCALIZE_STRING_INDEX; idx = g_pVGuiLocalize->GetNextStringIndex( idx ) ) {
+		const char* name = g_pVGuiLocalize->GetNameByIndex( idx );
+		CaptionLookup_t dummy{};
 		dummy.SetHash( name );
 
 		inverseMap.Insert( dummy.hash, idx );
 	}
 
 	// Now print everything out...
-	for ( i = 0; i < header.directorysize; ++i )
-	{
+	for ( i = 0; i < header.directorysize; ++i ) {
 		const CaptionLookup_t& entry = directory[ i ];
-		char const *name = g_pVGuiLocalize->GetNameByIndex( inverseMap.Element( inverseMap.Find( entry.hash ) ) );
+		char const* name = g_pVGuiLocalize->GetNameByIndex( inverseMap.Element( inverseMap.Find( entry.hash ) ) );
 		const CaptionBlock_t& block = blocks[ entry.blockNum ];
-		const wchar_t *data = (const wchar_t *)&block.data[ entry.offset ];
-		wchar_t *temp = ( wchar_t * )_alloca( entry.length * sizeof( short ) );
+		const auto* data = (const wchar_t*) &block.data[ entry.offset ];
+		auto* temp = (wchar_t*) _alloca( entry.length * sizeof( short ) );
 		wcsncpy( temp, data, ( entry.length / sizeof( short ) ) - 1 );
 
 		vprint( 0, "%3.3d:  (%40.40s) hash(%15.15u), block(%4.4d), offset(%4.4d), len(%4.4d) %S\n",
-			i, name, entry.hash, entry.blockNum, entry.offset, entry.length, temp );
+				i, name, entry.hash, entry.blockNum, entry.offset, entry.length, temp );
 	}
 }
 
 //-----------------------------------------------------------------------------
 // main application
 //-----------------------------------------------------------------------------
-int CCompileCaptionsApp::Main()
-{
-	CUtlVector< CUtlSymbol >	worklist;
+int CCompileCaptionsApp::Main() {
+	CUtlVector<CUtlSymbol> worklist;
 
 	int i = 1;
-	for ( i ; i<CommandLine()->ParmCount() ; i++)
-	{
-		if ( CommandLine()->GetParm( i )[ 0 ] == '-' )
-		{
-			switch( CommandLine()->GetParm( i )[ 1 ] )
-			{
-			case 'l':
-				uselogfile = true;
-				break;
-			case 'v':
-				verbose = true;
-				break;
-			case 'g': // -game
-				++i;
-				break;
-			default:
-				printusage();
-				break;
+	for ( i; i < CommandLine()->ParmCount(); i++ ) {
+		if ( CommandLine()->GetParm( i )[ 0 ] == '-' ) {
+			switch ( CommandLine()->GetParm( i )[ 1 ] ) {
+				case 'l':
+					uselogfile = true;
+					break;
+				case 'v':
+					verbose = true;
+					break;
+				case 'g':// -game
+					++i;
+					break;
+				default:
+					printusage();
+					break;
 			}
-		}
-		else if ( i != 0 )
-		{
+		} else if ( i != 0 ) {
 			char fn[ 512 ];
 			Q_strncpy( fn, CommandLine()->GetParm( i ), sizeof( fn ) );
 			Q_FixSlashes( fn );
@@ -516,8 +464,7 @@ int CCompileCaptionsApp::Main()
 		}
 	}
 
-	if ( CommandLine()->ParmCount() < 2 || ( i != CommandLine()->ParmCount() ) || worklist.Count() != 1 )
-	{
+	if ( CommandLine()->ParmCount() < 2 || ( i != CommandLine()->ParmCount() ) || worklist.Count() != 1 ) {
 		PrintHeader();
 		printusage();
 	}
@@ -526,19 +473,16 @@ int CCompileCaptionsApp::Main()
 
 	PrintHeader();
 
-	char binaries[MAX_PATH];
+	char binaries[ MAX_PATH ];
 	Q_strncpy( binaries, gamedir, MAX_PATH );
 	Q_StripTrailingSlash( binaries );
 	Q_strncat( binaries, "/../bin", MAX_PATH, MAX_PATH );
 
 	char outfile[ 512 ];
-	if ( Q_stristr( worklist[ worklist.Count() - 1 ].String(), gamedir ) )
-	{
-        Q_strncpy( outfile, &worklist[ worklist.Count() - 1 ].String()[ Q_strlen( gamedir ) ] , sizeof( outfile ) );
-	}
-	else
-	{
-        Q_snprintf( outfile, sizeof( outfile ), "resource\\%s", worklist[ worklist.Count() - 1 ].String() );
+	if ( Q_stristr( worklist[ worklist.Count() - 1 ].String(), gamedir ) ) {
+		Q_strncpy( outfile, &worklist[ worklist.Count() - 1 ].String()[ Q_strlen( gamedir ) ], sizeof( outfile ) );
+	} else {
+		Q_snprintf( outfile, sizeof( outfile ), "resource\\%s", worklist[ worklist.Count() - 1 ].String() );
 	}
 
 	char infile[ 512 ];
@@ -552,8 +496,7 @@ int CCompileCaptionsApp::Main()
 
 	g_pFullFileSystem->AddSearchPath( binaries, "EXECUTABLE_PATH" );
 
-	if ( !g_pVGuiLocalize->AddFile( infile, "MOD", false ) )
-	{
+	if ( !g_pVGuiLocalize->AddFile( infile, "MOD", false ) ) {
 		Error( "Unable to add localization file '%s'\n", infile );
 	}
 
@@ -561,8 +504,7 @@ int CCompileCaptionsApp::Main()
 
 	CompileCaptionFile( infile, outfile );
 
-	if ( verbose )
-	{
+	if ( verbose ) {
 		DescribeCaptions( outfile );
 	}
 
@@ -573,6 +515,6 @@ int CCompileCaptionsApp::Main()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: Main entry point 
+// Purpose: Main entry point
 //-----------------------------------------------------------------------------
 DEFINE_CONSOLE_STEAM_APPLICATION_OBJECT( CCompileCaptionsApp )
