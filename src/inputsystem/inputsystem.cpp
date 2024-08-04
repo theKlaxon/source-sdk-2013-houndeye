@@ -2,14 +2,12 @@
 // Created by ENDERZOMBI102 on 06/09/2023.
 //
 #include "SDL3/SDL.h"
-#include <array>
-
 #include "ButtonEntry.hpp"
 #include "icommandline.h"
 #include "inputsystem.hpp"
 
 InitReturnVal_t CInputSystem::Init() {
-	if ( CommandLine()->CheckParm( "-nojoy" ) ) ;
+	if ( CommandLine()->CheckParm( "-nojoy" ) ) { }
 
 	auto res = SDL_InitSubSystem( SDL_INIT_EVENTS | SDL_INIT_GAMEPAD | SDL_INIT_HAPTIC );
 
@@ -28,18 +26,20 @@ void CInputSystem::Shutdown() {
 // IInputSystem
 void CInputSystem::AttachToWindow( void* hWnd ) {
 	// WHY DOES ERROR CRASH
-	if ( hWnd == nullptr )
+	if ( hWnd == nullptr ) {
 		Error( "Called `CInputSystem::AttachToWindow` with a `nullptr`!" );
+	}
 
-	if ( this->m_pSdlWindow )
+	if ( this->m_pSdlWindow ) {
 		Error( "`CInputSystem::AttachToWindow`: Cannot attach to two windows at once!" );
+	}
 
 	auto props { SDL_CreateProperties() };
 	#if IsWindows()
 		SDL_SetNumberProperty( props, SDL_PROP_WINDOW_CREATE_WIN32_HWND_POINTER, reinterpret_cast<int>( hWnd ) );
 	#elif IsLinux()
 		// TODO: When we move to wayland, this should change!
-		SDL_SetNumberProperty( props, SDL_PROP_WINDOW_X11_WINDOW_NUMBER, reinterpret_cast<int>( hWnd ) );
+		SDL_SetNumberProperty( props, SDL_PROPERTY_WINDOW_X11_WINDOW_NUMBER, reinterpret_cast<int>( hWnd ) );
 	#endif
 
 	this->m_pSdlWindow = SDL_CreateWindowWithProperties( props );
@@ -63,17 +63,17 @@ void CInputSystem::EnableMessagePump( bool bEnable ) {
 	// asked to disable
 	if ( bEnable ) {
 		// if are we already disabled skip
-		if ( !this->m_bRunning )
+		if ( !this->m_bRunning ) {
 			return;
-
+		}
 		// disable the pump
 		this->m_bRunning = false;
 		this->m_pEventPump.Join();
 	} else {
 		// if are we already enabled skip
-		if ( this->m_bRunning )
+		if ( this->m_bRunning ) {
 			return;
-
+		}
 		// enable the pump
 		this->m_bRunning = true;
 		this->m_pEventPump.Start();
@@ -179,9 +179,11 @@ void CInputSystem::SetPrimaryUserId( int userId ) {
 }
 
 const char* CInputSystem::ButtonCodeToString( ButtonCode_t code ) const {
-	for ( auto entry : BUTTON_MAP )
-		if ( entry.code == code )
+	for ( auto entry : BUTTON_MAP ) {
+		if ( entry.code == code ) {
 			return entry.name;
+		}
+	}
 	return "";
 }
 
@@ -191,9 +193,11 @@ const char* CInputSystem::AnalogCodeToString( AnalogCode_t code ) const {
 }
 
 ButtonCode_t CInputSystem::StringToButtonCode( const char* pString ) const {
-	for ( auto& entry : BUTTON_MAP )
-		if ( entry.name && Q_strcmp( entry.name, pString ) == 0 )
+	for ( auto& entry : BUTTON_MAP ) {
+		if ( entry.name && Q_strcmp( entry.name, pString ) == 0 ) {
 			return entry.code;
+		}
+	}
 	return BUTTON_CODE_INVALID;
 }
 
@@ -228,8 +232,9 @@ int CInputSystem::GetPollCount() const {
 
 void CInputSystem::SetCursorPosition( int x, int y ) {
 	// FIXME: This doesn't sound good
-	if ( SDL_WarpMouseGlobal( x, y ) < 0 )
+	if ( SDL_WarpMouseGlobal( x, y ) < 0 ) {
 		DevWarning( "[AuroraSource|InputSystem] Failed to warp mouse pointer: %s", SDL_GetError() );
+	}
 }
 
 void* CInputSystem::GetHapticsInterfaceAddress() const {
