@@ -1,16 +1,10 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef SHEETSIMULATOR_H
-#define SHEETSIMULATOR_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "mathlib/mathlib.h"
 #include "mathlib/vector.h"
 #include "utlvector.h"
@@ -26,15 +20,14 @@
 class CGameTrace;
 typedef CGameTrace trace_t;
 //struct trace_t;
-typedef void (*TraceLineFunc_t)(const Vector &vecStart, const Vector &vecEnd, 
-								unsigned int mask, int collisionGroup, trace_t *ptr);
-typedef void (*TraceHullFunc_t)(const Vector &vecStart, const Vector &vecEnd, 
-								const Vector &hullMin, const Vector &hullMax, 
-								unsigned int mask, int collisionGroup, trace_t *ptr);
+typedef void ( *TraceLineFunc_t )( const Vector& vecStart, const Vector& vecEnd,
+								   unsigned int mask, int collisionGroup, trace_t* ptr );
+typedef void ( *TraceHullFunc_t )( const Vector& vecStart, const Vector& vecEnd,
+								   const Vector& hullMin, const Vector& hullMax,
+								   unsigned int mask, int collisionGroup, trace_t* ptr );
 
 
-class CSheetSimulator
-{
+class CSheetSimulator {
 public:
 	CSheetSimulator( TraceLineFunc_t traceline, TraceHullFunc_t traceHull );
 	~CSheetSimulator();
@@ -93,87 +86,84 @@ public:
 	void AddGravityForce( int particle );
 
 protected:
-	struct Particle_t
-	{
-		float	m_Mass;
-		Vector	m_Position;
-		Vector	m_Velocity;
-		Vector	m_Force;
-		int		m_Collided;
-		int		m_CollisionPlane;
-		float	m_CollisionDist;
+	struct Particle_t {
+		float m_Mass;
+		Vector m_Position;
+		Vector m_Velocity;
+		Vector m_Force;
+		int m_Collided;
+		int m_CollisionPlane;
+		float m_CollisionDist;
 	};
 
-	struct Spring_t
-	{
+	struct Spring_t {
 		int m_Particle1;
 		int m_Particle2;
 		float m_RestLength;
 	};
 
-	inline int NumParticles() const
-	{
-		return m_HorizontalCount * m_VerticalCount; 
+	inline int NumParticles() const {
+		return m_HorizontalCount * m_VerticalCount;
 	}
 
 	// simulator
-	void			EulerStep( float dt );
-	void			ComputeControlPoints();
-	void			ClearForces();
-	void			ComputeForces();
-	void			TestVertAgainstPlane( int vert, int plane, bool bFarTest = true );
-	void			SatisfyCollisionConstraints();
-	void			DetermineBestCollisionPlane( bool bFarTest = true );
-	void			ClampPointsToCollisionPlanes();
+	void EulerStep( float dt );
+	void ComputeControlPoints();
+	void ClearForces();
+	void ComputeForces();
+	void TestVertAgainstPlane( int vert, int plane, bool bFarTest = true );
+	void SatisfyCollisionConstraints();
+	void DetermineBestCollisionPlane( bool bFarTest = true );
+	void ClampPointsToCollisionPlanes();
 
 	// How many particles horiz + vert?
 	int m_HorizontalCount;
 	int m_VerticalCount;
 
 	// The particles
-	Particle_t*	m_Particle;
+	Particle_t* m_Particle;
 
 	// Output position after simulation
-	Vector*	m_OutputPosition;
+	Vector* m_OutputPosition;
 
 	// fixed points
-	int	m_FixedPointCount;
+	int m_FixedPointCount;
 	Vector* m_pFixedPoint;
 	Vector* m_ControlPoints;
-	
-	CUtlVector<Spring_t>	m_Springs;
-	CUtlVector<int>			m_Gravity;
+
+	CUtlVector<Spring_t> m_Springs;
+	CUtlVector<int> m_Gravity;
 
 	// raycasting methods
-	TraceLineFunc_t		m_TraceLine;
-	TraceHullFunc_t		m_TraceHull;
+	TraceLineFunc_t m_TraceLine;
+	TraceHullFunc_t m_TraceHull;
 
 	// Spring constants
-	float	m_FixedSpringConstant;
-	float	m_PointSpringConstant;
-	float	m_DampConstant;
-	float	m_ViscousDrag;
+	float m_FixedSpringConstant;
+	float m_PointSpringConstant;
+	float m_DampConstant;
+	float m_ViscousDrag;
 
 	// Collision group
-	int		m_CollisionGroup;
+	int m_CollisionGroup;
 
 	// position + orientation
-	Vector	m_Origin;
-	QAngle	m_Angles;
+	Vector m_Origin;
+	QAngle m_Angles;
 
 	// collision box
-	Vector  m_FrustumBoxMin;
-	Vector	m_FrustumBoxMax;
+	Vector m_FrustumBoxMin;
+	Vector m_FrustumBoxMax;
 
 	// Collision planes
-	cplane_t*	m_pCollisionPlanes;
-	bool*		m_pValidCollisionPlane;
+	cplane_t* m_pCollisionPlanes;
+	bool* m_pValidCollisionPlane;
 
 	// Control point offset
-	Vector		m_ControlPointOffset;
+	Vector m_ControlPointOffset;
 
 	// Gravity
-	float		m_GravityConstant;
+	float m_GravityConstant;
 };
 
 
@@ -181,33 +171,29 @@ protected:
 // Class to help dealing with the iterative computation
 //-----------------------------------------------------------------------------
 
-class CIterativeSheetSimulator : public CSheetSimulator
-{
+class CIterativeSheetSimulator : public CSheetSimulator {
 public:
 	CIterativeSheetSimulator( TraceLineFunc_t traceline, TraceHullFunc_t traceHull );
 
 	void BeginSimulation( float dt, int steps, int substeps, int collisionCount );
 
 	// Returns true if it just did a simulation step
-	bool Think( );
+	bool Think();
 	bool IsDone() const { return m_SimulationSteps == 0; }
 
-	int StepsRemaining( ) const { return m_SimulationSteps; }
+	int StepsRemaining() const { return m_SimulationSteps; }
 
 private:
-	CIterativeSheetSimulator( const CIterativeSheetSimulator & ); // not defined, not accessible
+	CIterativeSheetSimulator( const CIterativeSheetSimulator& );// not defined, not accessible
 
-	// Iterative collision detection 
-	void DetectCollisions( void );
+	// Iterative collision detection
+	void DetectCollisions();
 
-	float	m_TimeStep;
-	float	m_SubSteps;
-	char	m_TotalSteps;
-	char	m_SimulationSteps;
-	char	m_CollisionCount;
-	char	m_CurrentCollisionPt;
-	bool	m_InitialPass;
+	float m_TimeStep;
+	float m_SubSteps;
+	char m_TotalSteps;
+	char m_SimulationSteps;
+	char m_CollisionCount;
+	char m_CurrentCollisionPt;
+	bool m_InitialPass;
 };
-
-
-#endif // TF_SHIELD_SHARED_H
