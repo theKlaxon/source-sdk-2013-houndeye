@@ -8,6 +8,7 @@
 #include <functional>
 #include <memory>
 
+
 class ISystemClient;
 
 
@@ -91,18 +92,18 @@ public: // metadata
 	[[nodiscard]]
 	virtual auto GetIdentifier() const -> int = 0;
 	virtual auto Shutdown() -> void = 0;
-	auto operator==( ISystemClient& other ) const -> bool { return this == &other || this->GetIdentifier() == other.GetIdentifier(); }
-	auto operator==( const ISystemClient& other ) const -> bool { return this == &other || this->GetIdentifier() == other.GetIdentifier(); }
+	auto operator==( ISystemClient& pOther ) const -> bool { return this == &pOther || this->GetIdentifier() == pOther.GetIdentifier(); }
+	auto operator==( const ISystemClient& pOther ) const -> bool { return this == &pOther || this->GetIdentifier() == pOther.GetIdentifier(); }
 public: // fs interactions
 	// file ops
-	virtual auto Open  ( const char* path, OpenMode mode ) -> FileDescriptor* = 0;
-	virtual auto Read  ( const FileDescriptor* desc, void* buffer, uint32_t count ) -> int32_t = 0;
-	virtual auto Write ( const FileDescriptor* desc, const void* buffer, uint32_t count ) -> int32_t = 0;
-	virtual auto Flush ( const FileDescriptor* desc ) -> bool = 0;
-	virtual auto Close ( const FileDescriptor* desc ) -> void = 0;
+	virtual auto Open  ( const char* pPath, OpenMode pMode ) -> FileDescriptor* = 0;
+	virtual auto Read  ( const FileDescriptor* pDesc, void* pBuffer, uint32_t pCount ) -> int32_t = 0;
+	virtual auto Write ( const FileDescriptor* pDesc, const void* pBuffer, uint32_t pCount ) -> int32_t = 0;
+	virtual auto Flush ( const FileDescriptor* pDesc ) -> bool = 0;
+	virtual auto Close ( const FileDescriptor* pDesc ) -> void = 0;
 	// generic ops
-	virtual auto Walk  ( const FileDescriptor* desc, const WalkEntry*& entry ) -> void = 0;
-	virtual auto Create( const char* path, FileType type, OpenMode mode ) -> FileDescriptor* = 0;
-	virtual auto Remove( const FileDescriptor* desc ) -> void = 0;
-	virtual auto Stat  ( const FileDescriptor* desc ) -> std::optional<StatData> = 0;
+	virtual auto Walk  ( const FileDescriptor* pDesc, const WalkEntry*& pEntry ) -> void = 0;
+	virtual auto Create( const char* pPath, FileType pType, OpenMode pMode ) -> FileDescriptor* = 0;
+	virtual auto Remove( const FileDescriptor* pDesc ) -> void = 0;
+	virtual auto Stat  ( const FileDescriptor* pDesc ) -> std::optional<StatData> = 0;
 };

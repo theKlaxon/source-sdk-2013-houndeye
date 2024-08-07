@@ -18,3 +18,6 @@ which is the case under specific circumstances, which we'll enumerate in the fol
 | GCC 13   | Already done |
 | Clang 17 | Already done |
 | Zig 0.11 | `-O1`        |
+
+### The GCC `textrel` section warning
+https://gcc.gnu.org/legacy-ml/gcc-help/2006-11/msg00390.html

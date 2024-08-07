@@ -1,35 +1,28 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
-
-#ifndef HUD_NUMERICDISPLAY_H
-#define HUD_NUMERICDISPLAY_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include <vgui_controls/Panel.h>
 
 //-----------------------------------------------------------------------------
 // Purpose: Base class for all the hud elements that are just a numeric display
 //			with some options for text and icons
 //-----------------------------------------------------------------------------
-class CHudNumericDisplay : public vgui::Panel
-{
+class CHudNumericDisplay : public vgui::Panel {
 	DECLARE_CLASS_SIMPLE( CHudNumericDisplay, vgui::Panel );
 
 public:
-	CHudNumericDisplay(vgui::Panel *parent, const char *name);
+	CHudNumericDisplay( vgui::Panel* parent, const char* name );
 
-	void SetDisplayValue(int value);
-	void SetSecondaryValue(int value);
-	void SetShouldDisplayValue(bool state);
-	void SetShouldDisplaySecondaryValue(bool state);
-	void SetLabelText(const wchar_t *text);
-	void SetIndent(bool state);
-	void SetIsTime(bool state);
+	void SetDisplayValue( int value );
+	void SetSecondaryValue( int value );
+	void SetShouldDisplayValue( bool state );
+	void SetShouldDisplaySecondaryValue( bool state );
+	void SetLabelText( const wchar_t* text );
+	void SetIndent( bool state );
+	void SetIsTime( bool state );
 
 	bool ShouldDisplayValue( void ) { return m_bDisplayValue; }
 	bool ShouldDisplaySecondaryValue( void ) { return m_bDisplaySecondaryValue; }
@@ -41,13 +34,12 @@ protected:
 	virtual void Paint();
 	virtual void PaintLabel();
 
-	virtual void PaintNumbers(vgui::HFont font, int xpos, int ypos, int value);
+	virtual void PaintNumbers( vgui::HFont font, int xpos, int ypos, int value );
 
 protected:
-
 	int m_iValue;
 	int m_iSecondaryValue;
-	wchar_t m_LabelText[32];
+	wchar_t m_LabelText[ 32 ];
 	bool m_bDisplayValue, m_bDisplaySecondaryValue;
 	bool m_bIndent;
 	bool m_bIsTime;
@@ -68,6 +60,3 @@ protected:
 	CPanelAnimationVarAliasType( float, digit2_xpos, "digit2_xpos", "98", "proportional_float" );
 	CPanelAnimationVarAliasType( float, digit2_ypos, "digit2_ypos", "16", "proportional_float" );
 };
-
-
-#endif // HUD_NUMERICDISPLAY_H

@@ -1,20 +1,12 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
 //=============================================================================
-
-#ifndef INPUTOUTPUT_H
-#define INPUTOUTPUT_H
-#if IsWindows()
 #pragma once
-#endif
-
-
-#include <utlvector.h>
 #include "fgdlib/entitydefs.h"
+#include <utlvector.h>
 
 
-enum InputOutputType_t
-{
+enum InputOutputType_t {
 	iotInvalid = -1,
 	iotVoid,
 	iotInt,
@@ -28,78 +20,66 @@ enum InputOutputType_t
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-class CClassInputOutputBase
-{
-	public:
+class CClassInputOutputBase {
+public:
+	CClassInputOutputBase();
+	CClassInputOutputBase( const char* pszName, InputOutputType_t eType );
+	virtual ~CClassInputOutputBase();
 
-		CClassInputOutputBase(void);
-		CClassInputOutputBase(const char *pszName, InputOutputType_t eType);
-		virtual ~CClassInputOutputBase(void);
+	inline const char* GetName() { return ( m_szName ); }
+	InputOutputType_t GetType() { return ( m_eType ); }
+	const char* GetTypeText();
+	inline const char* GetDescription();
 
-		inline const char *GetName(void) { return(m_szName); }
-		InputOutputType_t GetType(void) { return(m_eType);  }
-		const char *GetTypeText(void);
-		inline const char *GetDescription(void);
+	inline void SetName( const char* szName ) { V_strcpy_safe( m_szName, szName ); }
+	inline void SetType( InputOutputType_t eType ) { m_eType = eType; }
+	InputOutputType_t SetType( const char* szType );
+	inline void SetDescription( char* pszDescription ) { m_pszDescription = pszDescription; }
 
-		inline void SetName(const char *szName) { V_strcpy_safe(m_szName, szName); }
-		inline void SetType(InputOutputType_t eType) { m_eType = eType; }
-		InputOutputType_t SetType(const char *szType);
-		inline void SetDescription(char *pszDescription) { m_pszDescription = pszDescription; }
+	CClassInputOutputBase& operator=( CClassInputOutputBase& );
 
-		CClassInputOutputBase &operator =(CClassInputOutputBase &);
+protected:
+	static const char* g_pszEmpty;
 
-	protected:
-
-		static const char *g_pszEmpty;
-
-		char m_szName[MAX_IO_NAME_LEN];
-		InputOutputType_t m_eType;
-		char *m_pszDescription;
+	char m_szName[ MAX_IO_NAME_LEN ];
+	InputOutputType_t m_eType;
+	char* m_pszDescription;
 };
 
 
 //-----------------------------------------------------------------------------
 // Purpose: Returns this I/O's long description.
 //-----------------------------------------------------------------------------
-const char *CClassInputOutputBase::GetDescription(void)
-{
-	if (m_pszDescription != NULL)
-	{
-		return(m_pszDescription);
+const char* CClassInputOutputBase::GetDescription() {
+	if ( m_pszDescription != nullptr ) {
+		return ( m_pszDescription );
 	}
 
-	return(g_pszEmpty);
+	return ( g_pszEmpty );
 }
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-class CClassInput : public CClassInputOutputBase
-{
-	public:
-
-		CClassInput(void);
-		CClassInput(const char *pszName, InputOutputType_t eType);
+class CClassInput : public CClassInputOutputBase {
+public:
+	CClassInput();
+	CClassInput( const char* pszName, InputOutputType_t eType );
 };
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-class CClassOutput : public CClassInputOutputBase
-{
-	public:
-
-		CClassOutput(void);
-		CClassOutput(const char *pszName, InputOutputType_t eType);
+class CClassOutput : public CClassInputOutputBase {
+public:
+	CClassOutput();
+	CClassOutput( const char* pszName, InputOutputType_t eType );
 };
 
 
-typedef CUtlVector<CClassInput *> CClassInputList;
-typedef CUtlVector<CClassOutput *> CClassOutputList;
-
-
-#endif // INPUTOUTPUT_H
+typedef CUtlVector<CClassInput*> CClassInputList;
+typedef CUtlVector<CClassOutput*> CClassOutputList;

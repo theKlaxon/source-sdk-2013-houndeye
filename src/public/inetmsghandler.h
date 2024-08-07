@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Workfile:     $
 // $Date:         $
@@ -10,71 +10,67 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-#if !defined( INETMSGHANDLER_H )
-#define INETMSGHANDLER_H
-#if IsWindows()
 #pragma once
-#endif
 
-class	INetChannel;
+
+class INetChannel;
 typedef struct netpacket_s netpacket_t;
 
-class INetChannelHandler
-{
+class INetChannelHandler {
 public:
-	virtual	~INetChannelHandler( void ) {};
+	virtual ~INetChannelHandler() { };
 
-	virtual void ConnectionStart(INetChannel *chan) = 0;	// called first time network channel is established
+	virtual void ConnectionStart( INetChannel* chan ) = 0;// called first time network channel is established
 
-	virtual void ConnectionClosing(const char *reason) = 0; // network channel is being closed by remote site
+	virtual void ConnectionClosing( const char* reason ) = 0;// network channel is being closed by remote site
 
-	virtual void ConnectionCrashed(const char *reason) = 0; // network error occured
+	virtual void ConnectionCrashed( const char* reason ) = 0;// network error occured
 
-	virtual void PacketStart(int incoming_sequence, int outgoing_acknowledged) = 0;	// called each time a new packet arrived
+	virtual void PacketStart( int incoming_sequence, int outgoing_acknowledged ) = 0;// called each time a new packet arrived
 
-	virtual void PacketEnd( void ) = 0; // all messages has been parsed
+	virtual void PacketEnd() = 0;// all messages has been parsed
 
-	virtual void FileRequested(const char *fileName, unsigned int transferID ) = 0; // other side request a file for download
+	virtual void FileRequested( const char* fileName, unsigned int transferID ) = 0;// other side request a file for download
 
-	virtual void FileReceived(const char *fileName, unsigned int transferID ) = 0; // we received a file
-	
-	virtual void FileDenied(const char *fileName, unsigned int transferID ) = 0;	// a file request was denied by other side
+	virtual void FileReceived( const char* fileName, unsigned int transferID ) = 0;// we received a file
 
-	virtual void FileSent(const char *fileName, unsigned int transferID ) = 0;	// we sent a file
+	virtual void FileDenied( const char* fileName, unsigned int transferID ) = 0;// a file request was denied by other side
+
+	virtual void FileSent( const char* fileName, unsigned int transferID ) = 0;// we sent a file
 };
 
-#define PROCESS_NET_MESSAGE( name )	\
-	virtual bool Process##name( NET_##name *msg )
+#define PROCESS_NET_MESSAGE( name ) \
+	virtual bool Process##name( NET_##name* msg )
 
-#define PROCESS_SVC_MESSAGE( name )	\
-	virtual bool Process##name( SVC_##name *msg )
+#define PROCESS_SVC_MESSAGE( name ) \
+	virtual bool Process##name( SVC_##name* msg )
 
-#define PROCESS_CLC_MESSAGE( name )	\
-	virtual bool Process##name( CLC_##name *msg )
+#define PROCESS_CLC_MESSAGE( name ) \
+	virtual bool Process##name( CLC_##name* msg )
 
-#define PROCESS_MM_MESSAGE( name )	\
-	virtual bool Process##name( MM_##name *msg )
+#define PROCESS_MM_MESSAGE( name ) \
+	virtual bool Process##name( MM_##name* msg )
 
 
-#define REGISTER_NET_MSG( name )				\
-	NET_##name * p##name = new NET_##name();	\
-	p##name->m_pMessageHandler = this;			\
-	chan->RegisterMessage( p##name );			\
+#define REGISTER_NET_MSG( name )            \
+	NET_##name* p##name = new NET_##name(); \
+	p##name->m_pMessageHandler = this;      \
+	chan->RegisterMessage( p##name );
 
-#define REGISTER_SVC_MSG( name )				\
-	SVC_##name * p##name = new SVC_##name();	\
-	p##name->m_pMessageHandler = this;			\
-	chan->RegisterMessage( p##name );			\
+#define REGISTER_SVC_MSG( name )            \
+	SVC_##name* p##name = new SVC_##name(); \
+	p##name->m_pMessageHandler = this;      \
+	chan->RegisterMessage( p##name );
 
-#define REGISTER_CLC_MSG( name )				\
-	CLC_##name * p##name = new CLC_##name();	\
-	p##name->m_pMessageHandler = this;			\
-	chan->RegisterMessage( p##name );			\
+#define REGISTER_CLC_MSG( name )            \
+	CLC_##name* p##name = new CLC_##name(); \
+	p##name->m_pMessageHandler = this;      \
+	chan->RegisterMessage( p##name );
 
-#define REGISTER_MM_MSG( name )					\
-	MM_##name * p##name = new MM_##name();		\
-	p##name->m_pMessageHandler = this;			\
-	chan->RegisterMessage( p##name );			\
+#define REGISTER_MM_MSG( name )           \
+	MM_##name* p##name = new MM_##name(); \
+	p##name->m_pMessageHandler = this;    \
+	chan->RegisterMessage( p##name );
 
 class NET_Tick;
 class NET_StringCmd;
@@ -82,10 +78,9 @@ class NET_SetConVar;
 class NET_SignonState;
 
 
-class INetMessageHandler 
-{
+class INetMessageHandler {
 public:
-	virtual ~INetMessageHandler( void ) {};
+	virtual ~INetMessageHandler() { };
 
 	PROCESS_NET_MESSAGE( Tick ) = 0;
 	PROCESS_NET_MESSAGE( StringCmd ) = 0;
@@ -104,10 +99,9 @@ class CLC_FileMD5Check;
 class CLC_SaveReplay;
 class CLC_CmdKeyValues;
 
-class IClientMessageHandler : public INetMessageHandler
-{
+class IClientMessageHandler : public INetMessageHandler {
 public:
-	virtual ~IClientMessageHandler( void ) {};
+	virtual ~IClientMessageHandler() { };
 
 	PROCESS_CLC_MESSAGE( ClientInfo ) = 0;
 	PROCESS_CLC_MESSAGE( Move ) = 0;
@@ -148,10 +142,9 @@ class SVC_GameEventList;
 class SVC_GetCvarValue;
 class SVC_CmdKeyValues;
 
-class IServerMessageHandler : public INetMessageHandler
-{
+class IServerMessageHandler : public INetMessageHandler {
 public:
-	virtual ~IServerMessageHandler( void ) {};
+	virtual ~IServerMessageHandler() { };
 
 	// Returns dem file protocol version, or, if not playing a demo, just returns PROTOCOL_VERSION
 	virtual int GetDemoProtocolVersion() const = 0;
@@ -190,10 +183,9 @@ class MM_Migrate;
 class MM_Mutelist;
 class MM_Checkpoint;
 
-class IMatchmakingMessageHandler : public INetMessageHandler
-{
+class IMatchmakingMessageHandler : public INetMessageHandler {
 public:
-	virtual ~IMatchmakingMessageHandler( void ) {};
+	virtual ~IMatchmakingMessageHandler() { };
 
 	PROCESS_MM_MESSAGE( Heartbeat ) = 0;
 	PROCESS_MM_MESSAGE( ClientInfo ) = 0;
@@ -201,16 +193,12 @@ public:
 	PROCESS_MM_MESSAGE( RegisterResponse ) = 0;
 	PROCESS_MM_MESSAGE( Migrate ) = 0;
 	PROCESS_MM_MESSAGE( Mutelist ) = 0;
-	PROCESS_MM_MESSAGE( Checkpoint) = 0;
+	PROCESS_MM_MESSAGE( Checkpoint ) = 0;
 };
 
-class IConnectionlessPacketHandler
-{
+class IConnectionlessPacketHandler {
 public:
-	virtual	~IConnectionlessPacketHandler( void ) {};
+	virtual ~IConnectionlessPacketHandler() { };
 
-	virtual bool ProcessConnectionlessPacket( netpacket_t *packet ) = 0;	// process a connectionless packet
+	virtual bool ProcessConnectionlessPacket( netpacket_t* packet ) = 0;// process a connectionless packet
 };
-
-
-#endif // INETMSGHANDLER_H

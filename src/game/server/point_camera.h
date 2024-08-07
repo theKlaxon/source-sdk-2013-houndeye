@@ -1,23 +1,16 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef CAMERA_H
-#define CAMERA_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "cbase.h"
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-class CPointCamera : public CBaseEntity
-{
+class CPointCamera : public CBaseEntity {
 public:
 	DECLARE_CLASS( CPointCamera, CBaseEntity );
 	DECLARE_SERVERCLASS();
@@ -29,14 +22,14 @@ public:
 
 	// Tell the client that this camera needs to be rendered
 	void SetActive( bool bActive );
-	int  UpdateTransmitState(void);
+	int UpdateTransmitState( void );
 
 	void ChangeFOVThink( void );
 
-	void InputChangeFOV( inputdata_t &inputdata );
-	void InputSetOnAndTurnOthersOff( inputdata_t &inputdata );
-	void InputSetOn( inputdata_t &inputdata );
-	void InputSetOff( inputdata_t &inputdata );
+	void InputChangeFOV( inputdata_t& inputdata );
+	void InputSetOnAndTurnOthersOff( inputdata_t& inputdata );
+	void InputSetOn( inputdata_t& inputdata );
+	void InputSetOff( inputdata_t& inputdata );
 
 private:
 	float m_TargetFOV;
@@ -53,11 +46,10 @@ private:
 	CNetworkVar( bool, m_bUseScreenAspectRatio );
 
 	// Allows the mapmaker to control whether a camera is active or not
-	bool	m_bIsOn;
+	bool m_bIsOn;
 
 public:
-	CPointCamera	*m_pNext;
+	CPointCamera* m_pNext;
 };
 
-CPointCamera *GetPointCameraList();
-#endif // CAMERA_H
+CPointCamera* GetPointCameraList();

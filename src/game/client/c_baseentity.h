@@ -9,7 +9,6 @@
 // $NoKeywords: $
 //===========================================================================//
 #pragma once
-
 #include "client_class.h"
 #include "client_thinklist.h"
 #include "ehandle.h"
@@ -30,6 +29,7 @@
 #include "soundflags.h"
 #include "tier0/threadtools.h"
 #include "toolframework/itoolentity.h"
+
 
 class C_Team;
 class IPhysicsObject;

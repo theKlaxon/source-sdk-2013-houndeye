@@ -1,21 +1,16 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
-
-#ifndef SOLIDSETDEFAULTS_H
-#define SOLIDSETDEFAULTS_H
-#if IsWindows()
 #pragma once
-#endif
+
 
 // solid_t parsing
-class CSolidSetDefaults : public IVPhysicsKeyHandler
-{
+class CSolidSetDefaults : public IVPhysicsKeyHandler {
 public:
-	virtual void ParseKeyValue( void *pData, const char *pKey, const char *pValue );
-	virtual void SetDefaults( void *pData );
+	virtual void ParseKeyValue( void* pData, const char* pKey, const char* pValue );
+	virtual void SetDefaults( void* pData );
 
 	unsigned int GetContentsMask() { return m_contentsMask; }
 
@@ -24,5 +19,3 @@ private:
 };
 
 extern CSolidSetDefaults g_SolidSetup;
-
-#endif // SOLIDSETDEFAULTS_H

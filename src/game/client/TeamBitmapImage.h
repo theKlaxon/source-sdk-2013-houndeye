@@ -5,20 +5,11 @@
 // $Revision: $
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef TEAMBITMAPIMAGE_H
-#define TEAMBITMAPIMAGE_H
-
-#if IsWindows()
 #pragma once
-#endif
-
 //#include "tf_shareddefs.h"
-
 #include <vgui/VGUI.h>
 
-namespace vgui
-{
+namespace vgui {
 	class Panel;
 }
 
@@ -29,15 +20,14 @@ class KeyValues;
 //-----------------------------------------------------------------------------
 // A multiplexer bitmap that chooses a bitmap based on team
 //-----------------------------------------------------------------------------
-class CTeamBitmapImage
-{
+class CTeamBitmapImage {
 public:
 	// construction, destruction
 	CTeamBitmapImage();
 	~CTeamBitmapImage();
 
 	// initialization
-	bool Init( vgui::Panel *pParent, KeyValues* pInitData, C_BaseEntity* pEntity );
+	bool Init( vgui::Panel* pParent, KeyValues* pInitData, C_BaseEntity* pEntity );
 
 	// Alpha override...
 	void SetAlpha( float alpha );
@@ -47,17 +37,16 @@ public:
 
 protected:
 	// Wrapper so we can implement this with EHANDLES some day
-	C_BaseEntity *GetEntity() { return m_pEntity; }
+	C_BaseEntity* GetEntity() { return m_pEntity; }
 
 private:
-	enum
-	{
+	enum {
 		// NOTE: Was MAX_TF_TEAMS not 4, but I don't like the dependency here.
 		BITMAP_COUNT = 4 + 1
 	};
 
-	BitmapImage *m_ppImage[ BITMAP_COUNT ];
-	C_BaseEntity *m_pEntity;
+	BitmapImage* m_ppImage[ BITMAP_COUNT ];
+	C_BaseEntity* m_pEntity;
 	float m_Alpha;
 	bool m_bRelativeTeams;
 };
@@ -73,8 +62,5 @@ private:
 // NOTE: This function looks for the key values 'material' and 'color'
 // and uses them to set up the material + modulation color of the image
 //-----------------------------------------------------------------------------
-bool InitializeTeamImage( KeyValues *pInitData, const char* pSectionName, 
-	vgui::Panel *pParent, C_BaseEntity *pEntity, CTeamBitmapImage* pBitmapImage );
-
-
-#endif //  TEAMBITMAPIMAGE_H
+bool InitializeTeamImage( KeyValues* pInitData, const char* pSectionName,
+						  vgui::Panel* pParent, C_BaseEntity* pEntity, CTeamBitmapImage* pBitmapImage );

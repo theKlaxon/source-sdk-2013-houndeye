@@ -1,22 +1,14 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
-
-#ifndef COLORPICKERPANEL_H
-#define COLORPICKERPANEL_H
-
-#if IsWindows()
 #pragma once
-#endif
-
-
-#include "vgui_controls/EditablePanel.h"
-#include "vgui_controls/Frame.h"
-#include "vgui_controls/Button.h"
 #include "bitmap/imageformat.h"
 #include "mathlib/vector.h"
+#include "vgui_controls/Button.h"
+#include "vgui_controls/EditablePanel.h"
+#include "vgui_controls/Frame.h"
 
 
 //-----------------------------------------------------------------------------
@@ -25,12 +17,11 @@
 class CColorXYPreview;
 class CColorZPreview;
 
-namespace vgui
-{
+namespace vgui {
 	class RadioButton;
 	class TextEntry;
 	class IScheme;
-}
+}// namespace vgui
 
 
 //-----------------------------------------------------------------------------
@@ -38,19 +29,18 @@ namespace vgui
 // Color picker panel
 //
 //-----------------------------------------------------------------------------
-class CColorPickerPanel : public vgui::EditablePanel
-{
+class CColorPickerPanel : public vgui::EditablePanel {
 	DECLARE_CLASS_SIMPLE( CColorPickerPanel, vgui::EditablePanel );
 
 public:
 	// constructor
-	CColorPickerPanel( vgui::Panel *pParent, const char *pName );
+	CColorPickerPanel( vgui::Panel* pParent, const char* pName );
 	void SetInitialColor( Color initialColor );
-	void GetCurrentColor( Color *pColor );
-	void GetInitialColor( Color *pColor );
+	void GetCurrentColor( Color* pColor );
+	void GetInitialColor( Color* pColor );
 
 	// Inherited from Panel
-	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );
+	virtual void ApplySchemeSettings( vgui::IScheme* pScheme );
 	virtual void OnMousePressed( vgui::MouseCode code );
 
 private:
@@ -60,13 +50,13 @@ private:
 	MESSAGE_FUNC_PARAMS( OnColorSelected, "ColorSelected", data );
 
 	// Called when the color changes
-	void OnColorChanged( vgui::TextEntry *pChanged = NULL );
+	void OnColorChanged( vgui::TextEntry* pChanged = NULL );
 
 	// Updates the preview colors
 	void UpdatePreviewColors();
 
-	CColorXYPreview *m_pColorXYPreview;
-	CColorZPreview *m_pColorZPreview;
+	CColorXYPreview* m_pColorXYPreview;
+	CColorZPreview* m_pColorZPreview;
 	vgui::RadioButton* m_pHueRadio;
 	vgui::RadioButton* m_pSaturationRadio;
 	vgui::RadioButton* m_pValueRadio;
@@ -94,41 +84,39 @@ private:
 //-----------------------------------------------------------------------------
 // Purpose: Modal dialog for picker
 //-----------------------------------------------------------------------------
-class CColorPickerFrame : public vgui::Frame
-{
+class CColorPickerFrame : public vgui::Frame {
 	DECLARE_CLASS_SIMPLE( CColorPickerFrame, vgui::Frame );
 
 public:
-	CColorPickerFrame( vgui::Panel *pParent, const char *pTitle );
+	CColorPickerFrame( vgui::Panel* pParent, const char* pTitle );
 	~CColorPickerFrame();
 
 	// Inherited from Frame
-	virtual void OnCommand( const char *pCommand );
+	virtual void OnCommand( const char* pCommand );
 
 	// Purpose: Activate the dialog
 	// If a color is picked, the message 'ColorPickerPicked' is sent with the "color" field set to the color
 	// If cancel is hit, the message 'ColorPickerCancel' is sent
 	// If the color is changed in the preview, the message 'ColorPickerPreview' is sent with the "color" field set to the color
-	void DoModal( Color initialColor, KeyValues *pContextKeys = NULL );
+	void DoModal( Color initialColor, KeyValues* pContextKeys = NULL );
 
 	// Gets the initial color
-	void GetInitialColor( Color *pColor );
+	void GetInitialColor( Color* pColor );
 
 private:
 	void CleanUpMessage();
 
-	CColorPickerPanel *m_pPicker;
-	vgui::Button *m_pOpenButton;
-	vgui::Button *m_pCancelButton;
-	KeyValues *m_pContextKeys;
+	CColorPickerPanel* m_pPicker;
+	vgui::Button* m_pOpenButton;
+	vgui::Button* m_pCancelButton;
+	KeyValues* m_pContextKeys;
 };
 
 
 //-----------------------------------------------------------------------------
 // Purpose: A button which brings up the color picker
 //-----------------------------------------------------------------------------
-class CColorPickerButton : public vgui::Button
-{
+class CColorPickerButton : public vgui::Button {
 	DECLARE_CLASS_SIMPLE( CColorPickerButton, vgui::Button );
 
 	/*
@@ -141,15 +129,15 @@ class CColorPickerButton : public vgui::Button
 	*/
 
 public:
-	CColorPickerButton( vgui::Panel *pParent, const char *pName, vgui::Panel *pActionSignalTarget = NULL );
+	CColorPickerButton( vgui::Panel* pParent, const char* pName, vgui::Panel* pActionSignalTarget = NULL );
 	~CColorPickerButton();
 
-	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );
+	virtual void ApplySchemeSettings( vgui::IScheme* pScheme );
 	virtual void DoClick();
 
-	void	SetColor( const Color& clr );
-	void	SetColor( int r, int g, int b, int a );
-	Color	GetColor( void ) { return m_CurrentColor; }
+	void SetColor( const Color& clr );
+	void SetColor( int r, int g, int b, int a );
+	Color GetColor( void ) { return m_CurrentColor; }
 
 private:
 	MESSAGE_FUNC_PARAMS( OnPicked, "ColorPickerPicked", data );
@@ -159,5 +147,3 @@ private:
 	void UpdateButtonColor();
 	Color m_CurrentColor;
 };
-
-#endif // COLORPICKERPANEL_H

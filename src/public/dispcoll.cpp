@@ -23,7 +23,7 @@ const float CDispCollTree::ONE_MINUS_COLLISION_EPSILON = 1.0f - COLLISION_EPSILO
 //-----------------------------------------------------------------------------
 // Purpose: initialize the displacement triangles
 //-----------------------------------------------------------------------------
-void CDispCollTri::Init( void )
+void CDispCollTri::Init()
 {
 	for( int i = 0; i < 3; i++ )
 	{
@@ -72,7 +72,7 @@ inline void CDispCollTri::SetPointNormal( int index, Vector const &normal )
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-void CDispCollTri::CalcPlane( void )
+void CDispCollTri::CalcPlane()
 {
 	//
 	// calculate the plane normal and distance
@@ -131,7 +131,7 @@ inline void CDispCollTri::SetIntersect( bool bIntersect )
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-inline bool CDispCollTri::IsIntersect( void )
+inline bool CDispCollTri::IsIntersect()
 {
 	return m_bIntersect;
 }
@@ -161,7 +161,7 @@ CDispCollNode::CDispCollNode()
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-inline bool CDispCollNode::IsLeaf( void )
+inline bool CDispCollNode::IsLeaf()
 {
 	return m_bIsLeaf;
 }
@@ -218,7 +218,7 @@ CDispCollTree::~CDispCollTree()
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CDispCollTree::InitAABBData( void )
+void CDispCollTree::InitAABBData()
 {
 	m_AABBNormals[0].x = -1.0f;  m_AABBNormals[0].y = 0.0f;   m_AABBNormals[0].z = 0.0f;
 	m_AABBNormals[1].x = 1.0f;   m_AABBNormals[1].y = 0.0f;   m_AABBNormals[1].z = 0.0f;
@@ -494,7 +494,7 @@ bool CDispCollTree::AllocNodes( int nodeCount )
 //-----------------------------------------------------------------------------
 // Purpose: release allocated memory for displacement collision tree
 //-----------------------------------------------------------------------------
-void CDispCollTree::FreeNodes( void )
+void CDispCollTree::FreeNodes()
 {
 	if( m_pNodes )
 	{

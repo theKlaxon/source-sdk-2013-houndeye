@@ -1,18 +1,13 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
-
-#ifndef MOVEVARS_SHARED_H
-#define MOVEVARS_SHARED_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "convar.h"
 
-float GetCurrentGravity( void );
+
+float GetCurrentGravity();
 
 extern ConVar sv_gravity;
 extern ConVar sv_stopspeed;
@@ -49,5 +44,3 @@ extern ConVar r_JeepViewZHeight;
 extern ConVar r_AirboatViewDampenFreq;
 extern ConVar r_AirboatViewDampenDamp;
 extern ConVar r_AirboatViewZHeight;
-
-#endif // MOVEVARS_SHARED_H

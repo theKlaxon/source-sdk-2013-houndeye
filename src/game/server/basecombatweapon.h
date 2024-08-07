@@ -1,19 +1,13 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Workfile:     $
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef COMBATWEAPON_H
-#define COMBATWEAPON_H
-#if IsWindows()
 #pragma once
-#endif
-
-#include "entityoutput.h"
 #include "basecombatweapon_shared.h"
+#include "entityoutput.h"
 
 //-----------------------------------------------------------------------------
 // Bullet types
@@ -25,6 +19,4 @@
 
 struct animevent_t;
 
-extern void	SpawnBlood(Vector vecSpot, const Vector &vecDir, int bloodColor, float flDamage);
-
-#endif // COMBATWEAPON_H
+extern void SpawnBlood( Vector vecSpot, const Vector& vecDir, int bloodColor, float flDamage );

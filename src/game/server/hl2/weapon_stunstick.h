@@ -1,27 +1,19 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
-
-#ifndef WEAPON_STUNSTICK_H
-#define WEAPON_STUNSTICK_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "basebludgeonweapon.h"
 
-#define	STUNSTICK_RANGE		75.0f
-#define	STUNSTICK_REFIRE	0.6f
+#define STUNSTICK_RANGE 75.0f
+#define STUNSTICK_REFIRE 0.6f
 
-class CWeaponStunStick : public CBaseHLBludgeonWeapon
-{
+class CWeaponStunStick : public CBaseHLBludgeonWeapon {
 	DECLARE_CLASS( CWeaponStunStick, CBaseHLBludgeonWeapon );
 	DECLARE_DATADESC();
 
 public:
-
 	CWeaponStunStick();
 
 	DECLARE_SERVERCLASS();
@@ -29,30 +21,27 @@ public:
 
 	virtual void Precache();
 
-	void		Spawn();
+	void Spawn();
 
-	float		GetRange( void )		{ return STUNSTICK_RANGE; }
-	float		GetFireRate( void )		{ return STUNSTICK_REFIRE; }
+	float GetRange() { return STUNSTICK_RANGE; }
+	float GetFireRate() { return STUNSTICK_REFIRE; }
 
-	int			WeaponMeleeAttack1Condition( float flDot, float flDist );
+	int WeaponMeleeAttack1Condition( float flDot, float flDist );
 
-	bool		Deploy( void );
-	bool		Holster( CBaseCombatWeapon *pSwitchingTo = NULL );
-	
-	void		Drop( const Vector &vecVelocity );
-	void		ImpactEffect( trace_t &traceHit );
-	void		SecondaryAttack( void )	{}
-	void		SetStunState( bool state );
-	bool		GetStunState( void );
-	void		Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCharacter *pOperator );
-	
-	float		GetDamageForActivity( Activity hitActivity );
+	bool Deploy();
+	bool Holster( CBaseCombatWeapon* pSwitchingTo = nullptr );
 
-	bool		CanBePickedUpByNPCs( void ) { return false;	}		
+	void Drop( const Vector& vecVelocity );
+	void ImpactEffect( trace_t& traceHit );
+	void SecondaryAttack() { }
+	void SetStunState( bool state );
+	bool GetStunState();
+	void Operator_HandleAnimEvent( animevent_t* pEvent, CBaseCombatCharacter* pOperator );
+
+	float GetDamageForActivity( Activity hitActivity );
+
+	bool CanBePickedUpByNPCs() { return false; }
 
 private:
-
 	CNetworkVar( bool, m_bActive );
 };
-
-#endif // WEAPON_STUNSTICK_H

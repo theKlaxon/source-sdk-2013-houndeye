@@ -1,15 +1,10 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-#if !defined( SAVEGAME_VERSION_H )
-#define SAVEGAME_VERSION_H
-#if IsWindows()
 #pragma once
-#endif
 
-#define	SAVEGAME_VERSION	0x0073		// Version 0.73
 
-#endif // SAVEGAME_VERSION_H
+#define SAVEGAME_VERSION 0x0073// Version 0.73

@@ -3,17 +3,11 @@
 // Purpose:
 //
 //=============================================================================
-
-#ifndef STEAMUNIVERSE_H
-#define STEAMUNIVERSE_H
-#if IsWindows()
 #pragma once
-#endif
 
 
 // Steam universes.  Each universe is a self-contained Steam instance.
-enum EUniverse
-{
+enum EUniverse {
 	k_EUniverseInvalid = 0,
 	k_EUniversePublic = 1,
 	k_EUniverseBeta = 2,
@@ -22,6 +16,3 @@ enum EUniverse
 	// k_EUniverseRC = 5,				// no such universe anymore
 	k_EUniverseMax
 };
-
-
-#endif // STEAMUNIVERSE_H

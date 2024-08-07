@@ -33,5 +33,6 @@ target_link_libraries( vvis_launcher
 		tier1
 		${ASRC_vstdlib2}
 		${CMAKE_DL_LIBS}
+		SDL3::SDL3-shared # needed by tier02
 )
 add_dependencies( vvis_launcher vvis_dll filesystem_stdio )

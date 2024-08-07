@@ -27,7 +27,7 @@ target_link_libraries( filesystem_stdio
 		appframework
 	PRIVATE
 		SDL3::SDL3-shared
-		libvpkedit
+		vpkpp
 )
 set_target_properties( filesystem_stdio
 	PROPERTIES

@@ -1,14 +1,9 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
-
-#ifndef SCRIPT_INTRO_H
-#define SCRIPT_INTRO_H
-#if IsWindows()
 #pragma once
-#endif
 
 
 class CPointCamera;
@@ -17,38 +12,38 @@ class CPointCamera;
 //-----------------------------------------------------------------------------
 // Purpose: An entity that's used to control the intro sequence
 //-----------------------------------------------------------------------------
-class CScriptIntro : public CBaseEntity
-{
-	DECLARE_CLASS(CScriptIntro, CBaseEntity);
+class CScriptIntro : public CBaseEntity {
+	DECLARE_CLASS( CScriptIntro, CBaseEntity );
+
 public:
 	DECLARE_DATADESC();
 	DECLARE_SERVERCLASS();
 
-	virtual void	Spawn( void );
-	virtual void	Precache();
-	virtual void	Activate( void );
-	virtual int 	UpdateTransmitState(void);
+	virtual void Spawn();
+	virtual void Precache();
+	virtual void Activate();
+	virtual int UpdateTransmitState();
 
 	// Inputs
-	void	InputSetPlayerViewEntity( inputdata_t &inputdata );
-	void	InputSetCameraViewEntity( inputdata_t &inputdata );
-	void	InputSetBlendMode( inputdata_t &inputdata );
-	void	InputSetNextBlendMode( inputdata_t &inputdata );
-	void	InputSetNextFOV( inputdata_t &inputdata );
-	void	InputSetFOVBlendTime( inputdata_t &inputdata );
-	void	InputSetFOV( inputdata_t &inputdata );
-	void	InputSetNextBlendTime( inputdata_t &inputdata );
-	void	InputActivate( inputdata_t &inputdata );
-	void	InputDeactivate( inputdata_t &inputdata );
+	void InputSetPlayerViewEntity( inputdata_t& inputdata );
+	void InputSetCameraViewEntity( inputdata_t& inputdata );
+	void InputSetBlendMode( inputdata_t& inputdata );
+	void InputSetNextBlendMode( inputdata_t& inputdata );
+	void InputSetNextFOV( inputdata_t& inputdata );
+	void InputSetFOVBlendTime( inputdata_t& inputdata );
+	void InputSetFOV( inputdata_t& inputdata );
+	void InputSetNextBlendTime( inputdata_t& inputdata );
+	void InputActivate( inputdata_t& inputdata );
+	void InputDeactivate( inputdata_t& inputdata );
 
-	void	InputFadeTo( inputdata_t &inputdata );
-	void	InputSetFadeColor( inputdata_t &inputdata );
+	void InputFadeTo( inputdata_t& inputdata );
+	void InputSetFadeColor( inputdata_t& inputdata );
 
-	bool	GetIncludedPVSOrigin( Vector *pOrigin, CBaseEntity **ppCamera );
+	bool GetIncludedPVSOrigin( Vector* pOrigin, CBaseEntity** ppCamera );
 
 private:
 	// Think func used to finish the blend off
-	void BlendComplete( );
+	void BlendComplete();
 
 private:
 	CNetworkVar( Vector, m_vecPlayerView );
@@ -71,7 +66,7 @@ private:
 
 	// Fades
 	CNetworkArray( float, m_flFadeColor, 3 );
-	CNetworkVar( float, m_flFadeAlpha);
+	CNetworkVar( float, m_flFadeAlpha );
 	CNetworkVar( float, m_flFadeDuration );
 
 	CNetworkVar( EHANDLE, m_hCameraEntity );
@@ -81,5 +76,3 @@ private:
 };
 
 extern CHandle<CScriptIntro> g_hIntroScript;
-
-#endif // SCRIPT_INTRO_H

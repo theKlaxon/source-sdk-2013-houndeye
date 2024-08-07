@@ -4,13 +4,7 @@
 //
 // $NoKeywords: $
 //=============================================================================
-
-#ifndef THASH_H
-#define THASH_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include <typeinfo>
 
 //#define DBGFLAG_THASH			// Perform extra sanity checks on the THash
@@ -27,32 +21,29 @@
 // Template arguments:
 //		Data: the class to be stored in the hash table
 //		I: the type of the primary key (uint32 by default)
-template<class Data, typename I=uint32>
-class CTHash
-{
+template<class Data, typename I = uint32>
+class CTHash {
 private:
 	// RecHdr
 	// We insert one of these at the beginning of every record.  It's used for
 	// keeping the records in a linked list.
-	typedef struct RecHdr_t
-	{
-		RecHdr_t *m_pRecHdrNext;		// Next item in our linked list
-		RecHdr_t *m_pRecHdrPrev;		// Previous item in our linked list
-		I m_unKey;						// Key of this item
-		int m_iBucket;					// The bucket we're in
-		int m_nRunRatio;				// We want to run 1 cycle out of every m_nRunRatio
-										// cycles (not at all if 0).
-#ifdef DBGFLAG_THASH
-		uint m_iCycleLast;				// Last cycle we were visited (whether or not we ran)
-#endif
+	typedef struct RecHdr_t {
+		RecHdr_t* m_pRecHdrNext;// Next item in our linked list
+		RecHdr_t* m_pRecHdrPrev;// Previous item in our linked list
+		I m_unKey;              // Key of this item
+		int m_iBucket;          // The bucket we're in
+		int m_nRunRatio;        // We want to run 1 cycle out of every m_nRunRatio
+								// cycles (not at all if 0).
+	#ifdef DBGFLAG_THASH
+		uint m_iCycleLast;// Last cycle we were visited (whether or not we ran)
+	#endif
 	} RecHdr_t;
 
 	// Bucket
-	// Each hash bucket is represented by a Bucket structure, which points to the 
+	// Each hash bucket is represented by a Bucket structure, which points to the
 	// first record with the bucket's hash.
-	typedef struct Bucket_t
-	{
-		RecHdr_t *m_pRecHdrFirst;		// First record in our list
+	typedef struct Bucket_t {
+		RecHdr_t* m_pRecHdrFirst;// First record in our list
 	} Bucket_t;
 
 
@@ -65,76 +56,76 @@ public:
 	void Init( int cRecordInit, int cBuckets );
 
 	// Insert a record into the table
-	Data *PvRecordInsert( I unKey );
+	Data* PvRecordInsert( I unKey );
 	// Insert a record into the table and set the allocated object's pointer as the hash key
-	Data *PvRecordInsertAutoKey();
+	Data* PvRecordInsertAutoKey();
 	// Changes the key for a previously inserted item
-	void ChangeKey( Data * pvRecord, I unOldKey, I unNewKey );
+	void ChangeKey( Data* pvRecord, I unOldKey, I unNewKey );
 
 	// Remove a record
 	void Remove( I unKey );
 	// Remove a record
-	void Remove( Data * pvRecord );
+	void Remove( Data* pvRecord );
 	// Remove all records
 	void RemoveAll();
-	
+
 	// Find a record
-	Data *PvRecordFind( I unKey ) const;
+	Data* PvRecordFind( I unKey ) const;
 
 	// How many records do we have
 	int Count() const { return m_cRecordInUse; }
 
 	// Iterate through our members
-	Data *PvRecordFirst() const;
-	Data *PvRecordNext( Data *pvRecordCur ) const;
+	Data* PvRecordFirst() const;
+	Data* PvRecordNext( Data* pvRecordCur ) const;
 
 	// We provide a scheduling service.  Call StartFrameSchedule when you want to start running
-	// records in a given frame, and repeatedly call PvRecordRun until it returns NULL (or you
+	// records in a given frame, and repeatedly call PvRecordRun until it returns nullptr (or you
 	// run our of time).
-	void SetRunRatio( Data *pvRecord, int nRunRatio );
+	void SetRunRatio( Data* pvRecord, int nRunRatio );
 	void SetMicroSecPerCycle( int cMicroSecPerCycle, int cMicroSecPerFrame ) { m_cFramesPerCycle = cMicroSecPerCycle / cMicroSecPerFrame; }
 	void StartFrameSchedule( bool bNewFrame );
-	Data *PvRecordRun();
+	Data* PvRecordRun();
 
 	bool BCompletedPass();
 
-#ifdef DBGFLAG_VALIDATE
-	virtual void Validate( CValidator &validator, const char *pchName );
-#endif // DBGFLAG_VALIDATE
+	#ifdef DBGFLAG_VALIDATE
+		virtual void Validate( CValidator& validator, const char* pchName );
+	#endif// DBGFLAG_VALIDATE
 
 
 private:
 	// Insert a record into the table
-	Data *PvRecordInsertInternal( RecHdr_t *pRecHdr, I unKey );
+	Data* PvRecordInsertInternal( RecHdr_t* pRecHdr, I unKey );
 
 	// Get the record associated with a THashHdr
-	Data *PvRecordFromPRecHdr( RecHdr_t *pRecHdr ) const { return ( Data * ) ( ( ( uint8 * ) pRecHdr + sizeof( RecHdr_t ) ) ); }
+	Data* PvRecordFromPRecHdr( RecHdr_t* pRecHdr ) const { return (Data*) ( ( (uint8*) pRecHdr + sizeof( RecHdr_t ) ) ); }
 
 	// Get the RecHdr preceding a PvRecord
-	RecHdr_t *PRecHdrFromPvRecord( Data *pvRecord ) const { return ( ( ( RecHdr_t * ) pvRecord ) - 1 ); }
+	RecHdr_t* PRecHdrFromPvRecord( Data* pvRecord ) const { return ( ( (RecHdr_t*) pvRecord ) - 1 ); }
 
 	// Get the hash bucket corresponding to a key
 	int IBucket( I unKey ) const;
 
-	void InsertIntoHash( RecHdr_t *pRecHdr, I unKey );
-	void RemoveFromHash( Data * pvRecord );
+	void InsertIntoHash( RecHdr_t* pRecHdr, I unKey );
+	void RemoveFromHash( Data* pvRecord );
 
-	int m_cBucket;						// # of hash buckets we have
-	Bucket_t *m_pBucket;				// Big array of hash buckets
+	int m_cBucket;      // # of hash buckets we have
+	Bucket_t* m_pBucket;// Big array of hash buckets
 
-	CUtlMemoryPool *m_pMemoryPoolRecord;	// All our data records
+	CUtlMemoryPool* m_pMemoryPoolRecord;// All our data records
 
-	int m_cRecordInUse;					// # of records in use
-	RecHdr_t m_RecHdrHead;				// Head of our linked list
-	RecHdr_t m_RecHdrTail;				// Tail of our linked list
+	int m_cRecordInUse;   // # of records in use
+	RecHdr_t m_RecHdrHead;// Head of our linked list
+	RecHdr_t m_RecHdrTail;// Tail of our linked list
 
-	int m_cFramesPerCycle;				// Run each of our records once every m_cFramesPerCycle frames
-	RecHdr_t *m_pRecHdrRunNext;			// Next record to run (be careful-- this is more complicated than it sounds)
-	int m_iBucketRunMax;				// Stop running when we get to this bucket
-	uint m_iCycleCur;					// Current cycle (ie, how many times we've made a complete scheduler pass)
-	uint m_iCycleLast;					// Our previous cycle
-	uint m_iFrameCur;					// Our current frame (incremented once each StartFrameSchedule)
-	uint m_iCycleLastReported;			// Last cycle checked by BCompletedPass()
+	int m_cFramesPerCycle;     // Run each of our records once every m_cFramesPerCycle frames
+	RecHdr_t* m_pRecHdrRunNext;// Next record to run (be careful-- this is more complicated than it sounds)
+	int m_iBucketRunMax;       // Stop running when we get to this bucket
+	uint m_iCycleCur;          // Current cycle (ie, how many times we've made a complete scheduler pass)
+	uint m_iCycleLast;         // Our previous cycle
+	uint m_iFrameCur;          // Our current frame (incremented once each StartFrameSchedule)
+	uint m_iCycleLastReported; // Last cycle checked by BCompletedPass()
 };
 
 
@@ -143,27 +134,26 @@ private:
 // Input:	cMicroSecRunInterval -		How often we want the scheduler to run each of our records
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-CTHash<Data,I>::CTHash( int cFramesPerCycle )
-{
+CTHash<Data, I>::CTHash( int cFramesPerCycle ) {
 	m_cBucket = 0;
-	m_pBucket = NULL;
-	m_pMemoryPoolRecord = NULL;
+	m_pBucket = nullptr;
+	m_pMemoryPoolRecord = nullptr;
 	m_cRecordInUse = 0;
 
 	m_cFramesPerCycle = cFramesPerCycle;
-	m_pRecHdrRunNext = &m_RecHdrTail;		// This will make us start at the beginning on our first frame
+	m_pRecHdrRunNext = &m_RecHdrTail;// This will make us start at the beginning on our first frame
 	m_iBucketRunMax = 0;
 	m_iCycleCur = 0;
 	m_iCycleLast = 0;
 	m_iFrameCur = 0;
 	m_iCycleLastReported = 0;
 
-	m_RecHdrHead.m_pRecHdrPrev = NULL;
+	m_RecHdrHead.m_pRecHdrPrev = nullptr;
 	m_RecHdrHead.m_pRecHdrNext = &m_RecHdrTail;
 	m_RecHdrHead.m_iBucket = -1;
 
 	m_RecHdrTail.m_pRecHdrPrev = &m_RecHdrHead;
-	m_RecHdrTail.m_pRecHdrNext = NULL;
+	m_RecHdrTail.m_pRecHdrNext = nullptr;
 }
 
 
@@ -171,17 +161,16 @@ CTHash<Data,I>::CTHash( int cFramesPerCycle )
 // Purpose: Destructor
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-CTHash<Data,I>::~CTHash()
-{
+CTHash<Data, I>::~CTHash() {
 	RemoveAll();
 
-	if ( NULL != m_pBucket )
+	if ( nullptr != m_pBucket )
 		FreePv( m_pBucket );
-	m_pBucket = NULL;
+	m_pBucket = nullptr;
 
-	if ( NULL != m_pMemoryPoolRecord )
-		delete( m_pMemoryPoolRecord );
-	m_pMemoryPoolRecord = NULL;
+	if ( nullptr != m_pMemoryPoolRecord )
+		delete ( m_pMemoryPoolRecord );
+	m_pMemoryPoolRecord = nullptr;
 }
 
 
@@ -192,21 +181,20 @@ CTHash<Data,I>::~CTHash()
 //			cBucket -			# of hash buckets we should use
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-void CTHash<Data,I>::Init( int cRecordInit, int cBucket )
-{
-	Assert( cRecordInit > 0 );	// need to init with non-zero value or memory pool will never grow
+void CTHash<Data, I>::Init( int cRecordInit, int cBucket ) {
+	Assert( cRecordInit > 0 );// need to init with non-zero value or memory pool will never grow
 
 	// Copy our parameters
 	m_cBucket = cBucket;
 
 	// Alloc our arrays
-	m_pBucket = ( Bucket_t * ) PvAlloc( sizeof( Bucket_t ) * m_cBucket );
+	m_pBucket = (Bucket_t*) PvAlloc( sizeof( Bucket_t ) * m_cBucket );
 	m_pMemoryPoolRecord = new CUtlMemoryPool( sizeof( Data ) + sizeof( RecHdr_t ), cRecordInit,
-		CUtlMemoryPool::GROW_SLOW );
+											  CUtlMemoryPool::GROW_SLOW );
 
 	// Init the hash buckets
 	for ( int iBucket = 0; iBucket < m_cBucket; iBucket++ )
-		m_pBucket[iBucket].m_pRecHdrFirst = NULL;
+		m_pBucket[ iBucket ].m_pRecHdrFirst = nullptr;
 
 	// Make the tail have an illegally large bucket
 	m_RecHdrTail.m_iBucket = m_cBucket + 1;
@@ -219,13 +207,12 @@ void CTHash<Data,I>::Init( int cRecordInit, int cBucket )
 // Output:	Pointer to the new record
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-Data *CTHash<Data,I>::PvRecordInsert( I unKey )
-{
-	Assert( PvRecordFind( unKey ) == NULL );	// keys are unique; no record with this key may exist
+Data* CTHash<Data, I>::PvRecordInsert( I unKey ) {
+	Assert( PvRecordFind( unKey ) == nullptr );// keys are unique; no record with this key may exist
 
 	// Find a free record
-	RecHdr_t *pRecHdr = ( RecHdr_t * ) m_pMemoryPoolRecord->Alloc();
-	
+	RecHdr_t* pRecHdr = (RecHdr_t*) m_pMemoryPoolRecord->Alloc();
+
 	return PvRecordInsertInternal( pRecHdr, unKey );
 }
 
@@ -236,11 +223,10 @@ Data *CTHash<Data,I>::PvRecordInsert( I unKey )
 // Output:	Pointer to the new record
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-Data *CTHash<Data,I>::PvRecordInsertAutoKey()
-{
+Data* CTHash<Data, I>::PvRecordInsertAutoKey() {
 	// Find a free record
-	RecHdr_t *pRecHdr = ( RecHdr_t * ) m_pMemoryPoolRecord->Alloc();
-	
+	RecHdr_t* pRecHdr = (RecHdr_t*) m_pMemoryPoolRecord->Alloc();
+
 	return PvRecordInsertInternal( pRecHdr, (I) PvRecordFromPRecHdr( pRecHdr ) );
 }
 
@@ -253,27 +239,25 @@ Data *CTHash<Data,I>::PvRecordInsertAutoKey()
 // Output:	Pointer to the new record
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-Data *CTHash<Data,I>::PvRecordInsertInternal( RecHdr_t *pRecHdr, I unKey )
-{
+Data* CTHash<Data, I>::PvRecordInsertInternal( RecHdr_t* pRecHdr, I unKey ) {
 	InsertIntoHash( pRecHdr, unKey );
 
 	// assert that we don't have too many items per bucket
 	static bool s_bPerfWarning = false;
-	if ( !s_bPerfWarning && Count() >= ( 5 * m_cBucket ) )
-	{
+	if ( !s_bPerfWarning && Count() >= ( 5 * m_cBucket ) ) {
 		s_bPerfWarning = true;
 		AssertMsg( false, "Performance warning: too many items, not enough buckets" );
 		Msg( "not enough buckets in thash class %s (%d records, %d buckets)\n",
-#if IsWindows()
-		 typeid(*this).raw_name(),
-#else
-		typeid(*this).name(),
-#endif
-		Count(), m_cBucket );
+		#if IsWindows()
+			 typeid( *this ).raw_name(),
+		#else
+			 typeid( *this ).name(),
+		#endif
+			 Count(), m_cBucket );
 	}
 
 	// Construct ourselves
-	Data *pData = PvRecordFromPRecHdr( pRecHdr );
+	Data* pData = PvRecordFromPRecHdr( pRecHdr );
 	Construct<Data>( pData );
 	return pData;
 }
@@ -285,14 +269,12 @@ Data *CTHash<Data,I>::PvRecordInsertInternal( RecHdr_t *pRecHdr, I unKey )
 //			unNewKey -		new key to use
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-void CTHash<Data,I>::ChangeKey( Data * pvRecord, I unOldKey, I unNewKey )
-{
-	Data * pvRecordFound = PvRecordFind( unOldKey );
+void CTHash<Data, I>::ChangeKey( Data* pvRecord, I unOldKey, I unNewKey ) {
+	Data* pvRecordFound = PvRecordFind( unOldKey );
 	Assert( pvRecordFound == pvRecord );
-	if ( pvRecordFound == pvRecord )
-	{
+	if ( pvRecordFound == pvRecord ) {
 		RemoveFromHash( pvRecord );
-		InsertIntoHash( PRecHdrFromPvRecord( pvRecord), unNewKey );
+		InsertIntoHash( PRecHdrFromPvRecord( pvRecord ), unNewKey );
 	}
 }
 
@@ -302,9 +284,8 @@ void CTHash<Data,I>::ChangeKey( Data * pvRecord, I unOldKey, I unNewKey )
 // Input:	unKey -		Key of the entry to remove
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-void CTHash<Data,I>::Remove( I unKey )
-{
-	Data *pvRemove = ( Data * ) PvRecordFind( unKey );
+void CTHash<Data, I>::Remove( I unKey ) {
+	Data* pvRemove = (Data*) PvRecordFind( unKey );
 	Assert( pvRemove );
 	if ( !pvRemove )
 		return;
@@ -317,8 +298,7 @@ void CTHash<Data,I>::Remove( I unKey )
 // Input:	pvRemove -		Pointer to the entry to remove
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-void CTHash<Data,I>::Remove( Data * pvRemove )
-{
+void CTHash<Data, I>::Remove( Data* pvRemove ) {
 	// Destruct the record we're removing
 	Destruct<Data>( pvRemove );
 
@@ -331,12 +311,10 @@ void CTHash<Data,I>::Remove( Data * pvRemove )
 // Purpose: Removes all entries from the table
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-void CTHash<Data,I>::RemoveAll()
-{
-	Data * pvRecord = PvRecordFirst();
-	while ( pvRecord )
-	{
-		Data *pvRecordNext = PvRecordNext( pvRecord );
+void CTHash<Data, I>::RemoveAll() {
+	Data* pvRecord = PvRecordFirst();
+	while ( pvRecord ) {
+		Data* pvRecordNext = PvRecordNext( pvRecord );
 		Remove( pvRecord );
 		pvRecord = pvRecordNext;
 	}
@@ -347,22 +325,20 @@ void CTHash<Data,I>::RemoveAll()
 // Input:	unKey -		Key to find
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-Data *CTHash<Data,I>::PvRecordFind( I unKey ) const
-{
+Data* CTHash<Data, I>::PvRecordFind( I unKey ) const {
 	// Find our hash bucket
 	int iBucket = IBucket( unKey );
 
 	// Walk the bucket's list looking for an exact match
-	for ( RecHdr_t *pRecHdr = m_pBucket[iBucket].m_pRecHdrFirst;
-		NULL != pRecHdr && pRecHdr->m_iBucket == iBucket;
-		pRecHdr = pRecHdr->m_pRecHdrNext )
-	{
+	for ( RecHdr_t* pRecHdr = m_pBucket[ iBucket ].m_pRecHdrFirst;
+		  nullptr != pRecHdr && pRecHdr->m_iBucket == iBucket;
+		  pRecHdr = pRecHdr->m_pRecHdrNext ) {
 		if ( unKey == pRecHdr->m_unKey )
 			return PvRecordFromPRecHdr( pRecHdr );
 	}
 
 	// Didn't find a match
-	return NULL;
+	return nullptr;
 }
 
 
@@ -371,12 +347,11 @@ Data *CTHash<Data,I>::PvRecordFind( I unKey ) const
 // Output:	Pointer to our first record
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-Data *CTHash<Data,I>::PvRecordFirst() const
-{
+Data* CTHash<Data, I>::PvRecordFirst() const {
 	if ( &m_RecHdrTail != m_RecHdrHead.m_pRecHdrNext )
 		return PvRecordFromPRecHdr( m_RecHdrHead.m_pRecHdrNext );
 	else
-		return NULL;
+		return nullptr;
 }
 
 
@@ -386,11 +361,10 @@ Data *CTHash<Data,I>::PvRecordFirst() const
 // Output:	Pointer to the next record
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-Data *CTHash<Data,I>::PvRecordNext( Data *pvRecordCur ) const
-{
-	RecHdr_t *pRecHdr = PRecHdrFromPvRecord( pvRecordCur );
+Data* CTHash<Data, I>::PvRecordNext( Data* pvRecordCur ) const {
+	RecHdr_t* pRecHdr = PRecHdrFromPvRecord( pvRecordCur );
 	if ( &m_RecHdrTail == pRecHdr->m_pRecHdrNext )
-		return NULL;
+		return nullptr;
 
 	return PvRecordFromPRecHdr( pRecHdr->m_pRecHdrNext );
 }
@@ -403,8 +377,7 @@ Data *CTHash<Data,I>::PvRecordNext( Data *pvRecordCur ) const
 //			nRunRatio -		The run ratio for this record
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-void CTHash<Data,I>::SetRunRatio( Data *pvRecord, int nRunRatio )
-{
+void CTHash<Data, I>::SetRunRatio( Data* pvRecord, int nRunRatio ) {
 	PRecHdrFromPvRecord( pvRecord )->m_nRunRatio = nRunRatio;
 }
 
@@ -418,11 +391,9 @@ void CTHash<Data,I>::SetRunRatio( Data *pvRecord, int nRunRatio )
 //							we need to keep going at the beginning.
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-void CTHash<Data,I>::StartFrameSchedule( bool bNewFrame )
-{
+void CTHash<Data, I>::StartFrameSchedule( bool bNewFrame ) {
 	// Calculate our current frame and cycle cycle
-	if ( bNewFrame )
-	{
+	if ( bNewFrame ) {
 		m_iCycleLast = m_iCycleCur;
 		m_iFrameCur++;
 		m_iCycleCur = m_iFrameCur / m_cFramesPerCycle;
@@ -430,25 +401,21 @@ void CTHash<Data,I>::StartFrameSchedule( bool bNewFrame )
 
 	// Calculate the last bucket to run
 	int iFrameInCycle = m_iFrameCur % m_cFramesPerCycle;
-	m_iBucketRunMax = ( int ) ( ( ( int64 ) ( iFrameInCycle + 1 ) * ( int64 ) m_cBucket )
-		/ ( int64 ) m_cFramesPerCycle );
+	m_iBucketRunMax = (int) ( ( (int64) ( iFrameInCycle + 1 ) * (int64) m_cBucket ) / (int64) m_cFramesPerCycle );
 	AssertFatal( m_iBucketRunMax >= 0 && m_iBucketRunMax <= m_cBucket );
 
 	// Are we starting a new cycle?
-	if ( m_iCycleCur > m_iCycleLast )
-	{
-#ifdef DBGFLAG_THASH
-		Assert( m_iCycleCur == m_iCycleLast + 1 );
-#endif
+	if ( m_iCycleCur > m_iCycleLast ) {
+		#ifdef DBGFLAG_THASH
+			Assert( m_iCycleCur == m_iCycleLast + 1 );
+		#endif
 
 		// Did we finish the last cycle?
-		if ( &m_RecHdrTail == m_pRecHdrRunNext )
-		{
+		if ( &m_RecHdrTail == m_pRecHdrRunNext ) {
 			m_pRecHdrRunNext = m_RecHdrHead.m_pRecHdrNext;
 		}
 		// No-- finish it up before moving on
-		else
-		{
+		else {
 			m_iBucketRunMax = m_cBucket + 1;
 		}
 	}
@@ -457,51 +424,43 @@ void CTHash<Data,I>::StartFrameSchedule( bool bNewFrame )
 
 //-----------------------------------------------------------------------------
 // Purpose: Returns the next record to run, if any
-// Output:	Pointer to the next record that needs to run (NULL if we're done)
+// Output:	Pointer to the next record that needs to run (nullptr if we're done)
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-Data *CTHash<Data,I>::PvRecordRun()
-{
+Data* CTHash<Data, I>::PvRecordRun() {
 	// Loop until we find a record to run, or until we pass m_iBucketRunMax
-	for ( ; ; )
-	{
+	for ( ;; ) {
 		// Are we past our stopping point?
-		if ( m_pRecHdrRunNext->m_iBucket >= m_iBucketRunMax )
-		{
+		if ( m_pRecHdrRunNext->m_iBucket >= m_iBucketRunMax ) {
 			// If this cycle ran to the very end, see if we need to start over
-			if ( m_iBucketRunMax > m_cBucket )
-			{
+			if ( m_iBucketRunMax > m_cBucket ) {
 				StartFrameSchedule( false );
 				continue;
 			}
 
-			return NULL;
+			return nullptr;
 		}
 
-#ifdef DBGFLAG_THASH
-		Assert( m_pRecHdrRunNext->m_iBucket >= m_iBucketRunFirst );
-		if ( 0 != m_pRecHdrRunNext->m_iCycleLast )
-		{
-			if ( m_pRecHdrRunNext->m_iCycleLast == m_iCycleCur )
-			{
-				DMsg( SPEW_CONSOLE,  1, "Double cycle: hdr = 0x%x, last frame = %d, curFrame = %d, first = %d, last = %d, bucket = %d\n",
-					m_pRecHdrRunNext, m_pRecHdrRunNext->m_iFrameLast, m_iFrame,
-					m_iBucketRunFirst, m_iBucketRunMax, m_pRecHdrRunNext->m_iBucket );
+		#ifdef DBGFLAG_THASH
+			Assert( m_pRecHdrRunNext->m_iBucket >= m_iBucketRunFirst );
+			if ( 0 != m_pRecHdrRunNext->m_iCycleLast ) {
+				if ( m_pRecHdrRunNext->m_iCycleLast == m_iCycleCur ) {
+					DMsg( SPEW_CONSOLE, 1, "Double cycle: hdr = 0x%x, last frame = %d, curFrame = %d, first = %d, last = %d, bucket = %d\n",
+						  m_pRecHdrRunNext, m_pRecHdrRunNext->m_iFrameLast, m_iFrame,
+						  m_iBucketRunFirst, m_iBucketRunMax, m_pRecHdrRunNext->m_iBucket );
+				} else if ( m_pRecHdrRunNext->m_iCycleLast != m_iCycleCur - 1 ) {
+					DMsg( SPEW_CONSOLE, 1, "Skipped cycle: hdr = 0x%x, cycleLast = %u, cycleCur = %u (missed %u cycles)\n",
+						  m_pRecHdrRunNext, m_pRecHdrRunNext->m_iCycleLast, m_iCycleCur,
+						  m_iCycleCur - m_pRecHdrRunNext->m_iCycleLast );
+					Assert( false );
+				}
 			}
-			else if ( m_pRecHdrRunNext->m_iCycleLast != m_iCycleCur - 1 )
-			{
-				DMsg( SPEW_CONSOLE,  1, "Skipped cycle: hdr = 0x%x, cycleLast = %u, cycleCur = %u (missed %u cycles)\n",
-					m_pRecHdrRunNext, m_pRecHdrRunNext->m_iCycleLast, m_iCycleCur,
-					m_iCycleCur - m_pRecHdrRunNext->m_iCycleLast );
-				Assert( false );
-			}
-		}
-		m_pRecHdrRunNext->m_iCycleLast = m_iCycleCur;
-		m_pRecHdrRunNext->m_iFrameLast = m_iFrame;
-#endif
+			m_pRecHdrRunNext->m_iCycleLast = m_iCycleCur;
+			m_pRecHdrRunNext->m_iFrameLast = m_iFrame;
+		#endif
 
 		// Set up the record to run next time
-		RecHdr_t *pRecHdrCur = m_pRecHdrRunNext;
+		RecHdr_t* pRecHdrCur = m_pRecHdrRunNext;
 		m_pRecHdrRunNext = m_pRecHdrRunNext->m_pRecHdrNext;
 
 		// Does this record need to run?
@@ -518,10 +477,8 @@ Data *CTHash<Data,I>::PvRecordRun()
 // Purpose: Return true if we've completed a scheduler pass since last called
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-bool CTHash<Data,I>::BCompletedPass()
-{
-	if ( m_iCycleCur != m_iCycleLastReported )
-	{
+bool CTHash<Data, I>::BCompletedPass() {
+	if ( m_iCycleCur != m_iCycleLastReported ) {
 		m_iCycleLastReported = m_iCycleCur;
 		return true;
 	}
@@ -529,7 +486,7 @@ bool CTHash<Data,I>::BCompletedPass()
 }
 
 
-extern const unsigned char g_CTHashRandomValues[256];  // definition lives in globals.cpp
+extern const unsigned char g_CTHashRandomValues[ 256 ];// definition lives in globals.cpp
 
 //-----------------------------------------------------------------------------
 // Purpose: Returns the index of the hash bucket corresponding to a particular key
@@ -537,87 +494,77 @@ extern const unsigned char g_CTHashRandomValues[256];  // definition lives in gl
 // Output:	Index of the hash bucket corresponding to unKey
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-int CTHash<Data,I>::IBucket( I unKey ) const
-{
+int CTHash<Data, I>::IBucket( I unKey ) const {
 	AssertFatal( m_cBucket > 0 );
 
 	// This is a pearsons hash variant that returns a maximum of 32 bits
-	size_t size = sizeof(I);
-	const uint8 *	k    = (const uint8 *) &unKey;
+	size_t size = sizeof( I );
+	const uint8* k = (const uint8*) &unKey;
 	uint32 byte_one = 0, byte_two = 0, byte_three = 0, byte_four = 0, n;
 
-	while (size)
-	{
+	while ( size ) {
 		--size;
-		n    = *k++;
-		byte_one = g_CTHashRandomValues[byte_one ^ n];
-		
-		if (size)
-		{
+		n = *k++;
+		byte_one = g_CTHashRandomValues[ byte_one ^ n ];
+
+		if ( size ) {
 			--size;
-			n   = *k++;
-			byte_two = g_CTHashRandomValues[byte_two ^ n];
-		}
-		else
+			n = *k++;
+			byte_two = g_CTHashRandomValues[ byte_two ^ n ];
+		} else
 			break;
-		
-		if (size)
-		{
+
+		if ( size ) {
 			--size;
-			n   = *k++;
-			byte_three = g_CTHashRandomValues[byte_three ^ n];
-		}
-		else
+			n = *k++;
+			byte_three = g_CTHashRandomValues[ byte_three ^ n ];
+		} else
 			break;
-		
-		if (size)
-		{
+
+		if ( size ) {
 			--size;
-			n   = *k++;
-			byte_four = g_CTHashRandomValues[byte_four ^ n];
-		}
-		else
+			n = *k++;
+			byte_four = g_CTHashRandomValues[ byte_four ^ n ];
+		} else
 			break;
 	}
 
 	uint32 idx = ( byte_four << 24 ) | ( byte_three << 16 ) | ( byte_two << 8 ) | byte_one;
 	idx = idx % m_cBucket;
-	return ( (int) idx ); 
+	return ( (int) idx );
 }
 
 
 #ifdef DBGFLAG_VALIDATE
-//-----------------------------------------------------------------------------
-// Purpose: Run a global validation pass on all of our data structures and memory
-//			allocations.
-// Input:	validator -		Our global validator object
-//			pchName -		Our name (typically a member var in our container)
-//-----------------------------------------------------------------------------
-template<class Data, class I>
-void CTHash<Data,I>::Validate( CValidator &validator, const char *pchName )
-{
-	VALIDATE_SCOPE();
+	//-----------------------------------------------------------------------------
+	// Purpose: Run a global validation pass on all of our data structures and memory
+	//			allocations.
+	// Input:	validator -		Our global validator object
+	//			pchName -		Our name (typically a member var in our container)
+	//-----------------------------------------------------------------------------
+	template<class Data, class I>
+	void CTHash<Data, I>::Validate( CValidator& validator, const char* pchName ) {
+		VALIDATE_SCOPE();
 
-	validator.ClaimMemory( m_pBucket );
-	ValidatePtr( m_pMemoryPoolRecord );
+		validator.ClaimMemory( m_pBucket );
+		ValidatePtr( m_pMemoryPoolRecord );
 
-#if IsDebug()
-	// first verify m_cRecordInUse
-	Data * pvRecord = PvRecordFirst();
-	int cItems = 0;
-	while ( pvRecord )
-	{
-		Data *pvRecordNext = PvRecordNext( pvRecord );
-		cItems++;
-		pvRecord = pvRecordNext;
+		#if IsDebug()
+			// first verify m_cRecordInUse
+			Data* pvRecord = PvRecordFirst();
+			int cItems = 0;
+			while ( pvRecord ) {
+				Data* pvRecordNext = PvRecordNext( pvRecord );
+				cItems++;
+				pvRecord = pvRecordNext;
+			}
+			Assert( m_cRecordInUse == cItems );
+			// then ask the mempool to verify this
+			if ( m_pMemoryPoolRecord )
+				m_pMemoryPoolRecord->LeakCheck( cItems );
+		#endif IsDebug()
 	}
-	Assert( m_cRecordInUse == cItems );
-	// then ask the mempool to verify this
-	if ( m_pMemoryPoolRecord )
-		m_pMemoryPoolRecord->LeakCheck( cItems );
-#endif IsDebug()
-}
-#endif // DBGFLAG_VALIDATE
+#endif// DBGFLAG_VALIDATE
 
 
 //-----------------------------------------------------------------------------
@@ -626,8 +573,7 @@ void CTHash<Data,I>::Validate( CValidator &validator, const char *pchName )
 // Output:	Pointer to the new record
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-void CTHash<Data,I>::InsertIntoHash( RecHdr_t *pRecHdr, I unKey )
-{
+void CTHash<Data, I>::InsertIntoHash( RecHdr_t* pRecHdr, I unKey ) {
 	m_cRecordInUse++;
 
 	// Init the RecHdr
@@ -637,18 +583,16 @@ void CTHash<Data,I>::InsertIntoHash( RecHdr_t *pRecHdr, I unKey )
 	// Find our hash bucket
 	int iBucket = IBucket( unKey );
 	pRecHdr->m_iBucket = iBucket;
-#ifdef DBGFLAG_THASH
-	pRecHdr->m_iCycleLast = 0;
-#endif
+	#ifdef DBGFLAG_THASH
+		pRecHdr->m_iCycleLast = 0;
+	#endif
 
 	// Find where to insert ourselves in the linked list
-	RecHdr_t *pRecHdrInsertBefore = &m_RecHdrTail;
+	RecHdr_t* pRecHdrInsertBefore = &m_RecHdrTail;
 	// Find the first bucket with anything in it that's at or after our bucket
-	for ( int iBucketT = iBucket; iBucketT < m_cBucket; iBucketT++ )
-	{
-		if ( NULL != m_pBucket[iBucketT].m_pRecHdrFirst )
-		{
-			pRecHdrInsertBefore = m_pBucket[iBucketT].m_pRecHdrFirst;
+	for ( int iBucketT = iBucket; iBucketT < m_cBucket; iBucketT++ ) {
+		if ( nullptr != m_pBucket[ iBucketT ].m_pRecHdrFirst ) {
+			pRecHdrInsertBefore = m_pBucket[ iBucketT ].m_pRecHdrFirst;
 			break;
 		}
 	}
@@ -660,7 +604,7 @@ void CTHash<Data,I>::InsertIntoHash( RecHdr_t *pRecHdr, I unKey )
 	pRecHdr->m_pRecHdrPrev->m_pRecHdrNext = pRecHdr;
 
 	// Our bucket should point to us
-	m_pBucket[iBucket].m_pRecHdrFirst = pRecHdr;
+	m_pBucket[ iBucket ].m_pRecHdrFirst = pRecHdr;
 }
 
 
@@ -669,19 +613,17 @@ void CTHash<Data,I>::InsertIntoHash( RecHdr_t *pRecHdr, I unKey )
 // Input:	pvRemove -		Pointer to the entry to remove
 //-----------------------------------------------------------------------------
 template<class Data, class I>
-void CTHash<Data,I>::RemoveFromHash( Data * pvRemove )
-{
+void CTHash<Data, I>::RemoveFromHash( Data* pvRemove ) {
 	// Find our RecHdr
-	RecHdr_t *pRecHdr = PRecHdrFromPvRecord( pvRemove );
+	RecHdr_t* pRecHdr = PRecHdrFromPvRecord( pvRemove );
 
-	// If our bucket points to us, point it to the next record (or else NULL)
+	// If our bucket points to us, point it to the next record (or else nullptr)
 	int iBucket = IBucket( pRecHdr->m_unKey );
-	if ( pRecHdr == m_pBucket[iBucket].m_pRecHdrFirst )
-	{
+	if ( pRecHdr == m_pBucket[ iBucket ].m_pRecHdrFirst ) {
 		if ( pRecHdr->m_pRecHdrNext->m_iBucket == iBucket )
-			m_pBucket[iBucket].m_pRecHdrFirst = pRecHdr->m_pRecHdrNext;
+			m_pBucket[ iBucket ].m_pRecHdrFirst = pRecHdr->m_pRecHdrNext;
 		else
-			m_pBucket[iBucket].m_pRecHdrFirst = NULL;
+			m_pBucket[ iBucket ].m_pRecHdrFirst = nullptr;
 	}
 
 	// Remove us from the linked list
@@ -694,5 +636,3 @@ void CTHash<Data,I>::RemoveFromHash( Data * pvRemove )
 
 	m_cRecordInUse--;
 }
-
-#endif // THASH_H

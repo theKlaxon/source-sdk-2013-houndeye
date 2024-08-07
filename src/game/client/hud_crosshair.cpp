@@ -43,7 +43,7 @@ DECLARE_HUDELEMENT( CHudCrosshair );
 #endif
 
 CHudCrosshair::CHudCrosshair( const char *pElementName ) :
-		CHudElement( pElementName ), BaseClass( NULL, "HudCrosshair" )
+		CHudElement( pElementName ), BaseClass( nullptr, "HudCrosshair" )
 {
 	vgui::Panel *pParent = g_pClientMode->GetViewport();
 	SetParent( pParent );
@@ -78,7 +78,7 @@ void CHudCrosshair::ApplySchemeSettings( IScheme *scheme )
 // costly traversal.  Called per frame, return true if thinking and 
 // painting need to occur.
 //-----------------------------------------------------------------------------
-bool CHudCrosshair::ShouldDraw( void )
+bool CHudCrosshair::ShouldDraw()
 {
 	bool bNeedsDraw;
 
@@ -217,7 +217,7 @@ void CHudCrosshair::GetDrawPosition ( float *pX, float *pY, bool *pbBehindCamera
 }
 
 
-void CHudCrosshair::Paint( void )
+void CHudCrosshair::Paint()
 {
 	if ( !m_pCrosshair )
 		return;

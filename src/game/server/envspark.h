@@ -4,43 +4,35 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef ENVSPARK_H
-#define ENVSPARK_H
-#if IsWindows()
 #pragma once
-#endif
 
-class CEnvSpark : public CPointEntity
-{
+
+class CEnvSpark : public CPointEntity {
 	DECLARE_CLASS( CEnvSpark, CPointEntity );
-
 public:
-	CEnvSpark( void );
+	CEnvSpark();
 
-	void	Spawn( void );
-	void	Precache( void );
-	void	SparkThink( void );
+	void Spawn();
+	void Precache();
+	void SparkThink();
 
-	void	StartSpark( void );
-	void	StopSpark( void );
+	void StartSpark();
+	void StopSpark();
 
 	// Input handlers
-	void InputStartSpark( inputdata_t &inputdata );
-	void InputStopSpark( inputdata_t &inputdata );
-	void InputToggleSpark( inputdata_t &inputdata );
-	void InputSparkOnce( inputdata_t &inputdata );
+	void InputStartSpark( inputdata_t& inputdata );
+	void InputStopSpark( inputdata_t& inputdata );
+	void InputToggleSpark( inputdata_t& inputdata );
+	void InputSparkOnce( inputdata_t& inputdata );
 
-	bool IsSparking( void ){ return ( GetNextThink() != TICK_NEVER_THINK ); }
-	
+	bool IsSparking() { return ( GetNextThink() != TICK_NEVER_THINK ); }
+
 	DECLARE_DATADESC();
 
-	float			m_flDelay;
-	int				m_nGlowSpriteIndex;
-	int				m_nMagnitude;
-	int				m_nTrailLength;
+	float m_flDelay;
+	int m_nGlowSpriteIndex;
+	int m_nMagnitude;
+	int m_nTrailLength;
 
-	COutputEvent	m_OnSpark;
+	COutputEvent m_OnSpark;
 };
-
-#endif // ENVSPARK_H

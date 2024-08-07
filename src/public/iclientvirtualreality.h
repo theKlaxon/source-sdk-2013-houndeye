@@ -1,22 +1,15 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: Contains the IClientVirtualReality interface, which is implemented in 
+// Purpose: Contains the IClientVirtualReality interface, which is implemented in
 //			client.dll and called by engine.dll
 //
 // $NoKeywords: $
 //
 //===========================================================================//
-
-#ifndef ICLIENTVIRTUALREALITY_H
-#define ICLIENTVIRTUALREALITY_H
-
-#if IsWindows()
 #pragma once
-#endif
-
+#include "appframework/IAppSystem.h"
 #include "tier1/interface.h"
 #include "tier1/refcount.h"
-#include "appframework/IAppSystem.h"
 
 //-----------------------------------------------------------------------------
 // forward declarations
@@ -35,16 +28,14 @@
 //-----------------------------------------------------------------------------
 
 
-
-abstract_class IClientVirtualReality : public IAppSystem
-{
+abstract_class IClientVirtualReality : public IAppSystem {
 public:
 	virtual ~IClientVirtualReality() {}
 
 	// Placeholder for API revision
 	virtual bool Connect( CreateInterfaceFn factory ) = 0;
 	virtual void Disconnect() = 0;
-	virtual void *QueryInterface( const char *pInterfaceName ) = 0;
+	virtual void* QueryInterface( const char* pInterfaceName ) = 0;
 	virtual InitReturnVal_t Init() = 0;
 	virtual void Shutdown() = 0;
 
@@ -55,10 +46,6 @@ public:
 };
 
 
-
 //-----------------------------------------------------------------------------
 
-extern IClientVirtualReality *g_pClientVR;
-
-
-#endif // ICLIENTVIRTUALREALITY_H
+extern IClientVirtualReality* g_pClientVR;

@@ -1,17 +1,10 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef MATSYSCONTROLS_H
-#define MATSYSCONTROLS_H
-
-#if IsWindows()
 #pragma once
-#endif
-
 #include "tier1/interface.h"
 
 
@@ -24,39 +17,38 @@ class IMDLCache;
 class IMatSystemSurface;
 class IStudioRender;
 
-namespace vgui
-{
+namespace vgui {
 
-//-----------------------------------------------------------------------------
-// handles the initialization of the vgui interfaces.
-// NOTE: Calls into VGui_InitInterfacesList
-// interfaces (listed below) are first attempted to be loaded from primaryProvider, then secondaryProvider
-// moduleName should be the name of the module that this instance of the vgui_controls has been compiled into
-//-----------------------------------------------------------------------------
-bool VGui_InitMatSysInterfacesList( const char *moduleName, CreateInterfaceFn *factoryList, int numFactories );
+	//-----------------------------------------------------------------------------
+	// handles the initialization of the vgui interfaces.
+	// NOTE: Calls into VGui_InitInterfacesList
+	// interfaces (listed below) are first attempted to be loaded from primaryProvider, then secondaryProvider
+	// moduleName should be the name of the module that this instance of the vgui_controls has been compiled into
+	//-----------------------------------------------------------------------------
+	bool VGui_InitMatSysInterfacesList( const char* moduleName, CreateInterfaceFn* factoryList, int numFactories );
 
 
-//-----------------------------------------------------------------------------
-// set of accessor functions to matsys interfaces
-// the appropriate header file for each is listed above the item
-//-----------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
+	// set of accessor functions to matsys interfaces
+	// the appropriate header file for each is listed above the item
+	//-----------------------------------------------------------------------------
 
-// #include <materialsystem/imaterialsystem.h>
-IMaterialSystem *MaterialSystem();
+	// #include <materialsystem/imaterialsystem.h>
+	IMaterialSystem* MaterialSystem();
 
-// #include <datacache/imdlcache.h>
-IMDLCache *MDLCache();
+	// #include <datacache/imdlcache.h>
+	IMDLCache* MDLCache();
 
-// #include <VGuiMatSurface/IMatSystemSurface.h>
-IMatSystemSurface *MatSystemSurface();
+	// #include <VGuiMatSurface/IMatSystemSurface.h>
+	IMatSystemSurface* MatSystemSurface();
 
-// #include <istudiorender.h"
-IStudioRender *StudioRender();
+	// #include <istudiorender.h"
+	IStudioRender* StudioRender();
 
-// #include <materialsystem/imaterialsystemhardwareconfig.h>
-IMaterialSystemHardwareConfig *MaterialSystemHardwareConfig();
+	// #include <materialsystem/imaterialsystemhardwareconfig.h>
+	IMaterialSystemHardwareConfig* MaterialSystemHardwareConfig();
 
-} // end namespace vgui
+}// end namespace vgui
 
 
 //-----------------------------------------------------------------------------
@@ -67,6 +59,3 @@ class CMDLSequencePicker;
 class CMDLPicker;
 class CSequencePicker;
 class CGameFileTreeView;
-
-
-#endif // MATSYSCONTROLS_H

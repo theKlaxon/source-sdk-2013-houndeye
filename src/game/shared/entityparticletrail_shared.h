@@ -1,16 +1,9 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
-
-#ifndef ENTITYPARTICLETRAIL_SHARED_H
-#define ENTITYPARTICLETRAIL_SHARED_H
-
-#if IsWindows()
 #pragma once
-#endif
-
 
 //-----------------------------------------------------------------------------
 // For networking this bad boy
@@ -25,8 +18,7 @@ EXTERN_SEND_TABLE( DT_EntityParticleTrailInfo );
 //-----------------------------------------------------------------------------
 // Particle trail info
 //-----------------------------------------------------------------------------
-struct EntityParticleTrailInfo_t
-{
+struct EntityParticleTrailInfo_t {
 	EntityParticleTrailInfo_t();
 
 	DECLARE_CLASS_NOBASE( EntityParticleTrailInfo_t );
@@ -38,7 +30,3 @@ struct EntityParticleTrailInfo_t
 	CNetworkVar( float, m_flStartSize );
 	CNetworkVar( float, m_flEndSize );
 };
-
-
-
-#endif // ENTITYPARTICLETRAIL_SHARED_H

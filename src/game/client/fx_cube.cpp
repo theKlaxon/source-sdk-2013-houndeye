@@ -101,7 +101,7 @@ public:
 		m_Life -= frametime;
 	}
 
-	bool IsActive( void )
+	bool IsActive()
 	{
 		return m_Life > 0.0;
 	}

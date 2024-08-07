@@ -1,35 +1,30 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Client-side CBasePlayer.
-//
 //			- Manages the player's flashlight effect.
 //
 //=============================================================================//
-
-#ifndef C_BASEPLAYER_H
-#define C_BASEPLAYER_H
-#if IsWindows()
 #pragma once
-#endif
-
-#include "c_playerlocaldata.h"
-#include "c_basecombatcharacter.h"
+#include "GameEventListener.h"
 #include "PlayerState.h"
-#include "usercmd.h"
-#include "shareddefs.h"
-#include "timedevent.h"
-#include "smartptr.h"
+#include "SoundEmitterSystem/isoundemittersystembase.h"
+#include "c_basecombatcharacter.h"
+#include "c_env_fog_controller.h"
+#include "c_playerlocaldata.h"
 #include "fx_water.h"
 #include "hintsystem.h"
-#include "SoundEmitterSystem/isoundemittersystembase.h"
-#include "c_env_fog_controller.h"
 #include "igameevents.h"
-#include "GameEventListener.h"
+#include "shareddefs.h"
+#include "smartptr.h"
+#include "timedevent.h"
+#include "usercmd.h"
+#include "vphysics_interface.h"
+#include "baseplayer_shared.h"
 
 #if defined USES_ECON_ITEMS
-#include "econ_item.h"
-#include "game_item_schema.h"
-#include "econ_item_view.h"
+	#include "econ_item.h"
+	#include "econ_item_view.h"
+	#include "game_item_schema.h"
 #endif
 
 class C_BaseCombatWeapon;
@@ -42,34 +37,31 @@ extern int g_nKillCamMode;
 extern int g_nKillCamTarget1;
 extern int g_nKillCamTarget2;
 
-class C_CommandContext
-{
+class C_CommandContext {
 public:
-	bool			needsprocessing;
+	bool needsprocessing;
 
-	CUserCmd		cmd;
-	int				command_number;
+	CUserCmd cmd;
+	int command_number;
 };
 
-class C_PredictionError
-{
+class C_PredictionError {
 public:
-	float	time;
-	Vector	error;
+	float time;
+	Vector error;
 };
 
-#define CHASE_CAM_DISTANCE_MIN	16.0f
-#define CHASE_CAM_DISTANCE_MAX	96.0f
-#define WALL_OFFSET				6.0f
+#define CHASE_CAM_DISTANCE_MIN 16.0f
+#define CHASE_CAM_DISTANCE_MAX 96.0f
+#define WALL_OFFSET 6.0f
 
 
-bool IsInFreezeCam( void );
+bool IsInFreezeCam();
 
 //-----------------------------------------------------------------------------
 // Purpose: Base Player class
 //-----------------------------------------------------------------------------
-class C_BasePlayer : public C_BaseCombatCharacter, public CGameEventListener
-{
+class C_BasePlayer : public C_BaseCombatCharacter, public CGameEventListener {
 public:
 	DECLARE_CLASS( C_BasePlayer, C_BaseCombatCharacter );
 	DECLARE_CLIENTCLASS();
@@ -77,263 +69,262 @@ public:
 	DECLARE_INTERPOLATION();
 
 	C_BasePlayer();
-	virtual			~C_BasePlayer();
+	virtual ~C_BasePlayer();
 
-	virtual void	Spawn( void );
-	virtual void	SharedSpawn(); // Shared between client and server.
-	virtual bool	GetSteamID( CSteamID *pID );
+	virtual void Spawn();
+	virtual void SharedSpawn();// Shared between client and server.
+	virtual bool GetSteamID( CSteamID* pID );
 
 	// IClientEntity overrides.
-	virtual void	OnPreDataChanged( DataUpdateType_t updateType );
-	virtual void	OnDataChanged( DataUpdateType_t updateType );
+	virtual void OnPreDataChanged( DataUpdateType_t updateType );
+	virtual void OnDataChanged( DataUpdateType_t updateType );
 
-	virtual void	PreDataUpdate( DataUpdateType_t updateType );
-	virtual void	PostDataUpdate( DataUpdateType_t updateType );
-	
-	virtual void	ReceiveMessage( int classID, bf_read &msg );
+	virtual void PreDataUpdate( DataUpdateType_t updateType );
+	virtual void PostDataUpdate( DataUpdateType_t updateType );
 
-	virtual void	OnRestore();
+	virtual void ReceiveMessage( int classID, bf_read& msg );
 
-	virtual void	AddEntity( void );
+	virtual void OnRestore();
 
-	virtual void	MakeTracer( const Vector &vecTracerSrc, const trace_t &tr, int iTracerType );
+	virtual void AddEntity();
 
-	virtual void	GetToolRecordingState( KeyValues *msg );
+	virtual void MakeTracer( const Vector& vecTracerSrc, const trace_t& tr, int iTracerType );
+
+	virtual void GetToolRecordingState( KeyValues* msg );
 
 	virtual float GetPlayerMaxSpeed();
 
-	void	SetAnimationExtension( const char *pExtension );
+	void SetAnimationExtension( const char* pExtension );
 
-	C_BaseViewModel		*GetViewModel( int viewmodelindex = 0, bool bObserverOK=true );
-	C_BaseCombatWeapon	*GetActiveWeapon( void ) const;
-	const char			*GetTracerType( void );
+	C_BaseViewModel* GetViewModel( int viewmodelindex = 0, bool bObserverOK = true );
+	C_BaseCombatWeapon* GetActiveWeapon() const;
+	const char* GetTracerType();
 
 	// View model prediction setup
-	virtual void		CalcView( Vector &eyeOrigin, QAngle &eyeAngles, float &zNear, float &zFar, float &fov );
-	virtual void		CalcViewModelView( const Vector& eyeOrigin, const QAngle& eyeAngles);
-	
+	virtual void CalcView( Vector& eyeOrigin, QAngle& eyeAngles, float& zNear, float& zFar, float& fov );
+	virtual void CalcViewModelView( const Vector& eyeOrigin, const QAngle& eyeAngles );
+
 
 	// Handle view smoothing when going up stairs
-	void				SmoothViewOnStairs( Vector& eyeOrigin );
-	virtual float		CalcRoll (const QAngle& angles, const Vector& velocity, float rollangle, float rollspeed);
-	void				CalcViewRoll( QAngle& eyeAngles );
-	void				CreateWaterEffects( void );
+	void SmoothViewOnStairs( Vector& eyeOrigin );
+	virtual float CalcRoll( const QAngle& angles, const Vector& velocity, float rollangle, float rollspeed );
+	void CalcViewRoll( QAngle& eyeAngles );
+	void CreateWaterEffects();
 
-	virtual void			SetPlayerUnderwater( bool state );
-	void					UpdateUnderwaterState( void );
-	bool					IsPlayerUnderwater( void ) { return m_bPlayerUnderwater; }
+	virtual void SetPlayerUnderwater( bool state );
+	void UpdateUnderwaterState();
+	bool IsPlayerUnderwater() { return m_bPlayerUnderwater; }
 
-	virtual Vector			Weapon_ShootPosition();
-	virtual void			Weapon_DropPrimary( void ) {}
+	virtual Vector Weapon_ShootPosition();
+	virtual void Weapon_DropPrimary() {}
 
-	virtual Vector			GetAutoaimVector( float flScale );
-	void					SetSuitUpdate(const char *name, int fgroup, int iNoRepeat);
+	virtual Vector GetAutoaimVector( float flScale );
+	void SetSuitUpdate( const char* name, int fgroup, int iNoRepeat );
 
 	// Input handling
-	virtual bool	CreateMove( float flInputSampleTime, CUserCmd *pCmd );
-	virtual void	AvoidPhysicsProps( CUserCmd *pCmd );
-	
-	virtual void	PlayerUse( void );
-	CBaseEntity		*FindUseEntity( void );
-	virtual bool	IsUseableEntity( CBaseEntity *pEntity, unsigned int requiredCaps );
+	virtual bool CreateMove( float flInputSampleTime, CUserCmd* pCmd );
+	virtual void AvoidPhysicsProps( CUserCmd* pCmd );
+
+	virtual void PlayerUse();
+	CBaseEntity* FindUseEntity();
+	virtual bool IsUseableEntity( CBaseEntity* pEntity, unsigned int requiredCaps );
 
 	// Data handlers
-	virtual bool	IsPlayer( void ) const { return true; }
-	virtual int		GetHealth() const { return m_iHealth; }
+	virtual bool IsPlayer() const { return true; }
+	virtual int GetHealth() const { return m_iHealth; }
 
-	int		GetBonusProgress() const { return m_iBonusProgress; }
-	int		GetBonusChallenge() const { return m_iBonusChallenge; }
+	int GetBonusProgress() const { return m_iBonusProgress; }
+	int GetBonusChallenge() const { return m_iBonusChallenge; }
 
 	// observer mode
-	virtual int			GetObserverMode() const;
-	void				SetObserverMode ( int iNewMode );
-	virtual CBaseEntity	*GetObserverTarget() const;
-	void			SetObserverTarget( EHANDLE hObserverTarget );
+	virtual int GetObserverMode() const;
+	void SetObserverMode( int iNewMode );
+	virtual CBaseEntity* GetObserverTarget() const;
+	void SetObserverTarget( EHANDLE hObserverTarget );
 
-	bool			AudioStateIsUnderwater( Vector vecMainViewOrigin );
+	bool AudioStateIsUnderwater( Vector vecMainViewOrigin );
 
 	bool IsObserver() const;
 	bool IsHLTV() const;
 	bool IsReplay() const;
 	void ResetObserverMode();
-	bool IsBot( void ) const { return false; }
+	bool IsBot() const { return false; }
 
 	// Eye position..
-	virtual Vector		 EyePosition();
-	virtual const QAngle &EyeAngles();		// Direction of eyes
-	void				 EyePositionAndVectors( Vector *pPosition, Vector *pForward, Vector *pRight, Vector *pUp );
-	virtual const QAngle &LocalEyeAngles();		// Direction of eyes
-	
-	// This can be overridden to return something other than m_pRagdoll if the mod uses separate 
+	virtual Vector EyePosition();
+	virtual const QAngle& EyeAngles();// Direction of eyes
+	void EyePositionAndVectors( Vector* pPosition, Vector* pForward, Vector* pRight, Vector* pUp );
+	virtual const QAngle& LocalEyeAngles();// Direction of eyes
+
+	// This can be overridden to return something other than m_pRagdoll if the mod uses separate
 	// entities for ragdolls.
 	virtual IRagdoll* GetRepresentativeRagdoll() const;
 
 	// override the initial bone position for ragdolls
-	virtual bool GetRagdollInitBoneArrays( matrix3x4_t *pDeltaBones0, matrix3x4_t *pDeltaBones1, matrix3x4_t *pCurrentBones, float boneDt ) override;
+	virtual bool GetRagdollInitBoneArrays( matrix3x4_t* pDeltaBones0, matrix3x4_t* pDeltaBones1, matrix3x4_t* pCurrentBones, float boneDt ) override;
 
 	// Returns eye vectors
-	void			EyeVectors( Vector *pForward, Vector *pRight = NULL, Vector *pUp = NULL );
-	void			CacheVehicleView( void );	// Calculate and cache the position of the player in the vehicle
+	void EyeVectors( Vector* pForward, Vector* pRight = nullptr, Vector* pUp = nullptr );
+	void CacheVehicleView();// Calculate and cache the position of the player in the vehicle
 
 
-	bool			IsSuitEquipped( void ) { return m_Local.m_bWearingSuit; };
+	bool IsSuitEquipped() { return m_Local.m_bWearingSuit; };
 
 	// Team handlers
-	virtual void	TeamChange( int iNewTeam );
+	virtual void TeamChange( int iNewTeam );
 
 	// Flashlight
-	void	Flashlight( void );
-	void	UpdateFlashlight( void );
+	void Flashlight();
+	void UpdateFlashlight();
 
 	// Weapon selection code
-	virtual bool				IsAllowedToSwitchWeapons( void ) { return !IsObserver(); }
-	virtual C_BaseCombatWeapon	*GetActiveWeaponForSelection( void );
+	virtual bool IsAllowedToSwitchWeapons() { return !IsObserver(); }
+	virtual C_BaseCombatWeapon* GetActiveWeaponForSelection();
 
-	// Returns the view model if this is the local player. If you're in third person or 
+	// Returns the view model if this is the local player. If you're in third person or
 	// this is a remote player, it returns the active weapon
 	// (and its appropriate left/right weapon if this is TF2).
-	virtual C_BaseAnimating*	GetRenderedWeaponModel();
+	virtual C_BaseAnimating* GetRenderedWeaponModel();
 
-	virtual bool				IsOverridingViewmodel( void ) { return false; };
-	virtual int					DrawOverriddenViewmodel( C_BaseViewModel *pViewmodel, int flags ) { return 0; };
+	virtual bool IsOverridingViewmodel() { return false; };
+	virtual int DrawOverriddenViewmodel( C_BaseViewModel* pViewmodel, int flags ) { return 0; };
 
-	virtual float				GetDefaultAnimSpeed( void ) { return 1.0; }
+	virtual float GetDefaultAnimSpeed() { return 1.0; }
 
-	void						SetMaxSpeed( float flMaxSpeed ) { m_flMaxspeed = flMaxSpeed; }
-	float						MaxSpeed() const		{ return m_flMaxspeed; }
+	void SetMaxSpeed( float flMaxSpeed ) { m_flMaxspeed = flMaxSpeed; }
+	float MaxSpeed() const { return m_flMaxspeed; }
 
 	// Should this object cast shadows?
-	virtual ShadowType_t		ShadowCastType() { return SHADOWS_NONE; }
+	virtual ShadowType_t ShadowCastType() { return SHADOWS_NONE; }
 
-	virtual bool				ShouldReceiveProjectedTextures( int flags )
-	{
+	virtual bool ShouldReceiveProjectedTextures( int flags ) {
 		return false;
 	}
 
 
-	bool						IsLocalPlayer( void ) const;
+	bool IsLocalPlayer() const;
 
 	// Global/static methods
-	virtual void				ThirdPersonSwitch( bool bThirdperson );
-	static bool					LocalPlayerInFirstPersonView();
-	static bool					ShouldDrawLocalPlayer();
-	static C_BasePlayer			*GetLocalPlayer( void );
-	int							GetUserID( void );
-	virtual bool				CanSetSoundMixer( void );
-	virtual int					GetVisionFilterFlags( bool bWeaponsCheck = false ) { return 0x00; }
-	bool						HasVisionFilterFlags( int nFlags, bool bWeaponsCheck = false ) { return ( GetVisionFilterFlags( bWeaponsCheck ) & nFlags ) == nFlags; }
-	virtual void				CalculateVisionUsingCurrentFlags( void ) {}
-	void						BuildFirstPersonMeathookTransformations( CStudioHdr *hdr, Vector *pos, Quaternion q[], const matrix3x4_t& cameraTransform, int boneMask, CBoneBitList &boneComputed, const char *pchHeadBoneName );
+	virtual void ThirdPersonSwitch( bool bThirdperson );
+	static bool LocalPlayerInFirstPersonView();
+	static bool ShouldDrawLocalPlayer();
+	static C_BasePlayer* GetLocalPlayer();
+	int GetUserID();
+	virtual bool CanSetSoundMixer();
+	virtual int GetVisionFilterFlags( bool bWeaponsCheck = false ) { return 0x00; }
+	bool HasVisionFilterFlags( int nFlags, bool bWeaponsCheck = false ) { return ( GetVisionFilterFlags( bWeaponsCheck ) & nFlags ) == nFlags; }
+	virtual void CalculateVisionUsingCurrentFlags() {}
+	void BuildFirstPersonMeathookTransformations( CStudioHdr* hdr, Vector* pos, Quaternion q[], const matrix3x4_t& cameraTransform, int boneMask, CBoneBitList& boneComputed, const char* pchHeadBoneName );
 
 	// Specific queries about this player.
-	bool						InFirstPersonView();
-	bool						ShouldDrawThisPlayer();
+	bool InFirstPersonView();
+	bool ShouldDrawThisPlayer();
 
 	// Called by the view model if its rendering is being overridden.
-	virtual bool				ViewModel_IsTransparent( void );
-	virtual bool				ViewModel_IsUsingFBTexture( void );
+	virtual bool ViewModel_IsTransparent();
+	virtual bool ViewModel_IsUsingFBTexture();
 
 #if !defined( NO_ENTITY_PREDICTION )
-	void						AddToPlayerSimulationList( C_BaseEntity *other );
-	void						SimulatePlayerSimulatedEntities( void );
-	void						RemoveFromPlayerSimulationList( C_BaseEntity *ent );
-	void						ClearPlayerSimulationList( void );
+	void AddToPlayerSimulationList( C_BaseEntity* other );
+	void SimulatePlayerSimulatedEntities();
+	void RemoveFromPlayerSimulationList( C_BaseEntity* ent );
+	void ClearPlayerSimulationList();
 #endif
 
-	virtual void				PhysicsSimulate( void );
-	virtual unsigned int	PhysicsSolidMaskForEntity( void ) const { return MASK_PLAYERSOLID; }
+	virtual void PhysicsSimulate();
+	virtual unsigned int PhysicsSolidMaskForEntity() const { return MASK_PLAYERSOLID; }
 
 	// Prediction stuff
-	virtual bool				ShouldPredict( void );
+	virtual bool ShouldPredict();
 
-	virtual void				PreThink( void );
-	virtual void				PostThink( void );
+	virtual void PreThink();
+	virtual void PostThink();
 
-	virtual void				ItemPreFrame( void );
-	virtual void				ItemPostFrame( void );
-	virtual void				AbortReload( void );
+	virtual void ItemPreFrame();
+	virtual void ItemPostFrame();
+	virtual void AbortReload();
 
-	virtual void				SelectLastItem(void);
-	virtual void				Weapon_SetLast( C_BaseCombatWeapon *pWeapon );
-	virtual bool				Weapon_ShouldSetLast( C_BaseCombatWeapon *pOldWeapon, C_BaseCombatWeapon *pNewWeapon ) { return true; }
-	virtual bool				Weapon_ShouldSelectItem( C_BaseCombatWeapon *pWeapon );
-	virtual	bool				Weapon_Switch( C_BaseCombatWeapon *pWeapon, int viewmodelindex = 0 );		// Switch to given weapon if has ammo (false if failed)
-	virtual C_BaseCombatWeapon *GetLastWeapon( void ) { return m_hLastWeapon.Get(); }
-	void						ResetAutoaim( void );
-	virtual void 				SelectItem( const char *pstr, int iSubType = 0 );
+	virtual void SelectLastItem();
+	virtual void Weapon_SetLast( C_BaseCombatWeapon* pWeapon );
+	virtual bool Weapon_ShouldSetLast( C_BaseCombatWeapon* pOldWeapon, C_BaseCombatWeapon* pNewWeapon ) { return true; }
+	virtual bool Weapon_ShouldSelectItem( C_BaseCombatWeapon* pWeapon );
+	virtual bool Weapon_Switch( C_BaseCombatWeapon* pWeapon, int viewmodelindex = 0 );// Switch to given weapon if has ammo (false if failed)
+	virtual C_BaseCombatWeapon* GetLastWeapon() { return m_hLastWeapon.Get(); }
+	void ResetAutoaim();
+	virtual void SelectItem( const char* pstr, int iSubType = 0 );
 
-	virtual void				UpdateClientData( void );
+	virtual void UpdateClientData();
 
-	virtual float				GetFOV( void );	
-	int							GetDefaultFOV( void ) const;
-	virtual bool				IsZoomed( void )	{ return false; }
-	bool						SetFOV( CBaseEntity *pRequester, int FOV, float zoomRate = 0.0f, int iZoomStart = 0 );
-	void						ClearZoomOwner( void );
+	virtual float GetFOV();
+	int GetDefaultFOV() const;
+	virtual bool IsZoomed() { return false; }
+	bool SetFOV( CBaseEntity* pRequester, int FOV, float zoomRate = 0.0f, int iZoomStart = 0 );
+	void ClearZoomOwner();
 
-	float						GetFOVDistanceAdjustFactor();
+	float GetFOVDistanceAdjustFactor();
 
-	virtual void				ViewPunch( const QAngle &angleOffset );
-	void						ViewPunchReset( float tolerance = 0 );
+	virtual void ViewPunch( const QAngle& angleOffset );
+	void ViewPunchReset( float tolerance = 0 );
 
-	void						UpdateButtonState( int nUserCmdButtonMask );
-	int							GetImpulse( void ) const;
+	void UpdateButtonState( int nUserCmdButtonMask );
+	int GetImpulse() const;
 
-	virtual void				Simulate();
+	virtual void Simulate();
 
-	virtual bool				ShouldInterpolate();
+	virtual bool ShouldInterpolate();
 
-	virtual bool				ShouldDraw();
-	virtual int					DrawModel( int flags );
+	virtual bool ShouldDraw();
+	virtual int DrawModel( int flags );
 
 	// Called when not in tactical mode. Allows view to be overriden for things like driving a tank.
-	virtual void				OverrideView( CViewSetup *pSetup );
+	virtual void OverrideView( CViewSetup* pSetup );
 
 	// returns the player name
-	const char *				GetPlayerName();
-	virtual const Vector		GetPlayerMins( void ) const; // uses local player
-	virtual const Vector		GetPlayerMaxs( void ) const; // uses local player
+	const char* GetPlayerName();
+	virtual const Vector GetPlayerMins() const;// uses local player
+	virtual const Vector GetPlayerMaxs() const;// uses local player
 
 	// Is the player dead?
-	bool				IsPlayerDead();
-	bool				IsPoisoned( void ) { return m_Local.m_bPoisoned; }
+	bool IsPlayerDead();
+	bool IsPoisoned() { return m_Local.m_bPoisoned; }
 
-	C_BaseEntity				*GetUseEntity();
+	C_BaseEntity* GetUseEntity();
 
 	// Vehicles...
-	IClientVehicle			*GetVehicle();
+	IClientVehicle* GetVehicle();
 
-	bool			IsInAVehicle() const	{ return ( NULL != m_hVehicle.Get() ) ? true : false; }
-	virtual void	SetVehicleRole( int nRole );
-	void					LeaveVehicle( void );
+	bool IsInAVehicle() const { return ( nullptr != m_hVehicle.Get() ) ? true : false; }
+	virtual void SetVehicleRole( int nRole );
+	void LeaveVehicle();
 
-	bool					UsingStandardWeaponsInVehicle( void );
+	bool UsingStandardWeaponsInVehicle();
 
-	virtual void			SetAnimation( PLAYER_ANIM playerAnim );
+	virtual void SetAnimation( PLAYER_ANIM playerAnim );
 
-	float					GetTimeBase( void ) const;
-	float					GetFinalPredictedTime() const;
+	float GetTimeBase() const;
+	float GetFinalPredictedTime() const;
 
-	bool					IsInVGuiInputMode() const;
-	bool					IsInViewModelVGuiInputMode() const;
+	bool IsInVGuiInputMode() const;
+	bool IsInViewModelVGuiInputMode() const;
 
-	C_CommandContext		*GetCommandContext();
+	C_CommandContext* GetCommandContext();
 
 	// Get the command number associated with the current usercmd we're running (if in predicted code).
 	int CurrentCommandNumber() const;
-	const CUserCmd *GetCurrentUserCommand() const;
+	const CUserCmd* GetCurrentUserCommand() const;
 
 	const QAngle& GetPunchAngle();
-	void SetPunchAngle( const QAngle &angle );
+	void SetPunchAngle( const QAngle& angle );
 
-	float					GetWaterJumpTime() const;
-	void					SetWaterJumpTime( float flWaterJumpTime );
-	float					GetSwimSoundTime( void ) const;
-	void					SetSwimSoundTime( float flSwimSoundTime );
+	float GetWaterJumpTime() const;
+	void SetWaterJumpTime( float flWaterJumpTime );
+	float GetSwimSoundTime() const;
+	void SetSwimSoundTime( float flSwimSoundTime );
 
-	float					GetDeathTime( void ) { return m_flDeathTime; }
+	float GetDeathTime() { return m_flDeathTime; }
 
-	void		SetPreviouslyPredictedOrigin( const Vector &vecAbsOrigin );
-	const Vector &GetPreviouslyPredictedOrigin() const;
+	void SetPreviouslyPredictedOrigin( const Vector& vecAbsOrigin );
+	const Vector& GetPreviouslyPredictedOrigin() const;
 
 	// CS wants to allow small FOVs for zoomed-in AWPs.
 	virtual float GetMinFOV() const;
@@ -341,70 +332,72 @@ public:
 	virtual void DoMuzzleFlash();
 	virtual void PlayPlayerJingle();
 
-	virtual void UpdateStepSound( surfacedata_t *psurface, const Vector &vecOrigin, const Vector &vecVelocity  );
-	virtual void PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force );
-	virtual surfacedata_t * GetFootstepSurface( const Vector &origin, const char *surfaceName );
-	virtual void GetStepSoundVelocities( float *velwalk, float *velrun );
+	virtual void UpdateStepSound( surfacedata_t* psurface, const Vector& vecOrigin, const Vector& vecVelocity );
+	virtual void PlayStepSound( Vector& vecOrigin, surfacedata_t* psurface, float fvol, bool force );
+	virtual surfacedata_t* GetFootstepSurface( const Vector& origin, const char* surfaceName );
+	virtual void GetStepSoundVelocities( float* velwalk, float* velrun );
 	virtual void SetStepSoundTime( stepsoundtimes_t iStepSoundTime, bool bWalking );
-	virtual const char *GetOverrideStepSound( const char *pszBaseStepSoundName ) { return pszBaseStepSoundName; }
+	virtual const char* GetOverrideStepSound( const char* pszBaseStepSoundName ) { return pszBaseStepSoundName; }
 
 	virtual void OnEmitFootstepSound( const CSoundParameters& params, const Vector& vecOrigin, float fVolume ) {}
 
 	// Called by prediction when it detects a prediction correction.
 	// vDelta is the line from where the client had predicted the player to at the usercmd in question,
 	// to where the server says the client should be at said usercmd.
-	void NotePredictionError( const Vector &vDelta );
-	
+	void NotePredictionError( const Vector& vDelta );
+
 	// Called by the renderer to apply the prediction error smoothing.
-	void GetPredictionErrorSmoothingVector( Vector &vOffset ); 
+	void GetPredictionErrorSmoothingVector( Vector& vOffset );
 
 	virtual void ExitLadder() {}
-	surfacedata_t *GetLadderSurface( const Vector &origin );
+	surfacedata_t* GetLadderSurface( const Vector& origin );
 
-	surfacedata_t *GetSurfaceData( void ) { return m_pSurfaceData; }
+	surfacedata_t* GetSurfaceData() { return m_pSurfaceData; }
 
 	void SetLadderNormal( Vector vecLadderNormal ) { m_vecLadderNormal = vecLadderNormal; }
 
 	// Hints
-	virtual CHintSystem		*Hints( void ) { return NULL; }
-	bool					ShouldShowHints( void ) { return Hints() ? Hints()->ShouldShowHints() : false; }
-	bool 					HintMessage( int hint, bool bForce = false, bool bOnlyIfClear = false ) { return Hints() ? Hints()->HintMessage( hint, bForce, bOnlyIfClear ) : false; }
-	void 					HintMessage( const char *pMessage ) { if (Hints()) Hints()->HintMessage( pMessage ); }
+	virtual CHintSystem* Hints() { return nullptr; }
+	bool ShouldShowHints() { return Hints() ? Hints()->ShouldShowHints() : false; }
+	bool HintMessage( int hint, bool bForce = false, bool bOnlyIfClear = false ) { return Hints() ? Hints()->HintMessage( hint, bForce, bOnlyIfClear ) : false; }
+	void HintMessage( const char* pMessage ) {
+		if ( Hints() ) Hints()->HintMessage( pMessage );
+	}
 
-	virtual	IMaterial *GetHeadLabelMaterial( void );
+	virtual IMaterial* GetHeadLabelMaterial();
 
 	// Fog
-	fogparams_t				*GetFogParams( void ) { return &m_CurrentFog; }
-	void					FogControllerChanged( bool bSnap );
-	void					UpdateFogController( void );
-	void					UpdateFogBlend( void );
+	fogparams_t* GetFogParams() { return &m_CurrentFog; }
+	void FogControllerChanged( bool bSnap );
+	void UpdateFogController();
+	void UpdateFogBlend();
 
-	float					GetFOVTime( void ){ return m_flFOVTime; }
+	float GetFOVTime() { return m_flFOVTime; }
 
-	virtual void			OnAchievementAchieved( int iAchievement ) {}
-	
-	bool					ShouldAnnounceAchievement( void ){ return m_flNextAchievementAnnounceTime < gpGlobals->curtime; }
-	void					SetNextAchievementAnnounceTime( float flTime ){ m_flNextAchievementAnnounceTime = flTime; }
+	virtual void OnAchievementAchieved( int iAchievement ) {}
+
+	bool ShouldAnnounceAchievement() { return m_flNextAchievementAnnounceTime < gpGlobals->curtime; }
+	void SetNextAchievementAnnounceTime( float flTime ) { m_flNextAchievementAnnounceTime = flTime; }
 
 #if defined USES_ECON_ITEMS
 	// Wearables
-	virtual void			UpdateWearables();
-	C_EconWearable			*GetWearable( int i ) { return m_hMyWearables[i]; }
-	int						GetNumWearables( void ) { return m_hMyWearables.Count(); }
+	virtual void UpdateWearables();
+	C_EconWearable* GetWearable( int i ) { return m_hMyWearables[ i ]; }
+	int GetNumWearables() { return m_hMyWearables.Count(); }
 #endif
 
-	bool					HasFiredWeapon( void ) { return m_bFiredWeapon; }
-	void					SetFiredWeapon( bool bFlag ) { m_bFiredWeapon = bFlag; }
+	bool HasFiredWeapon() { return m_bFiredWeapon; }
+	void SetFiredWeapon( bool bFlag ) { m_bFiredWeapon = bFlag; }
 
-	virtual bool			CanUseFirstPersonCommand( void ){ return true; }
-	
+	virtual bool CanUseFirstPersonCommand() { return true; }
+
 protected:
-	fogparams_t				m_CurrentFog;
-	EHANDLE					m_hOldFogController;
+	fogparams_t m_CurrentFog;
+	EHANDLE m_hOldFogController;
 
 public:
 	int m_StuckLast;
-	
+
 	// Data for only the local player
 	CNetworkVarEmbedded( CPlayerLocalData, m_Local );
 
@@ -413,152 +406,151 @@ public:
 #endif
 
 	// Data common to all other players, too
-	CPlayerState			pl;
+	CPlayerState pl;
 
 	// Player FOV values
-	int						m_iFOV;				// field of view
-	int						m_iFOVStart;		// starting value of the FOV changing over time (client only)
-	float					m_flFOVTime;		// starting time of the FOV zoom
-	int						m_iDefaultFOV;		// default FOV if no other zooms are occurring
-	EHANDLE					m_hZoomOwner;		// This is a pointer to the entity currently controlling the player's zoom
-												// Only this entity can change the zoom state once it has ownership
+	int m_iFOV;          // field of view
+	int m_iFOVStart;     // starting value of the FOV changing over time (client only)
+	float m_flFOVTime;   // starting time of the FOV zoom
+	int m_iDefaultFOV;   // default FOV if no other zooms are occurring
+	EHANDLE m_hZoomOwner;// This is a pointer to the entity currently controlling the player's zoom
+						 // Only this entity can change the zoom state once it has ownership
 
 	// For weapon prediction
-	bool			m_fOnTarget;		//Is the crosshair on a target?
-	
-	char			m_szAnimExtension[32];
+	bool m_fOnTarget;//Is the crosshair on a target?
 
-	int				m_afButtonLast;
-	int				m_afButtonPressed;
-	int				m_afButtonReleased;
+	char m_szAnimExtension[ 32 ];
 
-	int				m_nButtons;
+	int m_afButtonLast;
+	int m_afButtonPressed;
+	int m_afButtonReleased;
 
-	CUserCmd		*m_pCurrentCommand;
+	int m_nButtons;
+
+	CUserCmd* m_pCurrentCommand;
 
 	// Movement constraints
-	EHANDLE			m_hConstraintEntity;
-	Vector			m_vecConstraintCenter;
-	float			m_flConstraintRadius;
-	float			m_flConstraintWidth;
-	float			m_flConstraintSpeedFactor;
+	EHANDLE m_hConstraintEntity;
+	Vector m_vecConstraintCenter;
+	float m_flConstraintRadius;
+	float m_flConstraintWidth;
+	float m_flConstraintSpeedFactor;
 
 protected:
+	void CalcPlayerView( Vector& eyeOrigin, QAngle& eyeAngles, float& fov );
+	void CalcVehicleView( IClientVehicle* pVehicle, Vector& eyeOrigin, QAngle& eyeAngles,
+						  float& zNear, float& zFar, float& fov );
+	virtual void CalcObserverView( Vector& eyeOrigin, QAngle& eyeAngles, float& fov );
+	virtual Vector GetChaseCamViewOffset( CBaseEntity* target );
+	void CalcChaseCamView( Vector& eyeOrigin, QAngle& eyeAngles, float& fov );
+	virtual void CalcInEyeCamView( Vector& eyeOrigin, QAngle& eyeAngles, float& fov );
 
-	void				CalcPlayerView( Vector& eyeOrigin, QAngle& eyeAngles, float& fov );
-	void				CalcVehicleView(IClientVehicle *pVehicle, Vector& eyeOrigin, QAngle& eyeAngles,
-							float& zNear, float& zFar, float& fov );
-	virtual void		CalcObserverView( Vector& eyeOrigin, QAngle& eyeAngles, float& fov );
-	virtual Vector		GetChaseCamViewOffset( CBaseEntity *target );
-	void				CalcChaseCamView( Vector& eyeOrigin, QAngle& eyeAngles, float& fov );
-	virtual void		CalcInEyeCamView( Vector& eyeOrigin, QAngle& eyeAngles, float& fov );
+	virtual float GetDeathCamInterpolationTime();
 
-	virtual float		GetDeathCamInterpolationTime();
-
-	virtual void		CalcDeathCamView( Vector& eyeOrigin, QAngle& eyeAngles, float& fov );
-	void				CalcRoamingView(Vector& eyeOrigin, QAngle& eyeAngles, float& fov);
-	virtual void		CalcFreezeCamView( Vector& eyeOrigin, QAngle& eyeAngles, float& fov );
+	virtual void CalcDeathCamView( Vector& eyeOrigin, QAngle& eyeAngles, float& fov );
+	void CalcRoamingView( Vector& eyeOrigin, QAngle& eyeAngles, float& fov );
+	virtual void CalcFreezeCamView( Vector& eyeOrigin, QAngle& eyeAngles, float& fov );
 
 	// Check to see if we're in vgui input mode...
-	void DetermineVguiInputMode( CUserCmd *pCmd );
+	void DetermineVguiInputMode( CUserCmd* pCmd );
 
 	// Used by prediction, sets the view angles for the player
-	virtual void SetLocalViewAngles( const QAngle &viewAngles );
+	virtual void SetLocalViewAngles( const QAngle& viewAngles );
 	virtual void SetViewAngles( const QAngle& ang );
 
-	// used by client side player footsteps 
+	// used by client side player footsteps
 	surfacedata_t* GetGroundSurface();
 
-	virtual void	FireGameEvent( IGameEvent *event );
+	virtual void FireGameEvent( IGameEvent* event );
 
 protected:
 	// Did we just enter a vehicle this frame?
-	bool			JustEnteredVehicle();
+	bool JustEnteredVehicle();
 
-// DATA
-	int				m_iObserverMode;	// if in spectator mode != 0
-	EHANDLE			m_hObserverTarget;	// current observer target
-	float			m_flObserverChaseDistance; // last distance to observer traget
-	Vector			m_vecFreezeFrameStart;
-	float			m_flFreezeFrameStartTime;	// Time at which we entered freeze frame observer mode
-	float			m_flFreezeFrameDistance;
-	bool			m_bWasFreezeFraming; 
-	float			m_flDeathTime;		// last time player died
+	// DATA
+	int m_iObserverMode;            // if in spectator mode != 0
+	EHANDLE m_hObserverTarget;      // current observer target
+	float m_flObserverChaseDistance;// last distance to observer traget
+	Vector m_vecFreezeFrameStart;
+	float m_flFreezeFrameStartTime;// Time at which we entered freeze frame observer mode
+	float m_flFreezeFrameDistance;
+	bool m_bWasFreezeFraming;
+	float m_flDeathTime;// last time player died
 
-	float			m_flStepSoundTime;
-	bool			m_IsFootprintOnLeft;
+	float m_flStepSoundTime;
+	bool m_IsFootprintOnLeft;
 
 private:
 	// Make sure no one calls this...
 	C_BasePlayer& operator=( const C_BasePlayer& src );
-	C_BasePlayer( const C_BasePlayer & ); // not defined, not accessible
+	C_BasePlayer( const C_BasePlayer& );// not defined, not accessible
 
 	// Vehicle stuff.
-	EHANDLE			m_hVehicle;
-	EHANDLE			m_hOldVehicle;
-	EHANDLE			m_hUseEntity;
-	
-	float			m_flMaxspeed;
+	EHANDLE m_hVehicle;
+	EHANDLE m_hOldVehicle;
+	EHANDLE m_hUseEntity;
 
-	int				m_iBonusProgress;
-	int				m_iBonusChallenge;
+	float m_flMaxspeed;
 
-	CInterpolatedVar< Vector >	m_iv_vecViewOffset;
+	int m_iBonusProgress;
+	int m_iBonusChallenge;
+
+	CInterpolatedVar<Vector> m_iv_vecViewOffset;
 
 	// Not replicated
-	Vector			m_vecWaterJumpVel;
-	float			m_flWaterJumpTime;  // used to be called teleport_time
-	int				m_nImpulse;
+	Vector m_vecWaterJumpVel;
+	float m_flWaterJumpTime;// used to be called teleport_time
+	int m_nImpulse;
 
-	float			m_flSwimSoundTime;
-	Vector			m_vecLadderNormal;
-	
-	QAngle			m_vecOldViewAngles;
+	float m_flSwimSoundTime;
+	Vector m_vecLadderNormal;
 
-	bool			m_bWasFrozen;
-	int				m_flPhysics;
+	QAngle m_vecOldViewAngles;
 
-	int				m_nTickBase;
-	int				m_nFinalPredictedTick;
+	bool m_bWasFrozen;
+	int m_flPhysics;
 
-	EHANDLE			m_pCurrentVguiScreen;
+	int m_nTickBase;
+	int m_nFinalPredictedTick;
 
-	bool			m_bFiredWeapon;
+	EHANDLE m_pCurrentVguiScreen;
+
+	bool m_bFiredWeapon;
 
 
 	// Player flashlight dynamic light pointers
-	CFlashlightEffect *m_pFlashlight;
+	CFlashlightEffect* m_pFlashlight;
 
 	typedef CHandle<C_BaseCombatWeapon> CBaseCombatWeaponHandle;
 	CNetworkVar( CBaseCombatWeaponHandle, m_hLastWeapon );
 
 #if !defined( NO_ENTITY_PREDICTION )
-	CUtlVector< CHandle< C_BaseEntity > > m_SimulatedByThisPlayer;
+	CUtlVector<CHandle<C_BaseEntity>> m_SimulatedByThisPlayer;
 #endif
 
 	// players own view models, left & right hand
-	CHandle< C_BaseViewModel >	m_hViewModel[ MAX_VIEWMODELS ];		
-	
-	float					m_flOldPlayerZ;
-	float					m_flOldPlayerViewOffsetZ;
-	
-	Vector	m_vecVehicleViewOrigin;		// Used to store the calculated view of the player while riding in a vehicle
-	QAngle	m_vecVehicleViewAngles;		// Vehicle angles
-	float	m_flVehicleViewFOV;
-	int		m_nVehicleViewSavedFrame;	// Used to mark which frame was the last one the view was calculated for
+	CHandle<C_BaseViewModel> m_hViewModel[ MAX_VIEWMODELS ];
+
+	float m_flOldPlayerZ;
+	float m_flOldPlayerViewOffsetZ;
+
+	Vector m_vecVehicleViewOrigin;// Used to store the calculated view of the player while riding in a vehicle
+	QAngle m_vecVehicleViewAngles;// Vehicle angles
+	float m_flVehicleViewFOV;
+	int m_nVehicleViewSavedFrame;// Used to mark which frame was the last one the view was calculated for
 
 	// For UI purposes...
-	int				m_iOldAmmo[ MAX_AMMO_TYPES ];
+	int m_iOldAmmo[ MAX_AMMO_TYPES ];
 
-	C_CommandContext		m_CommandContext;
+	C_CommandContext m_CommandContext;
 
 	// For underwater effects
-	float							m_flWaterSurfaceZ;
-	bool							m_bResampleWaterSurface;
-	TimedEvent						m_tWaterParticleTimer;
-	CSmartPtr<WaterDebrisEffect>	m_pWaterEmitter;
+	float m_flWaterSurfaceZ;
+	bool m_bResampleWaterSurface;
+	TimedEvent m_tWaterParticleTimer;
+	CSmartPtr<WaterDebrisEffect> m_pWaterEmitter;
 
-	bool							m_bPlayerUnderwater;
+	bool m_bPlayerUnderwater;
 
 	friend class CPrediction;
 
@@ -571,9 +563,9 @@ private:
 	friend class CHL2GameMovement;
 	friend class CDODGameMovement;
 	friend class CPortalGameMovement;
-	
+
 	// Accessors for gamemovement
-	float GetStepSize( void ) const { return m_Local.m_flStepSize; }
+	float GetStepSize() const { return m_Local.m_flStepSize; }
 
 	float m_flNextAvoidanceTime;
 	float m_flAvoidanceRight;
@@ -582,10 +574,10 @@ private:
 	float m_flAvoidanceDotRight;
 
 protected:
-	virtual bool IsDucked( void ) const { return m_Local.m_bDucked; }
-	virtual bool IsDucking( void ) const { return m_Local.m_bDucking; }
-	virtual float GetFallVelocity( void ) { return m_Local.m_flFallVelocity; }
-	bool ForceSetupBonesAtTimeFakeInterpolation( matrix3x4_t *pBonesOut, float curtimeOffset );
+	virtual bool IsDucked() const { return m_Local.m_bDucked; }
+	virtual bool IsDucking() const { return m_Local.m_bDucking; }
+	virtual float GetFallVelocity() { return m_Local.m_flFallVelocity; }
+	bool ForceSetupBonesAtTimeFakeInterpolation( matrix3x4_t* pBonesOut, float curtimeOffset );
 
 	float m_flLaggedMovementValue;
 
@@ -594,106 +586,93 @@ protected:
 	// the errors not be so jerky.
 	Vector m_vecPredictionError;
 	float m_flPredictionErrorTime;
-	
-	Vector m_vecPreviouslyPredictedOrigin; // Used to determine if non-gamemovement game code has teleported, or tweaked the player's origin
 
-	char m_szLastPlaceName[MAX_PLACE_NAME_LENGTH];	// received from the server
+	Vector m_vecPreviouslyPredictedOrigin;// Used to determine if non-gamemovement game code has teleported, or tweaked the player's origin
+
+	char m_szLastPlaceName[ MAX_PLACE_NAME_LENGTH ];// received from the server
 
 	// Texture names and surface data, used by CGameMovement
-	int				m_surfaceProps;
-	surfacedata_t*	m_pSurfaceData;
-	float			m_surfaceFriction;
-	char			m_chTextureType;
+	int m_surfaceProps;
+	surfacedata_t* m_pSurfaceData;
+	float m_surfaceFriction;
+	char m_chTextureType;
 
-	bool			m_bSentFreezeFrame;
-	float			m_flFreezeZOffset;
+	bool m_bSentFreezeFrame;
+	float m_flFreezeZOffset;
 
-	float			m_flNextAchievementAnnounceTime;
+	float m_flNextAchievementAnnounceTime;
 
-	int				m_nForceVisionFilterFlags; // Force our vision filter to a specific setting
-	int				m_nLocalPlayerVisionFlags;
+	int m_nForceVisionFilterFlags;// Force our vision filter to a specific setting
+	int m_nLocalPlayerVisionFlags;
 
 #if defined USES_ECON_ITEMS
 	// Wearables
-	CUtlVector<CHandle<C_EconWearable > >	m_hMyWearables;
+	CUtlVector<CHandle<C_EconWearable>> m_hMyWearables;
 #endif
 
 private:
-
-	struct StepSoundCache_t
-	{
+	struct StepSoundCache_t {
 		StepSoundCache_t() : m_usSoundNameIndex( 0 ) {}
-		CSoundParameters	m_SoundParameters;
-		unsigned short		m_usSoundNameIndex;
+		CSoundParameters m_SoundParameters;
+		unsigned short m_usSoundNameIndex;
 	};
 	// One for left and one for right side of step
-	StepSoundCache_t		m_StepSoundCache[ 2 ];
+	StepSoundCache_t m_StepSoundCache[ 2 ];
 
 public:
+	const char* GetLastKnownPlaceName() const { return m_szLastPlaceName; }// return the last nav place name the player occupied
 
-	const char *GetLastKnownPlaceName( void ) const	{ return m_szLastPlaceName; }	// return the last nav place name the player occupied
+	float GetLaggedMovementValue() { return m_flLaggedMovementValue; }
+	bool ShouldGoSouth( Vector vNPCForward, Vector vNPCRight );//Such a bad name.
 
-	float GetLaggedMovementValue( void ){ return m_flLaggedMovementValue;	}
-	bool  ShouldGoSouth( Vector vNPCForward, Vector vNPCRight ); //Such a bad name.
-
-	void SetOldPlayerZ( float flOld ) { m_flOldPlayerZ = flOld;	}
+	void SetOldPlayerZ( float flOld ) { m_flOldPlayerZ = flOld; }
 };
 
-EXTERN_RECV_TABLE(DT_BasePlayer);
+EXTERN_RECV_TABLE( DT_BasePlayer );
 
 //-----------------------------------------------------------------------------
 // Inline methods
 //-----------------------------------------------------------------------------
-inline C_BasePlayer *ToBasePlayer( C_BaseEntity *pEntity )
-{
+inline C_BasePlayer* ToBasePlayer( C_BaseEntity* pEntity ) {
 	if ( !pEntity || !pEntity->IsPlayer() )
-		return NULL;
+		return nullptr;
 
 #if IsDebug()
-	Assert( dynamic_cast<C_BasePlayer *>( pEntity ) != NULL );
+	Assert( dynamic_cast<C_BasePlayer*>( pEntity ) != nullptr );
 #endif
 
-	return static_cast<C_BasePlayer *>( pEntity );
+	return static_cast<C_BasePlayer*>( pEntity );
 }
 
-inline C_BaseEntity *C_BasePlayer::GetUseEntity() 
-{ 
+inline C_BaseEntity* C_BasePlayer::GetUseEntity() {
 	return m_hUseEntity;
 }
 
 
-inline IClientVehicle *C_BasePlayer::GetVehicle() 
-{ 
-	C_BaseEntity *pVehicleEnt = m_hVehicle.Get();
-	return pVehicleEnt ? pVehicleEnt->GetClientVehicle() : NULL;
+inline IClientVehicle* C_BasePlayer::GetVehicle() {
+	C_BaseEntity* pVehicleEnt = m_hVehicle.Get();
+	return pVehicleEnt ? pVehicleEnt->GetClientVehicle() : nullptr;
 }
 
-inline bool C_BasePlayer::IsObserver() const 
-{ 
-	return (GetObserverMode() != OBS_MODE_NONE); 
+inline bool C_BasePlayer::IsObserver() const {
+	return ( GetObserverMode() != OBS_MODE_NONE );
 }
 
-inline int C_BasePlayer::GetImpulse( void ) const 
-{ 
-	return m_nImpulse; 
+inline int C_BasePlayer::GetImpulse() const {
+	return m_nImpulse;
 }
 
 
-inline C_CommandContext* C_BasePlayer::GetCommandContext()
-{
+inline C_CommandContext* C_BasePlayer::GetCommandContext() {
 	return &m_CommandContext;
 }
 
-inline int CBasePlayer::CurrentCommandNumber() const
-{
+inline int CBasePlayer::CurrentCommandNumber() const {
 	Assert( m_pCurrentCommand );
 	return m_pCurrentCommand->command_number;
 }
 
-inline const CUserCmd *CBasePlayer::GetCurrentUserCommand() const
-{
+inline const CUserCmd* CBasePlayer::GetCurrentUserCommand() const {
 	Assert( m_pCurrentCommand );
 	return m_pCurrentCommand;
 }
-
-#endif // C_BASEPLAYER_H

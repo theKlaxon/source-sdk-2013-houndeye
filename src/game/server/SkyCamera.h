@@ -4,13 +4,7 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef SKYCAMERA_H
-#define SKYCAMERA_H
-
-#if IsWindows()
 #pragma once
-#endif
 
 class CSkyCamera;
 
@@ -18,30 +12,25 @@ class CSkyCamera;
 //
 // Sky Camera Class
 //
-class CSkyCamera : public CLogicalEntity
-{
+class CSkyCamera : public CLogicalEntity {
 	DECLARE_CLASS( CSkyCamera, CLogicalEntity );
 
 public:
-
 	DECLARE_DATADESC();
 	CSkyCamera();
 	~CSkyCamera();
-	virtual void Spawn( void );
+	virtual void Spawn();
 	virtual void Activate();
 
 public:
-	sky3dparams_t	m_skyboxData;
-	bool			m_bUseAngles;
-	CSkyCamera		*m_pNext;
+	sky3dparams_t m_skyboxData;
+	bool m_bUseAngles;
+	CSkyCamera* m_pNext;
 };
 
 
 //-----------------------------------------------------------------------------
 // Retrives the current skycamera
 //-----------------------------------------------------------------------------
-CSkyCamera*		GetCurrentSkyCamera();
-CSkyCamera*		GetSkyCameraList();
-
-
-#endif // SKYCAMERA_H
+CSkyCamera* GetCurrentSkyCamera();
+CSkyCamera* GetSkyCameraList();

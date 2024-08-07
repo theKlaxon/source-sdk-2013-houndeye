@@ -1,21 +1,13 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
-
-#ifndef VMTPREVIEWPANEL_H
-#define VMTPREVIEWPANEL_H
-
-#if IsWindows()
 #pragma once
-#endif
-
-
-#include "vgui_controls/Panel.h"
-#include "tier1/utlstring.h"
 #include "materialsystem/MaterialSystemUtil.h"
 #include "mathlib/vector.h"
+#include "tier1/utlstring.h"
+#include "vgui_controls/Panel.h"
 
 
 //-----------------------------------------------------------------------------
@@ -28,15 +20,14 @@
 // VMT Preview panel
 //
 //-----------------------------------------------------------------------------
-class CVMTPreviewPanel : public vgui::Panel
-{
+class CVMTPreviewPanel : public vgui::Panel {
 	DECLARE_CLASS_SIMPLE( CVMTPreviewPanel, vgui::Panel );
 
 public:
 	// constructor
-	CVMTPreviewPanel( vgui::Panel *pParent, const char *pName );
-	void SetVMT( const char *pMaterialName );
-	const char *GetVMT() const;
+	CVMTPreviewPanel( vgui::Panel* pParent, const char* pName );
+	void SetVMT( const char* pMaterialName );
+	const char* GetVMT() const;
 
 	// Paints the texture
 	virtual void Paint( void );
@@ -54,16 +45,16 @@ private:
 	void SetupOrthoMatrix( int nWidth, int nHeight );
 
 	// Sets the camera to look at the the thing we're spinning around
-	void LookAt( const Vector &vecLookAt, float flRadius );
+	void LookAt( const Vector& vecLookAt, float flRadius );
 
 	// Sets up lighting state
 	void SetupLightingState();
 
 	// Draw a sphere
-	void RenderSphere( const Vector &vCenter, float flRadius, int nTheta, int nPhi );
+	void RenderSphere( const Vector& vCenter, float flRadius, int nTheta, int nPhi );
 
 	// Draw sprite-card based materials
-	void RenderSpriteCard( const Vector &vCenter, float flRadius );
+	void RenderSpriteCard( const Vector& vCenter, float flRadius );
 
 	CUtlString m_VMTName;
 	CMaterialReference m_Material;
@@ -76,6 +67,3 @@ private:
 	float m_flLastRotationTime;
 	bool m_bDrawIn3DMode;
 };
-
-
-#endif // VMTPREVIEWPANEL_H

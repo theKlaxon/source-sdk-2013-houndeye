@@ -4,35 +4,22 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef SDK_TEAM_H
-#define SDK_TEAM_H
-
-#if IsWindows()
 #pragma once
-#endif
-
-
-#include "utlvector.h"
 #include "team.h"
+#include "utlvector.h"
 
 
 //-----------------------------------------------------------------------------
 // Purpose: Team Manager
 //-----------------------------------------------------------------------------
-class CSDKTeam : public CTeam
-{
+class CSDKTeam : public CTeam {
 	DECLARE_CLASS( CSDKTeam, CTeam );
 	DECLARE_SERVERCLASS();
 
 public:
-
 	// Initialization
-	virtual void Init( const char *pName, int iNumber );
+	virtual void Init( const char* pName, int iNumber );
 };
 
 
-extern CSDKTeam *GetGlobalSDKTeam( int iIndex );
-
-
-#endif // TF_TEAM_H
+extern CSDKTeam* GetGlobalSDKTeam( int iIndex );

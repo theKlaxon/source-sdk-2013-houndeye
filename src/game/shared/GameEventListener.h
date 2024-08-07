@@ -1,66 +1,55 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef GAME_EVENT_LISTENER_H
-#define GAME_EVENT_LISTENER_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "igameevents.h"
-extern IGameEventManager2 *gameeventmanager;
+
+
+extern IGameEventManager2* gameeventmanager;
 
 // A safer method than inheriting straight from IGameEventListener2.
-// Avoids requiring the user to remove themselves as listeners in 
+// Avoids requiring the user to remove themselves as listeners in
 // their deconstructor, and sets the serverside variable based on
 // our dll location.
-class CGameEventListener : public IGameEventListener2
-{
+class CGameEventListener : public IGameEventListener2 {
 public:
-	CGameEventListener() : m_bRegisteredForEvents(false)
-	{
-	}
+	CGameEventListener()
+		: m_bRegisteredForEvents( false ) { }
 
-	~CGameEventListener()
-	{
+	~CGameEventListener() {
 		StopListeningForAllEvents();
 	}
 
-	void ListenForGameEvent( const char *name )
-	{
+	void ListenForGameEvent( const char* name ) {
 		m_bRegisteredForEvents = true;
 
-#ifdef CLIENT_DLL
-		bool bServerSide = false;
-#else
-		bool bServerSide = true;
-#endif
-		if ( gameeventmanager )
+		#ifdef CLIENT_DLL
+			bool bServerSide = false;
+		#else
+			bool bServerSide = true;
+		#endif
+		if ( gameeventmanager ) {
 			gameeventmanager->AddListener( this, name, bServerSide );
+		}
 	}
 
-	void StopListeningForAllEvents()
-	{
+	void StopListeningForAllEvents() {
 		// remove me from list
-		if ( m_bRegisteredForEvents )
-		{
-			if ( gameeventmanager )
+		if ( m_bRegisteredForEvents ) {
+			if ( gameeventmanager ) {
 				gameeventmanager->RemoveListener( this );
+			}
 			m_bRegisteredForEvents = false;
 		}
 	}
 
 	// Intentionally abstract
-	virtual void FireGameEvent( IGameEvent *event ) = 0;
+	virtual void FireGameEvent( IGameEvent* event ) = 0;
 
 private:
-
 	// Have we registered for any events?
 	bool m_bRegisteredForEvents;
 };
-
-#endif

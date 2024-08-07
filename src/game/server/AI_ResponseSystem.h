@@ -27,7 +27,7 @@ abstract_class IResponseSystem
 public:
 	virtual ~IResponseSystem() {}
 
-	virtual bool FindBestResponse( const AI_CriteriaSet& set, AI_Response& response, IResponseFilter *pFilter = NULL ) = 0;
+	virtual bool FindBestResponse( const AI_CriteriaSet& set, AI_Response& response, IResponseFilter *pFilter = nullptr ) = 0;
 	virtual void GetAllResponses( CUtlVector<AI_Response *> *pResponses ) = 0;
 	virtual void PrecacheResponses( bool bEnable ) = 0;
 };

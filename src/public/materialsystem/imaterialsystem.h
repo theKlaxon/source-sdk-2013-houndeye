@@ -5,13 +5,8 @@
 // $NoKeywords: $
 //
 //===========================================================================//
+#pragma once
 
-#ifndef IMATERIALSYSTEM_H
-#define IMATERIALSYSTEM_H
-
-#if IsWindows()
-	#pragma once
-#endif
 
 #define OVERBRIGHT 2.0f
 #define OO_OVERBRIGHT ( 1.0f / 2.0f )
@@ -612,7 +607,7 @@ public:
 	virtual bool SupportsMSAAMode( int nMSAAMode ) = 0;
 
 	// FIXME: REMOVE! Get video card identitier
-	virtual const MaterialSystemHardwareIdentifier_t& GetVideoCardIdentifier( void ) const = 0;
+	virtual const MaterialSystemHardwareIdentifier_t& GetVideoCardIdentifier() const = 0;
 
 	// Use this to spew information about the 3D layer
 	virtual void SpewDriverInfo() const = 0;
@@ -653,8 +648,8 @@ public:
 	// Flushes managed textures from the texture cacher
 	virtual void EvictManagedResources() = 0;
 
-	virtual void ReleaseResources( void ) = 0;
-	virtual void ReacquireResources( void ) = 0;
+	virtual void ReleaseResources() = 0;
+	virtual void ReacquireResources() = 0;
 
 
 	// -----------------------------------------------------------
@@ -725,7 +720,7 @@ public:
 	//---------------------------------------------------------
 
 	virtual void DebugPrintUsedMaterials( const char* pSearchSubString, bool bVerbose ) = 0;
-	virtual void DebugPrintUsedTextures( void ) = 0;
+	virtual void DebugPrintUsedTextures() = 0;
 
 	virtual void ToggleSuppressMaterial( char const* pMaterialName ) = 0;
 	virtual void ToggleDebugMaterial( char const* pMaterialName ) = 0;
@@ -735,9 +730,9 @@ public:
 	// Misc features
 	//---------------------------------------------------------
 	//returns whether fast clipping is being used or not - needed to be exposed for better per-object clip behavior
-	virtual bool UsingFastClipping( void ) = 0;
+	virtual bool UsingFastClipping() = 0;
 
-	virtual int StencilBufferBits( void ) = 0;//number of bits per pixel in the stencil buffer
+	virtual int StencilBufferBits() = 0;//number of bits per pixel in the stencil buffer
 
 
 	//---------------------------------------------------------
@@ -914,9 +909,9 @@ public:
 	// -----------------------------------------------------------
 	virtual IMatRenderContext* GetRenderContext() = 0;
 
-	virtual bool SupportsShadowDepthTextures( void ) = 0;
-	virtual void BeginUpdateLightmaps( void ) = 0;
-	virtual void EndUpdateLightmaps( void ) = 0;
+	virtual bool SupportsShadowDepthTextures() = 0;
+	virtual void BeginUpdateLightmaps() = 0;
+	virtual void EndUpdateLightmaps() = 0;
 
 	// -----------------------------------------------------------
 	// Methods to force the material system into non-threaded, non-queued mode
@@ -927,7 +922,7 @@ public:
 	// Vendor-dependent shadow depth texture format
 	virtual ImageFormat GetShadowDepthTextureFormat() = 0;
 
-	virtual bool SupportsFetch4( void ) = 0;
+	virtual bool SupportsFetch4() = 0;
 
 	// Create a custom render context. Cannot be used to create MATERIAL_HARDWARE_CONTEXT
 	virtual IMatRenderContext* CreateRenderContext( MaterialContextType_t type ) = 0;
@@ -953,7 +948,7 @@ public:
 	virtual int AllocateDynamicLightmap( int lightmapSize[ 2 ], int* pOutOffsetIntoPage, int frameID ) = 0;
 
 	virtual void SetExcludedTextures( const char* pScriptName ) = 0;
-	virtual void UpdateExcludedTextures( void ) = 0;
+	virtual void UpdateExcludedTextures() = 0;
 
 	virtual bool IsInFrame() const = 0;
 
@@ -968,7 +963,7 @@ public:
 	virtual IMaterial* FindMaterialEx( char const* pMaterialName, const char* pTextureGroupName, int nContext, bool complain = true, const char* pComplainPrefix = NULL ) = 0;
 
 #ifdef DX_TO_GL_ABSTRACTION
-	virtual void DoStartupShaderPreloading( void ) = 0;
+	virtual void DoStartupShaderPreloading() = 0;
 #endif
 
 	// Sets the override sizes for all render target size tests. These replace the frame buffer size.
@@ -1019,7 +1014,7 @@ public:
 	// pass in an ITexture (that is build with "rendertarget" "1") or
 	// pass in NULL for the regular backbuffer.
 	virtual void SetRenderTarget( ITexture * pTexture ) = 0;
-	virtual ITexture* GetRenderTarget( void ) = 0;
+	virtual ITexture* GetRenderTarget() = 0;
 
 	virtual void GetRenderTargetDimensions( int& width, int& height ) const = 0;
 
@@ -1057,8 +1052,8 @@ public:
 
 	// matrix api
 	virtual void MatrixMode( MaterialMatrixMode_t matrixMode ) = 0;
-	virtual void PushMatrix( void ) = 0;
-	virtual void PopMatrix( void ) = 0;
+	virtual void PushMatrix() = 0;
+	virtual void PopMatrix() = 0;
 	virtual void LoadMatrix( VMatrix const& matrix ) = 0;
 	virtual void LoadMatrix( matrix3x4_t const& matrix ) = 0;
 	virtual void MultMatrix( VMatrix const& matrix ) = 0;
@@ -1067,7 +1062,7 @@ public:
 	virtual void MultMatrixLocal( matrix3x4_t const& matrix ) = 0;
 	virtual void GetMatrix( MaterialMatrixMode_t matrixMode, VMatrix * matrix ) = 0;
 	virtual void GetMatrix( MaterialMatrixMode_t matrixMode, matrix3x4_t * matrix ) = 0;
-	virtual void LoadIdentity( void ) = 0;
+	virtual void LoadIdentity() = 0;
 	virtual void Ortho( double left, double top, double right, double bottom, double zNear, double zFar ) = 0;
 	virtual void PerspectiveX( double fovx, double aspect, double zNear, double zFar ) = 0;
 	virtual void PickMatrix( int x, int y, int width, int height ) = 0;
@@ -1095,7 +1090,7 @@ public:
 	virtual void FogStart( float fStart ) = 0;
 	virtual void FogEnd( float fEnd ) = 0;
 	virtual void SetFogZ( float fogZ ) = 0;
-	virtual MaterialFogMode_t GetFogMode( void ) = 0;
+	virtual MaterialFogMode_t GetFogMode() = 0;
 
 	virtual void FogColor3f( float r, float g, float b ) = 0;
 	virtual void FogColor3fv( float const* rgb ) = 0;
@@ -1186,7 +1181,7 @@ public:
 	//
 
 	// Allocate and delete query objects.
-	virtual OcclusionQueryObjectHandle_t CreateOcclusionQueryObject( void ) = 0;
+	virtual OcclusionQueryObjectHandle_t CreateOcclusionQueryObject() = 0;
 	virtual void DestroyOcclusionQueryObject( OcclusionQueryObjectHandle_t ) = 0;
 
 	// Bracket drawing with begin and end so that we can get counts next frame.
@@ -1234,11 +1229,11 @@ public:
 	virtual void SetFlexWeights( int nFirstWeight, int nCount, const MorphWeight_t* pWeights ) = 0;
 
 	// FIXME: Remove
-	virtual void Unused4(){};
-	virtual void Unused5(){};
-	virtual void Unused6(){};
-	virtual void Unused7(){};
-	virtual void Unused8(){};
+	virtual void Unused4() {};
+	virtual void Unused5() {};
+	virtual void Unused6() {};
+	virtual void Unused7() {};
+	virtual void Unused8() {};
 
 	// Read w/ stretch to a host-memory buffer
 	virtual void ReadPixelsAndStretch( Rect_t * pSrcRect, Rect_t * pDstRect, unsigned char* pBuffer, ImageFormat dstFormat, int nDstStride ) = 0;
@@ -1278,7 +1273,7 @@ public:
 	virtual void PushRenderTargetAndViewport( ITexture * pTexture, ITexture * pDepthTexture, int nViewX, int nViewY, int nViewW, int nViewH ) = 0;
 
 	// This will pop a rendertarget + viewport
-	virtual void PopRenderTargetAndViewport( void ) = 0;
+	virtual void PopRenderTargetAndViewport() = 0;
 
 	// Binds a particular texture as the current lightmap
 	virtual void BindLightmapTexture( ITexture * pLightmapTexture ) = 0;
@@ -1312,7 +1307,7 @@ public:
 	// rendering clip planes, beware that only the most recently pushed plane will actually be used in a sizeable chunk of hardware configurations
 	// and that changes to the clip planes mid-frame while UsingFastClipping() is true will result unresolvable depth inconsistencies
 	virtual void PushCustomClipPlane( const float* pPlane ) = 0;
-	virtual void PopCustomClipPlane( void ) = 0;
+	virtual void PopCustomClipPlane() = 0;
 
 	// Returns the number of vertices + indices we can render using the dynamic mesh
 	// Passing true in the second parameter will return the max # of vertices + indices
@@ -1376,11 +1371,11 @@ public:
 	// A value of [1.0f, 1.0f, 1.0f] should match non-tone-mapped rendering.
 	virtual void SetToneMappingScaleLinear( const Vector& scale ) = 0;
 
-	virtual Vector GetToneMappingScaleLinear( void ) = 0;
+	virtual Vector GetToneMappingScaleLinear() = 0;
 	virtual void SetShadowDepthBiasFactors( float fSlopeScaleDepthBias, float fDepthBias ) = 0;
 
 	// Apply stencil operations to every pixel on the screen without disturbing depth or color buffers
-	virtual void PerformFullScreenStencilOperation( void ) = 0;
+	virtual void PerformFullScreenStencilOperation() = 0;
 
 	// Sets lighting origin for the current model (needed to convert directional lights to points)
 	virtual void SetLightingOrigin( Vector vLightingOrigin ) = 0;
@@ -1713,5 +1708,3 @@ static void DoMatSysQueueMark( IMaterialSystem* pMaterialSystem, const char* psz
 
 extern IMaterialSystem* materials;
 extern IMaterialSystem* g_pMaterialSystem;
-
-#endif// IMATERIALSYSTEM_H

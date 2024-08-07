@@ -16,7 +16,6 @@
     #include <intrin.h>
     #include <wow64apiset.h>
     #include <processthreadsapi.h>
-
 #elif IsPosix()
 	#include <cpuid.h>
 	#include <sys/utsname.h>
@@ -101,22 +100,23 @@ struct tm* Plat_localtime( const time_t* timep, struct tm* result ) {
 
 const CPUInformation* GetCPUInformation() {
 	static char vendor[13] { 0 };
+	// NOTE: All x86 processors nowadays support the following: SSE, SSE2, HT, SSSE3
 	static CPUInformation info{
 		.m_Size   = sizeof( CPUInformation ),
 		.m_bRDTSC = false,
 		.m_bCMOV  = true,
 		.m_bFCMOV = false,
-		.m_bSSE   = true,   // NOTE: All x86 processors nowadays support this
-		.m_bSSE2  = true,   // NOTE: All x86 processors nowadays support this
+		.m_bSSE   = IsPC() || SDL_HasSSE(),
+		.m_bSSE2  = IsPC() || SDL_HasSSE2(),
 		.m_b3DNow = false,
 		.m_bMMX   = SDL_HasMMX() != 0,
-		.m_bHT    = true,   // NOTE: All x86 processors nowadays support this
+		.m_bHT    = true,
 
-		.m_nLogicalProcessors = static_cast<uint8>(SDL_GetCPUCount()),
-		.m_nPhysicalProcessors = static_cast<uint8>(SDL_GetCPUCount()),
+		.m_nLogicalProcessors = static_cast<uint8>( SDL_GetCPUCount() ),
+		.m_nPhysicalProcessors = static_cast<uint8>( SDL_GetCPUCount() ),
 
 		.m_bSSE3  = SDL_HasSSE3() != 0,
-		.m_bSSSE3 = true,   // NOTE: All x86 processors nowadays support this
+		.m_bSSSE3 = IsPC(),
 		.m_bSSE4a = false,
 		.m_bSSE41 = SDL_HasSSE41() != 0,
 		.m_bSSE42 = SDL_HasSSE42() != 0,
@@ -168,8 +168,9 @@ const tchar* Plat_GetCommandLine() {
 		return GetCommandLine();
 	#elif IsPosix()
 		static tchar cmdline[2048] { 0 };
-		if ( cmdline[0] != '\0' )
+		if ( cmdline[0] != '\0' ) {
 			return cmdline;
+		}
 
 		auto file{ std::fopen( "/proc/self/cmdline", "r" ) };
 		std::fread( cmdline, 1, sizeof( cmdline ) - 1, file );
@@ -180,8 +181,8 @@ const tchar* Plat_GetCommandLine() {
 		#error "Plat_GetCommandLine: Missing implementation"
 	#endif
 }
-#if ! IsWindows()
-	void Plat_SetCommandLine( const char* cmdLine ) {
+#if !IsWindows()
+	void Plat_SetCommandLine( const char* ) {
 		AssertUnreachable();
 	}
 #endif
@@ -219,7 +220,7 @@ void* Plat_SimpleLog( const tchar* file, int line );
 
 		return false;
 	}
-	PLATFORM_INTERFACE void Plat_DebugString( const char* );
+	PLATFORM_INTERFACE void Plat_DebugString( const char* ) { /* do nothing */ }
 #elif IsWindows()
 	PLATFORM_INTERFACE bool Plat_IsInDebugSession() {
 		return IsDebuggerPresent();

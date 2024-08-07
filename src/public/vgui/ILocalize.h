@@ -1,24 +1,14 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //===========================================================================//
-
-#ifndef ILOCALIZE_H
-#define ILOCALIZE_H
-
-#if IsWindows()
 #pragma once
-#endif
-
 #include "tier1/ilocalize.h"
 
-namespace vgui
-{
-	class ILocalize : public ::ILocalize { };		// backwards compatability with vgui::ILocalize declarations
-}
+namespace vgui {
+	class ILocalize : public ::ILocalize {};// backwards compatability with vgui::ILocalize declarations
+}// namespace vgui
 
 #define VGUI_LOCALIZE_INTERFACE_VERSION "VGUI_Localize005"
-
-#endif // ILOCALIZE_H

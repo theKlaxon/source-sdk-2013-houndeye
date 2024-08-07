@@ -4,25 +4,17 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef ENV_HEADCRABCANISTER_SHARED_H
-#define ENV_HEADCRABCANISTER_SHARED_H
-
-#if IsWindows()
 #pragma once
-#endif
-
-#include "vstdlib/random.h"
 #include "mathlib/vector.h"
-#include "utlvector.h"
 #include "networkvar.h"
+#include "utlvector.h"
+#include "vstdlib/random.h"
 
 //=============================================================================
 //
 // Shared HeadcrabCanister Class
 //
-class CEnvHeadcrabCanisterShared
-{
+class CEnvHeadcrabCanisterShared {
 	DECLARE_CLASS_NOBASE( CEnvHeadcrabCanisterShared );
 	DECLARE_EMBEDDED_NETWORKVAR();
 	DECLARE_SIMPLE_DATADESC();
@@ -31,14 +23,14 @@ public:
 	CEnvHeadcrabCanisterShared();
 
 	// Initialization.
-	void InitInWorld( float flLaunchTime, const Vector &vecStartPosition, const QAngle &vecStartAngles, const Vector &vecDirection, const Vector &vecImpactPosition, bool bLaunchedFromWithinWorld = false );
-	void InitInSkybox( float flLaunchTime, const Vector &vecStartPosition, const QAngle &vecStartAngles, const Vector &vecDirection, const Vector &vecImpactPosition, const Vector &vecSkyboxOrigin, float flSkyboxScale );
+	void InitInWorld( float flLaunchTime, const Vector& vecStartPosition, const QAngle& vecStartAngles, const Vector& vecDirection, const Vector& vecImpactPosition, bool bLaunchedFromWithinWorld = false );
+	void InitInSkybox( float flLaunchTime, const Vector& vecStartPosition, const QAngle& vecStartAngles, const Vector& vecDirection, const Vector& vecImpactPosition, const Vector& vecSkyboxOrigin, float flSkyboxScale );
 
 	// Returns the position of the object at a given time.
-	void GetPositionAtTime( float flTime, Vector &vecPosition, QAngle &vecAngles );
+	void GetPositionAtTime( float flTime, Vector& vecPosition, QAngle& vecAngles );
 
 	// Returns whether or not the object is the the skybox
-	bool IsInSkybox( );
+	bool IsInSkybox();
 
 	// Returns the time at which it enters the world
 	float GetEnterWorldTime() const;
@@ -51,14 +43,14 @@ public:
 
 public:
 	// The objects initial parametric conditions.
-	CNetworkVector(	m_vecStartPosition );
-	CNetworkVector(	m_vecEnterWorldPosition );
-	CNetworkVector(	m_vecDirection );	
+	CNetworkVector( m_vecStartPosition );
+	CNetworkVector( m_vecEnterWorldPosition );
+	CNetworkVector( m_vecDirection );
 	CNetworkQAngle( m_vecStartAngles );
 
-	CNetworkVar( float,	m_flFlightTime );
-	CNetworkVar( float,	m_flFlightSpeed );
-	CNetworkVar( float,	m_flLaunchTime );
+	CNetworkVar( float, m_flFlightTime );
+	CNetworkVar( float, m_flFlightSpeed );
+	CNetworkVar( float, m_flLaunchTime );
 
 	CNetworkVar( float, m_flInitialZSpeed );
 	CNetworkVar( float, m_flZAcceleration );
@@ -69,18 +61,18 @@ public:
 	CNetworkVector( m_vecParabolaDirection );
 
 	// The time at which the canister enters the skybox
-	CNetworkVar( float,	m_flWorldEnterTime );
+	CNetworkVar( float, m_flWorldEnterTime );
 
 	// Skybox data
-	CNetworkVector(	m_vecSkyboxOrigin );
+	CNetworkVector( m_vecSkyboxOrigin );
 	CNetworkVar( float, m_flSkyboxScale );
 	CNetworkVar( bool, m_bInSkybox );
 
 private:
-	float	m_flLaunchHeight;
+	float m_flLaunchHeight;
 
 	// Calculate the enter time. (called from Init)
-	void CalcEnterTime( const Vector &vecTriggerMins, const Vector &vecTriggerMaxs );			
+	void CalcEnterTime( const Vector& vecTriggerMins, const Vector& vecTriggerMaxs );
 
 	friend class CEnvHeadcrabCanister;
 	friend class C_EnvHeadcrabCanister;
@@ -176,5 +168,3 @@ public:
 	CUtlVector<HeadcrabCanistertarget_t>	m_aTargets;
 };
 */
-
-#endif // ENV_HEADCRAB_CANISTER_SHARED_H

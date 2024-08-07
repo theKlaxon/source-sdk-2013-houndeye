@@ -1,26 +1,18 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef PLAYERLOCALDATA_H
-#define PLAYERLOCALDATA_H
-#if IsWindows()
 #pragma once
-#endif
-
-
-#include "playernet_vars.h"
-#include "networkvar.h"
 #include "fogcontroller.h"
+#include "networkvar.h"
+#include "playernet_vars.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: Player specific data ( sent only to local player, too )
 //-----------------------------------------------------------------------------
-class CPlayerLocalData
-{
+class CPlayerLocalData {
 public:
 	// Save/restore
 	DECLARE_SIMPLE_DATADESC();
@@ -30,19 +22,18 @@ public:
 
 	CPlayerLocalData();
 
-	void UpdateAreaBits( CBasePlayer *pl, unsigned char chAreaPortalBits[MAX_AREA_PORTAL_STATE_BYTES] );
+	void UpdateAreaBits( CBasePlayer* pl, unsigned char chAreaPortalBits[ MAX_AREA_PORTAL_STATE_BYTES ] );
 
 
 public:
+	CNetworkArray( unsigned char, m_chAreaBits, MAX_AREA_STATE_BYTES );             // Which areas are potentially visible to the client?
+	CNetworkArray( unsigned char, m_chAreaPortalBits, MAX_AREA_PORTAL_STATE_BYTES );// Which area portals are open?
 
-	CNetworkArray( unsigned char, m_chAreaBits, MAX_AREA_STATE_BYTES );								// Which areas are potentially visible to the client?
-	CNetworkArray( unsigned char, m_chAreaPortalBits, MAX_AREA_PORTAL_STATE_BYTES );	// Which area portals are open?
+	CNetworkVar( int, m_iHideHUD );   // bitfields containing sections of the HUD to hide
+	CNetworkVar( float, m_flFOVRate );// rate at which the FOV changes (defaults to 0)
 
-	CNetworkVar( int,	m_iHideHUD );		// bitfields containing sections of the HUD to hide
-	CNetworkVar( float, m_flFOVRate );		// rate at which the FOV changes (defaults to 0)
-		
-	Vector				m_vecOverViewpoint;			// Viewpoint overriding the real player's viewpoint
-	
+	Vector m_vecOverViewpoint;// Viewpoint overriding the real player's viewpoint
+
 	// Fully ducked
 	CNetworkVar( bool, m_bDucked );
 	// In process of ducking
@@ -55,16 +46,17 @@ public:
 	// Jump time, time to auto unduck (since we auto crouch jump now).
 	CNetworkVar( float, m_flJumpTime );
 	// Step sound side flip/flip
-	int m_nStepside;;
+	int m_nStepside;
+	;
 	// Velocity at time when we hit ground
 	CNetworkVar( float, m_flFallVelocity );
 	// Previous button state
 	int m_nOldButtons;
-	class CSkyCamera *m_pOldSkyCamera;
-	// Base velocity that was passed in to server physics so 
+	class CSkyCamera* m_pOldSkyCamera;
+	// Base velocity that was passed in to server physics so
 	//  client can predict conveyors correctly.  Server zeroes it, so we need to store here, too.
 	// auto-decaying view angle adjustment
-	CNetworkQAngle( m_vecPunchAngle );		
+	CNetworkQAngle( m_vecPunchAngle );
 	CNetworkQAngle( m_vecPunchAngleVel );
 	// Draw view model for the player
 	CNetworkVar( bool, m_bDrawViewmodel );
@@ -79,14 +71,11 @@ public:
 	CNetworkVarEmbedded( sky3dparams_t, m_skybox3d );
 	// world fog
 	CNetworkVarEmbedded( fogplayerparams_t, m_PlayerFog );
-	fogparams_t			m_fog;
+	fogparams_t m_fog;
 	// audio environment
 	CNetworkVarEmbedded( audioparams_t, m_audio );
 
 	CNetworkVar( bool, m_bSlowMovement );
 };
 
-EXTERN_SEND_TABLE(DT_Local);
-
-
-#endif // PLAYERLOCALDATA_H
+EXTERN_SEND_TABLE( DT_Local );

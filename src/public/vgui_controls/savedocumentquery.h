@@ -3,22 +3,15 @@
 // This dialog asks if you want to save your work
 //
 //=============================================================================
-
-#ifndef SAVEDOCUMENTQUERY_H
-#define SAVEDOCUMENTQUERY_H
-
-#if IsWindows()
 #pragma once
-#endif
 
 
 //-----------------------------------------------------------------------------
 // Forward declarations
 //-----------------------------------------------------------------------------
 class KeyValues;
-namespace vgui
-{
-class Panel;
+namespace vgui {
+	class Panel;
 }
 
 
@@ -31,7 +24,4 @@ class Panel;
 //		"commandname" - additional command send after saving (SAVEDOC_POSTCOMMAND_AFTER_SAVE)
 //		"OnMarkNotDirty" - when we want to mark the file not dirty
 //-----------------------------------------------------------------------------
-void ShowSaveDocumentQuery( vgui::Panel *pParent, const char *pFileName, const char *pFileType, int nContext, vgui::Panel *pActionSignalTarget, KeyValues *pPostSaveCommand );
-
-
-#endif // SAVEDOCUMENTQUERY_H
+void ShowSaveDocumentQuery( vgui::Panel* pParent, const char* pFileName, const char* pFileType, int nContext, vgui::Panel* pActionSignalTarget, KeyValues* pPostSaveCommand );

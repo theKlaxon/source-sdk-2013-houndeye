@@ -4,22 +4,15 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef AI_NAVGOALTYPE_H
-#define AI_NAVGOALTYPE_H
-
-#if IsWindows()
 #pragma once
-#endif
 
 // =======================================
-//  Movement goals 
+//  Movement goals
 //		Used both to store the current
 //		movment goal in m_routeGoalType
 //		and to or/and with route
 // =======================================
-enum GoalType_t 
-{
+enum GoalType_t {
 	GOALTYPE_NONE,
 	GOALTYPE_TARGETENT,
 	GOALTYPE_ENEMY,
@@ -28,8 +21,6 @@ enum GoalType_t
 	GOALTYPE_LOCATION_NEAREST_NODE,
 	GOALTYPE_FLANK,
 	GOALTYPE_COVER,
-	
+
 	GOALTYPE_INVALID
 };
-
-#endif // AI_NAVGOALTYPE_H

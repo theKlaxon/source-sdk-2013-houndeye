@@ -1,23 +1,16 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
-
-#ifndef GROUNDLINK_H
-#define GROUNDLINK_H
-#if IsWindows()
 #pragma once
-#endif
+
 
 //-----------------------------------------------------------------------------
 // Purpose: Used for tracking many to one ground entity chains ( many ents can share a single ground entity )
 //-----------------------------------------------------------------------------
-struct groundlink_t
-{
-	EHANDLE					entity;
-	groundlink_t			*nextLink;
-	groundlink_t			*prevLink;
+struct groundlink_t {
+	EHANDLE entity;
+	groundlink_t* nextLink;
+	groundlink_t* prevLink;
 };
-
-#endif // GROUNDLINK_H

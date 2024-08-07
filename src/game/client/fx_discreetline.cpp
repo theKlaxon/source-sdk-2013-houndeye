@@ -30,7 +30,7 @@ CFXDiscreetLine::CFXDiscreetLine( const char *name, const Vector& start, const V
 : CClientSideEffect( name )
 {
 	assert( materials );
-	if ( materials == NULL )
+	if ( materials == nullptr )
 		return;
 
 	// Create a material...
@@ -47,7 +47,7 @@ CFXDiscreetLine::CFXDiscreetLine( const char *name, const Vector& start, const V
 	m_fLength			= length;
 }
 
-CFXDiscreetLine::~CFXDiscreetLine( void )
+CFXDiscreetLine::~CFXDiscreetLine()
 {
 	Destroy();
 }
@@ -135,7 +135,7 @@ void CFXDiscreetLine::Draw( double frametime )
 		}
 
 		//Bind the material
-		pMesh = pRenderContext->GetDynamicMesh( true, NULL, NULL, m_pMaterial );
+		pMesh = pRenderContext->GetDynamicMesh( true, nullptr, nullptr, m_pMaterial );
 
 		meshBuilder.Begin( pMesh, MATERIAL_QUADS, 2 );
 
@@ -205,7 +205,7 @@ void CFXDiscreetLine::Draw( double frametime )
 	else
 	{
 		//Bind the material
-		pMesh = pRenderContext->GetDynamicMesh( true, NULL, NULL, m_pMaterial );
+		pMesh = pRenderContext->GetDynamicMesh( true, nullptr, nullptr, m_pMaterial );
 
 		meshBuilder.Begin( pMesh, MATERIAL_QUADS, 1 );
 
@@ -249,7 +249,7 @@ IsActive
 ==================================================
 */
 
-bool CFXDiscreetLine::IsActive( void )
+bool CFXDiscreetLine::IsActive()
 {
 	return ( m_fLife > 0.0 ) ? true : false;
 }
@@ -260,13 +260,13 @@ Destroy
 ==================================================
 */
 
-void CFXDiscreetLine::Destroy( void )
+void CFXDiscreetLine::Destroy()
 {
 	//Release the material
-	if ( m_pMaterial != NULL )
+	if ( m_pMaterial != nullptr )
 	{
 		m_pMaterial->DecrementReferenceCount();
-		m_pMaterial = NULL;
+		m_pMaterial = nullptr;
 	}
 }
 

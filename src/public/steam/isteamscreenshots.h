@@ -3,13 +3,7 @@
 // Purpose: public interface to user remote file storage in Steam
 //
 //=============================================================================
-
-#ifndef ISTEAMSCREENSHOTS_H
-#define ISTEAMSCREENSHOTS_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "isteamclient.h"
 
 const uint32 k_nScreenshotMaxTaggedUsers = 32;
@@ -22,26 +16,25 @@ const int k_cubUFSTagValueMax = 255;
 const int k_ScreenshotThumbWidth = 200;
 
 // Handle is valid for the lifetime of your process and no longer
-typedef uint32 ScreenshotHandle; 
+typedef uint32 ScreenshotHandle;
 #define INVALID_SCREENSHOT_HANDLE 0
 
 //-----------------------------------------------------------------------------
 // Purpose: Functions for adding screenshots to the user's screenshot library
 //-----------------------------------------------------------------------------
-class ISteamScreenshots
-{
+class ISteamScreenshots {
 public:
 	// Writes a screenshot to the user's screenshot library given the raw image data, which must be in RGB format.
 	// The return value is a handle that is valid for the duration of the game process and can be used to apply tags.
-	virtual ScreenshotHandle WriteScreenshot( void *pubRGB, uint32 cubRGB, int nWidth, int nHeight ) = 0;
+	virtual ScreenshotHandle WriteScreenshot( void* pubRGB, uint32 cubRGB, int nWidth, int nHeight ) = 0;
 
 	// Adds a screenshot to the user's screenshot library from disk.  If a thumbnail is provided, it must be 200 pixels wide and the same aspect ratio
 	// as the screenshot, otherwise a thumbnail will be generated if the user uploads the screenshot.  The screenshots must be in either JPEG or TGA format.
 	// The return value is a handle that is valid for the duration of the game process and can be used to apply tags.
 	// JPEG, TGA, and PNG formats are supported.
-	virtual ScreenshotHandle AddScreenshotToLibrary( const char *pchFilename, const char *pchThumbnailFilename, int nWidth, int nHeight ) = 0;
+	virtual ScreenshotHandle AddScreenshotToLibrary( const char* pchFilename, const char* pchThumbnailFilename, int nWidth, int nHeight ) = 0;
 
-	// Causes the Steam overlay to take a screenshot.  If screenshots are being hooked by the game then a ScreenshotRequested_t callback is sent back to the game instead. 
+	// Causes the Steam overlay to take a screenshot.  If screenshots are being hooked by the game then a ScreenshotRequested_t callback is sent back to the game instead.
 	virtual void TriggerScreenshot() = 0;
 
 	// Toggles whether the overlay handles screenshots when the user presses the screenshot hotkey, or the game handles them.  If the game is hooking screenshots,
@@ -50,8 +43,8 @@ public:
 	virtual void HookScreenshots( bool bHook ) = 0;
 
 	// Sets metadata about a screenshot's location (for example, the name of the map)
-	virtual bool SetLocation( ScreenshotHandle hScreenshot, const char *pchLocation ) = 0;
-	
+	virtual bool SetLocation( ScreenshotHandle hScreenshot, const char* pchLocation ) = 0;
+
 	// Tags a user as being visible in the screenshot
 	virtual bool TagUser( ScreenshotHandle hScreenshot, CSteamID steamID ) = 0;
 
@@ -63,18 +56,17 @@ public:
 
 // callbacks
 #if defined( VALVE_CALLBACK_PACK_SMALL )
-#pragma pack( push, 4 )
+	#pragma pack( push, 4 )
 #elif defined( VALVE_CALLBACK_PACK_LARGE )
-#pragma pack( push, 8 )
+	#pragma pack( push, 8 )
 #else
-#error isteamclient.h must be included
-#endif 
+	#error isteamclient.h must be included
+#endif
 //-----------------------------------------------------------------------------
 // Purpose: Screenshot successfully written or otherwise added to the library
 // and can now be tagged
 //-----------------------------------------------------------------------------
-struct ScreenshotReady_t
-{
+struct ScreenshotReady_t {
 	enum { k_iCallback = k_iSteamScreenshotsCallbacks + 1 };
 	ScreenshotHandle m_hLocal;
 	EResult m_eResult;
@@ -85,12 +77,8 @@ struct ScreenshotReady_t
 // HookScreenshots() has been called, in which case Steam will not take
 // the screenshot itself.
 //-----------------------------------------------------------------------------
-struct ScreenshotRequested_t
-{
+struct ScreenshotRequested_t {
 	enum { k_iCallback = k_iSteamScreenshotsCallbacks + 2 };
 };
 
 #pragma pack( pop )
-
-
-#endif // ISTEAMSCREENSHOTS_H

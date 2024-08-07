@@ -1,56 +1,45 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef IMAGELIST_H
-#define IMAGELIST_H
-
-#if IsWindows()
 #pragma once
-#endif
-
 #include <utlvector.h>
-#include <vgui/VGUI.h>
 #include <vgui/IImage.h>
+#include <vgui/VGUI.h>
 
-namespace vgui
-{
+namespace vgui {
 
-//-----------------------------------------------------------------------------
-// Purpose: holds a collection of images
-//			used by controls so that images can be refered to by indices
-//-----------------------------------------------------------------------------
-class ImageList
-{
-public:
-	ImageList(bool deleteImagesWhenDone);
-	~ImageList();
+	//-----------------------------------------------------------------------------
+	// Purpose: holds a collection of images
+	//			used by controls so that images can be refered to by indices
+	//-----------------------------------------------------------------------------
+	class ImageList {
+	public:
+		ImageList( bool deleteImagesWhenDone );
+		~ImageList();
 
-	// adds a new image to the list, returning the index it was placed at
-	int AddImage(vgui::IImage *image);
+		// adds a new image to the list, returning the index it was placed at
+		int AddImage( vgui::IImage* image );
 
-	// returns the number of images
-	int GetImageCount();
+		// returns the number of images
+		int GetImageCount();
 
-	// returns true if an index is valid
-	bool IsValidIndex(int imageIndex);
+		// returns true if an index is valid
+		bool IsValidIndex( int imageIndex );
 
-	// sets an image at a specified index, growing and adding NULL images if necessary
-	void SetImageAtIndex(int index, vgui::IImage *image);
+		// sets an image at a specified index, growing and adding NULL images if necessary
+		void SetImageAtIndex( int index, vgui::IImage* image );
 
-	// gets an image, imageIndex is of range [0, GetImageCount)
-	// image index 0 is always the blank image
-	vgui::IImage *GetImage(int imageIndex);
+		// gets an image, imageIndex is of range [0, GetImageCount)
+		// image index 0 is always the blank image
+		vgui::IImage* GetImage( int imageIndex );
 
-private:
-	CUtlVector<vgui::IImage *> m_Images;
-	bool m_bDeleteImagesWhenDone;
-};
+	private:
+		CUtlVector<vgui::IImage*> m_Images;
+		bool m_bDeleteImagesWhenDone;
+	};
 
 
-} // namespace vgui
-
-#endif // IMAGELIST_H
+}// namespace vgui

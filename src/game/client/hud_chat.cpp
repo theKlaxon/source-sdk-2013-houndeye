@@ -29,7 +29,7 @@ CHudChat::CHudChat( const char *pElementName ) : BaseClass( pElementName )
 	
 }
 
-void CHudChat::Init( void )
+void CHudChat::Init()
 {
 	BaseClass::Init();
 

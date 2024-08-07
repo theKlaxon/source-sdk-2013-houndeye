@@ -4,13 +4,7 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef ACHIEVEMENT_NOTIFICATION_PANEL_H
-#define ACHIEVEMENT_NOTIFICATION_PANEL_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include <vgui_controls/EditablePanel.h>
 #include "hudelement.h"
 
@@ -53,5 +47,3 @@ private:
 
 	CUtlLinkedList<Notification_t> m_queueNotification;
 };
-
-#endif	// ACHIEVEMENT_NOTIFICATION_PANEL_H

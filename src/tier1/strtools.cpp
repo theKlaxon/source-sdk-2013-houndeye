@@ -95,8 +95,11 @@ char* _V_strrchr( const char* file, int line, const char* s, char c ) {
 	AssertValidStringPtr( s );
 	int len = V_strlen( s );
 	s += len;
-	while ( len-- )
-		if ( *--s == c ) return (char*) s;
+	while ( len-- ) {
+		if ( *--s == c ) {
+			return (char*) s;
+		}
+	}
 	return nullptr;
 }
 
@@ -112,8 +115,9 @@ int _V_wcscmp( const char* file, int line, const wchar_t* s1, const wchar_t* s2 
 	AssertValidReadPtr( s2 );
 
 	while ( *s1 == *s2 ) {
-		if ( !*s1 )
+		if ( !*s1 ) {
 			return 0;// strings are equal
+		}
 
 		s1++;
 		s2++;

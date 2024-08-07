@@ -2506,17 +2506,17 @@ static void ComputeLightmapGradients( SSE_SampleInfo_t& info, bool const* pHasPr
 			int j = n * info.m_LightmapSize + sample.s + sample.t * w;
 
 			if ( sample.t > 0 ) {
-				if ( sample.s > 0 ) gradient[ i ] = std::max( gradient[ i ], fabs( pIntensity[ j ] - pIntensity[ j - 1 - w ] ) );
-				gradient[ i ] = std::max( gradient[ i ], fabs( pIntensity[ j ] - pIntensity[ j - w ] ) );
-				if ( sample.s < w - 1 ) gradient[ i ] = std::max( gradient[ i ], fabs( pIntensity[ j ] - pIntensity[ j + 1 - w ] ) );
+				if ( sample.s > 0 ) gradient[ i ] = std::max( gradient[ i ], std::fabs( pIntensity[ j ] - pIntensity[ j - 1 - w ] ) );
+				gradient[ i ] = std::max( gradient[ i ], std::fabs( pIntensity[ j ] - pIntensity[ j - w ] ) );
+				if ( sample.s < w - 1 ) gradient[ i ] = std::max( gradient[ i ], std::fabs( pIntensity[ j ] - pIntensity[ j + 1 - w ] ) );
 			}
 			if ( sample.t < h - 1 ) {
-				if ( sample.s > 0 ) gradient[ i ] = std::max( gradient[ i ], fabs( pIntensity[ j ] - pIntensity[ j - 1 + w ] ) );
-				gradient[ i ] = std::max( gradient[ i ], fabs( pIntensity[ j ] - pIntensity[ j + w ] ) );
-				if ( sample.s < w - 1 ) gradient[ i ] = std::max( gradient[ i ], fabs( pIntensity[ j ] - pIntensity[ j + 1 + w ] ) );
+				if ( sample.s > 0 ) gradient[ i ] = std::max( gradient[ i ], std::fabs( pIntensity[ j ] - pIntensity[ j - 1 + w ] ) );
+				gradient[ i ] = std::max( gradient[ i ], std::fabs( pIntensity[ j ] - pIntensity[ j + w ] ) );
+				if ( sample.s < w - 1 ) gradient[ i ] = std::max( gradient[ i ], std::fabs( pIntensity[ j ] - pIntensity[ j + 1 + w ] ) );
 			}
-			if ( sample.s > 0 ) gradient[ i ] = std::max( gradient[ i ], fabs( pIntensity[ j ] - pIntensity[ j - 1 ] ) );
-			if ( sample.s < w - 1 ) gradient[ i ] = std::max( gradient[ i ], fabs( pIntensity[ j ] - pIntensity[ j + 1 ] ) );
+			if ( sample.s > 0 ) gradient[ i ] = std::max( gradient[ i ], std::fabs( pIntensity[ j ] - pIntensity[ j - 1 ] ) );
+			if ( sample.s < w - 1 ) gradient[ i ] = std::max( gradient[ i ], std::fabs( pIntensity[ j ] - pIntensity[ j + 1 ] ) );
 		}
 	}
 }

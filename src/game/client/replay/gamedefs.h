@@ -1,12 +1,7 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
 //----------------------------------------------------------------------------------------
-
-#ifndef GAMEDEFS_H
-#define GAMEDEFS_H
-#if IsWindows()
 #pragma once
-#endif
 
 #if defined( TF_CLIENT_DLL )
 

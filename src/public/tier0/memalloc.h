@@ -64,7 +64,7 @@
 		virtual int CrtSetReportMode( int nReportType, int nReportMode ) = 0;
 		virtual int CrtIsValidHeapPointer( const void* pMem ) = 0;
 		virtual int CrtIsValidPointer( const void* pMem, unsigned int size, int access ) = 0;
-		virtual int CrtCheckMemory( void ) = 0;
+		virtual int CrtCheckMemory() = 0;
 		virtual int CrtSetDbgFlag( int nNewFlag ) = 0;
 		virtual void CrtMemCheckpoint( _CrtMemState * pState ) = 0;
 

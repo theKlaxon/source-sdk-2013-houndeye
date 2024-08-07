@@ -1,10 +1,5 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
-#ifndef NPC_TURRET_FLOOR_H
-#define NPC_TURRET_FLOOR_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "ai_basenpc.h"
 #include "player_pickup.h"
 #include "particle_system.h"
@@ -278,12 +273,12 @@ public:
 
 	static CTurretTipController	*CreateTipController( CNPC_FloorTurret *pOwner )
 	{
-		if ( pOwner == NULL )
-			return NULL;
+		if ( pOwner == nullptr )
+			return nullptr;
 
 		CTurretTipController *pController = (CTurretTipController *) Create( "floorturret_tipcontroller", pOwner->GetAbsOrigin(), pOwner->GetAbsAngles() );
 
-		if ( pController != NULL )
+		if ( pController != nullptr )
 		{
 			pController->m_pParentTurret = pOwner;
 		}
@@ -303,5 +298,3 @@ private:
 	float						m_angularLimit;
 	CNPC_FloorTurret			*m_pParentTurret;
 };
-
-#endif //#ifndef NPC_TURRET_FLOOR_H

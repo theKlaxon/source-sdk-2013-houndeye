@@ -1,29 +1,21 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Workfile:     $
 // $Date:         $
 // $NoKeywords: $
 //=============================================================================//
-#if !defined( IENGINEVGUI_H )
-#define IENGINEVGUI_H
-
-#if IsWindows()
 #pragma once
-#endif
-
 #include "interface.h"
 #include "vgui/VGUI.h"
 
 // Forward declarations.
-namespace vgui
-{
+namespace vgui {
 	class Panel;
 };
 
-enum VGuiPanel_t
-{
+enum VGuiPanel_t {
 	PANEL_ROOT = 0,
 	PANEL_GAMEUIDLL,
 	PANEL_CLIENTDLL,
@@ -34,32 +26,27 @@ enum VGuiPanel_t
 };
 
 // In-game panels are cropped to the current engine viewport size
-enum PaintMode_t
-{
-	PAINT_UIPANELS		= (1<<0),
-	PAINT_INGAMEPANELS  = (1<<1),
-	PAINT_CURSOR		= (1<<2), // software cursor, if appropriate
+enum PaintMode_t {
+	PAINT_UIPANELS = ( 1 << 0 ),
+	PAINT_INGAMEPANELS = ( 1 << 1 ),
+	PAINT_CURSOR = ( 1 << 2 ),// software cursor, if appropriate
 };
 
-abstract_class IEngineVGui
-{
+abstract_class IEngineVGui {
 public:
-	virtual					~IEngineVGui( void ) { }
+	virtual ~IEngineVGui( void ) {}
 
-	virtual vgui::VPANEL	GetPanel( VGuiPanel_t type ) = 0;
+	virtual vgui::VPANEL GetPanel( VGuiPanel_t type ) = 0;
 
-	virtual bool			IsGameUIVisible() = 0;
+	virtual bool IsGameUIVisible() = 0;
 };
 
-#define VENGINE_VGUI_VERSION	"VEngineVGui001"
+#define VENGINE_VGUI_VERSION "VEngineVGui001"
 
-#if defined(_STATIC_LINKED) && defined(CLIENT_DLL)
-namespace Client
-{
-extern IEngineVGui *enginevgui;
-}
+#if defined( _STATIC_LINKED ) && defined( CLIENT_DLL )
+	namespace Client {
+		extern IEngineVGui* enginevgui;
+	}
 #else
-extern IEngineVGui *enginevgui;
+	extern IEngineVGui* enginevgui;
 #endif
-
-#endif // IENGINEVGUI_H

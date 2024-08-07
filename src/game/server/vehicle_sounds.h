@@ -1,22 +1,15 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
-
-#ifndef VEHICLE_SOUNDS_H
-#define VEHICLE_SOUNDS_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "vcollide_parse.h"
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-enum vehiclesound
-{
+enum vehiclesound {
 	VS_SKID_FRICTION_LOW,
 	VS_SKID_FRICTION_NORMAL,
 	VS_SKID_FRICTION_HIGH,
@@ -30,36 +23,33 @@ enum vehiclesound
 	VS_NUM_SOUNDS,
 };
 
-extern const char *vehiclesound_parsenames[VS_NUM_SOUNDS];
+extern const char* vehiclesound_parsenames[ VS_NUM_SOUNDS ];
 
 // This is a list of vehiclesounds to automatically stop when the vehicle's driver exits the vehicle
-#define NUM_SOUNDS_TO_STOP_ON_EXIT	4
-extern vehiclesound g_iSoundsToStopOnExit[NUM_SOUNDS_TO_STOP_ON_EXIT];
+#define NUM_SOUNDS_TO_STOP_ON_EXIT 4
+extern vehiclesound g_iSoundsToStopOnExit[ NUM_SOUNDS_TO_STOP_ON_EXIT ];
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-struct vehicle_gear_t
-{
+struct vehicle_gear_t {
 	DECLARE_DATADESC();
 
-	float		flMinSpeed;
-	float		flMaxSpeed;
-	float		flSpeedApproachFactor;
+	float flMinSpeed;
+	float flMaxSpeed;
+	float flSpeedApproachFactor;
 };
 
-struct vehicle_crashsound_t
-{
+struct vehicle_crashsound_t {
 	DECLARE_DATADESC();
 
-	float		flMinSpeed;
-	float		flMinDeltaSpeed;
-	int			gearLimit;
-	string_t	iszCrashSound;
+	float flMinSpeed;
+	float flMinDeltaSpeed;
+	int gearLimit;
+	string_t iszCrashSound;
 };
 
-enum sound_states
-{
+enum sound_states {
 	SS_NONE = 0,
 	SS_SHUTDOWN,
 	SS_SHUTDOWN_WATER,
@@ -72,7 +62,7 @@ enum sound_states
 	SS_GEAR_3,
 	SS_GEAR_4,
 	SS_SLOWDOWN,
-	SS_SLOWDOWN_HIGHSPEED,	// not a real state, just a slot for state sounds
+	SS_SLOWDOWN_HIGHSPEED,// not a real state, just a slot for state sounds
 	SS_GEAR_0_RESUME,
 	SS_GEAR_1_RESUME,
 	SS_GEAR_2_RESUME,
@@ -86,52 +76,45 @@ enum sound_states
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-struct vehiclesounds_t
-{
-	void Init( void )
-	{
+struct vehiclesounds_t {
+	void Init() {
 		pGears.Purge();
 		crashSounds.Purge();
-		
-		for ( int i = 0; i < VS_NUM_SOUNDS; i++ )
-		{
-			iszSound[i] = NULL_STRING;
+
+		for ( int i = 0; i < VS_NUM_SOUNDS; i++ ) {
+			iszSound[ i ] = NULL_STRING;
 		}
 
-		for ( int i = 0; i < SS_NUM_STATES; i++ )
-		{
-			iszStateSounds[i] = NULL_STRING;
-			minStateTime[i] = 0.0f;
+		for ( int i = 0; i < SS_NUM_STATES; i++ ) {
+			iszStateSounds[ i ] = NULL_STRING;
+			minStateTime[ i ] = 0.0f;
 		}
 	}
 
 	DECLARE_DATADESC();
 
-	CUtlVector<vehicle_gear_t>	pGears;
+	CUtlVector<vehicle_gear_t> pGears;
 	CUtlVector<vehicle_crashsound_t> crashSounds;
-	string_t					iszSound[ VS_NUM_SOUNDS ];
-	string_t					iszStateSounds[SS_NUM_STATES];
-	float						minStateTime[SS_NUM_STATES];
+	string_t iszSound[ VS_NUM_SOUNDS ];
+	string_t iszStateSounds[ SS_NUM_STATES ];
+	float minStateTime[ SS_NUM_STATES ];
 };
 
 //-----------------------------------------------------------------------------
 // Purpose: A KeyValues parse for vehicle sound blocks
 //-----------------------------------------------------------------------------
-class CVehicleSoundsParser : public IVPhysicsKeyHandler
-{
+class CVehicleSoundsParser : public IVPhysicsKeyHandler {
 public:
-	CVehicleSoundsParser( void );
+	CVehicleSoundsParser();
 
-	virtual void ParseKeyValue( void *pData, const char *pKey, const char *pValue );
-	virtual void SetDefaults( void *pData );
+	virtual void ParseKeyValue( void* pData, const char* pKey, const char* pValue );
+	virtual void SetDefaults( void* pData );
 
 private:
 	// Index of the gear we're currently reading data into
-	int	m_iCurrentGear;
-	int	m_iCurrentState;
+	int m_iCurrentGear;
+	int m_iCurrentState;
 	int m_iCurrentCrashSound;
 };
-
-#endif // VEHICLE_SOUNDS_H

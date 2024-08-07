@@ -1,17 +1,10 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef KVPACKER_H
-#define KVPACKER_H
-
-#if IsWindows()
 #pragma once
-#endif
-
 #include "KeyValues.h"
 
 //-----------------------------------------------------------------------------
@@ -21,18 +14,16 @@
 //			so that the Steam servers and all the various GCs can still talk to
 //			each other.
 //-----------------------------------------------------------------------------
-class KVPacker
-{
+class KVPacker {
 public:
-	bool WriteAsBinary( KeyValues *pNode, CUtlBuffer &buffer );
-	bool ReadAsBinary( KeyValues *pNode, CUtlBuffer &buffer );
+	bool WriteAsBinary( KeyValues* pNode, CUtlBuffer& buffer );
+	bool ReadAsBinary( KeyValues* pNode, CUtlBuffer& buffer );
 
 private:
 	// These types are used for serialization of KeyValues nodes.
 	// Do not renumber them or you will break serialization across
 	// branches.
-	enum EPackType
-	{
+	enum EPackType {
 		PACKTYPE_NONE = 0,
 		PACKTYPE_STRING,
 		PACKTYPE_INT,
@@ -41,9 +32,6 @@ private:
 		PACKTYPE_WSTRING,
 		PACKTYPE_COLOR,
 		PACKTYPE_UINT64,
-		PACKTYPE_NULLMARKER,				// used to mark the end of a block in the binary format
+		PACKTYPE_NULLMARKER,// used to mark the end of a block in the binary format
 	};
 };
-
-
-#endif // KVPACKER_H

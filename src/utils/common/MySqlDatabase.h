@@ -1,20 +1,14 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef MYSQLDATABASE_H
-#define MYSQLDATABASE_H
-#if IsWindows()
 #pragma once
-#endif
-
-#include <windows.h>
 #include "ISQLDBReplyTarget.h"
-#include "utlvector.h"
 #include "UtlLinkedList.h"
+#include "utlvector.h"
+#include <windows.h>
 
 class ISQLDBCommand;
 
@@ -22,8 +16,7 @@ class ISQLDBCommand;
 // Purpose: Generic MySQL accessing database
 //			Provides threaded I/O queue functionality for accessing a mysql db
 //-----------------------------------------------------------------------------
-class CMySqlDatabase
-{
+class CMySqlDatabase {
 public:
 	// constructor
 	CMySqlDatabase();
@@ -45,10 +38,9 @@ public:
 	void RunThread();
 
 	// command queues
-	void AddCommandToQueue(ISQLDBCommand *cmd, ISQLDBReplyTarget *replyTarget, int returnState = 0);
+	void AddCommandToQueue( ISQLDBCommand* cmd, ISQLDBReplyTarget* replyTarget, int returnState = 0 );
 
 private:
-
 	// threading data
 	bool m_bRunThread;
 	CRITICAL_SECTION m_csThread;
@@ -59,10 +51,9 @@ private:
 	// wait event
 	HANDLE m_hEvent;
 
-	struct msg_t
-	{
-		ISQLDBCommand *cmd;
-		ISQLDBReplyTarget *replyTarget;
+	struct msg_t {
+		ISQLDBCommand* cmd;
+		ISQLDBReplyTarget* replyTarget;
 		int result;
 		int returnState;
 	};
@@ -77,20 +68,19 @@ class Connection;
 //-----------------------------------------------------------------------------
 // Purpose: Interface to a command
 //-----------------------------------------------------------------------------
-class ISQLDBCommand
-{
+class ISQLDBCommand {
 public:
 	// makes the command run (blocking), returning the success code
 	virtual int RunCommand() = 0;
 
 	// return data
-	virtual void *GetReturnData() { return NULL; }
+	virtual void* GetReturnData() { return NULL; }
 
 	// returns the command ID
 	virtual int GetID() { return 0; }
 
 	// gets information about the command for if it failed
-	virtual void GetDebugInfo(char *buf, int bufSize) { buf[0] = 0; }
+	virtual void GetDebugInfo( char* buf, int bufSize ) { buf[ 0 ] = 0; }
 
 	// use to delete
 	virtual void deleteThis() = 0;
@@ -99,6 +89,3 @@ protected:
 	// protected destructor, so that it has to be deleted through deleteThis()
 	virtual ~ISQLDBCommand() {}
 };
-
-
-#endif // MYSQLDATABASE_H

@@ -1,16 +1,9 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
-
-#ifndef IMATERIALSYSTEMSTUB_H
-#define IMATERIALSYSTEMSTUB_H
-#if IsWindows()
 #pragma once
-#endif
-
-
 #include "materialsystem/imaterialsystem.h"
 
 
@@ -19,13 +12,9 @@
 #define MATERIAL_SYSTEM_STUB_INTERFACE_VERSION "VMaterialSystemStub001"
 
 
-class IMaterialSystemStub : public IMaterialSystem
-{
+class IMaterialSystemStub : public IMaterialSystem {
 public:
-	// If this is called, then the stub will call through to the real material 
+	// If this is called, then the stub will call through to the real material
 	// system in some functions.
-	virtual void	SetRealMaterialSystem( IMaterialSystem *pSys ) = 0;
+	virtual void SetRealMaterialSystem( IMaterialSystem* pSys ) = 0;
 };
-
-
-#endif // IMATERIALSYSTEMSTUB_H

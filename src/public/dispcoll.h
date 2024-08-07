@@ -21,13 +21,13 @@ class CDispCollTri
 {
 public:
 	
-	void Init( void );
+	void Init();
 	inline void SetPoint( int index, Vector const& vert );
 	inline void SetPointNormal( int index, Vector const& normal );
-	void CalcPlane( void );
+	void CalcPlane();
 	
 	inline void SetIntersect( bool bIntersect );
-	inline bool IsIntersect( void );
+	inline bool IsIntersect();
 
 	Vector	m_Points[3];		// polygon points
 	Vector  m_PointNormals[3];	// polygon point normals
@@ -46,7 +46,7 @@ class CDispCollNode
 public:
 	
 	CDispCollNode();
-	inline bool IsLeaf( void );
+	inline bool IsLeaf();
 	inline void SetBounds( Vector const &bMin, Vector const &bMax );
 	inline void GetBounds( Vector &bMin, Vector &bMax );
 	
@@ -129,10 +129,10 @@ public:
 	// Attrib Functions
 	//
 	inline void SetPower( int power );
-	inline int GetPower( void );
+	inline int GetPower();
 
 	inline void SetCheckCount( int count );
-	inline int GetCheckCount( void );
+	inline int GetCheckCount();
 
 	inline void GetBounds( Vector& boundMin, Vector& boundMax );
 
@@ -151,7 +151,7 @@ protected:
 	//
 	// Creation/Destruction
 	//
-	void InitAABBData( void );
+	void InitAABBData();
 	void InitLeaves( CCoreDispInfo *pDisp );
 	void CreateNodes( CCoreDispInfo *pDisp );
 	void CreateNodes_r( CCoreDispInfo *pDisp, int nodeIndex, int termLevel );
@@ -186,7 +186,7 @@ protected:
 	// Memory Functions
 	//
 	bool AllocNodes( int nodeCount );
-	void FreeNodes( void );
+	void FreeNodes();
 
 	//=========================================================================
 	//
@@ -210,7 +210,7 @@ inline void CDispCollTree::SetPower( int power )
 	
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-inline int CDispCollTree::GetPower( void )
+inline int CDispCollTree::GetPower()
 {
 	return m_Power;
 }
@@ -226,7 +226,7 @@ inline void CDispCollTree::SetCheckCount( int count )
 	
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-inline int CDispCollTree::GetCheckCount( void )
+inline int CDispCollTree::GetCheckCount()
 {
 	return m_CheckCount;
 }

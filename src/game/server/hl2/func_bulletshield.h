@@ -1,45 +1,39 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef FUNC_BULLETSHIELD_H
-#define FUNC_BULLETSHIELD_H
-#if IsWindows()
 #pragma once
-#endif
+#include "modelentities.h"
 
 //!! replace this with generic start enabled/disabled
-#define SF_WALL_START_OFF		0x0001
-#define SF_IGNORE_PLAYERUSE		0x0002
+#define SF_WALL_START_OFF 0x0001
+#define SF_IGNORE_PLAYERUSE 0x0002
 
-#include "modelentities.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: shield that stops bullets, but not other objects
 // enabled state:	brush is visible
 // disabled staute:	brush not visible
 //-----------------------------------------------------------------------------
-class CFuncBulletShield : public CFuncBrush
-{
+class CFuncBulletShield : public CFuncBrush {
 public:
 	DECLARE_CLASS( CFuncBulletShield, CFuncBrush );
 	DECLARE_DATADESC();
 
-	virtual void Spawn( void );
-	
-	bool TestCollision( const Ray_t &ray, unsigned int mask, trace_t& trace );
+	virtual void Spawn();
+
+	bool TestCollision( const Ray_t& ray, unsigned int mask, trace_t& trace );
 	/*
-	bool CreateVPhysics( void );
+	bool CreateVPhysics();
 
-	virtual int	ObjectCaps( void ) { return HasSpawnFlags(SF_IGNORE_PLAYERUSE) ? BaseClass::ObjectCaps() : BaseClass::ObjectCaps() | FCAP_IMPULSE_USE; }
+	virtual int	ObjectCaps() { return HasSpawnFlags(SF_IGNORE_PLAYERUSE) ? BaseClass::ObjectCaps() : BaseClass::ObjectCaps() | FCAP_IMPULSE_USE; }
 
-	virtual int DrawDebugTextOverlays( void );
+	virtual int DrawDebugTextOverlays();
 
-	void TurnOff( void );
-	void TurnOn( void );
+	void TurnOff();
+	void TurnOn();
 
 	// Input handlers
 	void InputTurnOff( inputdata_t &inputdata );
@@ -60,9 +54,6 @@ public:
 
 	DECLARE_DATADESC();
 
-	virtual bool IsOn( void );
+	virtual bool IsOn();
 	*/
 };
-
-
-#endif // MODELENTITIES_H

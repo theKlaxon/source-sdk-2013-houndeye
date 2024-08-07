@@ -11,12 +11,12 @@
 //
 //=============================================================================//
 #pragma once
-
-#include "helperinfo.h"
-#include "tokenreader.h"
+#include "Color.h"
 #include "gdvar.h"
+#include "helperinfo.h"
 #include "inputoutput.h"
 #include "mathlib/vector.h"
+#include "tokenreader.h"
 
 class CHelperInfo;
 class GameData;
@@ -25,174 +25,164 @@ class GDinputvariable;
 const int GD_MAX_VARIABLES = 128;
 
 
-class GDclass
-{
-	public:
+class GDclass {
+public:
+	GDclass();
+	~GDclass();
 
-		GDclass();
-		~GDclass();
+	//
+	// Interface to class information:
+	//
+	inline const char* GetName() { return ( m_szName ); }
+	inline const char* GetDescription();
 
-		//
-		// Interface to class information:
-		//
-		inline const char *GetName() { return(m_szName); }
-		inline const char *GetDescription();
+	//
+	// Reading a class from the game data file:
+	//
+	BOOL InitFromTokens( TokenReader& tr, GameData* );
 
-		//
-		// Reading a class from the game data file:
-		//
-		BOOL InitFromTokens(TokenReader& tr, GameData*);
+	//
+	// Interface to variable information (keys):
+	//
+	inline int GetVariableCount() { return ( m_nVariables ); }
+	GDinputvariable* GetVariableAt( int iIndex );
+	void GetHelperForGDVar( GDinputvariable* pVar, CUtlVector<const char*>* helperName );
+	GDinputvariable* VarForName( const char* pszName, int* piIndex = nullptr );
+	BOOL AddVariable( GDinputvariable* pVar, GDclass* pBase, int iBaseIndex, int iVarIndex );
+	void AddBase( GDclass* pBase );
 
-		//
-		// Interface to variable information (keys):
-		//
-		inline int GetVariableCount() { return(m_nVariables); }
-		GDinputvariable *GetVariableAt(int iIndex);
-		void GetHelperForGDVar( GDinputvariable *pVar, CUtlVector<const char *> *helperName );
-		GDinputvariable *VarForName(const char *pszName, int *piIndex = nullptr);
-		BOOL AddVariable(GDinputvariable *pVar, GDclass *pBase, int iBaseIndex, int iVarIndex);
-		void AddBase(GDclass *pBase);
+	//
+	// Interface to input information:
+	//
+	inline void AddInput( CClassInput* pInput );
+	CClassInput* FindInput( const char* szName );
+	inline int GetInputCount() { return ( m_Inputs.Count() ); }
+	CClassInput* GetInput( int nIndex );
 
-		//
-		// Interface to input information:
-		//
-		inline void AddInput(CClassInput *pInput);
-		CClassInput *FindInput(const char *szName);
-		inline int GetInputCount() { return(m_Inputs.Count()); }
-		CClassInput *GetInput(int nIndex);
+	//
+	// Interface to output information:
+	//
+	inline void AddOutput( CClassOutput* pOutput );
+	CClassOutput* FindOutput( const char* szName );
+	inline int GetOutputCount() { return ( m_Outputs.Count() ); }
+	CClassOutput* GetOutput( int nIndex );
 
-		//
-		// Interface to output information:
-		//
-		inline void AddOutput(CClassOutput *pOutput);
-		CClassOutput *FindOutput(const char *szName);
-		inline int GetOutputCount() { return(m_Outputs.Count()); }
-		CClassOutput *GetOutput(int nIndex);
+	GameData* Parent;
 
-		GameData *Parent;
+	//
+	// Interface to class attributes:
+	//
+	inline bool IsClass( const char* pszClass );
+	inline bool IsSolidClass() { return ( m_bSolid ); }
+	inline bool IsBaseClass() { return ( m_bBase ); }
+	inline bool IsMoveClass() { return ( m_bMove ); }
+	inline bool IsKeyFrameClass() { return ( m_bKeyFrame ); }
+	inline bool IsPointClass() { return ( m_bPoint ); }
+	inline bool IsNPCClass() { return ( m_bNPC ); }
+	inline bool IsFilterClass() { return ( m_bFilter ); }
+	inline bool IsNodeClass();
+	static inline bool IsNodeClass( const char* pszClassName );
 
-		//
-		// Interface to class attributes:
-		//
-		inline bool IsClass(const char *pszClass);
-		inline bool IsSolidClass() { return(m_bSolid); }
-		inline bool IsBaseClass() { return(m_bBase); }
-		inline bool IsMoveClass() { return(m_bMove); }
-		inline bool IsKeyFrameClass() { return(m_bKeyFrame); }
-		inline bool IsPointClass() { return(m_bPoint); }
-		inline bool IsNPCClass() { return(m_bNPC); }
-		inline bool IsFilterClass() { return(m_bFilter); }
-		inline bool IsNodeClass();
-		static inline bool IsNodeClass(const char *pszClassName);
+	inline bool ShouldSnapToHalfGrid() { return m_bHalfGridSnap; }
 
-		inline bool ShouldSnapToHalfGrid() { return m_bHalfGridSnap; }
+	inline void SetNPCClass( bool bNPC ) { m_bNPC = bNPC; }
+	inline void SetFilterClass( bool bFilter ) { m_bFilter = bFilter; }
+	inline void SetPointClass( bool bPoint ) { m_bPoint = bPoint; }
+	inline void SetSolidClass( bool bSolid ) { m_bSolid = bSolid; }
+	inline void SetBaseClass( bool bBase ) { m_bBase = bBase; }
+	inline void SetMoveClass( bool bMove ) { m_bMove = bMove; }
+	inline void SetKeyFrameClass( bool bKeyFrame ) { m_bKeyFrame = bKeyFrame; }
 
-		inline void SetNPCClass(bool bNPC) { m_bNPC = bNPC; }
-		inline void SetFilterClass(bool bFilter) { m_bFilter = bFilter; }
-		inline void SetPointClass(bool bPoint) { m_bPoint = bPoint; }
-		inline void SetSolidClass(bool bSolid) { m_bSolid = bSolid; }
-		inline void SetBaseClass(bool bBase) { m_bBase = bBase; }
-		inline void SetMoveClass(bool bMove) { m_bMove = bMove; }
-		inline void SetKeyFrameClass(bool bKeyFrame) { m_bKeyFrame = bKeyFrame; }
+	inline const Vector& GetMins() { return ( m_bmins ); }
+	inline const Vector& GetMaxs() { return ( m_bmaxs ); }
 
-		inline const Vector &GetMins() { return(m_bmins); }
-		inline const Vector &GetMaxs() { return(m_bmaxs); }
-		
-		BOOL GetBoundBox(Vector& pfMins, Vector& pfMaxs);
-		bool HasBoundBox() const { return m_bGotSize; }
+	BOOL GetBoundBox( Vector& pfMins, Vector& pfMaxs );
+	bool HasBoundBox() const { return m_bGotSize; }
 
-		inline Color GetColor();
+	inline color32 GetColor();
 
-		//
-		// Interface to helper information:
-		//
-		inline void AddHelper(CHelperInfo *pHelper);
-		inline int GetHelperCount() { return(m_Helpers.Count()); }
-		CHelperInfo *GetHelper(int nIndex);
+	//
+	// Interface to helper information:
+	//
+	inline void AddHelper( CHelperInfo* pHelper );
+	inline int GetHelperCount() { return ( m_Helpers.Count() ); }
+	CHelperInfo* GetHelper( int nIndex );
 
-	protected:
+protected:
+	//
+	// Parsing the game data file:
+	//
+	bool ParseInput( TokenReader& tr );
+	bool ParseInputOutput( TokenReader& tr, CClassInputOutputBase* pInputOutput );
+	bool ParseOutput( TokenReader& tr );
+	bool ParseVariable( TokenReader& tr );
 
-		//
-		// Parsing the game data file:
-		//
-		bool ParseInput(TokenReader &tr);
-		bool ParseInputOutput(TokenReader &tr, CClassInputOutputBase *pInputOutput);
-		bool ParseOutput(TokenReader &tr);
-		bool ParseVariable(TokenReader &tr);
+private:
+	bool ParseBase( TokenReader& tr );
+	bool ParseColor( TokenReader& tr );
+	bool ParseHelper( TokenReader& tr, char* pszHelperName );
+	bool ParseSize( TokenReader& tr );
+	bool ParseSpecifiers( TokenReader& tr );
+	bool ParseVariables( TokenReader& tr );
 
-	private:
+	color32 m_rgbColor;// Color of entity.
 
-		bool ParseBase(TokenReader &tr);
-		bool ParseColor(TokenReader &tr);
-		bool ParseHelper(TokenReader &tr, char *pszHelperName);
-		bool ParseSize(TokenReader &tr);
-		bool ParseSpecifiers(TokenReader &tr);
-		bool ParseVariables(TokenReader &tr);
+	bool m_bBase;        // Base only - not available to user.
+	bool m_bSolid;       // Tied to solids only.
+	bool m_bModel;       // Properties of a single model.
+	bool m_bMove;        // Animatable
+	bool m_bKeyFrame;    // Animation keyframe
+	bool m_bPoint;       // Point class, not tied to solids.
+	bool m_bNPC;         // NPC class - used for populating lists of NPC classes.
+	bool m_bFilter;      // filter class - used for populating lists of filters.
+	bool m_bHalfGridSnap;// Snaps to a 1/2 grid so it can be centered on any geometry. Used for hinges, etc.
 
-		Color m_rgbColor;					// Color of entity.
+	bool m_bGotSize;// Just for loading.
+	bool m_bGotColor;
 
-		bool m_bBase;						// Base only - not available to user.
-		bool m_bSolid;						// Tied to solids only.
-		bool m_bModel;						// Properties of a single model.
-		bool m_bMove;						// Animatable
-		bool m_bKeyFrame;					// Animation keyframe
-		bool m_bPoint;						// Point class, not tied to solids.
-		bool m_bNPC;						// NPC class - used for populating lists of NPC classes.
-		bool m_bFilter;						// filter class - used for populating lists of filters.
-		bool m_bHalfGridSnap;				// Snaps to a 1/2 grid so it can be centered on any geometry. Used for hinges, etc.
+	char m_szName[ MAX_IDENT ];// Name of this class.
+	char* m_pszDescription;    // Description of this class, dynamically allocated.
 
-		bool m_bGotSize;					// Just for loading.
-		bool m_bGotColor;
+	CUtlVector<GDinputvariable*> m_Variables;// Variables for this class.
+	int m_nVariables;                        // Count of base & local variables combined.
+	CUtlVector<GDclass*> m_Bases;            // List of base classes this class inherits from.
 
-		char m_szName[MAX_IDENT];			// Name of this class.
-		char *m_pszDescription;				// Description of this class, dynamically allocated.
+	CClassInputList m_Inputs;
+	CClassOutputList m_Outputs;
 
-		CUtlVector<GDinputvariable *> m_Variables;		// Variables for this class.
-		int m_nVariables;								// Count of base & local variables combined.
-		CUtlVector<GDclass *> m_Bases;					// List of base classes this class inherits from.
+	CHelperInfoList m_Helpers;// Helpers for this class.
 
-		CClassInputList m_Inputs;
-		CClassOutputList m_Outputs;
+	//
+	//	[0] = base number from Bases, or -1 if not in a base.
+	//	[1] = index into base's variables
+	//
+	signed short m_VariableMap[ GD_MAX_VARIABLES ][ 2 ];
 
-		CHelperInfoList m_Helpers;			// Helpers for this class.
-
-		//
-		//	[0] = base number from Bases, or -1 if not in a base.
-		//	[1] = index into base's variables
-		//
-		signed short m_VariableMap[GD_MAX_VARIABLES][2];
-
-		Vector m_bmins;		// 3D minima of object (pointclass).
-		Vector m_bmaxs;		// 3D maxima of object (pointclass).
+	Vector m_bmins;// 3D minima of object (pointclass).
+	Vector m_bmaxs;// 3D maxima of object (pointclass).
 };
 
 
-void GDclass::AddInput(CClassInput *pInput)
-{
-	Assert(pInput != nullptr);
-	if (pInput != nullptr)
-	{
-		m_Inputs.AddToTail(pInput);
+void GDclass::AddInput( CClassInput* pInput ) {
+	Assert( pInput != nullptr );
+	if ( pInput != nullptr ) {
+		m_Inputs.AddToTail( pInput );
 	}
 }
 
 
-inline void GDclass::AddOutput(CClassOutput *pOutput)
-{
-	Assert(pOutput != nullptr);
-	if (pOutput != nullptr)
-	{
-		m_Outputs.AddToTail(pOutput);
+inline void GDclass::AddOutput( CClassOutput* pOutput ) {
+	Assert( pOutput != nullptr );
+	if ( pOutput != nullptr ) {
+		m_Outputs.AddToTail( pOutput );
 	}
 }
 
 
-inline void GDclass::AddHelper(CHelperInfo *pHelper)
-{
-	Assert(pHelper != nullptr);
-	if (pHelper != nullptr)
-	{
-		m_Helpers.AddToTail(pHelper);
+inline void GDclass::AddHelper( CHelperInfo* pHelper ) {
+	Assert( pHelper != nullptr );
+	if ( pHelper != nullptr ) {
+		m_Helpers.AddToTail( pHelper );
 	}
 }
 
@@ -200,8 +190,7 @@ inline void GDclass::AddHelper(CHelperInfo *pHelper)
 //-----------------------------------------------------------------------------
 // Purpose: Returns the render color of this entity class.
 //-----------------------------------------------------------------------------
-color32 GDclass::GetColor()
-{
+color32 GDclass::GetColor() {
 	return m_rgbColor;
 }
 
@@ -210,34 +199,30 @@ color32 GDclass::GetColor()
 // Purpose: Returns a description of this entity class, or the entity class name
 //			if no description exists.
 //-----------------------------------------------------------------------------
-const char *GDclass::GetDescription()
-{
-	if (m_pszDescription == nullptr)
-	{
-		return(m_szName);
+const char* GDclass::GetDescription() {
+	if ( m_pszDescription == nullptr ) {
+		return ( m_szName );
 	}
 
-	return(m_pszDescription);
+	return ( m_pszDescription );
 }
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : pszClass - 
+// Purpose:
+// Input  : pszClass -
 //-----------------------------------------------------------------------------
-bool GDclass::IsClass(const char *pszClass)
-{
-	Assert(pszClass != nullptr);
-	return(!stricmp(pszClass, m_szName));
+bool GDclass::IsClass( const char* pszClass ) {
+	Assert( pszClass != nullptr );
+	return ( !stricmp( pszClass, m_szName ) );
 }
 
 
 //-----------------------------------------------------------------------------
 // Purpose: Returns true if the given classname represents an AI node class, false if not.
 //-----------------------------------------------------------------------------
-bool GDclass::IsNodeClass(const char *pszClassName)
-{
-	return((strnicmp(pszClassName, "info_node", 9) == 0) && (stricmp(pszClassName, "info_node_link") != 0));
+bool GDclass::IsNodeClass( const char* pszClassName ) {
+	return ( ( strnicmp( pszClassName, "info_node", 9 ) == 0 ) && ( stricmp( pszClassName, "info_node_link" ) != 0 ) );
 }
 
 
@@ -246,7 +231,6 @@ bool GDclass::IsNodeClass(const char *pszClassName)
 //
 // HACK: if this is necessary, we should have a new @NodeClass FGD specifier (or something)
 //-----------------------------------------------------------------------------
-bool GDclass::IsNodeClass()
-{
-	return IsNodeClass(m_szName);
+bool GDclass::IsNodeClass() {
+	return IsNodeClass( m_szName );
 }

@@ -1,17 +1,12 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-#ifndef ICLIENTENTITYINTERNAL_H
-#define ICLIENTENTITYINTERNAL_H
-#if IsWindows()
 #pragma once
-#endif
-
-#include "icliententity.h"
 #include "clientleafsystem.h"
+#include "icliententity.h"
 
 //-----------------------------------------------------------------------------
 // Forward declarations
@@ -26,7 +21,3 @@ class ClientClass;
 
 typedef CBaseHandle ClientEntityHandle_t;
 typedef unsigned short SpatialPartitionHandle_t;
-
-
-
-#endif // ICLIENTENTITYINTERNAL_H

@@ -3,19 +3,11 @@
 // Purpose: Cryptographic hash agility helper definitions
 //
 //=============================================================================
-
-#ifndef PASSWORDHASH_H
-#define PASSWORDHASH_H
-
-#if IsWindows()
 #pragma once
-#endif
-
-
 #include "checksum_sha1.h"
 
-typedef unsigned char BigPasswordHash_t[32];
-typedef unsigned char PBKDF2Hash_t[32];
+typedef unsigned char BigPasswordHash_t[ 32 ];
+typedef unsigned char PBKDF2Hash_t[ 32 ];
 
 //
 // A union of all the possible password hash types.
@@ -37,8 +29,7 @@ typedef unsigned char PBKDF2Hash_t[32];
 // it may not be sufficient at the time you actually change the size of the
 // type, so look around.
 //
-typedef union
-{
+typedef union {
 	SHADigest_t sha;
 	BigPasswordHash_t bigpassword;
 	PBKDF2Hash_t pbkdf2;
@@ -59,8 +50,7 @@ typedef union
 //										strengthening old hashes in the database that haven't been logged in in a long time.
 //
 // Make sure to update k_EHashMax when adding new hash types.  Also add the length into the k_HashLengths array below.
-enum EPasswordHashAlg
-{
+enum EPasswordHashAlg {
 	k_EHashSHA1 = 0,
 	k_EHashBigPassword = 1,
 	k_EHashPBKDF2_1000 = 2,
@@ -73,22 +63,18 @@ enum EPasswordHashAlg
 //
 // Hash sizes for the various available hash algorithms,
 // indexed by EPasswordHashAlg.
-const size_t k_HashLengths[] = {
-	sizeof(SHADigest_t),
-	sizeof(BigPasswordHash_t),
-	sizeof(PBKDF2Hash_t),
-	sizeof(PBKDF2Hash_t),
-	sizeof(PBKDF2Hash_t),
-	sizeof(PBKDF2Hash_t),
+const size_t k_HashLengths[] {
+	sizeof( SHADigest_t ),
+	sizeof( BigPasswordHash_t ),
+	sizeof( PBKDF2Hash_t ),
+	sizeof( PBKDF2Hash_t ),
+	sizeof( PBKDF2Hash_t ),
+	sizeof( PBKDF2Hash_t ),
 };
 
-#if defined(C_ASSERT)
 //
 // If you're hitting this assert at compile time, it means that you've added a new
 // hash type and properly updated k_EHashMax, but you forgot to add the length
 // of the new hash type into k_HashLengths.  So do that.
 //
-C_ASSERT( ( ( sizeof(k_HashLengths) / sizeof(size_t) ) == k_EHashMax + 1 ) );
-#endif
-
-#endif // PASSWORDHASH_H
+static_assert( sizeof(k_HashLengths) / sizeof(size_t) == k_EHashMax + 1 );

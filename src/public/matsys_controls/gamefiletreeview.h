@@ -1,27 +1,18 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
-
-#ifndef GAMEFILETREEVIEW_H
-#define GAMEFILETREEVIEW_H
-
-#if IsWindows()
 #pragma once
-#endif
-
-
 #include "tier1/utlstring.h"
-#include "vgui_controls/TreeView.h"
 #include "vgui_controls/ImageList.h"
+#include "vgui_controls/TreeView.h"
 
 
 //-----------------------------------------------------------------------------
 // Forward declarations
 //-----------------------------------------------------------------------------
-namespace vgui
-{
+namespace vgui {
 	class IScheme;
 }
 
@@ -29,17 +20,16 @@ namespace vgui
 //-----------------------------------------------------------------------------
 // Purpose: Handles file view for game files
 //-----------------------------------------------------------------------------
-class CGameFileTreeView : public vgui::TreeView
-{
+class CGameFileTreeView : public vgui::TreeView {
 	DECLARE_CLASS_SIMPLE( CGameFileTreeView, vgui::TreeView );
 
 public:
-	CGameFileTreeView( vgui::Panel *parent, const char *name, const char *pRootFolderName, const char *pRootDir, const char *pExtension = NULL );
+	CGameFileTreeView( vgui::Panel* parent, const char* name, const char* pRootFolderName, const char* pRootDir, const char* pExtension = NULL );
 
 	// Inherited from base classes
 	virtual void GenerateChildrenOfNode( int itemIndex );
-	virtual void GenerateContextMenu( int itemIndex, int x, int y ); 
-	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );
+	virtual void GenerateContextMenu( int itemIndex, int x, int y );
+	virtual void ApplySchemeSettings( vgui::IScheme* pScheme );
 
 	// Purpose: Refreshes the active file list
 	void RefreshFileList();
@@ -51,7 +41,7 @@ public:
 	int GetRootDirectoryCount();
 
 	// Gets the ith root directory
-	const char *GetRootDirectory( int nIndex );
+	const char* GetRootDirectory( int nIndex );
 
 	// Selects the root folder
 	void SelectRoot();
@@ -61,21 +51,17 @@ private:
 	void PopulateRootNode( int itemIndex );
 
 	// Populate the root node with directories
-	void AddDirectoriesOfNode( int itemIndex, const char *pFilePath );
+	void AddDirectoriesOfNode( int itemIndex, const char* pFilePath );
 
 	// Populate the root node with directories
-	bool DoesDirectoryHaveSubdirectories( const char *pFilePath );
+	bool DoesDirectoryHaveSubdirectories( const char* pFilePath );
 
 	// Populate the root node with files
-	void AddFilesOfNode( int itemIndex, const char *pFilePath, const char *pExt );
+	void AddFilesOfNode( int itemIndex, const char* pFilePath, const char* pExt );
 
 	CUtlString m_RootDir;
 	CUtlString m_Ext;
 	CUtlString m_RootFolderName;
 	vgui::ImageList m_Images;
-	bool m_bUseExt;		// To differentiate "" from NULL in m_Ext
+	bool m_bUseExt;// To differentiate "" from NULL in m_Ext
 };
-
-
-#endif // GAMEFILETREEVIEW_H
-

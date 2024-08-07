@@ -10,15 +10,7 @@
 //
 // The application objects for apps that use tier3
 //=============================================================================
-
-#ifndef TIER3APP_H
-#define TIER3APP_H
-
-#if IsWindows()
 #pragma once
-#endif
-
-
 #include "appframework/tier2app.h"
 #include "tier3/tier3.h"
 #include "vgui_controls/Controls.h"
@@ -27,24 +19,21 @@
 //-----------------------------------------------------------------------------
 // The application object for apps that use tier3
 //-----------------------------------------------------------------------------
-class CTier3SteamApp : public CTier2SteamApp
-{
+class CTier3SteamApp : public CTier2SteamApp {
 	typedef CTier2SteamApp BaseClass;
 
 public:
 	// Methods of IApplication
-	virtual bool PreInit()
-	{
+	virtual bool PreInit() {
 		if ( !BaseClass::PreInit() )
 			return false;
 
 		CreateInterfaceFn factory = GetFactory();
 		ConnectTier3Libraries( &factory, 1 );
-		return true;			
+		return true;
 	}
 
-	virtual void PostShutdown()
-	{
+	virtual void PostShutdown() {
 		DisconnectTier3Libraries();
 		BaseClass::PostShutdown();
 	}
@@ -54,24 +43,21 @@ public:
 //-----------------------------------------------------------------------------
 // The application object for apps that use tier3
 //-----------------------------------------------------------------------------
-class CTier3DmSteamApp : public CTier2DmSteamApp
-{
+class CTier3DmSteamApp : public CTier2DmSteamApp {
 	typedef CTier2DmSteamApp BaseClass;
 
 public:
 	// Methods of IApplication
-	virtual bool PreInit()
-	{
+	virtual bool PreInit() {
 		if ( !BaseClass::PreInit() )
 			return false;
 
 		CreateInterfaceFn factory = GetFactory();
 		ConnectTier3Libraries( &factory, 1 );
-		return true;			
+		return true;
 	}
 
-	virtual void PostShutdown()
-	{
+	virtual void PostShutdown() {
 		DisconnectTier3Libraries();
 		BaseClass::PostShutdown();
 	}
@@ -81,14 +67,12 @@ public:
 //-----------------------------------------------------------------------------
 // The application object for apps that use vgui
 //-----------------------------------------------------------------------------
-class CVguiSteamApp : public CTier3SteamApp
-{
+class CVguiSteamApp : public CTier3SteamApp {
 	typedef CTier3SteamApp BaseClass;
 
 public:
 	// Methods of IApplication
-	virtual bool PreInit()
-	{
+	virtual bool PreInit() {
 		if ( !BaseClass::PreInit() )
 			return false;
 
@@ -101,14 +85,12 @@ public:
 //-----------------------------------------------------------------------------
 // The application object for apps that use vgui
 //-----------------------------------------------------------------------------
-class CVguiDmSteamApp : public CTier3DmSteamApp
-{
+class CVguiDmSteamApp : public CTier3DmSteamApp {
 	typedef CTier3DmSteamApp BaseClass;
 
 public:
 	// Methods of IApplication
-	virtual bool PreInit()
-	{
+	virtual bool PreInit() {
 		if ( !BaseClass::PreInit() )
 			return false;
 
@@ -116,6 +98,3 @@ public:
 		return vgui::VGui_InitInterfacesList( "CVguiSteamApp", &factory, 1 );
 	}
 };
-
-
-#endif // TIER3APP_H

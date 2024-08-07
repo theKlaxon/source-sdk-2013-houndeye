@@ -1,14 +1,9 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
-
-#ifndef IDEBUGTEXTUREINFO_H
-#define IDEBUGTEXTUREINFO_H
-#if IsWindows()
 #pragma once
-#endif
 
 
 class KeyValues;
@@ -18,14 +13,12 @@ class KeyValues;
 #define DEBUG_TEXTURE_INFO_VERSION "DebugTextureInfo001"
 
 
-abstract_class IDebugTextureInfo
-{
+abstract_class IDebugTextureInfo {
 public:
-	
 	// Use this to turn on the mode where it builds the debug texture list.
 	// At the end of the next frame, GetDebugTextureList() will return a valid list of the textures.
 	virtual void EnableDebugTextureList( bool bEnable ) = 0;
-	
+
 	// If this is on, then it will return all textures that exist, not just the ones that were bound in the last frame.
 	// It is required to enable debug texture list to get this.
 	virtual void EnableGetAllTextures( bool bEnable ) = 0;
@@ -42,13 +35,12 @@ public:
 	virtual KeyValues* GetDebugTextureList() = 0;
 
 	// Texture memory usage
-	enum TextureMemoryType
-	{
+	enum TextureMemoryType {
 		MEMORY_RESERVED_MIN = 0,
-		MEMORY_BOUND_LAST_FRAME,		// sums up textures bound last frame
-		MEMORY_TOTAL_LOADED,			// total texture memory used
-		MEMORY_ESTIMATE_PICMIP_1,		// estimate of running with "picmip 1"
-		MEMORY_ESTIMATE_PICMIP_2,		// estimate of running with "picmip 2"
+		MEMORY_BOUND_LAST_FRAME, // sums up textures bound last frame
+		MEMORY_TOTAL_LOADED,     // total texture memory used
+		MEMORY_ESTIMATE_PICMIP_1,// estimate of running with "picmip 1"
+		MEMORY_ESTIMATE_PICMIP_2,// estimate of running with "picmip 2"
 		MEMORY_RESERVED_MAX
 	};
 
@@ -62,8 +54,4 @@ public:
 	// used during a frame. Returns the old state of debug texture rendering flag to use
 	// it for restoring the mode.
 	virtual bool SetDebugTextureRendering( bool bEnable ) = 0;
-
 };
-
-
-#endif // IDEBUGTEXTUREINFO_H

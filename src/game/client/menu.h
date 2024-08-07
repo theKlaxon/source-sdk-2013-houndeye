@@ -1,38 +1,32 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef HUD_MENU_H
-#define HUD_MENU_H
-#if IsWindows()
 #pragma once
-#endif
-
-#include "utlvector.h"
 #include "hudelement.h"
+#include "utlvector.h"
 #include <vgui_controls/Panel.h>
 
-#define MENU_SELECTION_TIMEOUT	5.0f
+#define MENU_SELECTION_TIMEOUT 5.0f
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-class CHudMenu : public CHudElement, public vgui::Panel
-{
+class CHudMenu : public CHudElement, public vgui::Panel {
 	DECLARE_CLASS_SIMPLE( CHudMenu, vgui::Panel );
+
 public:
-	CHudMenu( const char *pElementName );
+	CHudMenu( const char* pElementName );
 	void Init( void );
 	void VidInit( void );
 	void Reset( void );
 	virtual bool ShouldDraw( void );
-	void MsgFunc_ShowMenu( bf_read &msg );
+	void MsgFunc_ShowMenu( bf_read& msg );
 	void HideMenu( void );
-	void ShowMenu( const char * menuName, int keySlot );
-	void ShowMenu_KeyValueItems( KeyValues *pKV );
+	void ShowMenu( const char* menuName, int keySlot );
+	void ShowMenu_KeyValueItems( KeyValues* pKV );
 
 	bool IsMenuOpen( void );
 	void SelectMenuItem( int menu_item );
@@ -40,34 +34,34 @@ public:
 private:
 	virtual void OnThink();
 	virtual void Paint();
-	virtual void ApplySchemeSettings(vgui::IScheme *pScheme);
+	virtual void ApplySchemeSettings( vgui::IScheme* pScheme );
+
 private:
-	void		ProcessText( void );
+	void ProcessText( void );
 
-	void PaintString( const wchar_t *text, int textlen, vgui::HFont& font, int x, int y );
+	void PaintString( const wchar_t* text, int textlen, vgui::HFont& font, int x, int y );
 
-	struct ProcessedLine
-	{
-		int	menuitem; // -1 for just text
+	struct ProcessedLine {
+		int menuitem;// -1 for just text
 		int startchar;
 		int length;
 		int pixels;
 		int height;
 	};
 
-	CUtlVector< ProcessedLine >	m_Processed;
+	CUtlVector<ProcessedLine> m_Processed;
 
-	int				m_nMaxPixels;
-	int				m_nHeight;
+	int m_nMaxPixels;
+	int m_nHeight;
 
-	bool			m_bMenuDisplayed;
-	int				m_bitsValidSlots;
-	float			m_flShutoffTime;
-	int				m_fWaitingForMore;
-	int				m_nSelectedItem;
-	bool			m_bMenuTakesInput;
+	bool m_bMenuDisplayed;
+	int m_bitsValidSlots;
+	float m_flShutoffTime;
+	int m_fWaitingForMore;
+	int m_nSelectedItem;
+	bool m_bMenuTakesInput;
 
-	float			m_flSelectionTime;
+	float m_flSelectionTime;
 
 	CPanelAnimationVar( float, m_flOpenCloseTime, "OpenCloseTime", "1" );
 
@@ -85,5 +79,3 @@ private:
 	CPanelAnimationVar( Color, m_ItemColor, "MenuItemColor", "ItemColor" );
 	CPanelAnimationVar( Color, m_BoxColor, "MenuBoxColor", "MenuBoxBg" );
 };
-
-#endif // HUD_MENU_H

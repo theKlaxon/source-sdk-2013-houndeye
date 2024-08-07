@@ -4,10 +4,11 @@
 #pragma once
 #include "isystemclient.hpp"
 
+
 class CPlainSystemClient : public ISystemClient {
 public:
-	CPlainSystemClient( int id, std::string absolute, const char* path );
-	static auto Open( int id, const std::string& absolute, const char* path ) -> std::shared_ptr<ISystemClient>;
+	CPlainSystemClient( int pId, std::string pAbsolute, const char* pPath );
+	static auto Open( int pId, const std::string& pAbsolute, const char* pPath ) -> std::shared_ptr<ISystemClient>;
 	[[nodiscard]]
 	auto GetNativePath() const -> const char* override;
 	[[nodiscard]]
@@ -16,15 +17,17 @@ public:
 	auto GetIdentifier() const -> int override;
 	auto Shutdown() -> void override;
 public: // FS interaction
-	auto Flush ( const FileDescriptor* handle ) -> bool override;
-	auto Walk  ( const FileDescriptor* desc, const WalkEntry*& entry ) -> void override;
-	auto Open  ( const char* path, OpenMode mode ) -> FileDescriptor* override;
-	auto Close ( const FileDescriptor* handle ) -> void override;
-	auto Create( const char* path, FileType type, OpenMode mode ) -> FileDescriptor* override;
-	auto Read  ( const FileDescriptor* handle, void* buffer, uint32_t count ) -> int32_t override;
-	auto Write ( const FileDescriptor* handle, void const* buffer, uint32_t count ) -> int32_t override;
-	auto Remove( const FileDescriptor* handle ) -> void override;
-	auto Stat  ( const FileDescriptor* handle ) -> std::optional<StatData> override;
+	// file ops
+	auto Open  ( const char* pPath, OpenMode pMode ) -> FileDescriptor* override;
+	auto Read  ( const FileDescriptor* pDesc, void* pBuffer, uint32_t pCount ) -> int32_t override;
+	auto Write ( const FileDescriptor* pDesc, const void* pBuffer, uint32_t pCount ) -> int32_t override;
+	auto Flush ( const FileDescriptor* pDesc ) -> bool override;
+	auto Close ( const FileDescriptor* pDesc ) -> void override;
+	// generic ops
+	auto Walk  ( const FileDescriptor* pDesc, const WalkEntry*& pEntry ) -> void override;
+	auto Create( const char* pPath, FileType pType, OpenMode pMode ) -> FileDescriptor* override;
+	auto Remove( const FileDescriptor* pDesc ) -> void override;
+	auto Stat  ( const FileDescriptor* pDesc ) -> std::optional<StatData> override;
 private:
 	const int m_iId;
 	const char* m_szNativePath;

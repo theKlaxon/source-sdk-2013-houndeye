@@ -14,7 +14,7 @@
 #include "tier0/memdbgon.h"
 
 //Global singelton accessor
-CClientEffectPrecacheSystem	*ClientEffectPrecacheSystem( void )
+CClientEffectPrecacheSystem	*ClientEffectPrecacheSystem()
 {
 	static CClientEffectPrecacheSystem	s_ClientEffectPrecacheSystem;
 	return &s_ClientEffectPrecacheSystem;
@@ -23,7 +23,7 @@ CClientEffectPrecacheSystem	*ClientEffectPrecacheSystem( void )
 //-----------------------------------------------------------------------------
 // Purpose: Precache all the registered effects
 //-----------------------------------------------------------------------------
-void CClientEffectPrecacheSystem::LevelInitPreEntity( void )
+void CClientEffectPrecacheSystem::LevelInitPreEntity()
 {
 	//Precache all known effects
 	for ( int i = 0; i < m_Effects.Size(); i++ )
@@ -42,14 +42,14 @@ void CClientEffectPrecacheSystem::LevelInitPreEntity( void )
 //-----------------------------------------------------------------------------
 // Purpose: Nothing to do here
 //-----------------------------------------------------------------------------
-void CClientEffectPrecacheSystem::LevelShutdownPreEntity( void )
+void CClientEffectPrecacheSystem::LevelShutdownPreEntity()
 {
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Dereference all the registered effects
 //-----------------------------------------------------------------------------
-void CClientEffectPrecacheSystem::LevelShutdownPostEntity( void )
+void CClientEffectPrecacheSystem::LevelShutdownPostEntity()
 {
 	// mark all known effects as free
 	for ( int i = 0; i < m_Effects.Size(); i++ )
@@ -61,7 +61,7 @@ void CClientEffectPrecacheSystem::LevelShutdownPostEntity( void )
 //-----------------------------------------------------------------------------
 // Purpose: Purges the effect list
 //-----------------------------------------------------------------------------
-void CClientEffectPrecacheSystem::Shutdown( void )
+void CClientEffectPrecacheSystem::Shutdown()
 {
 	//Release all effects
 	m_Effects.Purge();

@@ -3,18 +3,13 @@
 // Purpose: Default schedules.
 //
 //=============================================================================//
-
-#ifndef AI_DEFAULT_H
-#define AI_DEFAULT_H
-#if IsWindows()
 #pragma once
-#endif
+
 
 //=========================================================
 // These are the schedule types
 //=========================================================
-enum 
-{
+enum {
 	SCHED_NONE = 0,
 	SCHED_IDLE_STAND,
 	SCHED_IDLE_WALK,
@@ -55,7 +50,7 @@ enum
 	SCHED_PRE_FAIL_ESTABLISH_LINE_OF_FIRE,
 	SCHED_FAIL_ESTABLISH_LINE_OF_FIRE,
 	SCHED_SHOOT_ENEMY_COVER,
-	SCHED_COWER, // usually a last resort!
+	SCHED_COWER,// usually a last resort!
 	SCHED_MELEE_ATTACK1,
 	SCHED_MELEE_ATTACK2,
 	SCHED_RANGE_ATTACK1,
@@ -117,5 +112,3 @@ enum
 	LAST_SHARED_SCHEDULE
 
 };
-
-#endif // AI_DEFAULT_H

@@ -1,22 +1,15 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
-
-#ifndef ISERVERENGINETOOLS_H
-#define ISERVERENGINETOOLS_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "interface.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: exposed from engine to game .dll
 //-----------------------------------------------------------------------------
-class IServerEngineTools : public IBaseInterface
-{
+class IServerEngineTools : public IBaseInterface {
 public:
 	// Level init, shutdown
 	virtual void LevelInitPreEntityAllTools() = 0;
@@ -38,7 +31,7 @@ public:
 
 	// The server uses this to call into the tools to get the actual
 	// entities to spawn on startup
-	virtual const char* GetEntityData( const char *pActualEntityData ) = 0;
+	virtual const char* GetEntityData( const char* pActualEntityData ) = 0;
 
 	virtual void PreSetupVisibilityAllTools() = 0;
 
@@ -46,5 +39,3 @@ public:
 };
 
 #define VSERVERENGINETOOLS_INTERFACE_VERSION "VSERVERENGINETOOLS001"
-
-#endif // ISERVERENGINETOOLS_H

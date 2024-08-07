@@ -1,26 +1,16 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
-
-#ifndef ISHADERCOMPILEDLL_H
-#define ISHADERCOMPILEDLL_H
-#if IsWindows()
 #pragma once
-#endif
-
-
 #include "interface.h"
 
 #define SHADER_COMPILE_INTERFACE_VERSION "shadercompiledll_0"
 
 // This is the DLL interface to ShaderCompile
-abstract_class IShaderCompileDLL
-{
+abstract_class IShaderCompileDLL {
 public:
 	// All vrad.exe does is load the VRAD DLL and run this.
-	virtual int			main( int argc, char **argv ) = 0;
+	virtual int main( int argc, char** argv ) = 0;
 };
-
-#endif // ISHADERCOMPILEDLL_H

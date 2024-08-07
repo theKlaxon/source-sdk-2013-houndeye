@@ -6,14 +6,7 @@
 // $Date:         $
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef BSPLIB_H
-#define BSPLIB_H
-
-#if IsWindows()
-	#pragma once
-#endif
-
+#pragma once
 #include "bspfile.h"
 #include "byteswap.h"
 #include "utllinkedlist.h"
@@ -25,9 +18,9 @@
 #endif
 
 #ifdef ENGINE_DLL
-typedef CUtlVector<unsigned char, CHunkMemory<unsigned char>> CDispLightmapSamplePositions;
+	typedef CUtlVector<unsigned char, CHunkMemory<unsigned char>> CDispLightmapSamplePositions;
 #else
-typedef CUtlVector<unsigned char> CDispLightmapSamplePositions;
+	typedef CUtlVector<unsigned char> CDispLightmapSamplePositions;
 #endif
 
 class ISpatialQuery;
@@ -391,6 +384,3 @@ inline ColorRGBExp32* dface_AvgLightColor( dface_t* pFace, int nLightStyleIndex 
 inline const char* TexInfo_TexName( int iTexInfo ) {
 	return TexDataStringTable_GetString( dtexdata[ texinfo[ iTexInfo ].texdata ].nameStringTableID );
 }
-
-
-#endif// BSPLIB_H

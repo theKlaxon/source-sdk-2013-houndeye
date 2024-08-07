@@ -8,33 +8,24 @@
 // $NoKeywords: $
 //
 //===========================================================================//
-
-#ifndef SHADERAPI_SHAREDDEFS_H
-#define SHADERAPI_SHAREDDEFS_H
-
-#if IsWindows()
 #pragma once
-#endif
 
 
 //-----------------------------------------------------------------------------
 // Important enumerations
 //-----------------------------------------------------------------------------
-enum ShaderShadeMode_t
-{
+enum ShaderShadeMode_t {
 	SHADER_FLAT = 0,
 	SHADER_SMOOTH
 };
 
-enum ShaderTexCoordComponent_t
-{
+enum ShaderTexCoordComponent_t {
 	SHADER_TEXCOORD_S = 0,
 	SHADER_TEXCOORD_T,
 	SHADER_TEXCOORD_U
 };
 
-enum ShaderTexFilterMode_t
-{
+enum ShaderTexFilterMode_t {
 	SHADER_TEXFILTERMODE_NEAREST,
 	SHADER_TEXFILTERMODE_LINEAR,
 	SHADER_TEXFILTERMODE_NEAREST_MIPMAP_NEAREST,
@@ -44,8 +35,7 @@ enum ShaderTexFilterMode_t
 	SHADER_TEXFILTERMODE_ANISOTROPIC
 };
 
-enum ShaderTexWrapMode_t
-{
+enum ShaderTexWrapMode_t {
 	SHADER_TEXWRAPMODE_CLAMP,
 	SHADER_TEXWRAPMODE_REPEAT,
 	SHADER_TEXWRAPMODE_BORDER
@@ -58,14 +48,12 @@ enum ShaderTexWrapMode_t
 // NOTE: Texture stages are used only by fixed function shading algorithms
 // Samplers are used to enable and bind textures + by programmable shading algorithms
 //-----------------------------------------------------------------------------
-enum TextureStage_t
-{
+enum TextureStage_t {
 	SHADER_TEXTURE_STAGE0 = 0,
 	SHADER_TEXTURE_STAGE1,
 };
 
-enum Sampler_t
-{
+enum Sampler_t {
 	SHADER_SAMPLER0 = 0,
 	SHADER_SAMPLER1,
 	SHADER_SAMPLER2,
@@ -87,12 +75,9 @@ enum Sampler_t
 //-----------------------------------------------------------------------------
 // Vertex texture sampler identifiers
 //-----------------------------------------------------------------------------
-enum VertexTextureSampler_t
-{
+enum VertexTextureSampler_t {
 	SHADER_VERTEXTEXTURE_SAMPLER0 = 0,
 	SHADER_VERTEXTEXTURE_SAMPLER1,
 	SHADER_VERTEXTEXTURE_SAMPLER2,
 	SHADER_VERTEXTEXTURE_SAMPLER3,
 };
-
-#endif // SHADERAPI_SHAREDDEFS_H

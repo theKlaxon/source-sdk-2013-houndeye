@@ -1,18 +1,13 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef IVAUDIO_H
-#define IVAUDIO_H
-#if IsWindows()
 #pragma once
-#endif
 
-class IAudioStreamEvent
-{
+
+class IAudioStreamEvent {
 public:
 	// called by the stream to request more data
 	// seek the source to position "offset"
@@ -20,18 +15,17 @@ public:
 	// copy the data to pBuffer and return the number of bytes copied
 	// you may return less than bytesRequested if the end of the stream
 	// is encountered.
-	virtual int StreamRequestData( void *pBuffer, int bytesRequested, int offset ) = 0;
+	virtual int StreamRequestData( void* pBuffer, int bytesRequested, int offset ) = 0;
 };
 
 
-class IAudioStream
-{
+class IAudioStream {
 public:
 	virtual ~IAudioStream() {}
 
 	// Decode another bufferSize output bytes from the stream
 	// returns number of bytes decoded
-	virtual int	Decode( void *pBuffer, unsigned int bufferSize ) = 0;
+	virtual int Decode( void* pBuffer, unsigned int bufferSize ) = 0;
 
 	// output sampling bits (8/16)
 	virtual int GetOutputBits() = 0;
@@ -50,15 +44,11 @@ public:
 };
 
 
-#define VAUDIO_INTERFACE_VERSION		"VAudio002"
-class IVAudio
-{
+#define VAUDIO_INTERFACE_VERSION "VAudio002"
+class IVAudio {
 public:
 	virtual ~IVAudio() {}
 
-	virtual IAudioStream	*CreateMP3StreamDecoder( IAudioStreamEvent *pEventHandler ) = 0;
-	virtual void			DestroyMP3StreamDecoder( IAudioStream *pDecoder ) = 0;
+	virtual IAudioStream* CreateMP3StreamDecoder( IAudioStreamEvent* pEventHandler ) = 0;
+	virtual void DestroyMP3StreamDecoder( IAudioStream* pDecoder ) = 0;
 };
-
-
-#endif // IVAUDIO_H

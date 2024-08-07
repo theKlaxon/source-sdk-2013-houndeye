@@ -1,42 +1,34 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef BASEMODELPANEL_H
-#define BASEMODELPANEL_H
-#if IsWindows()
 #pragma once
-#endif
-
-#include <vgui/IScheme.h>
-#include <vgui_controls/ImagePanel.h>
-#include <vgui_controls/EditablePanel.h>
 #include "GameEventListener.h"
 #include "KeyValues.h"
+#include <vgui/IScheme.h>
+#include <vgui_controls/EditablePanel.h>
+#include <vgui_controls/ImagePanel.h>
+
 
 class C_SceneEntity;
 
 
-class CModelPanelModel : public C_BaseFlex
-{
+class CModelPanelModel : public C_BaseFlex {
 public:
-	CModelPanelModel(){}
+	CModelPanelModel() {}
 	DECLARE_CLASS( CModelPanelModel, C_BaseFlex );
 
-	virtual bool IsMenuModel() const{ return true; }
+	virtual bool IsMenuModel() const { return true; }
 };
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-class CModelPanelModelAnimation
-{
+class CModelPanelModelAnimation {
 public:
-	CModelPanelModelAnimation()
-	{
+	CModelPanelModelAnimation() {
 		m_pszName = NULL;
 		m_pszSequence = NULL;
 		m_pszActivity = NULL;
@@ -44,75 +36,64 @@ public:
 		m_bDefault = false;
 	}
 
-	~CModelPanelModelAnimation()
-	{
-		if ( m_pszName && m_pszName[0] )
-		{
-			delete [] m_pszName;
+	~CModelPanelModelAnimation() {
+		if ( m_pszName && m_pszName[ 0 ] ) {
+			delete[] m_pszName;
 			m_pszName = NULL;
 		}
 
-		if ( m_pszSequence && m_pszSequence[0] )
-		{
-			delete [] m_pszSequence;
+		if ( m_pszSequence && m_pszSequence[ 0 ] ) {
+			delete[] m_pszSequence;
 			m_pszSequence = NULL;
 		}
 
-		if ( m_pszActivity && m_pszActivity[0] )
-		{
-			delete [] m_pszActivity;
+		if ( m_pszActivity && m_pszActivity[ 0 ] ) {
+			delete[] m_pszActivity;
 			m_pszActivity = NULL;
 		}
 
-		if ( m_pPoseParameters )
-		{
+		if ( m_pPoseParameters ) {
 			m_pPoseParameters->deleteThis();
 			m_pPoseParameters = NULL;
 		}
 	}
 
 public:
-	const char	*m_pszName;
-	const char	*m_pszSequence;
-	const char	*m_pszActivity;
-	KeyValues	*m_pPoseParameters;
-	bool		m_bDefault;
+	const char* m_pszName;
+	const char* m_pszSequence;
+	const char* m_pszActivity;
+	KeyValues* m_pPoseParameters;
+	bool m_bDefault;
 };
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-class CModelPanelAttachedModelInfo
-{
+class CModelPanelAttachedModelInfo {
 public:
-	CModelPanelAttachedModelInfo()
-	{
+	CModelPanelAttachedModelInfo() {
 		m_pszModelName = NULL;
 		m_nSkin = 0;
 	}
 
-	~CModelPanelAttachedModelInfo()
-	{
-		if ( m_pszModelName && m_pszModelName[0] )
-		{
-			delete [] m_pszModelName;
+	~CModelPanelAttachedModelInfo() {
+		if ( m_pszModelName && m_pszModelName[ 0 ] ) {
+			delete[] m_pszModelName;
 			m_pszModelName = NULL;
 		}
 	}
 
 public:
-	const char	*m_pszModelName;
-	int			m_nSkin;
+	const char* m_pszModelName;
+	int m_nSkin;
 };
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-class CModelPanelModelInfo
-{
+class CModelPanelModelInfo {
 public:
-	CModelPanelModelInfo()
-	{
+	CModelPanelModelInfo() {
 		m_pszModelName = NULL;
 		m_pszModelName_HWM = NULL;
 		m_nSkin = -1;
@@ -122,23 +103,19 @@ public:
 		m_bUseSpotlight = false;
 	}
 
-	~CModelPanelModelInfo()
-	{
-		if ( m_pszModelName && m_pszModelName[0] )
-		{
-			delete [] m_pszModelName;
+	~CModelPanelModelInfo() {
+		if ( m_pszModelName && m_pszModelName[ 0 ] ) {
+			delete[] m_pszModelName;
 			m_pszModelName = NULL;
 		}
 
-		if ( m_pszModelName_HWM && m_pszModelName_HWM[0] )
-		{
-			delete [] m_pszModelName_HWM;
+		if ( m_pszModelName_HWM && m_pszModelName_HWM[ 0 ] ) {
+			delete[] m_pszModelName_HWM;
 			m_pszModelName_HWM = NULL;
 		}
 
-		if ( m_pszVCD && m_pszVCD[0] )
-		{
-			delete [] m_pszVCD;
+		if ( m_pszVCD && m_pszVCD[ 0 ] ) {
+			delete[] m_pszVCD;
 			m_pszVCD = NULL;
 		}
 
@@ -147,87 +124,84 @@ public:
 	}
 
 public:
-	const char	*m_pszModelName;
-	const char	*m_pszModelName_HWM;
-	int			m_nSkin;
-	const char	*m_pszVCD;
-	Vector		m_vecAbsAngles;
-	Vector		m_vecOriginOffset;
-	Vector2D	m_vecViewportOffset;
-	Vector		m_vecFramedOriginOffset;
-	bool		m_bUseSpotlight;
+	const char* m_pszModelName;
+	const char* m_pszModelName_HWM;
+	int m_nSkin;
+	const char* m_pszVCD;
+	Vector m_vecAbsAngles;
+	Vector m_vecOriginOffset;
+	Vector2D m_vecViewportOffset;
+	Vector m_vecFramedOriginOffset;
+	bool m_bUseSpotlight;
 
-	CUtlVector<CModelPanelModelAnimation*>		m_Animations;
-	CUtlVector<CModelPanelAttachedModelInfo*>	m_AttachedModelsInfo;
+	CUtlVector<CModelPanelModelAnimation*> m_Animations;
+	CUtlVector<CModelPanelAttachedModelInfo*> m_AttachedModelsInfo;
 };
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-class CModelPanel : public vgui::EditablePanel, public CGameEventListener
-{
+class CModelPanel : public vgui::EditablePanel, public CGameEventListener {
 public:
 	DECLARE_CLASS_SIMPLE( CModelPanel, vgui::EditablePanel );
 
-	CModelPanel( vgui::Panel *parent, const char *name );
+	CModelPanel( vgui::Panel* parent, const char* name );
 	virtual ~CModelPanel();
 
 	virtual void Paint();
-	virtual void ApplySettings( KeyValues *inResourceData );
+	virtual void ApplySettings( KeyValues* inResourceData );
 	virtual void DeleteVCDData( void );
 	virtual void DeleteModelData( void );
 
-	virtual void SetFOV( int nFOV ){ m_nFOV = nFOV; }
-	virtual void SetPanelDirty( void ){ m_bPanelDirty = true; }
-	virtual bool SetSequence( const char *pszSequence );
+	virtual void SetFOV( int nFOV ) { m_nFOV = nFOV; }
+	virtual void SetPanelDirty( void ) { m_bPanelDirty = true; }
+	virtual bool SetSequence( const char* pszSequence );
 
 	MESSAGE_FUNC_PARAMS( OnAddAnimation, "AddAnimation", data );
 	MESSAGE_FUNC_PARAMS( OnSetAnimation, "SetAnimation", data );
 
-	void	SetDefaultAnimation( const char *pszName );
-	void	SwapModel( const char *pszName, const char *pszAttached = NULL );
+	void SetDefaultAnimation( const char* pszName );
+	void SwapModel( const char* pszName, const char* pszAttached = NULL );
 
-	virtual void ParseModelInfo( KeyValues *inResourceData );
+	virtual void ParseModelInfo( KeyValues* inResourceData );
 
-	void		ClearAttachedModelInfos( void );
+	void ClearAttachedModelInfos( void );
 
-	void		CalculateFrameDistance( void );
-	void		ZoomToFrameDistance( void );
+	void CalculateFrameDistance( void );
+	void ZoomToFrameDistance( void );
 
-	void		UpdateModel();
-public: // IGameEventListener:
-	virtual void FireGameEvent( IGameEvent * event );
+	void UpdateModel();
+
+public:// IGameEventListener:
+	virtual void FireGameEvent( IGameEvent* event );
 
 protected:
 	virtual void SetupModel( void );
 	virtual void SetupVCD( void );
-	virtual const char *GetModelName( void );
+	virtual const char* GetModelName( void );
 
 private:
 	void InitCubeMaps();
-	int FindAnimByName( const char *pszName );
-	void CalculateFrameDistanceInternal( const model_t *pModel );
+	int FindAnimByName( const char* pszName );
+	void CalculateFrameDistanceInternal( const model_t* pModel );
 
 public:
-	int								m_nFOV;
-	float							m_flFrameDistance;
-	bool							m_bStartFramed;
-	CModelPanelModelInfo			*m_pModelInfo;
+	int m_nFOV;
+	float m_flFrameDistance;
+	bool m_bStartFramed;
+	CModelPanelModelInfo* m_pModelInfo;
 
-	CHandle<CModelPanelModel>				m_hModel;
-	CUtlVector<CHandle<C_BaseAnimating> >	m_AttachedModels;
+	CHandle<CModelPanelModel> m_hModel;
+	CUtlVector<CHandle<C_BaseAnimating>> m_AttachedModels;
 
-	CHandle<C_SceneEntity>			m_hScene;
+	CHandle<C_SceneEntity> m_hScene;
 
 private:
-	bool	m_bPanelDirty;
-	int		m_iDefaultAnimation;
+	bool m_bPanelDirty;
+	int m_iDefaultAnimation;
 
-	bool	m_bAllowOffscreen;
+	bool m_bAllowOffscreen;
 
 	CTextureReference m_DefaultEnvCubemap;
 	CTextureReference m_DefaultHDREnvCubemap;
 };
-
-
-#endif // BASEMODELPANEL_H

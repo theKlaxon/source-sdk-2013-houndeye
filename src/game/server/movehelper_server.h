@@ -1,17 +1,10 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef MOVEHELPER_SERVER_H
-#define MOVEHELPER_SERVER_H
-
-#if IsWindows()
 #pragma once
-#endif
-
 #include "imovehelper.h"
 
 
@@ -27,10 +20,9 @@ class CBaseEntity;
 // Implementation of the movehelper on the server
 //-----------------------------------------------------------------------------
 
-abstract_class IMoveHelperServer : public IMoveHelper
-{
+abstract_class IMoveHelperServer : public IMoveHelper {
 public:
-	virtual void SetHost( CBasePlayer *host ) = 0;
+	virtual void SetHost( CBasePlayer * host ) = 0;
 };
 
 //-----------------------------------------------------------------------------
@@ -38,6 +30,3 @@ public:
 //-----------------------------------------------------------------------------
 
 IMoveHelperServer* MoveHelperServer();
-
-
-#endif // MOVEHELPER_SERVER_H

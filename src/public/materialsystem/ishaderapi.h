@@ -8,17 +8,10 @@
 // $NoKeywords: $
 //
 //===========================================================================//
-
-#ifndef ISHADERAPI_MS_H
-#define ISHADERAPI_MS_H
-
-#if IsWindows()
 #pragma once
-#endif
-
-#include <shaderapi/shareddefs.h>
-#include <shaderapi/ishadershadow.h>
 #include <shaderapi/ishaderdynamic.h>
+#include <shaderapi/ishadershadow.h>
+#include <shaderapi/shareddefs.h>
 
 
 //-----------------------------------------------------------------------------
@@ -30,14 +23,10 @@ class IMaterialVar;
 //-----------------------------------------------------------------------------
 // Methods that can be called from the SHADER_INIT blocks of shaders
 //-----------------------------------------------------------------------------
-abstract_class IShaderInit
-{
+abstract_class IShaderInit {
 public:
 	// Loads up a texture
-	virtual void LoadTexture( IMaterialVar *pTextureVar, const char *pTextureGroupName, int nAdditionalCreationFlags = 0 ) = 0; 
-	virtual void LoadBumpMap( IMaterialVar *pTextureVar, const char *pTextureGroupName ) = 0;
-	virtual void LoadCubeMap( IMaterialVar **ppParams, IMaterialVar *pTextureVar, int nAdditionalCreationFlags = 0 ) = 0;
+	virtual void LoadTexture( IMaterialVar * pTextureVar, const char* pTextureGroupName, int nAdditionalCreationFlags = 0 ) = 0;
+	virtual void LoadBumpMap( IMaterialVar * pTextureVar, const char* pTextureGroupName ) = 0;
+	virtual void LoadCubeMap( IMaterialVar * *ppParams, IMaterialVar * pTextureVar, int nAdditionalCreationFlags = 0 ) = 0;
 };
-
-
-#endif // ISHADERAPI_MS_H

@@ -20,8 +20,8 @@ public:
 	DECLARE_CLASS( C_TEClientProjectile, C_BaseTempEntity );
 	DECLARE_CLIENTCLASS();
 
-	C_TEClientProjectile( void );
-	virtual			~C_TEClientProjectile( void );
+	C_TEClientProjectile();
+	virtual			~C_TEClientProjectile();
 
 	virtual void	PostDataUpdate( DataUpdateType_t updateType );
 
@@ -36,7 +36,7 @@ public:
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-C_TEClientProjectile::C_TEClientProjectile( void )
+C_TEClientProjectile::C_TEClientProjectile()
 {
 	m_vecOrigin.Init();
 	m_vecVelocity.Init();
@@ -48,7 +48,7 @@ C_TEClientProjectile::C_TEClientProjectile( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-C_TEClientProjectile::~C_TEClientProjectile( void )
+C_TEClientProjectile::~C_TEClientProjectile()
 {
 }
 

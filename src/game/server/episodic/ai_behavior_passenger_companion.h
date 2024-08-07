@@ -1,49 +1,38 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
-
-#ifndef AI_BEHAVIOR_PASSENGER_COMPANION_H
-#define AI_BEHAVIOR_PASSENGER_COMPANION_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "ai_behavior_passenger.h"
 
 class CNPC_PlayerCompanion;
 
-struct VehicleAvoidParams_t
-{
+struct VehicleAvoidParams_t {
 	Vector vecStartPos;
 	Vector vecGoalPos;
-	Vector *pNodePositions;
+	Vector* pNodePositions;
 	int nNumNodes;
 	int nDirection;
 	int nStartNode;
 	int nEndNode;
 };
 
-struct FailPosition_t
-{
-	Vector	vecPosition;
-	float	flTime;
+struct FailPosition_t {
+	Vector vecPosition;
+	float flTime;
 
 	DECLARE_SIMPLE_DATADESC();
 };
 
-class CAI_PassengerBehaviorCompanion : public CAI_PassengerBehavior
-{
+class CAI_PassengerBehaviorCompanion : public CAI_PassengerBehavior {
 	DECLARE_CLASS( CAI_PassengerBehaviorCompanion, CAI_PassengerBehavior );
 	DECLARE_DATADESC()
 
 public:
+	CAI_PassengerBehaviorCompanion();
 
-	CAI_PassengerBehaviorCompanion( void );
-
-	enum
-	{
+	enum {
 		// Schedules
 		SCHED_PASSENGER_RUN_TO_ENTER_VEHICLE = BaseClass::NEXT_SCHEDULE,
 		SCHED_PASSENGER_RUN_TO_ENTER_VEHICLE_FAILED,
@@ -69,7 +58,7 @@ public:
 		NEXT_TASK,
 
 		// Conditions
-		 
+
 		COND_PASSENGER_CAN_LEAVE_STUCK_VEHICLE = BaseClass::NEXT_CONDITION,
 		COND_PASSENGER_WARN_OVERTURNED,
 		COND_PASSENGER_WARN_COLLISION,
@@ -79,90 +68,87 @@ public:
 		NEXT_CONDITION,
 	};
 
-	virtual bool	CanSelectSchedule( void );
-	virtual void	Enable( CPropJeepEpisodic *pVehicle, bool bImmediateEnter = false);
-	virtual void	GatherConditions( void );
-	virtual int		SelectSchedule( void );
-	virtual int		SelectFailSchedule( int failedSchedule, int failedTask, AI_TaskFailureCode_t taskFailCode );
-	virtual void	StartTask( const Task_t *pTask );
-	virtual void	RunTask( const Task_t *pTask );
-	virtual void	AimGun( void );
-	virtual void	EnterVehicle( void );
-	virtual void	ExitVehicle( void );
-	virtual void	FinishEnterVehicle( void );
-	virtual void	FinishExitVehicle( void );
-	virtual void	BuildScheduleTestBits( void );
+	virtual bool CanSelectSchedule();
+	virtual void Enable( CPropJeepEpisodic* pVehicle, bool bImmediateEnter = false );
+	virtual void GatherConditions();
+	virtual int SelectSchedule();
+	virtual int SelectFailSchedule( int failedSchedule, int failedTask, AI_TaskFailureCode_t taskFailCode );
+	virtual void StartTask( const Task_t* pTask );
+	virtual void RunTask( const Task_t* pTask );
+	virtual void AimGun();
+	virtual void EnterVehicle();
+	virtual void ExitVehicle();
+	virtual void FinishEnterVehicle();
+	virtual void FinishExitVehicle();
+	virtual void BuildScheduleTestBits();
 	virtual Activity NPC_TranslateActivity( Activity activity );
-	virtual bool	CanExitVehicle( void );
-	virtual bool	IsValidEnemy( CBaseEntity *pEntity );
-	virtual void	OnUpdateShotRegulator( void );
-	virtual bool	IsNavigationUrgent( void );
-	virtual	bool	IsCurTaskContinuousMove( void );
-	virtual bool	IsCrouching( void );
+	virtual bool CanExitVehicle();
+	virtual bool IsValidEnemy( CBaseEntity* pEntity );
+	virtual void OnUpdateShotRegulator();
+	virtual bool IsNavigationUrgent();
+	virtual bool IsCurTaskContinuousMove();
+	virtual bool IsCrouching();
 
 private:
+	void SpeakVehicleConditions();
+	virtual void OnExitVehicleFailed();
 
-	void			SpeakVehicleConditions( void );
-	virtual void	OnExitVehicleFailed( void );
-
-	bool	CanFidget( void );
-	bool	UseRadialRouteToEntryPoint( const Vector &vecEntryPoint );
-	float	GetArcToEntryPoint( const Vector &vecCenterPoint, const Vector &vecEntryPoint, bool &bClockwise );
-	int		SelectScheduleInsideVehicle( void );
-	int		SelectScheduleOutsideVehicle( void );
-	bool	FindPathToVehicleEntryPoint( void );
-	bool	CanEnterVehicleImmediately( int *pResultSequence, Vector *pResultPos, QAngle *pResultAngles );
-	void	EnterVehicleImmediately( void );
+	bool CanFidget();
+	bool UseRadialRouteToEntryPoint( const Vector& vecEntryPoint );
+	float GetArcToEntryPoint( const Vector& vecCenterPoint, const Vector& vecEntryPoint, bool& bClockwise );
+	int SelectScheduleInsideVehicle();
+	int SelectScheduleOutsideVehicle();
+	bool FindPathToVehicleEntryPoint();
+	bool CanEnterVehicleImmediately( int* pResultSequence, Vector* pResultPos, QAngle* pResultAngles );
+	void EnterVehicleImmediately();
 
 	// ------------------------------------------
 	//  Passenger sensing
 	// ------------------------------------------
 
-	virtual void	GatherVehicleStateConditions( void );
+	virtual void GatherVehicleStateConditions();
 
-	float	GetVehicleSpeed( void );
-	void	GatherVehicleCollisionConditions( const Vector &localVelocity );
+	float GetVehicleSpeed();
+	void GatherVehicleCollisionConditions( const Vector& localVelocity );
 
 	// ------------------------------------------
 	//  Overturned tracking
 	// ------------------------------------------
-	void	UpdateStuckStatus( void );
-	bool	CanExitAtPosition( const Vector &vecTestPos );
-	bool	GetStuckExitPos( Vector *vecResult );
-	bool	ExitStuckVehicle( void );
+	void UpdateStuckStatus();
+	bool CanExitAtPosition( const Vector& vecTestPos );
+	bool GetStuckExitPos( Vector* vecResult );
+	bool ExitStuckVehicle();
 
-	bool			UpdateVehicleEntrancePath( void );
-	bool			PointIsWithinEntryFailureRadius( const Vector &vecPosition );
-	void			ResetVehicleEntryFailedState( void );
-	void			MarkVehicleEntryFailed( const Vector &vecPosition );
-	virtual int		FindEntrySequence( bool bNearest = false );
-	void			CalculateBodyLean( void );
+	bool UpdateVehicleEntrancePath();
+	bool PointIsWithinEntryFailureRadius( const Vector& vecPosition );
+	void ResetVehicleEntryFailedState();
+	void MarkVehicleEntryFailed( const Vector& vecPosition );
+	virtual int FindEntrySequence( bool bNearest = false );
+	void CalculateBodyLean();
 
-	float	m_flNextJostleTime;
-	float	m_flNextOverturnWarning;	// The next time the NPC may complained about being upside-down
-	float	m_flOverturnedDuration;		// Amount of time we've been stuck in the vehicle (unable to exit)
-	float	m_flUnseenDuration;			// Amount of time we've been hidden from the player's view
+	float m_flNextJostleTime;
+	float m_flNextOverturnWarning;// The next time the NPC may complained about being upside-down
+	float m_flOverturnedDuration; // Amount of time we've been stuck in the vehicle (unable to exit)
+	float m_flUnseenDuration;     // Amount of time we've been hidden from the player's view
 
-	float	m_flEnterBeginTime;			// Time the NPC started to try and enter the vehicle
-	int		m_nExitAttempts;			// Number of times we've attempted to exit the vehicle but failed
-	int		m_nVisibleEnemies;			// Keeps a record of how many enemies I know about
-	float	m_flLastLateralLean;		// Our last lean value
+	float m_flEnterBeginTime; // Time the NPC started to try and enter the vehicle
+	int m_nExitAttempts;      // Number of times we've attempted to exit the vehicle but failed
+	int m_nVisibleEnemies;    // Keeps a record of how many enemies I know about
+	float m_flLastLateralLean;// Our last lean value
 
-	CAI_MoveMonitor				m_VehicleMonitor;		// Used to keep track of the vehicle's movement relative to a mark
-	CUtlVector<FailPosition_t>	m_FailedEntryPositions;	// Used to keep track of the vehicle's movement relative to a mark
+	CAI_MoveMonitor m_VehicleMonitor;                 // Used to keep track of the vehicle's movement relative to a mark
+	CUtlVector<FailPosition_t> m_FailedEntryPositions;// Used to keep track of the vehicle's movement relative to a mark
 
 protected:
-	virtual int	SelectTransitionSchedule( void );
-	
-	void	ExtendFidgetDelay( float flDuration );
-	bool	CanPlayJostle( bool bLargeJostle );
-	
-	float	m_flEntraceUpdateTime;
-	float	m_flNextEnterAttempt;
-	float	m_flNextFidgetTime;
-	CHandle< CNPC_PlayerCompanion > m_hCompanion;
+	virtual int SelectTransitionSchedule();
+
+	void ExtendFidgetDelay( float flDuration );
+	bool CanPlayJostle( bool bLargeJostle );
+
+	float m_flEntraceUpdateTime;
+	float m_flNextEnterAttempt;
+	float m_flNextFidgetTime;
+	CHandle<CNPC_PlayerCompanion> m_hCompanion;
 
 	DEFINE_CUSTOM_SCHEDULE_PROVIDER;
 };
-
-#endif // AI_BEHAVIOR_PASSENGER_COMPANION_H

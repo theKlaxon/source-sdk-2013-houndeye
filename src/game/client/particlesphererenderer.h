@@ -4,14 +4,7 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef PARTICLESPHERERENDERER_H
-#define PARTICLESPHERERENDERER_H
-#if IsWindows()
 #pragma once
-#endif
-
-
 #include "particlemgr.h"
 #include "particle_util.h"
 
@@ -224,6 +217,3 @@ inline void CParticleSphereRenderer::RenderParticle_AddColor(
 		flAlpha,		// alpha
 		flParticleSize );
 }
-
-
-#endif // PARTICLESPHERERENDERER_H

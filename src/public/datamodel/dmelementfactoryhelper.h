@@ -1,28 +1,21 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
-
-#ifndef DMELEMENTFACTORYHELPER_H
-#define DMELEMENTFACTORYHELPER_H
-#if IsWindows()
 #pragma once
-#endif
-
-#include "datamodel/idatamodel.h"
-#include "datamodel/dmelement.h"
 #include "datamodel/dmattribute.h"
 #include "datamodel/dmattributevar.h"
-#include "tier1/utlvector.h"
+#include "datamodel/dmelement.h"
+#include "datamodel/idatamodel.h"
 #include "tier1/utlsymbol.h"
+#include "tier1/utlvector.h"
 
 
 //-----------------------------------------------------------------------------
 // Internal interface for IDmElementFactory
 //-----------------------------------------------------------------------------
-class IDmElementFactoryInternal : public IDmElementFactory
-{
+class IDmElementFactoryInternal : public IDmElementFactory {
 public:
 	virtual void SetElementTypeSymbol( CUtlSymbol sym ) = 0;
 	virtual bool IsAbstract() const = 0;
@@ -32,105 +25,93 @@ public:
 //-----------------------------------------------------------------------------
 // Class used to register factories into a global list
 //-----------------------------------------------------------------------------
-class CDmElementFactoryHelper
-{
+class CDmElementFactoryHelper {
 public:
 	// Static list of helpers
-	static CDmElementFactoryHelper *s_pHelpers[2];
+	static CDmElementFactoryHelper* s_pHelpers[ 2 ];
 
 	// Create all the hud elements
-	static void InstallFactories( );
+	static void InstallFactories();
 
 public:
 	// Construction
-	CDmElementFactoryHelper( const char *pClassName, IDmElementFactoryInternal *pFactory, bool bIsStandardFactory );
+	CDmElementFactoryHelper( const char* pClassName, IDmElementFactoryInternal* pFactory, bool bIsStandardFactory );
 
 	// Accessors
-	CDmElementFactoryHelper *GetNext( void );
+	CDmElementFactoryHelper* GetNext();
 
-	const char *GetClassname();
-	IDmElementFactoryInternal *GetFactory();
+	const char* GetClassname();
+	IDmElementFactoryInternal* GetFactory();
 
 private:
 	// Next factory in list
-	CDmElementFactoryHelper	*m_pNext;
+	CDmElementFactoryHelper* m_pNext;
 	// Creation function to use for this technology
-	IDmElementFactoryInternal *m_pFactory;
-	const char				*m_pszClassname;
+	IDmElementFactoryInternal* m_pFactory;
+	const char* m_pszClassname;
 };
 
 
 //-----------------------------------------------------------------------------
-// Inline methods 
+// Inline methods
 //-----------------------------------------------------------------------------
-inline const char *CDmElementFactoryHelper::GetClassname() 
-{ 
-	return m_pszClassname; 
+inline const char* CDmElementFactoryHelper::GetClassname() {
+	return m_pszClassname;
 }
 
-inline IDmElementFactoryInternal *CDmElementFactoryHelper::GetFactory() 
-{ 
-	return m_pFactory; 
+inline IDmElementFactoryInternal* CDmElementFactoryHelper::GetFactory() {
+	return m_pFactory;
 }
 
 
 //-----------------------------------------------------------------------------
 // Helper Template factory for simple creation of factories
 //-----------------------------------------------------------------------------
-template <class T >
-class CDmElementFactory : public IDmElementFactoryInternal
-{
+template<class T>
+class CDmElementFactory : public IDmElementFactoryInternal {
 public:
-	CDmElementFactory( const char *pLookupName ) : m_pLookupName( pLookupName ) {}
+	CDmElementFactory( const char* pLookupName ) : m_pLookupName( pLookupName ) {}
 
 	// Creation, destruction
-	virtual CDmElement* Create( DmElementHandle_t handle, const char *pElementType, const char *pElementName, DmFileId_t fileid, const DmObjectId_t &id )
-	{
+	virtual CDmElement* Create( DmElementHandle_t handle, const char* pElementType, const char* pElementName, DmFileId_t fileid, const DmObjectId_t& id ) {
 		return new T( handle, m_pLookupName, id, pElementName, fileid );
 	}
 
-	virtual void Destroy( DmElementHandle_t hElement )
-	{
-		CDmElement *pElement = g_pDataModel->GetElement( hElement );
-		if ( pElement )
-		{
-			T *pActualElement = static_cast< T* >( pElement );
+	virtual void Destroy( DmElementHandle_t hElement ) {
+		CDmElement* pElement = g_pDataModel->GetElement( hElement );
+		if ( pElement ) {
+			T* pActualElement = static_cast<T*>( pElement );
 			delete pActualElement;
 		}
 	}
 
 	// Sets the type symbol, used for "isa" implementation
-	virtual void SetElementTypeSymbol( CUtlSymbol sym )
-	{
+	virtual void SetElementTypeSymbol( CUtlSymbol sym ) {
 		T::SetTypeSymbol( sym );
 	}
 
 	virtual bool IsAbstract() const { return false; }
 
 private:
-	const char *m_pLookupName;
+	const char* m_pLookupName;
 };
 
 
-template < class T >
-class CDmAbstractElementFactory : public IDmElementFactoryInternal
-{
+template<class T>
+class CDmAbstractElementFactory : public IDmElementFactoryInternal {
 public:
 	CDmAbstractElementFactory() {}
 
 	// Creation, destruction
-	virtual CDmElement* Create( DmElementHandle_t handle, const char *pElementType, const char *pElementName, DmFileId_t fileid, const DmObjectId_t &id )
-	{
-		return NULL;
+	virtual CDmElement* Create( DmElementHandle_t handle, const char* pElementType, const char* pElementName, DmFileId_t fileid, const DmObjectId_t& id ) {
+		return nullptr;
 	}
 
-	virtual void Destroy( DmElementHandle_t hElement )
-	{
+	virtual void Destroy( DmElementHandle_t hElement ) {
 	}
 
 	// Sets the type symbol, used for "isa" implementation
-	virtual void SetElementTypeSymbol( CUtlSymbol sym )
-	{
+	virtual void SetElementTypeSymbol( CUtlSymbol sym ) {
 		T::SetTypeSymbol( sym );
 	}
 
@@ -141,50 +122,47 @@ private:
 
 
 //-----------------------------------------------------------------------------
-// Helper macro to create the class factory 
+// Helper macro to create the class factory
 //-----------------------------------------------------------------------------
-#if defined( MOVIEOBJECTS_LIB ) || defined ( DATAMODEL_LIB ) || defined ( DMECONTROLS_LIB )
+#if defined( MOVIEOBJECTS_LIB ) || defined( DATAMODEL_LIB ) || defined( DMECONTROLS_LIB )
 
-#define IMPLEMENT_ELEMENT_FACTORY( lookupName, className )	\
-	IMPLEMENT_ELEMENT( className )							\
-	CDmElementFactory< className > g_##className##_Factory( #lookupName );							\
-	CDmElementFactoryHelper g_##className##_Helper( #lookupName, &g_##className##_Factory, true );	\
-	className *g_##className##LinkerHack = NULL;
+	#define IMPLEMENT_ELEMENT_FACTORY( lookupName, className )                                         \
+		IMPLEMENT_ELEMENT( className )                                                                 \
+		CDmElementFactory<className> g_##className##_Factory( #lookupName );                           \
+		CDmElementFactoryHelper g_##className##_Helper( #lookupName, &g_##className##_Factory, true ); \
+		className* g_##className##LinkerHack = nullptr;
 
-#define IMPLEMENT_ABSTRACT_ELEMENT( lookupName, className )	\
-	IMPLEMENT_ELEMENT( className )							\
-	CDmAbstractElementFactory< className > g_##className##_Factory;									\
-	CDmElementFactoryHelper g_##className##_Helper( #lookupName, &g_##className##_Factory, true );	\
-	className *g_##className##LinkerHack = NULL;
+	#define IMPLEMENT_ABSTRACT_ELEMENT( lookupName, className )                                        \
+		IMPLEMENT_ELEMENT( className )                                                                 \
+		CDmAbstractElementFactory<className> g_##className##_Factory;                                  \
+		CDmElementFactoryHelper g_##className##_Helper( #lookupName, &g_##className##_Factory, true ); \
+		className* g_##className##LinkerHack = nullptr;
 
 #else
 
-#define IMPLEMENT_ELEMENT_FACTORY( lookupName, className )	\
-	IMPLEMENT_ELEMENT( className )							\
-	CDmElementFactory< className > g_##className##_Factory( #lookupName );						\
-	CDmElementFactoryHelper g_##className##_Helper( #lookupName, &g_##className##_Factory, false );	\
-	className *g_##className##LinkerHack = NULL;
+	#define IMPLEMENT_ELEMENT_FACTORY( lookupName, className )                                          \
+		IMPLEMENT_ELEMENT( className )                                                                  \
+		CDmElementFactory<className> g_##className##_Factory( #lookupName );                            \
+		CDmElementFactoryHelper g_##className##_Helper( #lookupName, &g_##className##_Factory, false ); \
+		className* g_##className##LinkerHack = nullptr;
 
-#define IMPLEMENT_ABSTRACT_ELEMENT( lookupName, className )	\
-	IMPLEMENT_ELEMENT( className )							\
-	CDmAbstractElementFactory< className > g_##className##_Factory;									\
-	CDmElementFactoryHelper g_##className##_Helper( #lookupName, &g_##className##_Factory, false );	\
-	className *g_##className##LinkerHack = NULL;
+	#define IMPLEMENT_ABSTRACT_ELEMENT( lookupName, className )                                         \
+		IMPLEMENT_ELEMENT( className )                                                                  \
+		CDmAbstractElementFactory<className> g_##className##_Factory;                                   \
+		CDmElementFactoryHelper g_##className##_Helper( #lookupName, &g_##className##_Factory, false ); \
+		className* g_##className##LinkerHack = nullptr;
 
 #endif
 
 
 // Used by classes defined in movieobjects or scenedatabase that must be explicitly installed
-#define IMPLEMENT_ELEMENT_FACTORY_INSTALL_EXPLICITLY( lookupName, className )	\
-	IMPLEMENT_ELEMENT( className )							\
-	CDmElementFactory< className > g_##className##_Factory( #lookupName );						\
-	CDmElementFactoryHelper g_##className##_Helper( #lookupName, &g_##className##_Factory, false );	\
-	className *g_##className##LinkerHack = NULL;
+#define IMPLEMENT_ELEMENT_FACTORY_INSTALL_EXPLICITLY( lookupName, className )                       \
+	IMPLEMENT_ELEMENT( className )                                                                  \
+	CDmElementFactory<className> g_##className##_Factory( #lookupName );                            \
+	CDmElementFactoryHelper g_##className##_Helper( #lookupName, &g_##className##_Factory, false ); \
+	className* g_##className##LinkerHack = nullptr;
 
 //-----------------------------------------------------------------------------
 // Installs dm element factories
 //-----------------------------------------------------------------------------
-void InstallDmElementFactories( );
-
-
-#endif // DMELEMENTFACTORYHELPER_H
+void InstallDmElementFactories();

@@ -1,19 +1,11 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef PORTALS_H
-#define PORTALS_H
-#if IsWindows()
 #pragma once
-#endif
 
 
 // Sets up the g_ClipPortalIndices array.
 void TranslateClipPortalIndices();
-
-
-#endif // PORTALS_H

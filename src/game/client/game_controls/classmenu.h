@@ -1,46 +1,38 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef CLASSMENU_H
-#define CLASSMENU_H
-#if IsWindows()
 #pragma once
-#endif
-
-#include <vgui_controls/Frame.h>
-#include <vgui_controls/Button.h>
-#include <vgui_controls/HTML.h>
+#include <game/client/iviewport.h>
 #include <utlvector.h>
 #include <vgui/ILocalize.h>
 #include <vgui/KeyCode.h>
-#include <game/client/iviewport.h>
+#include <vgui_controls/Button.h>
+#include <vgui_controls/Frame.h>
+#include <vgui_controls/HTML.h>
 
 #include "mouseoverpanelbutton.h"
 
-namespace vgui
-{
+namespace vgui {
 	class TextEntry;
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Draws the class menu
 //-----------------------------------------------------------------------------
-class CClassMenu : public vgui::Frame, public IViewPortPanel
-{
+class CClassMenu : public vgui::Frame, public IViewPortPanel {
 private:
 	DECLARE_CLASS_SIMPLE( CClassMenu, vgui::Frame );
 
 public:
-	CClassMenu(IViewPort *pViewPort);
-	CClassMenu(IViewPort *pViewPort, const char *panelName );
+	CClassMenu( IViewPort* pViewPort );
+	CClassMenu( IViewPort* pViewPort, const char* panelName );
 	virtual ~CClassMenu();
 
-	virtual const char *GetName( void ) { return PANEL_CLASS; }
-	virtual void SetData(KeyValues *data);
+	virtual const char* GetName( void ) { return PANEL_CLASS; }
+	virtual void SetData( KeyValues* data );
 	virtual void Reset();
 	virtual void Update() {};
 	virtual bool NeedsUpdate( void ) { return false; }
@@ -53,27 +45,23 @@ public:
 	virtual void SetParent( vgui::VPANEL parent ) { BaseClass::SetParent( parent ); }
 
 protected:
-
-	virtual vgui::Panel *CreateControlByName(const char *controlName);
-	virtual MouseOverPanelButton* CreateNewMouseOverPanelButton(vgui::EditablePanel *panel);
+	virtual vgui::Panel* CreateControlByName( const char* controlName );
+	virtual MouseOverPanelButton* CreateNewMouseOverPanelButton( vgui::EditablePanel* panel );
 
 	//vgui2 overrides
-	virtual void OnKeyCodePressed(vgui::KeyCode code);
+	virtual void OnKeyCodePressed( vgui::KeyCode code );
 
 	// helper functions
-	void SetLabelText(const char *textEntryName, const char *text);
-	void SetVisibleButton(const char *textEntryName, bool state);
+	void SetLabelText( const char* textEntryName, const char* text );
+	void SetVisibleButton( const char* textEntryName, bool state );
 
 	// command callbacks
-	void OnCommand( const char *command );
+	void OnCommand( const char* command );
 
-	IViewPort	*m_pViewPort;
+	IViewPort* m_pViewPort;
 	ButtonCode_t m_iScoreBoardKey;
-	int			m_iTeam;
-	vgui::EditablePanel *m_pPanel;
+	int m_iTeam;
+	vgui::EditablePanel* m_pPanel;
 
-	CUtlVector< MouseOverPanelButton * > m_mouseoverButtons;
+	CUtlVector<MouseOverPanelButton*> m_mouseoverButtons;
 };
-
-
-#endif // CLASSMENU_H

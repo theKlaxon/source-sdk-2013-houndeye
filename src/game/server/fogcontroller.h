@@ -1,20 +1,14 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
-
-#ifndef FOGCONTROLLER_H
-#define FOGCONTROLLER_H
-#if IsWindows()
 #pragma once
-#endif
-
-#include "playernet_vars.h"
 #include "igamesystem.h"
+#include "playernet_vars.h"
 
 // Spawn Flags
-#define SF_FOG_MASTER		0x0001
+#define SF_FOG_MASTER 0x0001
 
 //=============================================================================
 //
@@ -22,8 +16,7 @@
 // Compares a set of integer inputs to the one main input
 // Outputs true if they are all equivalant, false otherwise
 //
-class CFogController : public CBaseEntity
-{
+class CFogController : public CBaseEntity {
 public:
 	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
@@ -37,65 +30,57 @@ public:
 	virtual int UpdateTransmitState();
 
 	// Input handlers
-	void InputSetStartDist(inputdata_t &data);
-	void InputSetEndDist(inputdata_t &data);
-	void InputTurnOn(inputdata_t &data);
-	void InputTurnOff(inputdata_t &data);
-	void InputSetColor(inputdata_t &data);
-	void InputSetColorSecondary(inputdata_t &data);
-	void InputSetFarZ( inputdata_t &data );
-	void InputSetAngles( inputdata_t &inputdata );
-	void InputSetMaxDensity( inputdata_t &inputdata );
+	void InputSetStartDist( inputdata_t& data );
+	void InputSetEndDist( inputdata_t& data );
+	void InputTurnOn( inputdata_t& data );
+	void InputTurnOff( inputdata_t& data );
+	void InputSetColor( inputdata_t& data );
+	void InputSetColorSecondary( inputdata_t& data );
+	void InputSetFarZ( inputdata_t& data );
+	void InputSetAngles( inputdata_t& inputdata );
+	void InputSetMaxDensity( inputdata_t& inputdata );
 
-	void InputSetColorLerpTo(inputdata_t &data);
-	void InputSetColorSecondaryLerpTo(inputdata_t &data);
-	void InputSetStartDistLerpTo(inputdata_t &data);
-	void InputSetEndDistLerpTo(inputdata_t &data);
+	void InputSetColorLerpTo( inputdata_t& data );
+	void InputSetColorSecondaryLerpTo( inputdata_t& data );
+	void InputSetStartDistLerpTo( inputdata_t& data );
+	void InputSetEndDistLerpTo( inputdata_t& data );
 
-	void InputStartFogTransition(inputdata_t &data);
+	void InputStartFogTransition( inputdata_t& data );
 
-	int DrawDebugTextOverlays(void);
+	int DrawDebugTextOverlays();
 
-	void SetLerpValues( void );
-	void Spawn( void );
+	void SetLerpValues();
+	void Spawn();
 
-	bool IsMaster( void )					{ return HasSpawnFlags( SF_FOG_MASTER ); }
+	bool IsMaster() { return HasSpawnFlags( SF_FOG_MASTER ); }
 
 public:
-
 	CNetworkVarEmbedded( fogparams_t, m_fog );
-	bool					m_bUseAngles;
-	int						m_iChangedVariables;
+	bool m_bUseAngles;
+	int m_iChangedVariables;
 };
 
 //=============================================================================
 //
 // Fog Controller System.
 //
-class CFogSystem : public CAutoGameSystem
-{
+class CFogSystem : public CAutoGameSystem {
 public:
-
 	// Creation/Init.
-	CFogSystem( char const *name ) : CAutoGameSystem( name ) 
-	{
-		m_pMasterController = NULL;
+	CFogSystem( char const* name ) : CAutoGameSystem( name ) {
+		m_pMasterController = nullptr;
 	}
 
-	~CFogSystem()
-	{
-		m_pMasterController = NULL;
+	~CFogSystem() {
+		m_pMasterController = nullptr;
 	}
 
 	virtual void LevelInitPreEntity();
 	virtual void LevelInitPostEntity();
-	CFogController *GetMasterFogController( void )			{ return m_pMasterController; }
+	CFogController* GetMasterFogController() { return m_pMasterController; }
 
 private:
-
-	CFogController	*m_pMasterController;
+	CFogController* m_pMasterController;
 };
 
-CFogSystem *FogSystem( void );
-
-#endif // FOGCONTROLLER_H
+CFogSystem* FogSystem();

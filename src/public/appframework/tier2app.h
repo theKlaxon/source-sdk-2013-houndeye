@@ -10,40 +10,29 @@
 //
 // The application object for apps that use tier2
 //=============================================================================
-
-#ifndef TIER2APP_H
-#define TIER2APP_H
-
-#if IsWindows()
 #pragma once
-#endif
-
-
 #include "appframework/AppFramework.h"
-#include "tier2/tier2dm.h"
 #include "tier1/convar.h"
+#include "tier2/tier2dm.h"
 
 
 //-----------------------------------------------------------------------------
 // The application object for apps that use tier2
 //-----------------------------------------------------------------------------
-class CTier2SteamApp : public CSteamAppSystemGroup
-{
+class CTier2SteamApp : public CSteamAppSystemGroup {
 	typedef CSteamAppSystemGroup BaseClass;
 
 public:
 	// Methods of IApplication
-	virtual bool PreInit()
-	{
+	virtual bool PreInit() {
 		CreateInterfaceFn factory = GetFactory();
 		ConnectTier1Libraries( &factory, 1 );
 		ConVar_Register( 0 );
 		ConnectTier2Libraries( &factory, 1 );
-		return true;			
+		return true;
 	}
 
-	virtual void PostShutdown()
-	{
+	virtual void PostShutdown() {
 		DisconnectTier2Libraries();
 		ConVar_Unregister();
 		DisconnectTier1Libraries();
@@ -54,32 +43,28 @@ public:
 //-----------------------------------------------------------------------------
 // The application object for apps that use tier2 and datamodel
 //-----------------------------------------------------------------------------
-class CTier2DmSteamApp : public CTier2SteamApp
-{
+class CTier2DmSteamApp : public CTier2SteamApp {
 	typedef CTier2SteamApp BaseClass;
 
 public:
 	// Methods of IApplication
-	virtual bool PreInit()
-	{
-		if ( !BaseClass::PreInit() )
+	virtual bool PreInit() {
+		if ( !BaseClass::PreInit() ) {
 			return false;
+		}
 
 		CreateInterfaceFn factory = GetFactory();
-		if ( !ConnectDataModel( factory ) )
+		if ( !ConnectDataModel( factory ) ) {
 			return false;
+		}
 
 		InitReturnVal_t nRetVal = InitDataModel();
 		return ( nRetVal == INIT_OK );
 	}
 
-	virtual void PostShutdown()
-	{
+	virtual void PostShutdown() {
 		ShutdownDataModel();
 		DisconnectDataModel();
 		BaseClass::PostShutdown();
 	}
 };
-
-
-#endif // TIER2APP_H

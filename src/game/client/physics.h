@@ -4,14 +4,7 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef PHYSICS_H
-#define PHYSICS_H
-#if IsWindows()
 #pragma once
-#endif
-
-
 #include "interface.h"
 #include "physics_shared.h"
 
@@ -23,5 +16,3 @@ extern bool PhysicsDLLInit( CreateInterfaceFn physicsFactory );
 extern void PhysicsReset();
 extern void PhysicsSimulate();
 extern float PhysGetSyncCreateTime();
-
-#endif // PHYSICS_H

@@ -32,11 +32,11 @@ public:
 	CAI_TimedSemaphore()
 	 :	m_ReleaseTime( 0 )
 	{
-		m_hCurrentTalker = NULL;
+		m_hCurrentTalker = nullptr;
 	}
 	
 	void Acquire( float time, CBaseEntity *pTalker )		{ m_ReleaseTime = gpGlobals->curtime + time; m_hCurrentTalker = pTalker; }
-	void Release()					{ m_ReleaseTime = 0; m_hCurrentTalker = NULL; }
+	void Release()					{ m_ReleaseTime = 0; m_hCurrentTalker = nullptr; }
 	
 	// Current owner of the semaphore is always allowed to talk
 	bool IsAvailable( CBaseEntity *pTalker ) const		{ return ((gpGlobals->curtime > m_ReleaseTime) || (m_hCurrentTalker == pTalker)); }
@@ -192,7 +192,7 @@ public:
 	void NoteSpeaking( float duration, float delay = 0 );
 
 	// Force the NPC to release the semaphore & clear next speech time
-	void ForceNotSpeaking( void );
+	void ForceNotSpeaking();
 
 protected:
 	CAI_TimedSemaphore *GetMySpeechSemaphore( CBaseEntity *pNpc );

@@ -1,13 +1,7 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
 //----------------------------------------------------------------------------------------
-
-#ifndef REPLAYMESSAGEPANEL_H
-#define REPLAYMESSAGEPANEL_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "vgui_controls/EditablePanel.h"
 
 using namespace vgui;
@@ -28,58 +22,56 @@ extern ConVar replay_msgduration_connectrecording;
 class CExLabel;
 class CExButton;
 
-class CReplayMessageDlg : public EditablePanel
-{
+class CReplayMessageDlg : public EditablePanel {
 	DECLARE_CLASS_SIMPLE( CReplayMessageDlg, EditablePanel );
+
 public:
-	CReplayMessageDlg( const char *pText );
+	CReplayMessageDlg( const char* pText );
 	~CReplayMessageDlg();
 
-	virtual void	ApplySchemeSettings( IScheme *pScheme );
-	virtual void	PerformLayout();
+	virtual void ApplySchemeSettings( IScheme* pScheme );
+	virtual void PerformLayout();
 
-	virtual void	OnKeyCodeTyped( KeyCode nCode );
-	virtual void	OnCommand( const char *pCommand );
+	virtual void OnKeyCodeTyped( KeyCode nCode );
+	virtual void OnCommand( const char* pCommand );
 
 private:
-	void			Close();
+	void Close();
 
-	Panel			*m_pDlg;
-	CExLabel		*m_pMsgLabel;
-	CExButton		*m_pOKButton;
+	Panel* m_pDlg;
+	CExLabel* m_pMsgLabel;
+	CExButton* m_pOKButton;
 };
 
 //----------------------------------------------------------------------------------------
 // Purpose: A panel for display messages from the replay system during gameplay
 //----------------------------------------------------------------------------------------
-class CReplayMessagePanel : public EditablePanel
-{
+class CReplayMessagePanel : public EditablePanel {
 	DECLARE_CLASS_SIMPLE( CReplayMessagePanel, EditablePanel );
+
 public:
-	CReplayMessagePanel( const char *pLocalizeName, float flDuration, bool bUrgent );
+	CReplayMessagePanel( const char* pLocalizeName, float flDuration, bool bUrgent );
 	virtual ~CReplayMessagePanel();
 
 	void Show();
 	virtual void OnTick();
 
-	static int	InstanceCount();
-	static void	RemoveAll();
+	static int InstanceCount();
+	static void RemoveAll();
 
 private:
-	virtual void ApplySchemeSettings( IScheme *pScheme );
+	virtual void ApplySchemeSettings( IScheme* pScheme );
 	virtual void PerformLayout();
 
 
-	CExLabel	*m_pMessageLabel;
-	CExLabel	*m_pReplayLabel;
-	ImagePanel	*m_pIcon;
-	float		m_flShowStartTime;
-	float		m_flShowDuration;
-	bool		m_bUrgent;
+	CExLabel* m_pMessageLabel;
+	CExLabel* m_pReplayLabel;
+	ImagePanel* m_pIcon;
+	float m_flShowStartTime;
+	float m_flShowDuration;
+	bool m_bUrgent;
 
 #if defined( TF_CLIENT_DLL )
-	char		m_szBorderName[ 64 ];
+	char m_szBorderName[ 64 ];
 #endif
 };
-
-#endif // REPLAYMESSAGEPANEL_H

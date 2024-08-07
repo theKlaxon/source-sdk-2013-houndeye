@@ -4,12 +4,7 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef BASEPLAYER_SHARED_H
-#define BASEPLAYER_SHARED_H
-#if IsWindows()
 #pragma once
-#endif
 
 // PlayerUse defines
 #define	PLAYER_USE_RADIUS	80.f
@@ -32,8 +27,7 @@
 
 #define DEATH_ANIMATION_TIME	3.0f
 
-typedef struct 
-{
+typedef struct {
 	Vector		m_vecAutoAimDir;		// The direction autoaim wishes to point.
 	Vector		m_vecAutoAimPoint;		// The point (world space) that autoaim is aiming at.
 	EHANDLE		m_hAutoAimEntity;		// The entity that autoaim is aiming at.
@@ -43,8 +37,7 @@ typedef struct
 	float		m_fMaxDist;
 } autoaim_params_t;
 
-enum stepsoundtimes_t
-{
+enum stepsoundtimes_t {
 	STEPSOUNDTIME_NORMAL = 0,
 	STEPSOUNDTIME_ON_LADDER,
 	STEPSOUNDTIME_WATER_KNEE,
@@ -55,10 +48,8 @@ void CopySoundNameWithModifierToken( char *pchDest, const char *pchSource, int n
 
 // Shared header file for players
 #if defined( CLIENT_DLL )
-#define CBasePlayer C_BasePlayer
-#include "c_baseplayer.h"
+	#define CBasePlayer C_BasePlayer
+	#include "c_baseplayer.h"
 #else
-#include "player.h"
+	#include "player.h"
 #endif
-
-#endif // BASEPLAYER_SHARED_H

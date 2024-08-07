@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Workfile:     $
 // $Date:         $
@@ -10,26 +10,17 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-#if !defined( IDEBUGOVERLAYPANEL_H )
-#define IDEBUGOVERLAYPANEL_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include <vgui/VGUI.h>
 
-namespace vgui
-{
+namespace vgui {
 	class Panel;
 }
 
-abstract_class IDebugOverlayPanel
-{
+abstract_class IDebugOverlayPanel {
 public:
-	virtual void		Create( vgui::VPANEL parent ) = 0;
-	virtual void		Destroy( void ) = 0;
+	virtual void Create( vgui::VPANEL parent ) = 0;
+	virtual void Destroy( void ) = 0;
 };
 
-extern IDebugOverlayPanel *debugoverlaypanel;
-
-#endif // IDEBUGOVERLAYPANEL_H
+extern IDebugOverlayPanel* debugoverlaypanel;

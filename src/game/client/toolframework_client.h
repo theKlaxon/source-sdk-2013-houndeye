@@ -3,14 +3,7 @@
 // Purpose: 
 //
 //===========================================================================//
-
-#ifndef TOOLFRAMEWORK_CLIENT_H
-#define TOOLFRAMEWORK_CLIENT_H
-
-#if IsWindows()
 #pragma once
-#endif
-
 #include "toolframework/itoolentity.h"
 
 
@@ -97,5 +90,3 @@ public:
 private:
 	bool m_bToolsEnabled;
 };
-
-#endif // TOOLFRAMEWORK_CLIENT_H

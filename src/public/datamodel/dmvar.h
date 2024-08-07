@@ -1,14 +1,9 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
-
-#ifndef DMVAR_H
-#define DMVAR_H
-#if IsWindows()
 #pragma once
-#endif
 
 
 class CDmAttribute;
@@ -16,20 +11,19 @@ class CDmAttribute;
 //-----------------------------------------------------------------------------
 // Helper template for external attributes
 //-----------------------------------------------------------------------------
-template< typename T >
-class CDmaVar
-{
-	typedef typename CDmAttributeInfo< T >::StorageType_t D;
+template<typename T>
+class CDmaVar {
+	typedef typename CDmAttributeInfo<T>::StorageType_t D;
 
 public:
-	CDmaVar( );
+	CDmaVar();
 
 	// Setup to be used in OnConstruction methods of DmElements
-	void Init( CDmElement *pOwner, const char *pAttributeName, int flags = 0 );
-	void InitAndSet( CDmElement *pOwner, const char *pAttributeName, const T &value, int flags = 0 );
+	void Init( CDmElement* pOwner, const char* pAttributeName, int flags = 0 );
+	void InitAndSet( CDmElement* pOwner, const char* pAttributeName, const T& value, int flags = 0 );
 
 	// Set/get
-	const T& Set( const T &val );
+	const T& Set( const T& val );
 	const T& Get() const;
 
 	// Cast operators
@@ -40,22 +34,22 @@ public:
 	const CDmaVar<T>& operator=( const CDmaVar<T>& src );
 
 	// Math utility operations
-	const T& operator=( const T &val );
-	const T& operator+=( const T &val ); 
-	const T& operator-=( const T &val ); 
-	const T& operator/=( const T &val ); 
-	const T& operator*=( const T &val ); 
-	const T& operator^=( const T &val ); 
-	const T& operator|=( const T &val ); 
-	const T& operator&=( const T &val ); 
+	const T& operator=( const T& val );
+	const T& operator+=( const T& val );
+	const T& operator-=( const T& val );
+	const T& operator/=( const T& val );
+	const T& operator*=( const T& val );
+	const T& operator^=( const T& val );
+	const T& operator|=( const T& val );
+	const T& operator&=( const T& val );
 	T operator++();
 	T operator--();
-	T operator++( int ); // postfix version..
-	T operator--( int ); // postfix version..
+	T operator++( int );// postfix version..
+	T operator--( int );// postfix version..
 
 	// Returns the attribute associated with the var
-	CDmAttribute *GetAttribute();
-	const CDmAttribute *GetAttribute() const;
+	CDmAttribute* GetAttribute();
+	const CDmAttribute* GetAttribute() const;
 
 	// Is the attribute dirty?
 	bool IsDirty() const;
@@ -70,24 +64,21 @@ private:
 	D m_Storage;
 
 protected:
-	CDmAttribute *m_pAttribute;
+	CDmAttribute* m_pAttribute;
 };
 
 //-----------------------------------------------------------------------------
 // Specialization for string
 //-----------------------------------------------------------------------------
-class CDmaString : public CDmaVar< CUtlString >
-{
+class CDmaString : public CDmaVar<CUtlString> {
 public:
-	const char *Get( ) const;
+	const char* Get() const;
 	operator const char*() const;
 
-	void Set( const char *pValue );
-	CDmaString &operator=( const char *src );
+	void Set( const char* pValue );
+	CDmaString& operator=( const char* src );
 	const CDmaString& operator=( const CDmaString& src );
 
 	// Returns strlen
-	int	Length() const;
+	int Length() const;
 };
-
-#endif // DMVAR_H

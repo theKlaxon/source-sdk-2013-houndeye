@@ -5,15 +5,7 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef C_BASEVIEWMODEL_H
-#define C_BASEVIEWMODEL_H
-#if IsWindows()
 #pragma once
-#endif
-
+#include "baseviewmodel_shared.h"
 #include "c_baseanimating.h"
 #include "utlvector.h"
-#include "baseviewmodel_shared.h"
-
-#endif // C_BASEVIEWMODEL_H

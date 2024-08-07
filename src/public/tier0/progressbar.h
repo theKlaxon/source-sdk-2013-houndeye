@@ -3,21 +3,12 @@
 // Purpose: Provide a shared place for library fucntions to report progress % for display
 //
 //=============================================================================//
-
-#ifndef PROGRESSBAR_H
-#define PROGRESSBAR_H
-#if IsWindows()
 #pragma once
-#endif
 
 
-PLATFORM_INTERFACE void ReportProgress(char const *job_name, int total_units_to_do, 
-									   int n_units_completed);
+PLATFORM_INTERFACE void ReportProgress( char const* job_name, int total_units_to_do, int n_units_completed );
 
-typedef void (*ProgressReportHandler_t)( char const*, int, int );
+typedef void ( *ProgressReportHandler_t )( char const*, int, int );
 
 // install your own handler. returns previous handler
-PLATFORM_INTERFACE ProgressReportHandler_t InstallProgressReportHandler( ProgressReportHandler_t pfn);
-
-
-#endif
+PLATFORM_INTERFACE ProgressReportHandler_t InstallProgressReportHandler( ProgressReportHandler_t pfn );

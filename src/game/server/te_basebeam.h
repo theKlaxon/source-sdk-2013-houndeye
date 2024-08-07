@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose: Dispatches a beam ring between two entities
 //
 // $Workfile:     $
 // $Date:         $
@@ -10,32 +10,21 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-//-----------------------------------------------------------------------------
-// Purpose: Dispatches a beam ring between two entities
-//-----------------------------------------------------------------------------
-#if !defined( TE_BASEBEAM_H )
-#define TE_BASEBEAM_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "basetempentity.h"
 
-abstract_class CTEBaseBeam : public CBaseTempEntity
-{
-public:
 
+abstract_class CTEBaseBeam : public CBaseTempEntity {
+public:
 	DECLARE_CLASS( CTEBaseBeam, CBaseTempEntity );
 	DECLARE_SERVERCLASS();
 
-
 public:
-					CTEBaseBeam( const char *name );
-	virtual			~CTEBaseBeam( void );
+	CTEBaseBeam( const char* name );
+	virtual ~CTEBaseBeam();
 
-	virtual void	Test( const Vector& current_origin, const QAngle& current_angles ) = 0;
-	
+	virtual void Test( const Vector& current_origin, const QAngle& current_angles ) = 0;
+
 public:
 	CNetworkVar( int, m_nModelIndex );
 	CNetworkVar( int, m_nHaloIndex );
@@ -54,6 +43,4 @@ public:
 	CNetworkVar( int, m_nFlags );
 };
 
-EXTERN_SEND_TABLE(DT_BaseBeam);
-
-#endif // TE_BASEBEAM_H
+EXTERN_SEND_TABLE( DT_BaseBeam );

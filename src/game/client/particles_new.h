@@ -5,13 +5,7 @@
 //
 // $NoKeywords: $
 //===========================================================================//
-
-#ifndef PARTICLES_NEW_H
-#define PARTICLES_NEW_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "particlemgr.h"
 #include "particles/particles.h"
 #include "particlesphererenderer.h"
@@ -332,6 +326,3 @@ inline CSmartPtr<CNewParticleEffect> CNewParticleEffect::Create( CBaseEntity *pO
 // which will go to null when the effect is deleted
 //--------------------------------------------------------------------------------
 typedef CUtlReference<CNewParticleEffect> HPARTICLEFFECT;
-
-
-#endif // PARTICLES_NEW_H

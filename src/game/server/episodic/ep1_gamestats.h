@@ -1,31 +1,22 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
-
-#ifndef EP1_GAMESTATS_H
-#define EP1_GAMESTATS_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "gamestats.h"
 
-class CEP1GameStats : public CBaseGameStats
-{
+class CEP1GameStats : public CBaseGameStats {
 	typedef CBaseGameStats BaseClass;
 
 public:
-	CEP1GameStats( void );
+	CEP1GameStats();
 
-	virtual CBaseGameStats *OnInit( CBaseGameStats *pCurrentGameStats, char const *gamedir );
+	virtual CBaseGameStats* OnInit( CBaseGameStats* pCurrentGameStats, char const* gamedir );
 
-	virtual bool StatTrackingEnabledForMod( void ) { return true; }
-	virtual bool UserPlayedAllTheMaps( void );
+	virtual bool StatTrackingEnabledForMod() { return true; }
+	virtual bool UserPlayedAllTheMaps();
 
-	virtual const char *GetStatSaveFileName( void );
-	virtual const char *GetStatUploadRegistryKeyName( void );
+	virtual const char* GetStatSaveFileName();
+	virtual const char* GetStatUploadRegistryKeyName();
 };
-
-#endif // EP1_GAMESTATS_H

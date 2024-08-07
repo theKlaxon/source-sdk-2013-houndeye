@@ -1,18 +1,11 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
 //=============================================================================//
-
-#ifndef ISHADOWMGR_H
-#define ISHADOWMGR_H
-
-#if IsWindows()
 #pragma once
-#endif
-
 #include "interface.h"
 #include "mathlib/vmatrix.h"
 
@@ -30,18 +23,17 @@ class IClientRenderable;
 class ITexture;
 
 // change this when the new version is incompatable with the old
-#define ENGINE_SHADOWMGR_INTERFACE_VERSION	"VEngineShadowMgr002"
+#define ENGINE_SHADOWMGR_INTERFACE_VERSION "VEngineShadowMgr002"
 
 
 //-----------------------------------------------------------------------------
 // Flags for the creation method
 //-----------------------------------------------------------------------------
-enum ShadowFlags_t
-{
-	SHADOW_FLAGS_FLASHLIGHT				= (1 << 0),
-	SHADOW_FLAGS_SHADOW					= (1 << 1),
+enum ShadowFlags_t {
+	SHADOW_FLAGS_FLASHLIGHT = ( 1 << 0 ),
+	SHADOW_FLAGS_SHADOW = ( 1 << 1 ),
 	// Update this if you add flags
-	SHADOW_FLAGS_LAST_FLAG				= SHADOW_FLAGS_SHADOW
+	SHADOW_FLAGS_LAST_FLAG = SHADOW_FLAGS_SHADOW
 };
 
 #define SHADOW_FLAGS_PROJECTED_TEXTURE_TYPE_MASK ( SHADOW_FLAGS_FLASHLIGHT | SHADOW_FLAGS_SHADOW )
@@ -59,19 +51,17 @@ enum ShadowFlags_t
 //-----------------------------------------------------------------------------
 typedef unsigned short ShadowHandle_t;
 
-enum
-{
-	SHADOW_HANDLE_INVALID = (ShadowHandle_t)~0
+enum {
+	SHADOW_HANDLE_INVALID = (ShadowHandle_t) ~0
 };
 
 
 //-----------------------------------------------------------------------------
 // Used for the creation Flags field of CreateShadow
 //-----------------------------------------------------------------------------
-enum ShadowCreateFlags_t
-{
-	SHADOW_CACHE_VERTS =  ( 1 << 0 ),
-	SHADOW_FLASHLIGHT =   ( 1 << 1 ),
+enum ShadowCreateFlags_t {
+	SHADOW_CACHE_VERTS = ( 1 << 0 ),
+	SHADOW_FLASHLIGHT = ( 1 << 1 ),
 
 	SHADOW_LAST_FLAG = SHADOW_FLASHLIGHT,
 };
@@ -80,19 +70,18 @@ enum ShadowCreateFlags_t
 //-----------------------------------------------------------------------------
 // Information about a particular shadow
 //-----------------------------------------------------------------------------
-struct ShadowInfo_t
-{
+struct ShadowInfo_t {
 	// Transforms from world space into texture space of the shadow
-	VMatrix		m_WorldToShadow;
+	VMatrix m_WorldToShadow;
 
 	// The shadow should no longer be drawn once it's further than MaxDist
 	// along z in shadow texture coordinates.
-	float			m_FalloffOffset;
-	float			m_MaxDist;
-	float			m_FalloffAmount;	// how much to lighten the shadow maximally
-	Vector2D		m_TexOrigin;
-	Vector2D		m_TexSize;
-	unsigned char	m_FalloffBias;
+	float m_FalloffOffset;
+	float m_MaxDist;
+	float m_FalloffAmount;// how much to lighten the shadow maximally
+	Vector2D m_TexOrigin;
+	Vector2D m_TexSize;
+	unsigned char m_FalloffBias;
 };
 
 struct FlashlightState_t;
@@ -100,19 +89,18 @@ struct FlashlightState_t;
 //-----------------------------------------------------------------------------
 // The engine's interface to the shadow manager
 //-----------------------------------------------------------------------------
-abstract_class IShadowMgr
-{
+abstract_class IShadowMgr {
 public:
 	// Create, destroy shadows (see ShadowCreateFlags_t for creationFlags)
-	virtual ShadowHandle_t CreateShadow( IMaterial* pMaterial, IMaterial* pModelMaterial, void* pBindProxy, int creationFlags ) = 0;
+	virtual ShadowHandle_t CreateShadow( IMaterial * pMaterial, IMaterial * pModelMaterial, void* pBindProxy, int creationFlags ) = 0;
 	virtual void DestroyShadow( ShadowHandle_t handle ) = 0;
 
-	// Resets the shadow material (useful for shadow LOD.. doing blobby at distance) 
-	virtual void SetShadowMaterial( ShadowHandle_t handle, IMaterial* pMaterial, IMaterial* pModelMaterial, void* pBindProxy ) = 0;
+	// Resets the shadow material (useful for shadow LOD.. doing blobby at distance)
+	virtual void SetShadowMaterial( ShadowHandle_t handle, IMaterial * pMaterial, IMaterial * pModelMaterial, void* pBindProxy ) = 0;
 
 	// Shadow opacity
-//	virtual void SetShadowOpacity( ShadowHandle_t handle, float alpha ) = 0;
-//	virtual float GetShadowOpacity( ShadowHandle_t handle ) const = 0;
+	//	virtual void SetShadowOpacity( ShadowHandle_t handle, float alpha ) = 0;
+	//	virtual float GetShadowOpacity( ShadowHandle_t handle ) const = 0;
 
 	// Project a shadow into the world
 	// The two points specify the upper left coordinate and the lower-right
@@ -133,24 +121,24 @@ public:
 	// the shadow size measured in the space of the shadow matrix; the
 	// shadow goes from +/- size.x/2 along the x axis of the shadow matrix
 	// and +/- size.y/2 along the y axis of the shadow matrix.
-	virtual void ProjectShadow( ShadowHandle_t handle, const Vector &origin, 
-		const Vector& projectionDir, const VMatrix& worldToShadow, const Vector2D& size,
-		int nLeafCount, const int *pLeafList,
-		float maxHeight, float falloffOffset, float falloffAmount, const Vector &vecCasterOrigin ) = 0;
+	virtual void ProjectShadow( ShadowHandle_t handle, const Vector& origin,
+								const Vector& projectionDir, const VMatrix& worldToShadow, const Vector2D& size,
+								int nLeafCount, const int* pLeafList,
+								float maxHeight, float falloffOffset, float falloffAmount, const Vector& vecCasterOrigin ) = 0;
 
-	virtual void ProjectFlashlight( ShadowHandle_t handle, const VMatrix &worldToShadow, int nLeafCount, const int *pLeafList ) = 0;
+	virtual void ProjectFlashlight( ShadowHandle_t handle, const VMatrix& worldToShadow, int nLeafCount, const int* pLeafList ) = 0;
 
 	// Gets at information about a particular shadow
-	virtual const ShadowInfo_t &GetInfo( ShadowHandle_t handle ) = 0;
+	virtual const ShadowInfo_t& GetInfo( ShadowHandle_t handle ) = 0;
 
-	virtual const Frustum_t &GetFlashlightFrustum( ShadowHandle_t handle ) = 0;
+	virtual const Frustum_t& GetFlashlightFrustum( ShadowHandle_t handle ) = 0;
 
 	// Methods related to shadows on brush models
-	virtual void AddShadowToBrushModel( ShadowHandle_t handle, 
-		model_t* pModel, const Vector& origin, const QAngle& angles ) = 0;
+	virtual void AddShadowToBrushModel( ShadowHandle_t handle,
+										model_t * pModel, const Vector& origin, const QAngle& angles ) = 0;
 
 	// Removes all shadows from a brush model
-	virtual void RemoveAllShadowsFromBrushModel( model_t* pModel ) = 0;
+	virtual void RemoveAllShadowsFromBrushModel( model_t * pModel ) = 0;
 
 	// Sets the texture coordinate range for a shadow...
 	virtual void SetShadowTexCoord( ShadowHandle_t handle, float x, float y, float w, float h ) = 0;
@@ -171,19 +159,16 @@ public:
 	virtual void SetFalloffBias( ShadowHandle_t shadow, unsigned char ucBias ) = 0;
 
 	// Update the state for a flashlight.
-	virtual void UpdateFlashlightState( ShadowHandle_t shadowHandle, const FlashlightState_t &lightState ) = 0;
+	virtual void UpdateFlashlightState( ShadowHandle_t shadowHandle, const FlashlightState_t& lightState ) = 0;
 
-	virtual void DrawFlashlightDepthTexture( ) = 0;
+	virtual void DrawFlashlightDepthTexture() = 0;
 
-	virtual void AddFlashlightRenderable( ShadowHandle_t shadow, IClientRenderable *pRenderable ) = 0;
-	virtual ShadowHandle_t CreateShadowEx( IMaterial* pMaterial, IMaterial* pModelMaterial, void* pBindProxy, int creationFlags ) = 0;
+	virtual void AddFlashlightRenderable( ShadowHandle_t shadow, IClientRenderable * pRenderable ) = 0;
+	virtual ShadowHandle_t CreateShadowEx( IMaterial * pMaterial, IMaterial * pModelMaterial, void* pBindProxy, int creationFlags ) = 0;
 
-	virtual void SetFlashlightDepthTexture( ShadowHandle_t shadowHandle, ITexture *pFlashlightDepthTexture, unsigned char ucShadowStencilBit ) = 0;
+	virtual void SetFlashlightDepthTexture( ShadowHandle_t shadowHandle, ITexture * pFlashlightDepthTexture, unsigned char ucShadowStencilBit ) = 0;
 
-	virtual const FlashlightState_t &GetFlashlightState( ShadowHandle_t handle ) = 0;
+	virtual const FlashlightState_t& GetFlashlightState( ShadowHandle_t handle ) = 0;
 
 	virtual void SetFlashlightRenderState( ShadowHandle_t handle ) = 0;
 };
-
-
-#endif

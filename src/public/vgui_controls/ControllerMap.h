@@ -1,48 +1,36 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef CONTROLLERMAP_H
-#define CONTROLLERMAP_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "Panel.h"
 #include "utlmap.h"
 #include "utlsymbol.h"
 
-class CControllerMap : public vgui::Panel
-{
+class CControllerMap : public vgui::Panel {
 	DECLARE_CLASS_SIMPLE( CControllerMap, vgui::Panel )
 
 	virtual void OnKeyCodeTyped( vgui::KeyCode code );
 
 public:
-	CControllerMap( vgui::Panel *parent, const char *name );
+	CControllerMap( vgui::Panel* parent, const char* name );
 
-	virtual void ApplySettings( KeyValues *inResourceData );
+	virtual void ApplySettings( KeyValues* inResourceData );
 
-	int NumButtons( void )
-	{
+	int NumButtons() {
 		return m_buttonMap.Count();
 	}
 
-	const char *GetBindingText( int idx );
-	const char *GetBindingIcon( int idx );
+	const char* GetBindingText( int idx );
+	const char* GetBindingIcon( int idx );
 
 private:
-
-	struct button_t
-	{
-		CUtlSymbol	cmd;
-		CUtlSymbol	text;
-		CUtlSymbol	icon;
+	struct button_t {
+		CUtlSymbol cmd;
+		CUtlSymbol text;
+		CUtlSymbol icon;
 	};
-	CUtlMap< int, button_t > m_buttonMap;
+	CUtlMap<int, button_t> m_buttonMap;
 };
-
-#endif // CONTROLLERMAP_H

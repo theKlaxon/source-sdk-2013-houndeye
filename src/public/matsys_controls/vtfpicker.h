@@ -1,15 +1,9 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
-
-#ifndef VTFPICKER_H
-#define VTFPICKER_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "matsys_controls/baseassetpicker.h"
 
 
@@ -18,8 +12,7 @@
 //-----------------------------------------------------------------------------
 class CVTFPreviewPanel;
 
-namespace vgui
-{
+namespace vgui {
 	class Splitter;
 }
 
@@ -27,33 +20,28 @@ namespace vgui
 //-----------------------------------------------------------------------------
 // Purpose: Base class for choosing raw assets
 //-----------------------------------------------------------------------------
-class CVTFPicker : public CBaseAssetPicker
-{
+class CVTFPicker : public CBaseAssetPicker {
 	DECLARE_CLASS_SIMPLE( CVTFPicker, CBaseAssetPicker );
 
 public:
-	CVTFPicker( vgui::Panel *pParent );
+	CVTFPicker( vgui::Panel* pParent );
 	virtual ~CVTFPicker();
 
 private:
 	// Derived classes have this called when the previewed asset changes
-	virtual void OnSelectedAssetPicked( const char *pAssetName );
+	virtual void OnSelectedAssetPicked( const char* pAssetName );
 
-	CVTFPreviewPanel *m_pVTFPreview;
-	vgui::Splitter *m_pPreviewSplitter;
+	CVTFPreviewPanel* m_pVTFPreview;
+	vgui::Splitter* m_pPreviewSplitter;
 };
 
 
 //-----------------------------------------------------------------------------
 // Purpose: Modal dialog for asset picker
 //-----------------------------------------------------------------------------
-class CVTFPickerFrame : public CBaseAssetPickerFrame
-{
+class CVTFPickerFrame : public CBaseAssetPickerFrame {
 	DECLARE_CLASS_SIMPLE( CVTFPickerFrame, CBaseAssetPickerFrame );
 
 public:
-	CVTFPickerFrame( vgui::Panel *pParent, const char *pTitle );
+	CVTFPickerFrame( vgui::Panel* pParent, const char* pTitle );
 };
-
-
-#endif // VTFPICKER_H

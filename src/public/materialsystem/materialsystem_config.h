@@ -1,50 +1,41 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //===========================================================================//
-
-#ifndef MATERIALSYSTEM_CONFIG_H
-#define MATERIALSYSTEM_CONFIG_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "materialsystem/imaterialsystem.h"
 
 #define MATERIALSYSTEM_CONFIG_VERSION "VMaterialSystemConfig002"
 
-enum MaterialSystem_Config_Flags_t
-{
-	MATSYS_VIDCFG_FLAGS_WINDOWED                   = ( 1 << 0 ),
-	MATSYS_VIDCFG_FLAGS_RESIZING                   = ( 1 << 1 ),
-	MATSYS_VIDCFG_FLAGS_NO_WAIT_FOR_VSYNC          = ( 1 << 3 ),
-	MATSYS_VIDCFG_FLAGS_STENCIL                    = ( 1 << 4 ),
-	MATSYS_VIDCFG_FLAGS_FORCE_TRILINEAR            = ( 1 << 5 ),
-	MATSYS_VIDCFG_FLAGS_FORCE_HWSYNC               = ( 1 << 6 ),
-	MATSYS_VIDCFG_FLAGS_DISABLE_SPECULAR           = ( 1 << 7 ),
-	MATSYS_VIDCFG_FLAGS_DISABLE_BUMPMAP            = ( 1 << 8 ),
-	MATSYS_VIDCFG_FLAGS_ENABLE_PARALLAX_MAPPING    = ( 1 << 9 ),
-	MATSYS_VIDCFG_FLAGS_USE_Z_PREFILL              = ( 1 << 10 ),
-	MATSYS_VIDCFG_FLAGS_REDUCE_FILLRATE            = ( 1 << 11 ),
-	MATSYS_VIDCFG_FLAGS_ENABLE_HDR                 = ( 1 << 12 ),
-	MATSYS_VIDCFG_FLAGS_LIMIT_WINDOWED_SIZE        = ( 1 << 13 ),
+enum MaterialSystem_Config_Flags_t {
+	MATSYS_VIDCFG_FLAGS_WINDOWED = ( 1 << 0 ),
+	MATSYS_VIDCFG_FLAGS_RESIZING = ( 1 << 1 ),
+	MATSYS_VIDCFG_FLAGS_NO_WAIT_FOR_VSYNC = ( 1 << 3 ),
+	MATSYS_VIDCFG_FLAGS_STENCIL = ( 1 << 4 ),
+	MATSYS_VIDCFG_FLAGS_FORCE_TRILINEAR = ( 1 << 5 ),
+	MATSYS_VIDCFG_FLAGS_FORCE_HWSYNC = ( 1 << 6 ),
+	MATSYS_VIDCFG_FLAGS_DISABLE_SPECULAR = ( 1 << 7 ),
+	MATSYS_VIDCFG_FLAGS_DISABLE_BUMPMAP = ( 1 << 8 ),
+	MATSYS_VIDCFG_FLAGS_ENABLE_PARALLAX_MAPPING = ( 1 << 9 ),
+	MATSYS_VIDCFG_FLAGS_USE_Z_PREFILL = ( 1 << 10 ),
+	MATSYS_VIDCFG_FLAGS_REDUCE_FILLRATE = ( 1 << 11 ),
+	MATSYS_VIDCFG_FLAGS_ENABLE_HDR = ( 1 << 12 ),
+	MATSYS_VIDCFG_FLAGS_LIMIT_WINDOWED_SIZE = ( 1 << 13 ),
 	MATSYS_VIDCFG_FLAGS_SCALE_TO_OUTPUT_RESOLUTION = ( 1 << 14 ),
-	MATSYS_VIDCFG_FLAGS_USING_MULTIPLE_WINDOWS     = ( 1 << 15 ),
-	MATSYS_VIDCFG_FLAGS_DISABLE_PHONG              = ( 1 << 16 ),
-	MATSYS_VIDCFG_FLAGS_VR_MODE                    = ( 1 << 17 ),
+	MATSYS_VIDCFG_FLAGS_USING_MULTIPLE_WINDOWS = ( 1 << 15 ),
+	MATSYS_VIDCFG_FLAGS_DISABLE_PHONG = ( 1 << 16 ),
+	MATSYS_VIDCFG_FLAGS_VR_MODE = ( 1 << 17 ),
 };
 
-struct MaterialSystemHardwareIdentifier_t
-{
-	char *m_pCardName;
+struct MaterialSystemHardwareIdentifier_t {
+	char* m_pCardName;
 	unsigned int m_nVendorID;
 	unsigned int m_nDeviceID;
 };
 
-struct MaterialSystem_Config_t
-{
+struct MaterialSystem_Config_t {
 	bool Windowed() const { return ( m_Flags & MATSYS_VIDCFG_FLAGS_WINDOWED ) != 0; }
 	bool Resizing() const { return ( m_Flags & MATSYS_VIDCFG_FLAGS_RESIZING ) != 0; }
 #ifdef CSS_PERF_TEST
@@ -52,7 +43,7 @@ struct MaterialSystem_Config_t
 #else
 	bool WaitForVSync() const { return ( m_Flags & MATSYS_VIDCFG_FLAGS_NO_WAIT_FOR_VSYNC ) == 0; }
 #endif
-	bool Stencil() const { return (m_Flags & MATSYS_VIDCFG_FLAGS_STENCIL ) != 0; }
+	bool Stencil() const { return ( m_Flags & MATSYS_VIDCFG_FLAGS_STENCIL ) != 0; }
 	bool ForceTrilinear() const { return ( m_Flags & MATSYS_VIDCFG_FLAGS_FORCE_TRILINEAR ) != 0; }
 	bool ForceHWSync() const { return ( m_Flags & MATSYS_VIDCFG_FLAGS_FORCE_HWSYNC ) != 0; }
 	bool UseSpecular() const { return ( m_Flags & MATSYS_VIDCFG_FLAGS_DISABLE_SPECULAR ) == 0; }
@@ -65,23 +56,19 @@ struct MaterialSystem_Config_t
 	bool ScaleToOutputResolution() const { return ( m_Flags & MATSYS_VIDCFG_FLAGS_SCALE_TO_OUTPUT_RESOLUTION ) != 0; }
 	bool UsingMultipleWindows() const { return ( m_Flags & MATSYS_VIDCFG_FLAGS_USING_MULTIPLE_WINDOWS ) != 0; }
 	bool UsePhong() const { return ( m_Flags & MATSYS_VIDCFG_FLAGS_DISABLE_PHONG ) == 0; }
-	bool VRMode() const { return ( m_Flags & MATSYS_VIDCFG_FLAGS_VR_MODE) != 0; }
+	bool VRMode() const { return ( m_Flags & MATSYS_VIDCFG_FLAGS_VR_MODE ) != 0; }
 	bool ShadowDepthTexture() const { return m_bShadowDepthTexture; }
 	bool MotionBlur() const { return m_bMotionBlur; }
 	bool SupportFlashlight() const { return m_bSupportFlashlight; }
 
-	void SetFlag( unsigned int flag, bool val )
-	{
-		if( val )
-		{
-			m_Flags |= flag;	
-		}
-		else
-		{
-			m_Flags &= ~flag;	
+	void SetFlag( unsigned int flag, bool val ) {
+		if ( val ) {
+			m_Flags |= flag;
+		} else {
+			m_Flags &= ~flag;
 		}
 	}
-	
+
 	// control panel stuff
 	MaterialVideoMode_t m_VideoMode;
 	float m_fMonitorGamma;
@@ -95,8 +82,8 @@ struct MaterialSystem_Config_t
 	int skipMipLevels;
 	int dxSupportLevel;
 	unsigned int m_Flags;
-	bool bEditMode;				// true if in Hammer.
-	unsigned char proxiesTestMode;	// 0 = normal, 1 = no proxies, 2 = alpha test all, 3 = color mod all
+	bool bEditMode;               // true if in Hammer.
+	unsigned char proxiesTestMode;// 0 = normal, 1 = no proxies, 2 = alpha test all, 3 = color mod all
 	bool bCompressedTextures;
 	bool bFilterLightmaps;
 	bool bFilterTextures;
@@ -110,18 +97,18 @@ struct MaterialSystem_Config_t
 	bool bAllowCheats;
 	char nShowMipLevels;
 	bool bShowLowResImage;
-	bool bShowNormalMap; 
+	bool bShowNormalMap;
 	bool bMipMapTextures;
 	unsigned char nFullbright;
 	bool m_bFastNoBump;
 	bool m_bSuppressRendering;
 
 	// debug modes
-	bool bShowSpecular; // This is the fast version that doesn't require reloading materials
-	bool bShowDiffuse;  // This is the fast version that doesn't require reloading materials
+	bool bShowSpecular;// This is the fast version that doesn't require reloading materials
+	bool bShowDiffuse; // This is the fast version that doesn't require reloading materials
 
 	// misc
-	int m_nReserved;	// Currently unused
+	int m_nReserved;// Currently unused
 
 	// No depth bias
 	float m_SlopeScaleDepthBias_Normal;
@@ -144,8 +131,7 @@ struct MaterialSystem_Config_t
 
 	int m_nVRModeAdapter;
 
-	MaterialSystem_Config_t()
-	{
+	MaterialSystem_Config_t() {
 		memset( this, 0, sizeof( *this ) );
 
 		// video config defaults
@@ -224,6 +210,3 @@ struct MaterialSystem_Config_t
 		m_WindowedSizeLimitHeight = 1024;
 	}
 };
-
-
-#endif // MATERIALSYSTEM_CONFIG_H

@@ -3,22 +3,16 @@
 // Purpose: 
 //
 //=============================================================================//
+#pragma once
 
 #if defined( REPLAY_ENABLED )
+	#include "replay/ireplaycamera.h"
+	#include "GameEventListener.h"
 
-#ifndef REPLAYCAMERA_H
-#define REPLAYCAMERA_H
-#if IsWindows()
-#pragma once
-#endif
-
-#include "replay/ireplaycamera.h"
-#include "GameEventListener.h"
-
-class C_ReplayCamera : public CGameEventListener,
+	class C_ReplayCamera : public CGameEventListener,
 					   public IReplayCamera
-{
-public:
+	{
+	public:
 	C_ReplayCamera();
 	virtual ~C_ReplayCamera();
 
@@ -44,10 +38,10 @@ public:
 	void SpecNamedPlayer( const char *szPlayerName );
 	bool IsPVSLocked();
 	void SetAutoDirector( bool bActive );
-	
+
 	int  GetMode();	// returns current camera mode
 	C_BaseEntity *GetPrimaryTarget();  // return primary target
-	inline int GetPrimaryTargetIndex()	{ return m_iTarget1; }	
+	inline int GetPrimaryTargetIndex()	{ return m_iTarget1; }
 	void SetPrimaryTarget( int nEntity); // set the primary obs target
 
 	void CreateMove(CUserCmd *cmd);
@@ -66,7 +60,7 @@ public:
 	float		m_flRoamingShakeSpeed;
 	float		m_flRoamingShakeDir;
 
-protected:
+	protected:
 	void InitRoamingKeys();
 	bool ShouldUseDefaultRoamingSettings() const;
 
@@ -103,7 +97,7 @@ protected:
 	float		m_flOffset;  // z-offset from target origin
 	float		m_flDistance; // distance to traget origin+offset
 	float		m_flLastDistance; // too smooth distance
-	float		m_flTheta; // view angle horizontal 
+	float		m_flTheta; // view angle horizontal
 	float		m_flPhi; // view angle vertical
 	float		m_flInertia; // camera inertia 0..100
 	float		m_flLastAngleUpdateTime;
@@ -128,31 +122,28 @@ protected:
 	ButtonCode_t m_aMovementButtons[NUM_DIRS];
 
 	float	m_flNoiseSample;
-};
+	};
 
-//-----------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 
-C_ReplayCamera *ReplayCamera();
+	C_ReplayCamera *ReplayCamera();
 
-//-----------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------
 
-#define FREE_CAM_ACCEL_MIN			1.1f
-#define FREE_CAM_ACCEL_MAX			10.0f
-#define FREE_CAM_SPEED_MIN			0.1f
-#define FREE_CAM_SPEED_MAX			20.0f
-#define FREE_CAM_FOV_MIN			10.0f
-#define FREE_CAM_FOV_MAX			130.0f
-#define FREE_CAM_ROT_FILTER_MIN		30.0f
-#define FREE_CAM_ROT_FILTER_MAX		5.0f
-#define FREE_CAM_SHAKE_SPEED_MIN	0.1f
-#define FREE_CAM_SHAKE_SPEED_MAX	15.0f
-#define FREE_CAM_SHAKE_AMOUNT_MIN	0.0f
-#define FREE_CAM_SHAKE_AMOUNT_MAX	35.0f
-#define FREE_CAM_SHAKE_DIR_MIN		-1.0f
-#define FREE_CAM_SHAKE_DIR_MAX		1.0f
+	#define FREE_CAM_ACCEL_MIN			1.1f
+	#define FREE_CAM_ACCEL_MAX			10.0f
+	#define FREE_CAM_SPEED_MIN			0.1f
+	#define FREE_CAM_SPEED_MAX			20.0f
+	#define FREE_CAM_FOV_MIN			10.0f
+	#define FREE_CAM_FOV_MAX			130.0f
+	#define FREE_CAM_ROT_FILTER_MIN		30.0f
+	#define FREE_CAM_ROT_FILTER_MAX		5.0f
+	#define FREE_CAM_SHAKE_SPEED_MIN	0.1f
+	#define FREE_CAM_SHAKE_SPEED_MAX	15.0f
+	#define FREE_CAM_SHAKE_AMOUNT_MIN	0.0f
+	#define FREE_CAM_SHAKE_AMOUNT_MAX	35.0f
+	#define FREE_CAM_SHAKE_DIR_MIN		-1.0f
+	#define FREE_CAM_SHAKE_DIR_MAX		1.0f
 
-//-----------------------------------------------------------------------------
-
-#endif // REPLAYCAMERA_H
-
+	//-----------------------------------------------------------------------------
 #endif

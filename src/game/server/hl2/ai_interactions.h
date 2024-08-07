@@ -1,21 +1,11 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose: Definition for all AI interactions
 //
 // $NoKeywords: $
 //
 //=============================================================================//
-
-//==================================================
-// Definition for all AI interactions
-//==================================================
-
-#ifndef	AI_INTERACTIONS_H
-#define	AI_INTERACTIONS_H
-
-#if IsWindows()
 #pragma once
-#endif
 
 //Antlion
 extern int	g_interactionAntlionKilled;
@@ -76,5 +66,3 @@ extern int	g_interactionPlayerPuntedHeavyObject;
 // Zombie
 // Melee attack will land in one second or so.
 extern int	g_interactionZombieMeleeWarning;
-
-#endif	//AI_INTERACTIONS_H

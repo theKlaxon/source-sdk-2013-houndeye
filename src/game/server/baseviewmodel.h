@@ -6,12 +6,5 @@
 // $Date:         $
 // $NoKeywords: $
 //=============================================================================//
-#if !defined( BASEVIEWMODEL_H )
-#define BASEVIEWMODEL_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "baseviewmodel_shared.h"
-
-#endif // BASEVIEWMODEL_H

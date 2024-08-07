@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Workfile:     $
 // $Date:         $
@@ -10,20 +10,13 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-#if !defined( OVERLAYTEXT_H )
-#define OVERLAYTEXT_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "mathlib/vector.h"
 
-class  OverlayText_t
-{
+class OverlayText_t {
 public:
-	OverlayText_t()
-	{
-		nextOverlayText = 0;
+	OverlayText_t() {
+		nextOverlayText = nullptr;
 		origin.Init();
 		bUseOrigin = false;
 		lineOffset = 0;
@@ -36,23 +29,21 @@ public:
 		r = g = b = a = 255;
 	}
 
-	bool			IsDead();
-	void			SetEndTime( float duration );
+	bool IsDead();
+	void SetEndTime( float duration );
 
-	Vector			origin;
-	bool			bUseOrigin;
-	int				lineOffset;
-	float			flXPos;
-	float			flYPos;
-	char			text[512];
-	float			m_flEndTime;			// When does this text go away
-	int				m_nCreationTick;		// If > 0, show only one server frame
-	int				m_nServerCount;			// compare server spawn count to remove stale overlays
-	int				r;
-	int				g;
-	int				b;
-	int				a;
-	OverlayText_t	*nextOverlayText;
+	Vector origin;
+	bool bUseOrigin;
+	int lineOffset;
+	float flXPos;
+	float flYPos;
+	char text[ 512 ];
+	float m_flEndTime;  // When does this text go away
+	int m_nCreationTick;// If > 0, show only one server frame
+	int m_nServerCount; // compare server spawn count to remove stale overlays
+	int r;
+	int g;
+	int b;
+	int a;
+	OverlayText_t* nextOverlayText;
 };
-
-#endif // OVERLAYTEXT_H

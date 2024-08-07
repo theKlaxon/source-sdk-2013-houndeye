@@ -29,15 +29,6 @@ inline void RangeCheck( const T& value, int minValue, int maxValue ) {
 	#endif
 }
 
-inline void RangeCheck( const Vector& value, int minValue, int maxValue ) {
-	#if IsDebug()
-		RangeCheck( value.x, minValue, maxValue );
-		RangeCheck( value.y, minValue, maxValue );
-		RangeCheck( value.z, minValue, maxValue );
-	#endif
-}
-
-
 template<class T, int minValue, int maxValue, int startValue>
 class CRangeCheckedVar {
 public:
@@ -90,3 +81,12 @@ public:
 private:
 	T m_Val;
 };
+
+
+inline void RangeCheck( const Vector& value, int minValue, int maxValue ) {
+	#if IsDebug()
+		RangeCheck( value.x, minValue, maxValue );
+		RangeCheck( value.y, minValue, maxValue );
+		RangeCheck( value.z, minValue, maxValue );
+	#endif
+}

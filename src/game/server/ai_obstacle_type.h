@@ -3,21 +3,14 @@
 // Purpose:
 //
 //=============================================================================//
-
-#ifndef AI_OBSTACLE_TYPE_H
-#define AI_OBSTACLE_TYPE_H
-
-#if IsWindows()
 #pragma once
-#endif
 
 //-------------------------------------
 // AI_MoveSuggType_t
 //
 // Purpose: Specifies the type of suggestion. Different types have different weights
 //-------------------------------------
-enum AI_MoveSuggType_t
-{
+enum AI_MoveSuggType_t {
 	// Positive suggestions
 	AIMST_MOVE,
 
@@ -32,5 +25,3 @@ enum AI_MoveSuggType_t
 
 	AIMS_INVALID
 };
-
-#endif // AI_OBSTACLE_TYPE_H

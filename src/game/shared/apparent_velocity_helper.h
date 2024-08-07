@@ -1,63 +1,48 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
-
-#ifndef APPARENT_VELOCITY_HELPER_H
-#define APPARENT_VELOCITY_HELPER_H
-#if IsWindows()
 #pragma once
-#endif
 
 
-inline float CalcDistance( float x, float y )
-{
+inline float CalcDistance( float x, float y ) {
 	return x - y;
 }
 
-inline float CalcDistance( const Vector &a, const Vector &b )
-{
+inline float CalcDistance( const Vector& a, const Vector& b ) {
 	return a.DistTo( b );
 }
 
 
 template<class T>
-class CDefaultCalcDistance
-{
+class CDefaultCalcDistance {
 public:
-	static inline float CalcDistance( const T &a, const T &b )
-	{
+	static inline float CalcDistance( const T& a, const T& b ) {
 		return ::CalcDistance( a, b );
 	}
 };
 
-class CCalcDistance2D
-{
+class CCalcDistance2D {
 public:
-	static inline float CalcDistance( const Vector &a, const Vector &b )
-	{
-		return (a-b).Length2D();
+	static inline float CalcDistance( const Vector& a, const Vector& b ) {
+		return ( a - b ).Length2D();
 	}
 };
 
 
-template< class T, class Functor=CDefaultCalcDistance<T> >
-class CApparentVelocity
-{
+template<class T, class Functor = CDefaultCalcDistance<T>>
+class CApparentVelocity {
 public:
-	CApparentVelocity(const T& t0)
-	{
+	CApparentVelocity( const T& t0 ) {
 		m_LastTime = -1;
 		m_LastValue = t0;
 	}
 
-	float AddSample( float time, T value )
-	{
+	float AddSample( float time, T value ) {
 		float flRet = 0;
-		if ( m_LastTime != -1 )
-		{
-			flRet = Functor::CalcDistance(value, m_LastValue) / (time - m_LastTime);
+		if ( m_LastTime != -1 ) {
+			flRet = Functor::CalcDistance( value, m_LastValue ) / ( time - m_LastTime );
 		}
 
 		m_LastTime = time;
@@ -70,6 +55,3 @@ private:
 	T m_LastValue;
 	float m_LastTime;
 };
-
-
-#endif // APPARENT_VELOCITY_HELPER_H

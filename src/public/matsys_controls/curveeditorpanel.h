@@ -1,17 +1,9 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
-
-#ifndef CURVEEDITORPANEL_H
-#define CURVEEDITORPANEL_H
-
-#if IsWindows()
 #pragma once
-#endif
-
-
 #include "vgui_controls/Panel.h"
 
 
@@ -26,19 +18,18 @@ struct BGRA8888_t;
 // Curve editor image panel
 //
 //-----------------------------------------------------------------------------
-class CCurveEditorPanel : public vgui::Panel
-{
+class CCurveEditorPanel : public vgui::Panel {
 	DECLARE_CLASS_SIMPLE( CCurveEditorPanel, vgui::Panel );
 
 public:
 	// constructor
-	CCurveEditorPanel( vgui::Panel *pParent, const char *pName );
+	CCurveEditorPanel( vgui::Panel* pParent, const char* pName );
 	~CCurveEditorPanel();
 
 	virtual void Paint( void );
 	virtual void PaintBackground( void );
 
-	virtual void OnCursorMoved( int x,int y );
+	virtual void OnCursorMoved( int x, int y );
 	virtual void OnMousePressed( vgui::MouseCode code );
 	virtual void OnMouseReleased( vgui::MouseCode code );
 	virtual void OnKeyCodePressed( vgui::KeyCode code );
@@ -51,17 +42,13 @@ protected:
 	virtual void RemoveControlPoint( int nPoint ) = 0;
 	virtual float GetValue( float flIn ) = 0;
 	virtual int ControlPointCount() = 0;
-	virtual void GetControlPoint( int nPoint, float *pIn, float *pOut ) = 0;
+	virtual void GetControlPoint( int nPoint, float* pIn, float* pOut ) = 0;
 
 private:
 	// Converts screen location to normalized values and back
-	void ScreenToValue( int x, int y, float *pIn, float *pOut );
-	void ValueToScreen( float flIn, float flOut, int *x, int *y );
+	void ScreenToValue( int x, int y, float* pIn, float* pOut );
+	void ValueToScreen( float flIn, float flOut, int* x, int* y );
 
 	int m_nSelectedPoint;
-	int m_nHighlightedPoint;	// Used when not selecting
+	int m_nHighlightedPoint;// Used when not selecting
 };
-
-
-
-#endif // CURVEEDITORPANEL_H

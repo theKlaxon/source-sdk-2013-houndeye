@@ -1,39 +1,36 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
 // A growable memory class.
 //===========================================================================//
-
-#ifndef UTLBLOCKMEMORY_H
-#define UTLBLOCKMEMORY_H
-
-#if IsWindows()
-	#pragma once
-#endif
-
+#pragma once
+#include "mathlib/mathlib.h"
 #include "tier0/dbg.h"
 #include "tier0/platform.h"
-#include "mathlib/mathlib.h"
 
 #include "tier0/memalloc.h"
 #include "tier0/memdbgon.h"
 
 #if defined( _MSC_VER )
-	#pragma warning (disable:4100)
-	#pragma warning (disable:4514)
+	#pragma warning( disable : 4100 )
+	#pragma warning( disable : 4514 )
 #endif
 
 //-----------------------------------------------------------------------------
 
 #ifdef UTBLOCKLMEMORY_TRACK
-	#define UTLBLOCKMEMORY_TRACK_ALLOC()	MemAlloc_RegisterAllocation( "Sum of all UtlBlockMemory", 0, NumAllocated() * sizeof(T), NumAllocated() * sizeof(T), 0 )
-	#define UTLBLOCKMEMORY_TRACK_FREE()		if ( !m_pMemory ) ; else MemAlloc_RegisterDeallocation( "Sum of all UtlBlockMemory", 0, NumAllocated() * sizeof(T), NumAllocated() * sizeof(T), 0 )
+	#define UTLBLOCKMEMORY_TRACK_ALLOC() MemAlloc_RegisterAllocation( "Sum of all UtlBlockMemory", 0, NumAllocated() * sizeof( T ), NumAllocated() * sizeof( T ), 0 )
+	#define UTLBLOCKMEMORY_TRACK_FREE() \
+		if ( !m_pMemory )               \
+			;                           \
+		else                            \
+			MemAlloc_RegisterDeallocation( "Sum of all UtlBlockMemory", 0, NumAllocated() * sizeof( T ), NumAllocated() * sizeof( T ), 0 )
 #else
-	#define UTLBLOCKMEMORY_TRACK_ALLOC()	((void)0)
-	#define UTLBLOCKMEMORY_TRACK_FREE()		((void)0)
+	#define UTLBLOCKMEMORY_TRACK_ALLOC() ( (void) 0 )
+	#define UTLBLOCKMEMORY_TRACK_FREE() ( (void) 0 )
 #endif
 
 
@@ -41,9 +38,8 @@
 // The CUtlBlockMemory class:
 // A growable memory class that allocates non-sequential blocks, but is indexed sequentially
 //-----------------------------------------------------------------------------
-template< class T, class I >
-class CUtlBlockMemory
-{
+template<class T, class I>
+class CUtlBlockMemory {
 public:
 	// constructor, destructor
 	CUtlBlockMemory( int nGrowSize = 0, int nInitSize = 0 );
@@ -56,21 +52,20 @@ public:
 	T* Base() { return NULL; }
 	const T* Base() const { return NULL; }
 
-	class Iterator_t
-	{
+	class Iterator_t {
 	public:
 		Iterator_t( I i ) : index( i ) {}
 		I index;
 
-		bool operator==( const Iterator_t it ) const	{ return index == it.index; }
-		bool operator!=( const Iterator_t it ) const	{ return index != it.index; }
+		bool operator==( const Iterator_t it ) const { return index == it.index; }
+		bool operator!=( const Iterator_t it ) const { return index != it.index; }
 	};
-	Iterator_t First() const							{ return Iterator_t( IsIdxValid( 0 ) ? 0 : InvalidIndex() ); }
-	Iterator_t Next( const Iterator_t &it ) const		{ return Iterator_t( IsIdxValid( it.index + 1 ) ? it.index + 1 : InvalidIndex() ); }
-	I GetIndex( const Iterator_t &it ) const			{ return it.index; }
-	bool IsIdxAfter( I i, const Iterator_t &it ) const	{ return i > it.index; }
-	bool IsValidIterator( const Iterator_t &it ) const	{ return IsIdxValid( it.index ); }
-	Iterator_t InvalidIterator() const					{ return Iterator_t( InvalidIndex() ); }
+	Iterator_t First() const { return Iterator_t( IsIdxValid( 0 ) ? 0 : InvalidIndex() ); }
+	Iterator_t Next( const Iterator_t& it ) const { return Iterator_t( IsIdxValid( it.index + 1 ) ? it.index + 1 : InvalidIndex() ); }
+	I GetIndex( const Iterator_t& it ) const { return it.index; }
+	bool IsIdxAfter( I i, const Iterator_t& it ) const { return i > it.index; }
+	bool IsValidIterator( const Iterator_t& it ) const { return IsIdxValid( it.index ); }
+	Iterator_t InvalidIterator() const { return Iterator_t( InvalidIndex() ); }
 
 	// element access
 	T& operator[]( I i );
@@ -80,9 +75,9 @@ public:
 
 	// Can we use this index?
 	bool IsIdxValid( I i ) const;
-	static I InvalidIndex() { return ( I )-1; }
+	static I InvalidIndex() { return (I) -1; }
 
-	void Swap( CUtlBlockMemory< T, I > &mem );
+	void Swap( CUtlBlockMemory<T, I>& mem );
 
 	// Size
 	int NumAllocated() const;
@@ -117,16 +112,14 @@ protected:
 // constructor, destructor
 //-----------------------------------------------------------------------------
 
-template< class T, class I >
-CUtlBlockMemory<T,I>::CUtlBlockMemory( int nGrowSize, int nInitAllocationCount )
-: m_pMemory( 0 ), m_nBlocks( 0 ), m_nIndexMask( 0 ), m_nIndexShift( 0 )
-{
+template<class T, class I>
+CUtlBlockMemory<T, I>::CUtlBlockMemory( int nGrowSize, int nInitAllocationCount )
+	: m_pMemory( 0 ), m_nBlocks( 0 ), m_nIndexMask( 0 ), m_nIndexShift( 0 ) {
 	Init( nGrowSize, nInitAllocationCount );
 }
 
-template< class T, class I >
-CUtlBlockMemory<T,I>::~CUtlBlockMemory()
-{
+template<class T, class I>
+CUtlBlockMemory<T, I>::~CUtlBlockMemory() {
 	Purge();
 }
 
@@ -134,9 +127,8 @@ CUtlBlockMemory<T,I>::~CUtlBlockMemory()
 //-----------------------------------------------------------------------------
 // Fast swap
 //-----------------------------------------------------------------------------
-template< class T, class I >
-void CUtlBlockMemory<T,I>::Swap( CUtlBlockMemory< T, I > &mem )
-{
+template<class T, class I>
+void CUtlBlockMemory<T, I>::Swap( CUtlBlockMemory<T, I>& mem ) {
 	V_swap( m_pMemory, mem.m_pMemory );
 	V_swap( m_nBlocks, mem.m_nBlocks );
 	V_swap( m_nIndexMask, mem.m_nIndexMask );
@@ -147,13 +139,11 @@ void CUtlBlockMemory<T,I>::Swap( CUtlBlockMemory< T, I > &mem )
 //-----------------------------------------------------------------------------
 // Set the size by which the memory grows - round up to the next power of 2
 //-----------------------------------------------------------------------------
-template< class T, class I >
-void CUtlBlockMemory<T,I>::Init( int nGrowSize /* = 0 */, int nInitSize /* = 0 */ )
-{
+template<class T, class I>
+void CUtlBlockMemory<T, I>::Init( int nGrowSize /* = 0 */, int nInitSize /* = 0 */ ) {
 	Purge();
 
-	if ( nGrowSize == 0)
-	{
+	if ( nGrowSize == 0 ) {
 		// default grow size is smallest size s.t. c++ allocation overhead is ~6% of block size
 		nGrowSize = ( 127 + sizeof( T ) ) / sizeof( T );
 	}
@@ -161,8 +151,7 @@ void CUtlBlockMemory<T,I>::Init( int nGrowSize /* = 0 */, int nInitSize /* = 0 *
 	m_nIndexMask = nGrowSize - 1;
 
 	m_nIndexShift = 0;
-	while ( nGrowSize > 1 )
-	{
+	while ( nGrowSize > 1 ) {
 		nGrowSize >>= 1;
 		++m_nIndexShift;
 	}
@@ -175,35 +164,31 @@ void CUtlBlockMemory<T,I>::Init( int nGrowSize /* = 0 */, int nInitSize /* = 0 *
 //-----------------------------------------------------------------------------
 // element access
 //-----------------------------------------------------------------------------
-template< class T, class I >
-inline T& CUtlBlockMemory<T,I>::operator[]( I i )
-{
-	Assert( IsIdxValid(i) );
-	T *pBlock = m_pMemory[ MajorIndex( i ) ];
+template<class T, class I>
+inline T& CUtlBlockMemory<T, I>::operator[]( I i ) {
+	Assert( IsIdxValid( i ) );
+	T* pBlock = m_pMemory[ MajorIndex( i ) ];
 	return pBlock[ MinorIndex( i ) ];
 }
 
-template< class T, class I >
-inline const T& CUtlBlockMemory<T,I>::operator[]( I i ) const
-{
-	Assert( IsIdxValid(i) );
-	const T *pBlock = m_pMemory[ MajorIndex( i ) ];
+template<class T, class I>
+inline const T& CUtlBlockMemory<T, I>::operator[]( I i ) const {
+	Assert( IsIdxValid( i ) );
+	const T* pBlock = m_pMemory[ MajorIndex( i ) ];
 	return pBlock[ MinorIndex( i ) ];
 }
 
-template< class T, class I >
-inline T& CUtlBlockMemory<T,I>::Element( I i )
-{
-	Assert( IsIdxValid(i) );
-	T *pBlock = m_pMemory[ MajorIndex( i ) ];
+template<class T, class I>
+inline T& CUtlBlockMemory<T, I>::Element( I i ) {
+	Assert( IsIdxValid( i ) );
+	T* pBlock = m_pMemory[ MajorIndex( i ) ];
 	return pBlock[ MinorIndex( i ) ];
 }
 
-template< class T, class I >
-inline const T& CUtlBlockMemory<T,I>::Element( I i ) const
-{
-	Assert( IsIdxValid(i) );
-	const T *pBlock = m_pMemory[ MajorIndex( i ) ];
+template<class T, class I>
+inline const T& CUtlBlockMemory<T, I>::Element( I i ) const {
+	Assert( IsIdxValid( i ) );
+	const T* pBlock = m_pMemory[ MajorIndex( i ) ];
 	return pBlock[ MinorIndex( i ) ];
 }
 
@@ -211,9 +196,8 @@ inline const T& CUtlBlockMemory<T,I>::Element( I i ) const
 //-----------------------------------------------------------------------------
 // Size
 //-----------------------------------------------------------------------------
-template< class T, class I >
-inline int CUtlBlockMemory<T,I>::NumAllocated() const
-{
+template<class T, class I>
+inline int CUtlBlockMemory<T, I>::NumAllocated() const {
 	return m_nBlocks * NumElementsInBlock();
 }
 
@@ -221,15 +205,13 @@ inline int CUtlBlockMemory<T,I>::NumAllocated() const
 //-----------------------------------------------------------------------------
 // Is element index valid?
 //-----------------------------------------------------------------------------
-template< class T, class I >
-inline bool CUtlBlockMemory<T,I>::IsIdxValid( I i ) const
-{
+template<class T, class I>
+inline bool CUtlBlockMemory<T, I>::IsIdxValid( I i ) const {
 	return ( i >= 0 ) && ( MajorIndex( i ) < m_nBlocks );
 }
 
-template< class T, class I >
-void CUtlBlockMemory<T,I>::Grow( int num )
-{
+template<class T, class I>
+void CUtlBlockMemory<T, I>::Grow( int num ) {
 	if ( num <= 0 )
 		return;
 
@@ -239,48 +221,41 @@ void CUtlBlockMemory<T,I>::Grow( int num )
 	ChangeSize( m_nBlocks + nBlocks );
 }
 
-template< class T, class I >
-void CUtlBlockMemory<T,I>::ChangeSize( int nBlocks )
-{
-	UTLBLOCKMEMORY_TRACK_FREE(); // this must stay before the recalculation of m_nBlocks, since it implicitly uses the old value
+template<class T, class I>
+void CUtlBlockMemory<T, I>::ChangeSize( int nBlocks ) {
+	UTLBLOCKMEMORY_TRACK_FREE();// this must stay before the recalculation of m_nBlocks, since it implicitly uses the old value
 
 	int nBlocksOld = m_nBlocks;
 	m_nBlocks = nBlocks;
 
-	UTLBLOCKMEMORY_TRACK_ALLOC(); // this must stay after the recalculation of m_nBlocks, since it implicitly uses the new value
+	UTLBLOCKMEMORY_TRACK_ALLOC();// this must stay after the recalculation of m_nBlocks, since it implicitly uses the new value
 
-	if ( m_pMemory )
-	{
+	if ( m_pMemory ) {
 		// free old blocks if shrinking
 		// Only possible if m_pMemory is non-NULL (and avoids PVS-Studio warning)
-		for ( int i = m_nBlocks; i < nBlocksOld; ++i )
-		{
+		for ( int i = m_nBlocks; i < nBlocksOld; ++i ) {
 			UTLBLOCKMEMORY_TRACK_FREE();
-			free( (void*)m_pMemory[ i ] );
+			free( (void*) m_pMemory[ i ] );
 		}
 
 		MEM_ALLOC_CREDIT_CLASS();
-		m_pMemory = (T**)realloc( m_pMemory, m_nBlocks * sizeof(T*) );
+		m_pMemory = (T**) realloc( m_pMemory, m_nBlocks * sizeof( T* ) );
 		Assert( m_pMemory );
-	}
-	else
-	{
+	} else {
 		MEM_ALLOC_CREDIT_CLASS();
-		m_pMemory = (T**)malloc( m_nBlocks * sizeof(T*) );
+		m_pMemory = (T**) malloc( m_nBlocks * sizeof( T* ) );
 		Assert( m_pMemory );
 	}
 
-	if ( !m_pMemory )
-	{
+	if ( !m_pMemory ) {
 		Error( "CUtlBlockMemory overflow!\n" );
 	}
 
 	// allocate new blocks if growing
 	int nBlockSize = NumElementsInBlock();
-	for ( int i = nBlocksOld; i < m_nBlocks; ++i )
-	{
+	for ( int i = nBlocksOld; i < m_nBlocks; ++i ) {
 		MEM_ALLOC_CREDIT_CLASS();
-		m_pMemory[ i ] = (T*)malloc( nBlockSize * sizeof( T ) );
+		m_pMemory[ i ] = (T*) malloc( nBlockSize * sizeof( T ) );
 		Assert( m_pMemory[ i ] );
 	}
 }
@@ -289,9 +264,8 @@ void CUtlBlockMemory<T,I>::ChangeSize( int nBlocks )
 //-----------------------------------------------------------------------------
 // Makes sure we've got at least this much memory
 //-----------------------------------------------------------------------------
-template< class T, class I >
-inline void CUtlBlockMemory<T,I>::EnsureCapacity( int num )
-{
+template<class T, class I>
+inline void CUtlBlockMemory<T, I>::EnsureCapacity( int num ) {
 	Grow( num - NumAllocated() );
 }
 
@@ -299,39 +273,34 @@ inline void CUtlBlockMemory<T,I>::EnsureCapacity( int num )
 //-----------------------------------------------------------------------------
 // Memory deallocation
 //-----------------------------------------------------------------------------
-template< class T, class I >
-void CUtlBlockMemory<T,I>::Purge()
-{
+template<class T, class I>
+void CUtlBlockMemory<T, I>::Purge() {
 	if ( !m_pMemory )
 		return;
 
-	for ( int i = 0; i < m_nBlocks; ++i )
-	{
+	for ( int i = 0; i < m_nBlocks; ++i ) {
 		UTLBLOCKMEMORY_TRACK_FREE();
-		free( (void*)m_pMemory[ i ] );
+		free( (void*) m_pMemory[ i ] );
 	}
 	m_nBlocks = 0;
 
 	UTLBLOCKMEMORY_TRACK_FREE();
-	free( (void*)m_pMemory );
+	free( (void*) m_pMemory );
 	m_pMemory = 0;
 }
 
-template< class T, class I >
-void CUtlBlockMemory<T,I>::Purge( int numElements )
-{
+template<class T, class I>
+void CUtlBlockMemory<T, I>::Purge( int numElements ) {
 	Assert( numElements >= 0 );
 
 	int nAllocated = NumAllocated();
-	if ( numElements > nAllocated )
-	{
+	if ( numElements > nAllocated ) {
 		// Ensure this isn't a grow request in disguise.
 		Assert( numElements <= nAllocated );
 		return;
 	}
 
-	if ( numElements <= 0 )
-	{
+	if ( numElements <= 0 ) {
 		Purge();
 		return;
 	}
@@ -348,5 +317,3 @@ void CUtlBlockMemory<T,I>::Purge( int numElements )
 }
 
 #include "tier0/memdbgoff.h"
-
-#endif // UTLBLOCKMEMORY_H

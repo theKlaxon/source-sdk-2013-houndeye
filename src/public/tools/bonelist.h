@@ -1,54 +1,40 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
-
-#ifndef BONELIST_H
-#define BONELIST_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "studio.h"
 
-class CBoneList
-{
+class CBoneList {
 public:
-
 	CBoneList();
 
 	void Release();
 
-	static CBoneList *Alloc();
+	static CBoneList* Alloc();
 
 public:
-
-	int			m_nBones;
-	Vector		m_vecPos[ MAXSTUDIOBONES ];
-	Quaternion	m_quatRot[ MAXSTUDIOBONES ];
+	int m_nBones;
+	Vector m_vecPos[ MAXSTUDIOBONES ];
+	Quaternion m_quatRot[ MAXSTUDIOBONES ];
 
 private:
-	bool		m_bShouldDelete;
+	bool m_bShouldDelete;
 };
 
-class CFlexList
-{
+class CFlexList {
 public:
-
 	CFlexList();
 
 	void Release();
 
-	static CFlexList *Alloc();
+	static CFlexList* Alloc();
 
 public:
-
-	int			m_nNumFlexes;
-	float		m_flexWeights[ MAXSTUDIOFLEXCTRL ];
+	int m_nNumFlexes;
+	float m_flexWeights[ MAXSTUDIOFLEXCTRL ];
 
 private:
-	bool		m_bShouldDelete;
+	bool m_bShouldDelete;
 };
-
-#endif // BONELIST_H

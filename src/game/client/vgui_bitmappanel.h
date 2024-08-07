@@ -5,14 +5,7 @@
 // $Revision: $
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef VGUI_BITMAPPANEL_H
-#define VGUI_BITMAPPANEL_H
-
-#if IsWindows()
 #pragma once
-#endif
-
 #include <vgui_controls/Panel.h>
 
 //-----------------------------------------------------------------------------
@@ -25,21 +18,20 @@ struct Bitmap_t;
 //-----------------------------------------------------------------------------
 // This is a base class for a panel which always is rendered on top of an entity
 //-----------------------------------------------------------------------------
-class CBitmapPanel : public vgui::Panel
-{
+class CBitmapPanel : public vgui::Panel {
 	typedef vgui::Panel BaseClass;
 
 public:
 	// constructor
-	CBitmapPanel( );
-	CBitmapPanel( vgui::Panel *pParent, const char *pName );
+	CBitmapPanel();
+	CBitmapPanel( vgui::Panel* pParent, const char* pName );
 	~CBitmapPanel();
 
 	// initialization
 	bool Init( KeyValues* pInitData );
 
 	// initialization from build-mode dialog style .res files
-	virtual void ApplySettings(KeyValues *inResourceData);
+	virtual void ApplySettings( KeyValues* inResourceData );
 
 	virtual void Paint( void );
 	virtual void PaintBackground( void ) {}
@@ -48,25 +40,21 @@ public:
 	virtual void OnCursorExited();
 
 	// Setup for panels that aren't created by the commander overlay factory (i.e. aren't parsed from a keyvalues file)
-	virtual void SetImage( BitmapImage *pImage );
+	virtual void SetImage( BitmapImage* pImage );
 
 	/// Set bitmap data directly
-	virtual void SetBitmap( const Bitmap_t &bitmap );
+	virtual void SetBitmap( const Bitmap_t& bitmap );
 
-	const char *GetMouseOverText( void );
+	const char* GetMouseOverText( void );
 
 private:
-	enum
-	{
+	enum {
 		MAX_ENTITY_MOUSEOVER = 256
 	};
 	// The bitmap to render
-	BitmapImage *m_pImage;
+	BitmapImage* m_pImage;
 	int m_r, m_g, m_b, m_a;
 	bool m_bOwnsImage;
 
-	char			m_szMouseOverText[ MAX_ENTITY_MOUSEOVER ];
-
+	char m_szMouseOverText[ MAX_ENTITY_MOUSEOVER ];
 };
-
-#endif //  VGUI_BITMAPPANEL_H

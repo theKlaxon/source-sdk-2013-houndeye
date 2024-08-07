@@ -1,15 +1,10 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef DAMAGEMODIFIER_H
-#define DAMAGEMODIFIER_H
-#if IsWindows()
 #pragma once
-#endif
 
 
 class CBaseEntity;
@@ -20,27 +15,23 @@ class CBaseEntity;
 //-----------------------------------------------------------------------------
 // Purpose: Class handling generic damage modification to & from a player
 //-----------------------------------------------------------------------------
-class CDamageModifier
-{
+class CDamageModifier {
 public:
-				CDamageModifier();
+	CDamageModifier();
 
-	void		AddModifierToEntity( CBaseEntity *pChar );
-	void		RemoveModifier();
+	void AddModifierToEntity( CBaseEntity* pChar );
+	void RemoveModifier();
 
-	void		SetModifier( float flDamageScale );
-	float		GetModifier() const;
+	void SetModifier( float flDamageScale );
+	float GetModifier() const;
 
-	void		SetDoneToMe( bool bDoneToMe );
-	bool		IsDamageDoneToMe() const;
+	void SetDoneToMe( bool bDoneToMe );
+	bool IsDamageDoneToMe() const;
 
-	CBaseEntity	*GetCharacter() const;
+	CBaseEntity* GetCharacter() const;
 
 private:
-	float							m_flModifier;
-	CHandle<CBaseEntity>			m_hEnt;
-	bool							m_bDoneToMe;	// True = modifies damage done to the entity, false = damage done by the entity
+	float m_flModifier;
+	CHandle<CBaseEntity> m_hEnt;
+	bool m_bDoneToMe;// True = modifies damage done to the entity, false = damage done by the entity
 };
-
-
-#endif // DAMAGEMODIFIER_H

@@ -1,35 +1,30 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-#if !defined( HUD_SUITPOWER_H )
-#define HUD_SUITPOWER_H
-#if IsWindows()
 #pragma once
-#endif
-
-#include "hudelement.h"
 #include "hud_numericdisplay.h"
+#include "hudelement.h"
 #include <vgui_controls/Panel.h>
+
 
 //-----------------------------------------------------------------------------
 // Purpose: Shows the sprint power bar
 //-----------------------------------------------------------------------------
-class CHudSuitPower : public CHudElement, public vgui::Panel
-{
+class CHudSuitPower : public CHudElement, public vgui::Panel {
 	DECLARE_CLASS_SIMPLE( CHudSuitPower, vgui::Panel );
 
 public:
-	CHudSuitPower( const char *pElementName );
-	virtual void	Init( void );
-	virtual void	Reset( void );
-	virtual void	OnThink( void );
-	bool			ShouldDraw( void );
+	CHudSuitPower( const char* pElementName );
+	virtual void Init( void );
+	virtual void Reset( void );
+	virtual void OnThink( void );
+	bool ShouldDraw( void );
 
 protected:
-	virtual void	Paint();
+	virtual void Paint();
 
 private:
 	CPanelAnimationVar( Color, m_AuxPowerColor, "AuxPowerColor", "255 0 0 255" );
@@ -52,6 +47,4 @@ private:
 	float m_flSuitPower;
 	int m_nSuitPowerLow;
 	int m_iActiveSuitDevices;
-};	
-
-#endif // HUD_SUITPOWER_H
+};

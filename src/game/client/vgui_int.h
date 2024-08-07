@@ -1,21 +1,15 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-#if !defined( VGUI_INT_H )
-#define VGUI_INT_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "interface.h"
 
 #include <vgui/VGUI.h>
 
-namespace vgui
-{
+namespace vgui {
 	class Panel;
 }
 
@@ -27,5 +21,3 @@ void VGUI_CreateClientDLLRootPanel( void );
 void VGUI_DestroyClientDLLRootPanel( void );
 void VGui_PreRender();
 void VGui_PostRender();
-
-#endif // VGUI_INT_H

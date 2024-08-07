@@ -1,45 +1,36 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Workfile:     $
 // $Date:         $
 // $NoKeywords: $
 //=============================================================================//
-#if !defined( CLIENTMODE_HLNORMAL_H )
-#define CLIENTMODE_HLNORMAL_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "clientmode_shared.h"
-#include <vgui_controls/EditablePanel.h>
 #include <vgui/Cursor.h>
+#include <vgui_controls/EditablePanel.h>
 
 class CHudViewport;
 
-namespace vgui
-{
+namespace vgui {
 	typedef unsigned long HScheme;
 }
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-class ClientModeHLNormal : public ClientModeShared
-{
+class ClientModeHLNormal : public ClientModeShared {
 public:
 	DECLARE_CLASS( ClientModeHLNormal, ClientModeShared );
 
 	ClientModeHLNormal();
 	~ClientModeHLNormal();
 
-	virtual void	Init();
-	virtual bool	ShouldDrawCrosshair( void );
+	virtual void Init();
+	virtual bool ShouldDrawCrosshair( void );
 };
 
-extern IClientMode *GetClientModeNormal();
+extern IClientMode* GetClientModeNormal();
 extern vgui::HScheme g_hVGuiCombineScheme;
-
-#endif // CLIENTMODE_HLNORMAL_H

@@ -1,21 +1,13 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
-
-#ifndef VTFPREVIEWPANEL_H
-#define VTFPREVIEWPANEL_H
-
-#if IsWindows()
 #pragma once
-#endif
-
-
-#include "vgui_controls/Panel.h"
-#include "tier1/utlstring.h"
 #include "materialsystem/MaterialSystemUtil.h"
 #include "mathlib/vector.h"
+#include "tier1/utlstring.h"
+#include "vgui_controls/Panel.h"
 
 
 //-----------------------------------------------------------------------------
@@ -28,17 +20,16 @@
 // VTF Preview panel
 //
 //-----------------------------------------------------------------------------
-class CVTFPreviewPanel : public vgui::Panel
-{
+class CVTFPreviewPanel : public vgui::Panel {
 	DECLARE_CLASS_SIMPLE( CVTFPreviewPanel, vgui::Panel );
 
 public:
 	// constructor
-	CVTFPreviewPanel( vgui::Panel *pParent, const char *pName );
+	CVTFPreviewPanel( vgui::Panel* pParent, const char* pName );
 	virtual ~CVTFPreviewPanel();
 
-	void SetVTF( const char *pFullPath, bool bLoadImmediately = true );
-	const char *GetVTF() const;
+	void SetVTF( const char* pFullPath, bool bLoadImmediately = true );
+	const char* GetVTF() const;
 
 	// Paints the texture
 	virtual void Paint( void );
@@ -53,10 +44,10 @@ private:
 	void SetupProjectionMatrix( int nWidth, int nHeight );
 
 	// Sets the camera to look at the the thing we're spinning around
-	void LookAt( const Vector &vecLookAt, float flRadius );
+	void LookAt( const Vector& vecLookAt, float flRadius );
 
 	// Draw a sphere
-	void RenderSphere( const Vector &vCenter, float flRadius, int nTheta, int nPhi );
+	void RenderSphere( const Vector& vCenter, float flRadius, int nTheta, int nPhi );
 
 	CUtlString m_VTFName;
 	CTextureReference m_PreviewTexture;
@@ -65,6 +56,3 @@ private:
 	Vector m_vecCameraDirection;
 	float m_flLastRotationTime;
 };
-
-
-#endif // VTFPREVIEWPANEL_H

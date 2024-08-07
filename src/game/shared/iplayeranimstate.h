@@ -1,28 +1,19 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
-
-#ifndef IPLAYERANIMSTATE_H
-#define IPLAYERANIMSTATE_H
-#if IsWindows()
 #pragma once
-#endif
 
 
-
-typedef enum
-{
-	LEGANIM_9WAY,		// Legs use a 9-way blend, with "move_x" and "move_y" pose parameters.
-	LEGANIM_8WAY,		// Legs use an 8-way blend with "move_yaw" pose param.
-	LEGANIM_GOLDSRC	// Legs always point in the direction he's running and the torso rotates.
+typedef enum {
+	LEGANIM_9WAY,  // Legs use a 9-way blend, with "move_x" and "move_y" pose parameters.
+	LEGANIM_8WAY,  // Legs use an 8-way blend with "move_yaw" pose param.
+	LEGANIM_GOLDSRC// Legs always point in the direction he's running and the torso rotates.
 } LegAnimType_t;
 
 
-
-abstract_class IPlayerAnimState
-{
+abstract_class IPlayerAnimState {
 public:
 	virtual void Release() = 0;
 
@@ -42,6 +33,3 @@ public:
 	// it will change his body_yaw pose parameter before changing his rendered angle).
 	virtual const QAngle& GetRenderAngles() = 0;
 };
-
-
-#endif // IPLAYERANIMSTATE_H

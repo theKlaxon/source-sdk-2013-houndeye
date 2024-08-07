@@ -10,23 +10,14 @@
 //
 // Material editor
 //=============================================================================
-
-#ifndef VGUIMATSYSAPP_H
-#define VGUIMATSYSAPP_H
-
-#if IsWindows()
 #pragma once
-#endif
-
-
 #include "appframework/tier3app.h"
 
 
 //-----------------------------------------------------------------------------
 // The application object
 //-----------------------------------------------------------------------------
-class CVguiMatSysApp : public CVguiSteamApp
-{
+class CVguiMatSysApp : public CVguiSteamApp {
 	typedef CVguiSteamApp BaseClass;
 
 public:
@@ -49,23 +40,20 @@ protected:
 	void AppPumpMessages();
 
 	// Sets the video mode
-	bool SetVideoMode( );
+	bool SetVideoMode();
 
 	// Sets up the game path
-	bool SetupSearchPaths( const char *pStartingDir, bool bOnlyUseStartingDir, bool bIsTool );
+	bool SetupSearchPaths( const char* pStartingDir, bool bOnlyUseStartingDir, bool bIsTool );
 
 private:
 	// Returns the app name
-	virtual const char *GetAppName() = 0;
+	virtual const char* GetAppName() = 0;
 	virtual bool AppUsesReadPixels() { return false; }
 
 	// Creates the app window
-	virtual void *CreateAppWindow( char const *pTitle, bool bWindowed, int w, int h );
+	virtual void* CreateAppWindow( char const* pTitle, bool bWindowed, int w, int h );
 
-	void *m_HWnd;
+	void* m_HWnd;
 	int m_nWidth;
 	int m_nHeight;
 };
-
-
-#endif // VGUIMATSYSAPP_H

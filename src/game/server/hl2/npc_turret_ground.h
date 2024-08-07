@@ -1,110 +1,98 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
-#ifndef NPC_TURRET_GROUND_H
-#define NPC_TURRET_GROUND_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "ai_basenpc.h"
 #include "smoke_trail.h"
 
-//=========================================================
-//=========================================================
-class CNPC_GroundTurret : public CAI_BaseNPC
-{
+
+class CNPC_GroundTurret : public CAI_BaseNPC {
 public:
 	DECLARE_CLASS( CNPC_GroundTurret, CAI_BaseNPC );
 	DECLARE_DATADESC();
 
-	void			Precache( void );
-	virtual void	Spawn( void );
-	bool			CreateVPhysics( void );
-	void			PrescheduleThink();
-	Class_T			Classify( void );
+	void Precache();
+	virtual void Spawn();
+	bool CreateVPhysics();
+	void PrescheduleThink();
+	Class_T Classify();
 
 	void PostNPCInit();
 
 	// Damage & Death
-	virtual int OnTakeDamage_Alive( const CTakeDamageInfo &info );
-	void Event_Killed( const CTakeDamageInfo &info );
+	virtual int OnTakeDamage_Alive( const CTakeDamageInfo& info );
+	void Event_Killed( const CTakeDamageInfo& info );
 	void DeathEffects();
-	bool CanBecomeRagdoll( void ) { return false; }
-	void DeathSound( const CTakeDamageInfo &info );
+	bool CanBecomeRagdoll() { return false; }
+	void DeathSound( const CTakeDamageInfo& info );
 
 	// Combat
-	void MakeTracer( const Vector &vecTracerSrc, const trace_t &tr, int iTracerType );
-	Vector GetAttackSpread( CBaseCombatWeapon *pWeapon, CBaseEntity *pTarget )
-	{
+	void MakeTracer( const Vector& vecTracerSrc, const trace_t& tr, int iTracerType );
+	Vector GetAttackSpread( CBaseCombatWeapon* pWeapon, CBaseEntity* pTarget ) {
 		return VECTOR_CONE_5DEGREES;
 	}
 
 
-	// Sensing 
+	// Sensing
 	void GatherConditions();
 	Vector EyePosition();
-	bool FVisible( CBaseEntity *pEntity, int traceMask, CBaseEntity **ppBlocker );
-	bool QuerySeeEntity( CBaseEntity *pEntity, bool bOnlyHateOrFearIfNPC = false );
+	bool FVisible( CBaseEntity* pEntity, int traceMask, CBaseEntity** ppBlocker );
+	bool QuerySeeEntity( CBaseEntity* pEntity, bool bOnlyHateOrFearIfNPC = false );
 
 
-	bool IsOpeningOrClosing() { return (GetAbsVelocity().z != 0.0f); }
+	bool IsOpeningOrClosing() { return ( GetAbsVelocity().z != 0.0f ); }
 	bool IsEnabled();
 	bool IsOpen();
 
 	// Tasks & Schedules
-	void StartTask( const Task_t *pTask );
-	void RunTask( const Task_t *pTask );
-	virtual int SelectSchedule( void );
+	void StartTask( const Task_t* pTask );
+	void RunTask( const Task_t* pTask );
+	virtual int SelectSchedule();
 	virtual int TranslateSchedule( int scheduleType );
 
 	// Activities & Animation
-	Activity			NPC_TranslateActivity( Activity eNewActivity );
-	virtual void		Shoot();
-	virtual void		Scan();
-	void				ProjectBeam( const Vector &vecStart, const Vector &vecDir, int width, int brightness, float duration );
+	Activity NPC_TranslateActivity( Activity eNewActivity );
+	virtual void Shoot();
+	virtual void Scan();
+	void ProjectBeam( const Vector& vecStart, const Vector& vecDir, int width, int brightness, float duration );
 
 	// Local
 	void SetActive( bool bActive ) {}
 
 	// Inputs
-	void InputEnable( inputdata_t &inputdata );
-	void InputDisable( inputdata_t &inputdata );
+	void InputEnable( inputdata_t& inputdata );
+	void InputDisable( inputdata_t& inputdata );
 
 	// Outputs
-	COutputEvent	m_OnAreaClear;
+	COutputEvent m_OnAreaClear;
 
 	DEFINE_CUSTOM_AI;
-
 protected:
 	//-----------------------------------------------------
 	// Conditions, Schedules, Tasks
 	//-----------------------------------------------------
-	enum 
-	{
+	enum {
 		SCHED_GROUND_TURRET_IDLE = BaseClass::NEXT_SCHEDULE,
 		SCHED_GROUND_TURRET_ATTACK,
 
 		TASK_GROUNDTURRET_SCAN = BaseClass::NEXT_TASK,
 	};
 
-	int			m_iAmmoType;
-	SmokeTrail	*m_pSmoke;
+	int m_iAmmoType;
+	SmokeTrail* m_pSmoke;
 
-	bool		m_bEnabled;
+	bool m_bEnabled;
 
-	float		m_flTimeNextShoot;
-	float		m_flTimeLastSawEnemy;
-	Vector		m_vecSpread;
-	bool		m_bHasExploded;
-	int			m_iDeathSparks;
-	float		m_flSensingDist;
-	bool		m_bSeeEnemy;
-	float		m_flTimeNextPing;
+	float m_flTimeNextShoot;
+	float m_flTimeLastSawEnemy;
+	Vector m_vecSpread;
+	bool m_bHasExploded;
+	int m_iDeathSparks;
+	float m_flSensingDist;
+	bool m_bSeeEnemy;
+	float m_flTimeNextPing;
 
-	Vector		m_vecClosedPos;
+	Vector m_vecClosedPos;
 
-	Vector		m_vecLightOffset;
+	Vector m_vecLightOffset;
 
-	HSOUNDSCRIPTHANDLE 	m_ShotSounds;
+	HSOUNDSCRIPTHANDLE m_ShotSounds;
 };
-
-#endif //#ifndef NPC_TURRET_GROUND_H

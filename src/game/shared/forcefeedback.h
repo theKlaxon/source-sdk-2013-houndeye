@@ -1,17 +1,11 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
-
-#ifndef FORCEFEEDBACK_H
-#define FORCEFEEDBACK_H
-#if IsWindows()
 #pragma once
-#endif
 
-enum
-{
+enum {
 	FFMSG_START = 0,
 	FFMSG_STOP,
 	FFMSG_STOPALL,
@@ -19,8 +13,7 @@ enum
 	FFMSG_RESUME
 };
 
-typedef enum
-{
+typedef enum {
 	FORCE_FEEDBACK_SHOT_SINGLE,
 	FORCE_FEEDBACK_SHOT_DOUBLE,
 
@@ -36,36 +29,30 @@ typedef enum
 
 class CBasePlayer;
 
-struct FFBaseParams_t
-{
-	FFBaseParams_t() :
-		m_flDirection( 0.0f ),
-		m_flDuration( 0.0f ),
-		m_flGain( 1.0f ),
-		m_nPriority( 0 ),
-		m_bSolo( false )
-	{
+struct FFBaseParams_t {
+	FFBaseParams_t() : m_flDirection( 0.0f ),
+					   m_flDuration( 0.0f ),
+					   m_flGain( 1.0f ),
+					   m_nPriority( 0 ),
+					   m_bSolo( false ) {
 	}
 
-	float			m_flDirection;	// yaw
-	float			m_flDuration;	// seconds (-1 == INFINITE, 0.0 == use duration from .ffe file)
-	float			m_flGain;		// 0 -> 1 global scale
-	int				m_nPriority;	// Higher is more important
-	bool			m_bSolo;		// Temporarily suppress all other FF effects while playing
+	float m_flDirection;// yaw
+	float m_flDuration; // seconds (-1 == INFINITE, 0.0 == use duration from .ffe file)
+	float m_flGain;     // 0 -> 1 global scale
+	int m_nPriority;    // Higher is more important
+	bool m_bSolo;       // Temporarily suppress all other FF effects while playing
 };
 
-abstract_class IForceFeedback
-{
+abstract_class IForceFeedback {
 public:
 	// API
-	virtual void			StopAllEffects( CBasePlayer *player ) = 0;
-	virtual void			StopEffect( CBasePlayer *player, FORCEFEEDBACK_t effect ) = 0;
-	virtual void			StartEffect( CBasePlayer *player, FORCEFEEDBACK_t effect, const FFBaseParams_t& params ) = 0;
+	virtual void StopAllEffects( CBasePlayer * player ) = 0;
+	virtual void StopEffect( CBasePlayer * player, FORCEFEEDBACK_t effect ) = 0;
+	virtual void StartEffect( CBasePlayer * player, FORCEFEEDBACK_t effect, const FFBaseParams_t& params ) = 0;
 
-	virtual void			PauseAll( CBasePlayer *player ) = 0;
-	virtual void			ResumeAll( CBasePlayer *player ) = 0;
+	virtual void PauseAll( CBasePlayer * player ) = 0;
+	virtual void ResumeAll( CBasePlayer * player ) = 0;
 };
 
-extern IForceFeedback *forcefeedback;
-
-#endif // FORCEFEEDBACK_H
+extern IForceFeedback* forcefeedback;

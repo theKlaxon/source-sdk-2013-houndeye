@@ -1,43 +1,32 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Header: $
 // $NoKeywords: $
 //===========================================================================//
-
-#ifndef IMATERIALSYSTEMHARDWARECONFIG_H
-#define IMATERIALSYSTEMHARDWARECONFIG_H
-
-#if IsWindows()
 #pragma once
-#endif
-
-
 #include "tier1/interface.h"
 
 //-----------------------------------------------------------------------------
 // GL helpers
 //-----------------------------------------------------------------------------
-ALWAYS_INLINE bool IsEmulatingGL()
-{
+ALWAYS_INLINE bool IsEmulatingGL() {
 	static bool bIsEmulatingGL = ( Plat_GetCommandLineA() ) ? ( strstr( Plat_GetCommandLineA(), "-r_emulate_gl" ) != NULL ) : false;
 	return bIsEmulatingGL;
 }
 
-ALWAYS_INLINE bool IsOpenGL( void )
-{
+ALWAYS_INLINE bool IsOpenGL( void ) {
 	return IsPlatformOpenGL() || IsEmulatingGL();
 }
 
 //-----------------------------------------------------------------------------
 // Material system interface version
 //-----------------------------------------------------------------------------
-#define MATERIALSYSTEM_HARDWARECONFIG_INTERFACE_VERSION		"MaterialSystemHardwareConfig012"
+#define MATERIALSYSTEM_HARDWARECONFIG_INTERFACE_VERSION "MaterialSystemHardwareConfig012"
 
 // HDRFIXME NOTE: must match common_ps_fxc.h
-enum HDRType_t
-{
+enum HDRType_t {
 	HDR_TYPE_NONE,
 	HDR_TYPE_INTEGER,
 	HDR_TYPE_FLOAT,
@@ -45,8 +34,7 @@ enum HDRType_t
 
 // For now, vertex compression is simply "on or off" (for the sake of simplicity
 // and MeshBuilder perf.), but later we may support multiple flavours.
-enum VertexCompressionType_t
-{
+enum VertexCompressionType_t {
 	// This indicates an uninitialized VertexCompressionType_t value
 	VERTEX_COMPRESSION_INVALID = 0xFFFFFFFF,
 
@@ -68,23 +56,21 @@ enum VertexCompressionType_t
 // use DEFCONFIGMETHOD to define time-critical methods that we want to make just return constants
 // on the 360, so that the checks will happen at compile time. Not all methods are defined this way
 // - just the ones that I perceive as being called often in the frame interval.
-#define DEFCONFIGMETHOD( ret_type, method, xbox_return_value )	\
-virtual ret_type method const = 0;
-
+#define DEFCONFIGMETHOD( ret_type, method, xbox_return_value ) \
+	virtual ret_type method const = 0;
 
 
 //-----------------------------------------------------------------------------
 // Material system configuration
 //-----------------------------------------------------------------------------
-class IMaterialSystemHardwareConfig
-{
+class IMaterialSystemHardwareConfig {
 public:
 	// on xbox, some methods are inlined to return constants
 
 	DEFCONFIGMETHOD( bool, HasDestAlphaBuffer(), true );
 	DEFCONFIGMETHOD( bool, HasStencilBuffer(), true );
-	virtual int	 GetFrameBufferColorDepth() const = 0;
-	virtual int  GetSamplerCount() const = 0;
+	virtual int GetFrameBufferColorDepth() const = 0;
+	virtual int GetSamplerCount() const = 0;
 	virtual bool HasSetDeviceGammaRamp() const = 0;
 	DEFCONFIGMETHOD( bool, SupportsCompressedTextures(), true );
 	virtual VertexCompressionType_t SupportsCompressedVertices() const = 0;
@@ -93,11 +79,11 @@ public:
 	DEFCONFIGMETHOD( bool, SupportsPixelShaders_1_4(), true );
 	DEFCONFIGMETHOD( bool, SupportsStaticControlFlow(), true );
 	DEFCONFIGMETHOD( bool, SupportsPixelShaders_2_0(), true );
-	DEFCONFIGMETHOD( bool,  SupportsVertexShaders_2_0(), true );
-	virtual int  MaximumAnisotropicLevel() const = 0;	// 0 means no anisotropic filtering
-	virtual int  MaxTextureWidth() const = 0;
-	virtual int  MaxTextureHeight() const = 0;
-	virtual int	 TextureMemorySize() const = 0;
+	DEFCONFIGMETHOD( bool, SupportsVertexShaders_2_0(), true );
+	virtual int MaximumAnisotropicLevel() const = 0;// 0 means no anisotropic filtering
+	virtual int MaxTextureWidth() const = 0;
+	virtual int MaxTextureHeight() const = 0;
+	virtual int TextureMemorySize() const = 0;
 	virtual bool SupportsOverbright() const = 0;
 	virtual bool SupportsCubeMaps() const = 0;
 	virtual bool SupportsMipmappedCubemaps() const = 0;
@@ -106,22 +92,22 @@ public:
 	// The number of texture stages represents the number of computations
 	// we can do in the fixed-function pipeline, it is *not* related to the
 	// simultaneous number of textures we can use
-	virtual int  GetTextureStageCount() const = 0;
-	virtual int	 NumVertexShaderConstants() const = 0;
-	virtual int	 NumPixelShaderConstants() const = 0;
-	virtual int	 MaxNumLights() const = 0;
+	virtual int GetTextureStageCount() const = 0;
+	virtual int NumVertexShaderConstants() const = 0;
+	virtual int NumPixelShaderConstants() const = 0;
+	virtual int MaxNumLights() const = 0;
 	virtual bool SupportsHardwareLighting() const = 0;
-	virtual int	 MaxBlendMatrices() const = 0;
-	virtual int	 MaxBlendMatrixIndices() const = 0;
-	virtual int	 MaxTextureAspectRatio() const = 0;
-	virtual int	 MaxVertexShaderBlendMatrices() const = 0;
-	virtual int	 MaxUserClipPlanes() const = 0;
+	virtual int MaxBlendMatrices() const = 0;
+	virtual int MaxBlendMatrixIndices() const = 0;
+	virtual int MaxTextureAspectRatio() const = 0;
+	virtual int MaxVertexShaderBlendMatrices() const = 0;
+	virtual int MaxUserClipPlanes() const = 0;
 	virtual bool UseFastClipping() const = 0;
 
 	// This here should be the major item looked at when checking for compat
 	// from anywhere other than the material system	shaders
 	DEFCONFIGMETHOD( int, GetDXSupportLevel(), 98 );
-	virtual const char *GetShaderDLLName() const = 0;
+	virtual const char* GetShaderDLLName() const = 0;
 
 	virtual bool ReadPixelsFromFrontBuffer() const = 0;
 
@@ -138,12 +124,12 @@ public:
 	virtual bool SupportsColorOnSecondStream() const = 0;
 	virtual bool SupportsStaticPlusDynamicLighting() const = 0;
 
-	// Does our card have a hard time with fillrate 
+	// Does our card have a hard time with fillrate
 	// relative to other cards w/ the same dx level?
 	virtual bool PreferReducedFillrate() const = 0;
 
 	// This is the max dx support level supported by the card
-	virtual int	 GetMaxDXSupportLevel() const = 0;
+	virtual int GetMaxDXSupportLevel() const = 0;
 
 	// Does the card specify fog color in linear space when sRGBWrites are enabled?
 	virtual bool SpecifiesFogColorInLinearSpace() const = 0;
@@ -155,13 +141,13 @@ public:
 
 	virtual bool SupportsGLMixedSizeTargets() const = 0;
 
-	virtual bool IsAAEnabled() const = 0;	// Is antialiasing being used?
+	virtual bool IsAAEnabled() const = 0;// Is antialiasing being used?
 
 	// NOTE: Anything after this was added after shipping HL2.
 	virtual int GetVertexTextureCount() const = 0;
 	virtual int GetMaxVertexTextureDimension() const = 0;
 
-	virtual int  MaxTextureDepth() const = 0;
+	virtual int MaxTextureDepth() const = 0;
 
 	virtual HDRType_t GetHDRType() const = 0;
 	virtual HDRType_t GetHardwareHDRType() const = 0;
@@ -198,5 +184,3 @@ public:
 	inline bool ShouldAlwaysUseShaderModel2bShaders() const { return IsOpenGL(); }
 	inline bool PlatformRequiresNonNullPixelShaders() const { return IsOpenGL(); }
 };
-
-#endif // IMATERIALSYSTEMHARDWARECONFIG_H

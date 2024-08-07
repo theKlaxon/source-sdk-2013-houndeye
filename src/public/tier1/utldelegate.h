@@ -6,13 +6,7 @@
 // $NoKeywords: $
 //
 //===========================================================================//
-
-#ifndef UTLDELEGATE_H
-#define UTLDELEGATE_H
-
-#if IsWindows()
 #pragma once
-#endif
 
 
 //-----------------------------------------------------------------------------
@@ -35,16 +29,14 @@
 //-----------------------------------------------------------------------------
 
 // First, define the functions you wish to call.
-int Test1( char *pString, float x );
-class CTestClass
-{
+int Test1( char* pString, float x );
+class CTestClass {
 public:
 	void Test2();
 	static float Test3( int x );
 };
 
-void Test()
-{
+void Test() {
 	CTestClass testClass;
 
 	// CUtlDelegate is a class that can be used to invoke methods of classes
@@ -53,16 +45,16 @@ void Test()
 	// There are a couple ways to hook up a delegate. One is in a constructor
 	// Note that the template parameter of CUtlFastDelegate looks like the
 	// function type: first, you have the return type, then ( parameter list )
-	CUtlDelegate< int ( char *, float ) > delegate1( &Test1 );
+	CUtlDelegate<int( char*, float )> delegate1( &Test1 );
 
 	// Another way is to use the UtlMakeDelegate method, allowing you to
 	// define the delegate later. Note that UtlMakeDelegate does *not* do a heap allocation
-	CUtlDelegate< void () > delegate2;
+	CUtlDelegate<void()> delegate2;
 	delegate2 = UtlMakeDelegate( &testClass, &CTestClass::Test2 );
 
 	// A third method is to use the Bind() method of CUtlFastDelegate
 	// Note that you do not pass in the class pointer for static functions
-	CUtlDelegate< float ( int ) > delegate3;
+	CUtlDelegate<float( int )> delegate3;
 	delegate3.Bind( &CTestClass::Test3 );
 
 	// Use the () operator to invoke the function calls.
@@ -74,24 +66,21 @@ void Test()
 	delegate1.Clear();
 
 	// You can use operator! or IsEmpty() to see if a delegate is bound
-	if ( !delegate1.IsEmpty() )
-	{
+	if ( !delegate1.IsEmpty() ) {
 		delegate1( "hello2" );
 	}
 
 	// Delegates maintain an internal non-templatized representation of the
 	// functions they are bound to called CUtlAbstractDelegate. These are
-	// useful when keeping a list of untyped delegates or when passing 
+	// useful when keeping a list of untyped delegates or when passing
 	// delegates across interface boundaries.
-	const CUtlAbstractDelegate &abstractDelegate3 = delegate3.GetAbstractDelegate();
-	CUtlDelegate< float ( int ) > delegate4;
+	const CUtlAbstractDelegate& abstractDelegate3 = delegate3.GetAbstractDelegate();
+	CUtlDelegate<float( int )> delegate4;
 	delegate4.SetAbstractDelegate( abstractDelegate3 );
 	delegate4( 10 );
 }
 
-#endif // UTLDELEGATE_USAGE_DEMONSTRATION
+#endif// UTLDELEGATE_USAGE_DEMONSTRATION
 
 // Looking in this file may cause blindness.
 #include "tier1/utldelegateimpl.h"
-
-#endif // UTLDELEGATE_H

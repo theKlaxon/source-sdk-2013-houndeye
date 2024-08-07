@@ -1,67 +1,52 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef FUNC_AREAPORTALWINDOW_H
-#define FUNC_AREAPORTALWINDOW_H
-#if IsWindows()
 #pragma once
-#endif
-
-
 #include "baseentity.h"
-#include "utllinkedlist.h"
 #include "func_areaportalbase.h"
+#include "utllinkedlist.h"
 
 
-class CFuncAreaPortalWindow : public CFuncAreaPortalBase
-{
+class CFuncAreaPortalWindow : public CFuncAreaPortalBase {
 public:
-	DECLARE_CLASS( CFuncAreaPortalWindow, CFuncAreaPortalBase );	
-	
+	DECLARE_CLASS( CFuncAreaPortalWindow, CFuncAreaPortalBase );
+
 	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
 
-					CFuncAreaPortalWindow();
-					~CFuncAreaPortalWindow();
+	CFuncAreaPortalWindow();
+	~CFuncAreaPortalWindow();
 
 
-// Overrides.
+	// Overrides.
 public:
+	virtual void Spawn();
+	virtual void Activate();
 
-	virtual void	Spawn();
-	virtual void	Activate();
 
-
-// CFuncAreaPortalBase stuff.
+	// CFuncAreaPortalBase stuff.
 public:
-
-	virtual bool	UpdateVisibility( const Vector &vOrigin, float fovDistanceAdjustFactor, bool &bIsOpenOnClient );
+	virtual bool UpdateVisibility( const Vector& vOrigin, float fovDistanceAdjustFactor, bool& bIsOpenOnClient );
 
 
 public:
 	// Returns false if the viewer is past the fadeout distance.
-	bool IsWindowOpen( const Vector &vOrigin, float fovDistanceAdjustFactor );
+	bool IsWindowOpen( const Vector& vOrigin, float fovDistanceAdjustFactor );
 
 public:
-	
-	CNetworkVar( float, m_flFadeStartDist );	// Distance at which it starts fading (when <= this, alpha=m_flTranslucencyLimit).
-	CNetworkVar( float, m_flFadeDist );		// Distance at which it becomes solid.
+	CNetworkVar( float, m_flFadeStartDist );// Distance at which it starts fading (when <= this, alpha=m_flTranslucencyLimit).
+	CNetworkVar( float, m_flFadeDist );     // Distance at which it becomes solid.
 
 	// 0-1 value - minimum translucency it's allowed to get to.
 	CNetworkVar( float, m_flTranslucencyLimit );
 
-	string_t 		m_iBackgroundBModelName;	// string name of background bmodel
+	string_t m_iBackgroundBModelName;// string name of background bmodel
 	CNetworkVar( int, m_iBackgroundModelIndex );
 
 	//Input handlers
-	void InputSetFadeStartDistance( inputdata_t &inputdata );
-	void InputSetFadeEndDistance( inputdata_t &inputdata );
+	void InputSetFadeStartDistance( inputdata_t& inputdata );
+	void InputSetFadeEndDistance( inputdata_t& inputdata );
 };
-
-
-
-#endif // FUNC_AREAPORTALWINDOW_H

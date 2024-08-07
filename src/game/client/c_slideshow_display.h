@@ -29,23 +29,23 @@ public:
 	C_SlideshowDisplay();
 	virtual ~C_SlideshowDisplay();
 
-	void Spawn( void );
+	void Spawn();
 
 	virtual void	OnDataChanged( DataUpdateType_t updateType );
 
-	void ClientThink( void );
+	void ClientThink();
 
-	bool IsEnabled( void ) { return m_bEnabled; }
+	bool IsEnabled() { return m_bEnabled; }
 
 	void GetDisplayText( char *pchText ) { Q_strcpy( pchText, m_szDisplayText ); }
-	int CurrentMaterialIndex( void ) { return m_iCurrentMaterialIndex; }
+	int CurrentMaterialIndex() { return m_iCurrentMaterialIndex; }
 	int GetMaterialIndex( int iSlideIndex );
-	int NumMaterials( void );
-	int CurrentSlideIndex( void ) { return m_iCurrentSlideIndex; }
+	int NumMaterials();
+	int CurrentSlideIndex() { return m_iCurrentSlideIndex; }
 
 private:
 
-	void BuildSlideShowImagesList( void );
+	void BuildSlideShowImagesList();
 
 private:
 

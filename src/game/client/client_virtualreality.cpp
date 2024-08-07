@@ -303,7 +303,7 @@ void			CClientVirtualReality::Disconnect()
 void *			CClientVirtualReality::QueryInterface( const char *pInterfaceName )
 {
 	CreateInterfaceFn factory = Sys_GetFactoryThis();	// This silly construction is necessary
-	return factory( pInterfaceName, NULL );				// to prevent the LTCG compiler from crashing.
+	return factory( pInterfaceName, nullptr );				// to prevent the LTCG compiler from crashing.
 }
 
 
@@ -337,7 +337,7 @@ void CClientVirtualReality::DrawMainMenu()
 	// have to draw the UI in stereo via the render texture or it won't fuse properly
 
 	// Draw it into the render target first
-	ITexture *pTexture = materials->FindTexture( "_rt_gui", NULL, false );
+	ITexture *pTexture = materials->FindTexture( "_rt_gui", nullptr, false );
 	Assert( pTexture );
 	if( !pTexture) 
 		return;
@@ -353,7 +353,7 @@ void CClientVirtualReality::DrawMainMenu()
 	pRenderContext->ClearBuffers( false, true, true );
 
 	// constrain where VGUI can render to the view
-	pRenderContext->PushRenderTargetAndViewport( pTexture, NULL, 0, 0, viewActualWidth, viewActualHeight );
+	pRenderContext->PushRenderTargetAndViewport( pTexture, nullptr, 0, 0, viewActualWidth, viewActualHeight );
 	pRenderContext->OverrideAlphaWriteEnable( true, true );
 
 	// clear the render target 
@@ -419,9 +419,9 @@ void CClientVirtualReality::DrawMainMenu()
 
 		ITexture *pColor = g_pSourceVR->GetRenderTarget( (ISourceVirtualReality::VREye)(nView-1), ISourceVirtualReality::RT_Color );
 		ITexture *pDepth = g_pSourceVR->GetRenderTarget( (ISourceVirtualReality::VREye)(nView-1), ISourceVirtualReality::RT_Depth );
-		render->Push3DView( viewEye[nView], VIEW_CLEAR_DEPTH|VIEW_CLEAR_COLOR, pColor, NULL, pDepth );
+		render->Push3DView( viewEye[nView], VIEW_CLEAR_DEPTH|VIEW_CLEAR_COLOR, pColor, nullptr, pDepth );
 		RenderHUDQuad( false,  false );
-		render->PopView( NULL );
+		render->PopView( nullptr );
 
 		PostProcessFrame( (StereoEye_t)nView );
 
@@ -581,8 +581,8 @@ bool CClientVirtualReality::OverrideWeaponHudAimVectors ( Vector *pAimOrigin, Ve
 		return false;
 	}
 
-	Assert ( pAimOrigin != NULL );
-	Assert ( pAimDirection != NULL );
+	Assert ( pAimOrigin != nullptr );
+	Assert ( pAimDirection != nullptr );
 
 	// So give it some nice high-fps numbers, not the low-fps ones we get from the game.
 	*pAimOrigin = m_WorldFromWeapon.GetTranslation();
@@ -767,8 +767,8 @@ bool CClientVirtualReality::OverrideStereoView( CViewSetup *pViewMiddle, CViewSe
 // --------------------------------------------------------------------
 bool CClientVirtualReality::OverridePlayerMotion( float flInputSampleFrametime, const QAngle &oldAngles, const QAngle &curAngles, const Vector &curMotion, QAngle *pNewAngles, Vector *pNewMotion )
 {
-	Assert ( pNewAngles != NULL );
-	Assert ( pNewMotion != NULL );
+	Assert ( pNewAngles != nullptr );
+	Assert ( pNewMotion != nullptr );
 	*pNewAngles = curAngles;
 	*pNewMotion = curMotion;
 
@@ -1091,7 +1091,7 @@ void CClientVirtualReality::RenderHUDQuad( bool bBlackout, bool bTranslucent )
 	CMatRenderContextPtr pRenderContext( materials );
 
 	{
-		IMaterial *mymat = NULL;
+		IMaterial *mymat = nullptr;
 		if ( bTranslucent )
 		{
 			mymat = materials->FindMaterial( "vgui/inworldui", TEXTURE_GROUP_VGUI );
@@ -1102,7 +1102,7 @@ void CClientVirtualReality::RenderHUDQuad( bool bBlackout, bool bTranslucent )
 		}
 		Assert( !mymat->IsErrorMaterial() );
 
-		IMesh *pMesh = pRenderContext->GetDynamicMesh( true, NULL, NULL, mymat );
+		IMesh *pMesh = pRenderContext->GetDynamicMesh( true, nullptr, nullptr, mymat );
 
 		CMeshBuilder meshBuilder;
 		meshBuilder.Begin( pMesh, MATERIAL_TRIANGLE_STRIP, 2 );

@@ -10,9 +10,12 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-#if IsWindows()
-	#include <windows.h>
-#elif IsPosix()
+#if defined( PLATFORM_WINDOWS )
+	#include <sysinfoapi.h>
+	#include <processthreadsapi.h>
+	#include <synchapi.h>
+	#include <handleapi.h>
+#elif defined( PLATFORM_POSIX )
 	#include <pthread.h>
 #else
 	#error "threads.h: Don't know how to handle threads here!"
@@ -80,16 +83,18 @@ void ThreadWorkerFunction( int iThread, void* ) {
 
 	while ( true ) {
 		work = GetThreadWork();
-		if ( work == -1 )
+		if ( work == -1 ) {
 			break;
+		}
 
 		workfunction( iThread, work );
 	}
 }
 
 void RunThreadsOnIndividual( int workcnt, bool showpacifier, ThreadWorkerFn func ) {
-	if ( numthreads == -1 )
+	if ( numthreads == -1 ) {
 		ThreadSetDefault();
+	}
 
 	workfunction = func;
 	RunThreadsOn( workcnt, showpacifier, ThreadWorkerFunction );
@@ -117,8 +122,9 @@ void ThreadSetDefault() {
 		#elif IsLinux()
 			numthreads = sysconf( _SC_NPROCESSORS_ONLN );
 		#endif
-		if ( numthreads < 1 || numthreads > 32 )
-			numthreads = 1;
+		if ( numthreads < 1 || numthreads > 32 ) {
+				numthreads = 1;
+		}
 	}
 
 	Msg( "%i threads\n", numthreads );
@@ -130,16 +136,19 @@ void ThreadLock() {
 		return;
 	}
 	mutex.Lock();
-	if ( enter )
+	if ( enter ) {
 		Error( "Recursive ThreadLock\n" );
+	}
 	enter = 1;
 }
 
 void ThreadUnlock() {
-	if (! threaded )
+	if (! threaded ) {
 		return;
-	if (! enter )
+	}
+	if (! enter ) {
 		Error( "ThreadUnlock without lock\n" );
+	}
 	enter = 0;
 	mutex.Unlock();
 }
@@ -164,8 +173,9 @@ void RunThreads_Start( RunThreadsFn fn, void* pUserData, ERunThreadsPriority ePr
 	Assert( numthreads > 0 );
 	threaded = true;
 
-	if ( numthreads > MAX_TOOL_THREADS )
+	if ( numthreads > MAX_TOOL_THREADS ) {
 		numthreads = MAX_TOOL_THREADS;
+	}
 
 	for ( int i = 0; i < numthreads; i++ ) {
 		g_RunThreadsData[ i ].m_iThread = i;
@@ -188,8 +198,9 @@ void RunThreads_Start( RunThreadsFn fn, void* pUserData, ERunThreadsPriority ePr
 		#endif
 
 		if ( ePriority == k_eRunThreadsPriority_UseGlobalState ) {
-			if ( g_bLowPriorityThreads )
+			if ( g_bLowPriorityThreads ) {
 				SetThreadPriority( g_ThreadHandles[ i ], THREAD_PRIORITY_LOWEST );
+			}
 		} else if ( ePriority == k_eRunThreadsPriority_Idle ) {
 			SetThreadPriority( g_ThreadHandles[ i ], THREAD_PRIORITY_IDLE );
 		}
@@ -228,11 +239,11 @@ void RunThreadsOn( int workcnt, bool showpacifier, RunThreadsFn fn, void* pUserD
 	StartPacifier( "" );
 	pacifier = showpacifier;
 
-#if defined( _PROFILE )
-	threaded = false;
-	( *func )( 0 );
-	return;
-#endif
+	#if defined( _PROFILE )
+		threaded = false;
+		( *func )( 0 );
+		return;
+	#endif
 
 	RunThreads_Start( fn, pUserData );
 	RunThreads_End();

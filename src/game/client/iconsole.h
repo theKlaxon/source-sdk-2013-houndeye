@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Workfile:     $
 // $Date:         $
@@ -10,26 +10,17 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-#if !defined( ICONSOLE_H )
-#define ICONSOLE_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include <vgui/VGUI.h>
 
-namespace vgui
-{
+namespace vgui {
 	class Panel;
 }
 
-abstract_class IConsole
-{
+abstract_class IConsole {
 public:
-	virtual void		Create( vgui::VPANEL parent ) = 0;
-	virtual void		Destroy( void ) = 0;
+	virtual void Create( vgui::VPANEL parent ) = 0;
+	virtual void Destroy( void ) = 0;
 };
 
-extern IConsole *console;
-
-#endif // ICONSOLE_H
+extern IConsole* console;

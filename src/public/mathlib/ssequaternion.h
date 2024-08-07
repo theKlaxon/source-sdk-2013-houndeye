@@ -3,22 +3,15 @@
 // Purpose: - defines SIMD "structure of arrays" classes and functions.
 //
 //===========================================================================//
-#ifndef SSEQUATMATH_H
-#define SSEQUATMATH_H
-
-#if IsWindows()
 #pragma once
-#endif
-
-
 #include "mathlib/ssemath.h"
 
 // Use this #define to allow SSE versions of Quaternion math
 // to exist on PC.
 // On PC, certain horizontal vector operations are not supported.
 // This causes the SSE implementation of quaternion math to mix the
-// vector and scalar floating point units, which is extremely 
-// performance negative if you don't compile to native SSE2 (which 
+// vector and scalar floating point units, which is extremely
+// performance negative if you don't compile to native SSE2 (which
 // we don't as of Sept 1, 2007). So, it's best not to allow these
 // functions to exist at all. It's not good enough to simply replace
 // the contents of the functions with scalar math, because each call
@@ -42,20 +35,17 @@
 //---------------------------------------------------------------------
 #if ALLOW_SIMD_QUATERNION_MATH
 // Using STDC or SSE
-ALWAYS_INLINE fltx4 LoadAlignedSIMD( const QuaternionAligned & pSIMD )
-{
+ALWAYS_INLINE fltx4 LoadAlignedSIMD( const QuaternionAligned& pSIMD ) {
 	fltx4 retval = LoadAlignedSIMD( pSIMD.Base() );
 	return retval;
 }
 
-ALWAYS_INLINE fltx4 LoadAlignedSIMD( const QuaternionAligned * RESTRICT pSIMD )
-{
+ALWAYS_INLINE fltx4 LoadAlignedSIMD( const QuaternionAligned* RESTRICT pSIMD ) {
 	fltx4 retval = LoadAlignedSIMD( pSIMD );
 	return retval;
 }
 
-ALWAYS_INLINE void StoreAlignedSIMD( QuaternionAligned * RESTRICT pSIMD, const fltx4 & a )
-{
+ALWAYS_INLINE void StoreAlignedSIMD( QuaternionAligned* RESTRICT pSIMD, const fltx4& a ) {
 	StoreAlignedSIMD( pSIMD->Base(), a );
 }
 #endif
@@ -64,29 +54,27 @@ ALWAYS_INLINE void StoreAlignedSIMD( QuaternionAligned * RESTRICT pSIMD, const f
 //---------------------------------------------------------------------
 // Make sure quaternions are within 180 degrees of one another, if not, reverse q
 //---------------------------------------------------------------------
-ALWAYS_INLINE fltx4 QuaternionAlignSIMD( const fltx4 &p, const fltx4 &q )
-{
+ALWAYS_INLINE fltx4 QuaternionAlignSIMD( const fltx4& p, const fltx4& q ) {
 	// decide if one of the quaternions is backwards
 	fltx4 a = SubSIMD( p, q );
 	fltx4 b = AddSIMD( p, q );
 	a = Dot4SIMD( a, a );
 	b = Dot4SIMD( b, b );
 	fltx4 cmp = CmpGtSIMD( a, b );
-	fltx4 result = MaskedAssign( cmp, NegSIMD(q), q );
+	fltx4 result = MaskedAssign( cmp, NegSIMD( q ), q );
 	return result;
 }
 
-//---------------------------------------------------------------------
-// Normalize Quaternion
-//---------------------------------------------------------------------
-#if USE_STDC_FOR_SIMD
+	//---------------------------------------------------------------------
+	// Normalize Quaternion
+	//---------------------------------------------------------------------
+	#if USE_STDC_FOR_SIMD
 
-ALWAYS_INLINE fltx4 QuaternionNormalizeSIMD( const fltx4 &q )
-{
+ALWAYS_INLINE fltx4 QuaternionNormalizeSIMD( const fltx4& q ) {
 	fltx4 radius, result;
 	radius = Dot4SIMD( q, q );
 
-	if ( SubFloat( radius, 0 ) ) // > FLT_EPSILON && ((radius < 1.0f - 4*FLT_EPSILON) || (radius > 1.0f + 4*FLT_EPSILON))
+	if ( SubFloat( radius, 0 ) )// > FLT_EPSILON && ((radius < 1.0f - 4*FLT_EPSILON) || (radius > 1.0f + 4*FLT_EPSILON))
 	{
 		float iradius = 1.0f / sqrt( SubFloat( radius, 0 ) );
 		result = ReplicateX4( iradius );
@@ -96,27 +84,25 @@ ALWAYS_INLINE fltx4 QuaternionNormalizeSIMD( const fltx4 &q )
 	return q;
 }
 
-#else
+	#else
 
 // SSE implementation
-ALWAYS_INLINE fltx4 QuaternionNormalizeSIMD( const fltx4 &q )
-{
+ALWAYS_INLINE fltx4 QuaternionNormalizeSIMD( const fltx4& q ) {
 	fltx4 radius, result, mask;
 	radius = Dot4SIMD( q, q );
-	mask = CmpEqSIMD( radius, Four_Zeros ); // all ones iff radius = 0
+	mask = CmpEqSIMD( radius, Four_Zeros );// all ones iff radius = 0
 	result = ReciprocalSqrtSIMD( radius );
 	result = MulSIMD( result, q );
-	return MaskedAssign( mask, q, result );	// if radius was 0, just return q
+	return MaskedAssign( mask, q, result );// if radius was 0, just return q
 }
 
-#endif
+	#endif
 
 
 //---------------------------------------------------------------------
 // 0.0 returns p, 1.0 return q.
 //---------------------------------------------------------------------
-ALWAYS_INLINE fltx4 QuaternionBlendNoAlignSIMD( const fltx4 &p, const fltx4 &q, float t )
-{
+ALWAYS_INLINE fltx4 QuaternionBlendNoAlignSIMD( const fltx4& p, const fltx4& q, float t ) {
 	fltx4 sclp, sclq, result;
 	sclq = ReplicateX4( t );
 	sclp = SubSIMD( Four_Ones, sclq );
@@ -129,8 +115,7 @@ ALWAYS_INLINE fltx4 QuaternionBlendNoAlignSIMD( const fltx4 &p, const fltx4 &q, 
 //---------------------------------------------------------------------
 // Blend Quaternions
 //---------------------------------------------------------------------
-ALWAYS_INLINE fltx4 QuaternionBlendSIMD( const fltx4 &p, const fltx4 &q, float t )
-{
+ALWAYS_INLINE fltx4 QuaternionBlendSIMD( const fltx4& p, const fltx4& q, float t ) {
 	// decide if one of the quaternions is backwards
 	fltx4 q2, result;
 	q2 = QuaternionAlignSIMD( p, q );
@@ -143,14 +128,13 @@ ALWAYS_INLINE fltx4 QuaternionBlendSIMD( const fltx4 &p, const fltx4 &q, float t
 // Multiply Quaternions
 //---------------------------------------------------------------------
 // SSE and STDC
-ALWAYS_INLINE fltx4 QuaternionMultSIMD( const fltx4 &p, const fltx4 &q )
-{
+ALWAYS_INLINE fltx4 QuaternionMultSIMD( const fltx4& p, const fltx4& q ) {
 	// decide if one of the quaternions is backwards
 	fltx4 q2, result;
 	q2 = QuaternionAlignSIMD( p, q );
-	SubFloat( result, 0 ) =  SubFloat( p, 0 ) * SubFloat( q2, 3 ) + SubFloat( p, 1 ) * SubFloat( q2, 2 ) - SubFloat( p, 2 ) * SubFloat( q2, 1 ) + SubFloat( p, 3 ) * SubFloat( q2, 0 );
+	SubFloat( result, 0 ) = SubFloat( p, 0 ) * SubFloat( q2, 3 ) + SubFloat( p, 1 ) * SubFloat( q2, 2 ) - SubFloat( p, 2 ) * SubFloat( q2, 1 ) + SubFloat( p, 3 ) * SubFloat( q2, 0 );
 	SubFloat( result, 1 ) = -SubFloat( p, 0 ) * SubFloat( q2, 2 ) + SubFloat( p, 1 ) * SubFloat( q2, 3 ) + SubFloat( p, 2 ) * SubFloat( q2, 0 ) + SubFloat( p, 3 ) * SubFloat( q2, 1 );
-	SubFloat( result, 2 ) =  SubFloat( p, 0 ) * SubFloat( q2, 1 ) - SubFloat( p, 1 ) * SubFloat( q2, 0 ) + SubFloat( p, 2 ) * SubFloat( q2, 3 ) + SubFloat( p, 3 ) * SubFloat( q2, 2 );
+	SubFloat( result, 2 ) = SubFloat( p, 0 ) * SubFloat( q2, 1 ) - SubFloat( p, 1 ) * SubFloat( q2, 0 ) + SubFloat( p, 2 ) * SubFloat( q2, 3 ) + SubFloat( p, 3 ) * SubFloat( q2, 2 );
 	SubFloat( result, 3 ) = -SubFloat( p, 0 ) * SubFloat( q2, 0 ) - SubFloat( p, 1 ) * SubFloat( q2, 1 ) - SubFloat( p, 2 ) * SubFloat( q2, 2 ) + SubFloat( p, 3 ) * SubFloat( q2, 3 );
 	return result;
 }
@@ -160,19 +144,18 @@ ALWAYS_INLINE fltx4 QuaternionMultSIMD( const fltx4 &p, const fltx4 &q )
 // Quaternion scale
 //---------------------------------------------------------------------
 // SSE and STDC
-ALWAYS_INLINE fltx4 QuaternionScaleSIMD( const fltx4 &p, float t )
-{
+ALWAYS_INLINE fltx4 QuaternionScaleSIMD( const fltx4& p, float t ) {
 	float r;
 	fltx4 q;
 
-	// FIXME: nick, this isn't overly sensitive to accuracy, and it may be faster to 
+	// FIXME: nick, this isn't overly sensitive to accuracy, and it may be faster to
 	// use the cos part (w) of the quaternion (sin(omega)*N,cos(omega)) to figure the new scale.
 	float sinom = sqrt( SubFloat( p, 0 ) * SubFloat( p, 0 ) + SubFloat( p, 1 ) * SubFloat( p, 1 ) + SubFloat( p, 2 ) * SubFloat( p, 2 ) );
 	sinom = std::min( sinom, 1.f );
 
 	float sinsom = sin( asin( sinom ) * t );
 
-	t = sinsom / (sinom + FLT_EPSILON);
+	t = sinsom / ( sinom + FLT_EPSILON );
 	SubFloat( q, 0 ) = t * SubFloat( p, 0 );
 	SubFloat( q, 1 ) = t * SubFloat( p, 1 );
 	SubFloat( q, 2 ) = t * SubFloat( p, 2 );
@@ -181,7 +164,7 @@ ALWAYS_INLINE fltx4 QuaternionScaleSIMD( const fltx4 &p, float t )
 	r = 1.0f - sinsom * sinsom;
 
 	// Assert( r >= 0 );
-	if (r < 0.0f) 
+	if ( r < 0.0f )
 		r = 0.0f;
 	r = sqrt( r );
 
@@ -194,27 +177,22 @@ ALWAYS_INLINE fltx4 QuaternionScaleSIMD( const fltx4 &p, float t )
 // Quaternion sphereical linear interpolation
 //-----------------------------------------------------------------------------
 // SSE and STDC
-ALWAYS_INLINE fltx4 QuaternionSlerpNoAlignSIMD( const fltx4 &p, const fltx4 &q, float t )
-{
+ALWAYS_INLINE fltx4 QuaternionSlerpNoAlignSIMD( const fltx4& p, const fltx4& q, float t ) {
 	float omega, cosom, sinom, sclp, sclq;
 
 	fltx4 result;
 
 	// 0.0 returns p, 1.0 return q.
-	cosom = SubFloat( p, 0 ) * SubFloat( q, 0 ) + SubFloat( p, 1 ) * SubFloat( q, 1 ) + 
-		SubFloat( p, 2 ) * SubFloat( q, 2 ) + SubFloat( p, 3 ) * SubFloat( q, 3 );
+	cosom = SubFloat( p, 0 ) * SubFloat( q, 0 ) + SubFloat( p, 1 ) * SubFloat( q, 1 ) +
+			SubFloat( p, 2 ) * SubFloat( q, 2 ) + SubFloat( p, 3 ) * SubFloat( q, 3 );
 
-	if ( (1.0f + cosom ) > 0.000001f ) 
-	{
-		if ( (1.0f - cosom ) > 0.000001f ) 
-		{
+	if ( ( 1.0f + cosom ) > 0.000001f ) {
+		if ( ( 1.0f - cosom ) > 0.000001f ) {
 			omega = acos( cosom );
 			sinom = sin( omega );
-			sclp = sin( (1.0f - t)*omega) / sinom;
-			sclq = sin( t*omega ) / sinom;
-		}
-		else 
-		{
+			sclp = sin( ( 1.0f - t ) * omega ) / sinom;
+			sclq = sin( t * omega ) / sinom;
+		} else {
 			// TODO: add short circuit for cosom == 1.0f?
 			sclp = 1.0f - t;
 			sclq = t;
@@ -223,15 +201,13 @@ ALWAYS_INLINE fltx4 QuaternionSlerpNoAlignSIMD( const fltx4 &p, const fltx4 &q, 
 		SubFloat( result, 1 ) = sclp * SubFloat( p, 1 ) + sclq * SubFloat( q, 1 );
 		SubFloat( result, 2 ) = sclp * SubFloat( p, 2 ) + sclq * SubFloat( q, 2 );
 		SubFloat( result, 3 ) = sclp * SubFloat( p, 3 ) + sclq * SubFloat( q, 3 );
-	}
-	else 
-	{
+	} else {
 		SubFloat( result, 0 ) = -SubFloat( q, 1 );
-		SubFloat( result, 1 ) =  SubFloat( q, 0 );
+		SubFloat( result, 1 ) = SubFloat( q, 0 );
 		SubFloat( result, 2 ) = -SubFloat( q, 3 );
-		SubFloat( result, 3 ) =  SubFloat( q, 2 );
-		sclp = sin( (1.0f - t) * (0.5f * M_PI));
-		sclq = sin( t * (0.5f * M_PI));
+		SubFloat( result, 3 ) = SubFloat( q, 2 );
+		sclp = sin( ( 1.0f - t ) * ( 0.5f * M_PI ) );
+		sclq = sin( t * ( 0.5f * M_PI ) );
 		SubFloat( result, 0 ) = sclp * SubFloat( p, 0 ) + sclq * SubFloat( result, 0 );
 		SubFloat( result, 1 ) = sclp * SubFloat( p, 1 ) + sclq * SubFloat( result, 1 );
 		SubFloat( result, 2 ) = sclp * SubFloat( p, 2 ) + sclq * SubFloat( result, 2 );
@@ -240,8 +216,7 @@ ALWAYS_INLINE fltx4 QuaternionSlerpNoAlignSIMD( const fltx4 &p, const fltx4 &q, 
 	return result;
 }
 
-ALWAYS_INLINE fltx4 QuaternionSlerpSIMD( const fltx4 &p, const fltx4 &q, float t )
-{
+ALWAYS_INLINE fltx4 QuaternionSlerpSIMD( const fltx4& p, const fltx4& q, float t ) {
 	fltx4 q2, result;
 	q2 = QuaternionAlignSIMD( p, q );
 	result = QuaternionSlerpNoAlignSIMD( p, q2, t );
@@ -249,7 +224,4 @@ ALWAYS_INLINE fltx4 QuaternionSlerpSIMD( const fltx4 &p, const fltx4 &q, float t
 }
 
 
-#endif // ALLOW_SIMD_QUATERNION_MATH
-
-#endif // SSEQUATMATH_H
-
+#endif// ALLOW_SIMD_QUATERNION_MATH

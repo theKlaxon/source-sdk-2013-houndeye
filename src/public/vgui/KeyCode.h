@@ -6,19 +6,9 @@
 //
 // $NoKeywords: $
 //===========================================================================//
-
-#ifndef KEYCODE_H
-#define KEYCODE_H
-
-#if IsWindows()
 #pragma once
-#endif
-
 #include "inputsystem/ButtonCode.h"
 
-namespace vgui
-{
-typedef ButtonCode_t KeyCode;
+namespace vgui {
+	typedef ButtonCode_t KeyCode;
 }
-
-#endif // KEYCODE_H

@@ -1,5 +1,4 @@
-# postbuild.cmake
-
+# helpers.cmake
 include_guard(GLOBAL)
 
 function(target_strip_symbols target)
@@ -16,21 +15,21 @@ endfunction()
 
 # Creates a symlink from the target's output binary to the game/bin directory
 function(link_to_bin)
-	cmake_parse_arguments( CTB "" "TARGET" "" ${ARGN} )
-	if ( NOT DEFINED "CTB_TARGET" )
+	cmake_parse_arguments( LTB "" "TARGET" "" ${ARGN} )
+	if ( NOT DEFINED "LTB_TARGET" )
 		message( SEND_ERROR "Missing `TARGET` parameter!" )
 		return()
 	endif ()
 
 	add_custom_command(
-		TARGET ${CTB_TARGET}
+		TARGET ${LTB_TARGET}
 		POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E $<IF:$<BOOL:${WIN32}>,copy,create_symlink> $<TARGET_FILE:${CTB_TARGET}> ${GAMEDIR}/bin/$<TARGET_FILE_NAME:${CTB_TARGET}>
+			COMMAND ${CMAKE_COMMAND} -E $<IF:$<BOOL:${WIN32}>,copy,create_symlink> $<TARGET_FILE:${LTB_TARGET}> ${GAMEDIR}/bin/$<TARGET_FILE_NAME:${LTB_TARGET}>
 	)
 endfunction()
 
-# Declares a shared library other can link to.
-# As example, to link to `tier0` you can do target_link_libraries( ${target} ${vis} ${ASRC_tier0} )`
+# Declares a shared library others can link to.
+# As example, to link to the `tier0` reimplementation, you can do target_link_libraries( ${target} ${vis} ${ASRC_tier02} )`
 function(declare_library)
 	cmake_parse_arguments( DL "" "TARGET" "" ${ARGN} )
 	if ( NOT DEFINED "DL_TARGET" )

@@ -1,22 +1,16 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
-
-#ifndef ENV_DEBUGHISTORY_H
-#define ENV_DEBUGHISTORY_H
-#if IsWindows()
 #pragma once
-#endif
 
-enum debughistorycategories_t
-{
+enum debughistorycategories_t {
 	HISTORY_ENTITY_IO,
 	HISTORY_AI_DECISIONS,
 	HISTORY_SCENE_PRINT,
-	HISTORY_ALYX_BLIND,		// TEMP: until we find and fix this bug
-	HISTORY_PLAYER_DAMAGE,  // record all damage done to the player
+	HISTORY_ALYX_BLIND,   // TEMP: until we find and fix this bug
+	HISTORY_PLAYER_DAMAGE,// record all damage done to the player
 
 	// Add new categories here
 
@@ -25,11 +19,9 @@ enum debughistorycategories_t
 
 #define DISABLE_DEBUG_HISTORY
 
-#if defined(DISABLE_DEBUG_HISTORY)
-#define ADD_DEBUG_HISTORY( category, line )		((void)0)
+#if defined( DISABLE_DEBUG_HISTORY )
+	#define ADD_DEBUG_HISTORY( category, line ) ( (void) 0 )
 #else
-#define ADD_DEBUG_HISTORY( category, line )		AddDebugHistoryLine( category, line )
-void AddDebugHistoryLine( int iCategory, const char *pszLine );
+	#define ADD_DEBUG_HISTORY( category, line ) AddDebugHistoryLine( category, line )
+void AddDebugHistoryLine( int iCategory, const char* pszLine );
 #endif
-
-#endif // ENV_DEBUGHISTORY_H

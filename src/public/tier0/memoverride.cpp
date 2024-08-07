@@ -234,7 +234,7 @@
 				int __active_heap = 1;
 			#endif//  _MSC_VER >= 1400
 
-			size_t __cdecl _get_sbh_threshold( void ) {
+			size_t __cdecl _get_sbh_threshold() {
 				return 0;
 			}
 
@@ -507,7 +507,7 @@
 		#if IsWindows()
 
 		extern "C" {
-			int _CrtDumpMemoryLeaks( void ) {
+			int _CrtDumpMemoryLeaks() {
 				return 0;
 			}
 
@@ -531,12 +531,12 @@
 			#endif
 
 			int _crtDbgFlag = _CRTDBG_ALLOC_MEM_DF;
-			int* AFNAME( _crtDbgFlag )( void ) {
+			int* AFNAME( _crtDbgFlag )() {
 				return AFRET( _crtDbgFlag );
 			}
 
 			long _crtBreakAlloc; /* Break on this allocation */
-			long* AFNAME( _crtBreakAlloc )( void ) {
+			long* AFNAME( _crtBreakAlloc )() {
 				return AFRET( _crtBreakAlloc );
 			}
 
@@ -561,7 +561,7 @@
 				return g_pMemAlloc->CrtIsValidPointer( pMem, size, access );
 			}
 
-			int __cdecl _CrtCheckMemory( void ) {
+			int __cdecl _CrtCheckMemory() {
 				// FIXME: Remove this when we re-implement the heap
 				return g_pMemAlloc->CrtCheckMemory();
 			}
@@ -727,7 +727,7 @@
 				#if defined( _DEBUG ) && _MSC_VER < 1930
 					// wrapper which passes no debug info; not available in debug
 					#if !defined( SUPPRESS_INVALID_PARAMETER_NO_INFO )
-						void __cdecl _invalid_parameter_noinfo( void ) {
+						void __cdecl _invalid_parameter_noinfo() {
 							Assert( 0 );
 						}
 					#endif
@@ -779,7 +779,7 @@
 					return oldCheckCount;
 				}
 
-				extern "C" int __cdecl _CrtGetCheckCount( void ) {
+				extern "C" int __cdecl _CrtGetCheckCount() {
 					return __crtDebugCheckCount;
 				}
 
@@ -799,7 +799,7 @@
 					return _aligned_offset_recalloc_dbg( memblock, count, size, 0, 0, szFileName, nLine );
 				}
 
-				_CRT_REPORT_HOOK __cdecl _CrtGetReportHook( void ) {
+				_CRT_REPORT_HOOK __cdecl _CrtGetReportHook() {
 					return NULL;
 				}
 
@@ -858,7 +858,7 @@
 				_free_dbg( pUserData, 0 );
 			}
 
-			_CRT_ALLOC_HOOK __cdecl _CrtGetAllocHook( void ) {
+			_CRT_ALLOC_HOOK __cdecl _CrtGetAllocHook() {
 				assert( 0 );
 				return NULL;
 			}
@@ -869,7 +869,7 @@
 			}
 
 
-			_CRT_DUMP_CLIENT __cdecl _CrtGetDumpClient( void ) {
+			_CRT_DUMP_CLIENT __cdecl _CrtGetDumpClient() {
 				assert( 0 );
 				return NULL;
 			}

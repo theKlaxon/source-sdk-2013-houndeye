@@ -4,20 +4,21 @@
 #include "packsystemclient.hpp"
 #include <utility>
 
-CPackSystemClient::CPackSystemClient( int id, const char* path, std::unique_ptr<vpkedit::PackFile>&& pack ) {
-	this->m_iId = id;
-	this->m_szNativePath = path;
-	this->m_PackFile = std::move( pack );
+CPackSystemClient::CPackSystemClient( int pId, const char* pPath, std::unique_ptr<vpkpp::PackFile>&& pPack ) {
+	this->m_iId = pId;
+	this->m_szNativePath = pPath;
+	this->m_PackFile = std::move( pPack );
 }
-auto CPackSystemClient::Open( int id, const std::string& absolute, const char* path ) -> std::shared_ptr<ISystemClient> {
-	auto pack{ vpkedit::PackFile::open( absolute, {} ) };
-	if (! pack )
+auto CPackSystemClient::Open( int pId, const std::string& pAbsolute, const char* pPath ) -> std::shared_ptr<ISystemClient> {
+	auto pack{ vpkpp::PackFile::open( pAbsolute, {} ) };
+	if (! pack ) {
 		return {};
+	}
 
 	switch ( pack->getType() ) {
-		case vpkedit::PackFileType::VPK:
-		case vpkedit::PackFileType::BSP:
-			return std::make_shared<CPackSystemClient>( id, path, std::move( pack ) );
+		case vpkpp::PackFileType::VPK:
+		case vpkpp::PackFileType::BSP:
+			return std::make_shared<CPackSystemClient>( pId, pPath, std::move( pack ) );
 		default:
 			return {};
 	}
@@ -38,17 +39,17 @@ auto CPackSystemClient::Flush( const FileDescriptor* desc ) -> bool {
 	AssertFatalMsg( false, "Not supported!!" );
 	std::unreachable();
 }
-auto CPackSystemClient::Walk( uint16_t nwname, const char* wname ) -> void {
+auto CPackSystemClient::Walk( const FileDescriptor* pDesc, const WalkEntry*& pEntry ) -> void {
 
 }
-auto CPackSystemClient::Open( const char* path, OpenMode mode ) -> FileDescriptor* {
-	AssertFatalMsg( path, "Was given a `NULL` file path!" );
-	AssertFatalMsg( mode, "Was given an empty open mode!" );
+auto CPackSystemClient::Open( const char* pPath, OpenMode pMode ) -> FileDescriptor* {
+	AssertFatalMsg( pPath, "Was given a `NULL` file path!" );
+	AssertFatalMsg( pMode, "Was given an empty open mode!" );
 
 	return nullptr;
 }
 auto CPackSystemClient::Close( const FileDescriptor* desc ) -> void { }
-auto CPackSystemClient::Create( const char* path, dirmode_t perm, OpenMode mode ) -> FileDescriptor* {
+auto CPackSystemClient::Create( const char* pPath, FileType pType, OpenMode pMode ) -> FileDescriptor* {
 	AssertFatalMsg( false, "Not supported!!" );
 	std::unreachable();
 }
@@ -66,6 +67,6 @@ auto CPackSystemClient::Remove( const FileDescriptor* desc ) -> void {
 	AssertFatalMsg( false, "Not supported!!" );
 	std::unreachable();
 }
-auto CPackSystemClient::Stat( const FileDescriptor* desc ) -> StatData {
+auto CPackSystemClient::Stat( const FileDescriptor* pDesc ) -> std::optional<StatData> {
 	return {};
 }

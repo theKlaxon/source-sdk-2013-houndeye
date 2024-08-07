@@ -1,18 +1,11 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
 //===========================================================================//
-
-#ifndef ISHADERSHADOW_H
-#define ISHADERSHADOW_H
-
-#if IsWindows()
 #pragma once
-#endif
-
 #include "shaderapi/shareddefs.h"
 #include <materialsystem/imaterial.h>
 
@@ -22,14 +15,13 @@
 //-----------------------------------------------------------------------------
 class CMeshBuilder;
 class IMaterialVar;
-struct LightDesc_t; 
+struct LightDesc_t;
 
 
 //-----------------------------------------------------------------------------
 // important enumerations
 //-----------------------------------------------------------------------------
-enum ShaderDepthFunc_t 
-{ 
+enum ShaderDepthFunc_t {
 	SHADER_DEPTHFUNC_NEVER,
 	SHADER_DEPTHFUNC_NEARER,
 	SHADER_DEPTHFUNC_EQUAL,
@@ -40,8 +32,7 @@ enum ShaderDepthFunc_t
 	SHADER_DEPTHFUNC_ALWAYS
 };
 
-enum ShaderBlendFactor_t
-{
+enum ShaderBlendFactor_t {
 	SHADER_BLEND_ZERO,
 	SHADER_BLEND_ONE,
 	SHADER_BLEND_DST_COLOR,
@@ -55,8 +46,7 @@ enum ShaderBlendFactor_t
 	SHADER_BLEND_ONE_MINUS_SRC_COLOR
 };
 
-enum ShaderBlendOp_t
-{
+enum ShaderBlendOp_t {
 	SHADER_BLEND_OP_ADD,
 	SHADER_BLEND_OP_SUBTRACT,
 	SHADER_BLEND_OP_REVSUBTRACT,
@@ -64,8 +54,7 @@ enum ShaderBlendOp_t
 	SHADER_BLEND_OP_MAX
 };
 
-enum ShaderAlphaFunc_t
-{
+enum ShaderAlphaFunc_t {
 	SHADER_ALPHAFUNC_NEVER,
 	SHADER_ALPHAFUNC_LESS,
 	SHADER_ALPHAFUNC_EQUAL,
@@ -76,8 +65,7 @@ enum ShaderAlphaFunc_t
 	SHADER_ALPHAFUNC_ALWAYS
 };
 
-enum ShaderStencilFunc_t 
-{ 
+enum ShaderStencilFunc_t {
 	SHADER_STENCILFUNC_NEVER = 0,
 	SHADER_STENCILFUNC_LESS,
 	SHADER_STENCILFUNC_EQUAL,
@@ -88,8 +76,7 @@ enum ShaderStencilFunc_t
 	SHADER_STENCILFUNC_ALWAYS
 };
 
-enum ShaderStencilOp_t 
-{ 
+enum ShaderStencilOp_t {
 	SHADER_STENCILOP_KEEP = 0,
 	SHADER_STENCILOP_ZERO,
 	SHADER_STENCILOP_SET_TO_REFERENCE,
@@ -100,28 +87,24 @@ enum ShaderStencilOp_t
 	SHADER_STENCILOP_DECREMENT_WRAP,
 };
 
-enum ShaderTexChannel_t
-{
+enum ShaderTexChannel_t {
 	SHADER_TEXCHANNEL_COLOR = 0,
 	SHADER_TEXCHANNEL_ALPHA
 };
 
-enum ShaderPolyModeFace_t
-{
+enum ShaderPolyModeFace_t {
 	SHADER_POLYMODEFACE_FRONT,
 	SHADER_POLYMODEFACE_BACK,
 	SHADER_POLYMODEFACE_FRONT_AND_BACK,
 };
 
-enum ShaderPolyMode_t
-{
+enum ShaderPolyMode_t {
 	SHADER_POLYMODE_POINT,
 	SHADER_POLYMODE_LINE,
 	SHADER_POLYMODE_FILL
 };
 
-enum ShaderTexArg_t
-{
+enum ShaderTexArg_t {
 	SHADER_TEXARG_TEXTURE = 0,
 	SHADER_TEXARG_VERTEXCOLOR,
 	SHADER_TEXARG_SPECULARCOLOR,
@@ -134,8 +117,7 @@ enum ShaderTexArg_t
 	SHADER_TEXARG_ONE,
 };
 
-enum ShaderTexOp_t
-{
+enum ShaderTexOp_t {
 	// DX5 shaders support these
 	SHADER_TEXOP_MODULATE = 0,
 	SHADER_TEXOP_MODULATE2X,
@@ -158,8 +140,7 @@ enum ShaderTexOp_t
 	SHADER_TEXOP_DOTPRODUCT3
 };
 
-enum ShaderTexGenParam_t
-{
+enum ShaderTexGenParam_t {
 	SHADER_TEXGENPARAM_OBJECT_LINEAR,
 	SHADER_TEXGENPARAM_EYE_LINEAR,
 	SHADER_TEXGENPARAM_SPHERE_MAP,
@@ -167,45 +148,43 @@ enum ShaderTexGenParam_t
 	SHADER_TEXGENPARAM_CAMERASPACENORMAL
 };
 
-enum ShaderDrawBitField_t
-{
-	SHADER_DRAW_POSITION			= 0x0001,
-	SHADER_DRAW_NORMAL				= 0x0002,
-	SHADER_DRAW_COLOR				= 0x0004,
-	SHADER_DRAW_SPECULAR			= 0x0008,
+enum ShaderDrawBitField_t {
+	SHADER_DRAW_POSITION = 0x0001,
+	SHADER_DRAW_NORMAL = 0x0002,
+	SHADER_DRAW_COLOR = 0x0004,
+	SHADER_DRAW_SPECULAR = 0x0008,
 
-	SHADER_DRAW_TEXCOORD0			= 0x0010,
-	SHADER_DRAW_TEXCOORD1			= 0x0020,
-	SHADER_DRAW_TEXCOORD2			= 0x0040,
-	SHADER_DRAW_TEXCOORD3			= 0x0080,
+	SHADER_DRAW_TEXCOORD0 = 0x0010,
+	SHADER_DRAW_TEXCOORD1 = 0x0020,
+	SHADER_DRAW_TEXCOORD2 = 0x0040,
+	SHADER_DRAW_TEXCOORD3 = 0x0080,
 
-	SHADER_DRAW_LIGHTMAP_TEXCOORD0	= 0x0100,
-	SHADER_DRAW_LIGHTMAP_TEXCOORD1	= 0x0200,
-	SHADER_DRAW_LIGHTMAP_TEXCOORD2	= 0x0400,
-	SHADER_DRAW_LIGHTMAP_TEXCOORD3	= 0x0800,
+	SHADER_DRAW_LIGHTMAP_TEXCOORD0 = 0x0100,
+	SHADER_DRAW_LIGHTMAP_TEXCOORD1 = 0x0200,
+	SHADER_DRAW_LIGHTMAP_TEXCOORD2 = 0x0400,
+	SHADER_DRAW_LIGHTMAP_TEXCOORD3 = 0x0800,
 
-	SHADER_DRAW_SECONDARY_TEXCOORD0	= 0x1000,
-	SHADER_DRAW_SECONDARY_TEXCOORD1	= 0x2000,
-	SHADER_DRAW_SECONDARY_TEXCOORD2	= 0x4000,
-	SHADER_DRAW_SECONDARY_TEXCOORD3	= 0x8000,
+	SHADER_DRAW_SECONDARY_TEXCOORD0 = 0x1000,
+	SHADER_DRAW_SECONDARY_TEXCOORD1 = 0x2000,
+	SHADER_DRAW_SECONDARY_TEXCOORD2 = 0x4000,
+	SHADER_DRAW_SECONDARY_TEXCOORD3 = 0x8000,
 
-	SHADER_TEXCOORD_MASK = SHADER_DRAW_TEXCOORD0 | SHADER_DRAW_TEXCOORD1 | 
-							SHADER_DRAW_TEXCOORD2 | SHADER_DRAW_TEXCOORD3,
+	SHADER_TEXCOORD_MASK = SHADER_DRAW_TEXCOORD0 | SHADER_DRAW_TEXCOORD1 |
+						   SHADER_DRAW_TEXCOORD2 | SHADER_DRAW_TEXCOORD3,
 
-	SHADER_LIGHTMAP_TEXCOORD_MASK = SHADER_DRAW_LIGHTMAP_TEXCOORD0 | 
-									SHADER_DRAW_LIGHTMAP_TEXCOORD1 | 
-									SHADER_DRAW_LIGHTMAP_TEXCOORD2 | 
+	SHADER_LIGHTMAP_TEXCOORD_MASK = SHADER_DRAW_LIGHTMAP_TEXCOORD0 |
+									SHADER_DRAW_LIGHTMAP_TEXCOORD1 |
+									SHADER_DRAW_LIGHTMAP_TEXCOORD2 |
 									SHADER_DRAW_LIGHTMAP_TEXCOORD3,
 
-	SHADER_SECONDARY_TEXCOORD_MASK = SHADER_DRAW_SECONDARY_TEXCOORD0 | 
-									SHADER_DRAW_SECONDARY_TEXCOORD1 | 
-									SHADER_DRAW_SECONDARY_TEXCOORD2 | 
-									SHADER_DRAW_SECONDARY_TEXCOORD3,
+	SHADER_SECONDARY_TEXCOORD_MASK = SHADER_DRAW_SECONDARY_TEXCOORD0 |
+									 SHADER_DRAW_SECONDARY_TEXCOORD1 |
+									 SHADER_DRAW_SECONDARY_TEXCOORD2 |
+									 SHADER_DRAW_SECONDARY_TEXCOORD3,
 };
 
 
-enum ShaderFogMode_t
-{
+enum ShaderFogMode_t {
 	SHADER_FOGMODE_DISABLED = 0,
 	SHADER_FOGMODE_OO_OVERBRIGHT,
 	SHADER_FOGMODE_BLACK,
@@ -215,8 +194,7 @@ enum ShaderFogMode_t
 	SHADER_FOGMODE_NUMFOGMODES
 };
 
-enum ShaderMaterialSource_t
-{
+enum ShaderMaterialSource_t {
 	SHADER_MATERIALSOURCE_MATERIAL = 0,
 	SHADER_MATERIALSOURCE_COLOR1,
 	SHADER_MATERIALSOURCE_COLOR2,
@@ -224,26 +202,24 @@ enum ShaderMaterialSource_t
 
 
 // m_ZBias has only two bits in ShadowState_t, so be careful extending this enum
-enum PolygonOffsetMode_t
-{
-	SHADER_POLYOFFSET_DISABLE		= 0x0,
-	SHADER_POLYOFFSET_DECAL		= 0x1,
-	SHADER_POLYOFFSET_SHADOW_BIAS	= 0x2,
-	SHADER_POLYOFFSET_RESERVED		= 0x3	// Reserved for future use
+enum PolygonOffsetMode_t {
+	SHADER_POLYOFFSET_DISABLE = 0x0,
+	SHADER_POLYOFFSET_DECAL = 0x1,
+	SHADER_POLYOFFSET_SHADOW_BIAS = 0x2,
+	SHADER_POLYOFFSET_RESERVED = 0x3// Reserved for future use
 };
 
 
 //-----------------------------------------------------------------------------
 // The Shader interface versions
 //-----------------------------------------------------------------------------
-#define SHADERSHADOW_INTERFACE_VERSION	"ShaderShadow010"
+#define SHADERSHADOW_INTERFACE_VERSION "ShaderShadow010"
 
 
 //-----------------------------------------------------------------------------
 // the shader API interface (methods called from shaders)
 //-----------------------------------------------------------------------------
-abstract_class IShaderShadow
-{
+abstract_class IShaderShadow {
 public:
 	// Sets the default *shadow* state
 	virtual void SetDefaultState() = 0;
@@ -266,7 +242,7 @@ public:
 	virtual void StencilMask( int nMask ) = 0;
 	virtual void StencilWriteMask( int nMask ) = 0;
 
-	// Suppresses/activates color writing 
+	// Suppresses/activates color writing
 	virtual void EnableColorWrites( bool bEnable ) = 0;
 	virtual void EnableAlphaWrites( bool bEnable ) = 0;
 
@@ -292,12 +268,12 @@ public:
 	// The flags to pass in here come from the VertexFormatFlags_t enum
 	// If pTexCoordDimensions is *not* specified, we assume all coordinates
 	// are 2-dimensional
-	virtual void VertexShaderVertexFormat( unsigned int nFlags, 
-			int nTexCoordCount, int* pTexCoordDimensions, int nUserDataSize ) = 0;
+	virtual void VertexShaderVertexFormat( unsigned int nFlags,
+										   int nTexCoordCount, int* pTexCoordDimensions, int nUserDataSize ) = 0;
 
 	// Pixel and vertex shader methods
 	virtual void SetVertexShader( const char* pFileName, int nStaticVshIndex ) = 0;
-	virtual	void SetPixelShader( const char* pFileName, int nStaticPshIndex = 0 ) = 0;
+	virtual void SetPixelShader( const char* pFileName, int nStaticPshIndex = 0 ) = 0;
 
 	// Indicates we're going to light the model
 	virtual void EnableLighting( bool bEnable ) = 0;
@@ -326,8 +302,8 @@ public:
 	// Can be used to specify different operation per channel (alpha/color)...
 	virtual void EnableCustomPixelPipe( bool bEnable ) = 0;
 	virtual void CustomTextureStages( int stageCount ) = 0;
-	virtual void CustomTextureOperation( TextureStage_t stage, ShaderTexChannel_t channel, 
-		ShaderTexOp_t op, ShaderTexArg_t arg1, ShaderTexArg_t arg2 ) = 0;
+	virtual void CustomTextureOperation( TextureStage_t stage, ShaderTexChannel_t channel,
+										 ShaderTexOp_t op, ShaderTexArg_t arg1, ShaderTexArg_t arg2 ) = 0;
 
 	// indicates what per-vertex data we're providing
 	virtual void DrawFlags( unsigned int drawFlags ) = 0;
@@ -349,7 +325,7 @@ public:
 	// The flags to pass in here come from the MorphFormatFlags_t enum
 	virtual void SetMorphFormat( MorphFormat_t flags ) = 0;
 
-	virtual void DisableFogGammaCorrection( bool bDisable ) = 0; //some blending modes won't work properly with corrected fog
+	virtual void DisableFogGammaCorrection( bool bDisable ) = 0;//some blending modes won't work properly with corrected fog
 
 	// Alpha to coverage
 	virtual void EnableAlphaToCoverage( bool bEnable ) = 0;
@@ -362,7 +338,3 @@ public:
 	virtual void BlendOpSeparateAlpha( ShaderBlendOp_t blendOp ) = 0;
 };
 // end class IShaderShadow
-
-
-
-#endif // ISHADERSHADOW_H

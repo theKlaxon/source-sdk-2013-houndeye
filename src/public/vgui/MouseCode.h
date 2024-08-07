@@ -5,19 +5,9 @@
 //
 // $NoKeywords: $
 //===========================================================================//
-
-#ifndef MOUSECODE_H
-#define MOUSECODE_H
-
-#if IsWindows()
 #pragma once
-#endif
-
 #include "inputsystem/ButtonCode.h"
 
-namespace vgui
-{
-typedef ButtonCode_t MouseCode;
+namespace vgui {
+	typedef ButtonCode_t MouseCode;
 }
-
-#endif // MOUSECODE_H

@@ -1,17 +1,10 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef HL2_SHAREDDEFS_H
-#define HL2_SHAREDDEFS_H
-
-#if IsWindows()
 #pragma once
-#endif
-
 #include "const.h"
 
 
@@ -19,8 +12,7 @@
 // Collision groups
 //--------------------------------------------------------------------------
 
-enum
-{
+enum {
 	HL2COLLISION_GROUP_PLASMANODE = LAST_SHARED_COLLISION_GROUP,
 	HL2COLLISION_GROUP_SPIT,
 	HL2COLLISION_GROUP_HOMING_MISSILE,
@@ -41,9 +33,5 @@ enum
 //--------------
 // HL2 SPECIFIC
 //--------------
-#define DMG_SNIPER			(DMG_LASTGENERICFLAG<<1)	// This is sniper damage
-#define DMG_MISSILEDEFENSE	(DMG_LASTGENERICFLAG<<2)	// The only kind of damage missiles take. (special missile defense)
-
-
-
-#endif // HL2_SHAREDDEFS_H
+#define DMG_SNIPER ( DMG_LASTGENERICFLAG << 1 )        // This is sniper damage
+#define DMG_MISSILEDEFENSE ( DMG_LASTGENERICFLAG << 2 )// The only kind of damage missiles take. (special missile defense)

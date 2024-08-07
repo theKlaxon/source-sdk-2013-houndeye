@@ -3,22 +3,15 @@
 // Purpose:
 //
 //=============================================================================//
-
-#ifndef WEAPON_PROFICIENCY_H
-#define WEAPON_PROFICIENCY_H
-
-#if IsWindows()
 #pragma once
-#endif
 
-struct WeaponProficiencyInfo_t
-{
-	float	spreadscale;
-	float	bias;
+
+struct WeaponProficiencyInfo_t {
+	float spreadscale;
+	float bias;
 };
 
-enum WeaponProficiency_t
-{
+enum WeaponProficiency_t {
 	WEAPON_PROFICIENCY_POOR = 0,
 	WEAPON_PROFICIENCY_AVERAGE,
 	WEAPON_PROFICIENCY_GOOD,
@@ -26,7 +19,4 @@ enum WeaponProficiency_t
 	WEAPON_PROFICIENCY_PERFECT,
 };
 
-const char *GetWeaponProficiencyName( WeaponProficiency_t proficiency );
-
-
-#endif // WEAPON_PROFICIENCY_H
+const char* GetWeaponProficiencyName( WeaponProficiency_t proficiency );

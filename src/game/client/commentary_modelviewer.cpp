@@ -52,7 +52,7 @@ void CCommentaryModelViewer::ApplySchemeSettings( vgui::IScheme *pScheme )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CCommentaryModelViewer::PerformLayout( void ) 
+void CCommentaryModelViewer::PerformLayout()
 {
 	int w,h;
 	GetParent()->GetSize( w, h );
@@ -154,7 +154,7 @@ void CCommentaryModelViewer::OnKeyCodePressed( vgui::KeyCode code )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CCommentaryModelViewer::OnThink( void )
+void CCommentaryModelViewer::OnThink()
 {
 	HandleMovementInput();
 
@@ -164,7 +164,7 @@ void CCommentaryModelViewer::OnThink( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CCommentaryModelViewer::HandleMovementInput( void )
+void CCommentaryModelViewer::HandleMovementInput()
 {
 	bool bLeftDown = input()->IsKeyDown(KEY_LEFT);
 	bool bRightDown = input()->IsKeyDown(KEY_RIGHT);

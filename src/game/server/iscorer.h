@@ -5,12 +5,8 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef ISCORER_H
-#define ISCORER_H
-#if IsWindows()
 #pragma once
-#endif
+
 
 //-----------------------------------------------------------------------------
 // Purpose: Interface that entities can use to redirect scoring to other entities.
@@ -20,10 +16,7 @@ abstract_class IScorer
 {
 public:
 	// Return the entity that should receive the score
-	virtual CBasePlayer *GetScorer( void ) = 0;
+	virtual CBasePlayer *GetScorer() = 0;
 	// Return the entity that should get assistance credit
-	virtual CBasePlayer *GetAssistant( void ) = 0;
+	virtual CBasePlayer *GetAssistant() = 0;
 };
-
-
-#endif // ISCORER_H

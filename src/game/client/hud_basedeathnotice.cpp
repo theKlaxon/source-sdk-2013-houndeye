@@ -58,7 +58,7 @@ void CHudBaseDeathNotice::ApplySchemeSettings( IScheme *scheme )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CHudBaseDeathNotice::Init( void )
+void CHudBaseDeathNotice::Init()
 {
 	ListenForGameEvent( "player_death" );
 	ListenForGameEvent( "object_destroyed" );	
@@ -71,7 +71,7 @@ void CHudBaseDeathNotice::Init( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CHudBaseDeathNotice::VidInit( void )
+void CHudBaseDeathNotice::VidInit()
 {
 	m_DeathNotices.RemoveAll();
 }

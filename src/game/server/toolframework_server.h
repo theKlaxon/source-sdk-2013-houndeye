@@ -5,23 +5,14 @@
 // $NoKeywords: $
 //
 //===========================================================================//
-
-#ifndef TOOLFRAMEWORK_SERVER_H
-#define TOOLFRAMEWORK_SERVER_H
-
-#if IsWindows()
 #pragma once
-#endif
 
 
 //-----------------------------------------------------------------------------
 // Are tools enabled? 
 //-----------------------------------------------------------------------------
 #ifndef NO_TOOLFRAMEWORK
-bool ToolsEnabled();
+	bool ToolsEnabled();
 #else
-#define ToolsEnabled() 0
+	#define ToolsEnabled() 0
 #endif
-
-
-#endif // TOOLFRAMEWORK_SERVER_H 

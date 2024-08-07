@@ -1,14 +1,11 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-#ifndef ICHOREOEVENTCALLBACK_H
-#define ICHOREOEVENTCALLBACK_H
-#if IsWindows()
 #pragma once
-#endif
+
 
 class CChoreoEvent;
 class CChoreoChannel;
@@ -19,16 +16,13 @@ class CChoreoScene;
 // Purpose: During choreo playback, events are triggered by calling back from
 //  the scene through this interface.
 //-----------------------------------------------------------------------------
-abstract_class IChoreoEventCallback
-{
+abstract_class IChoreoEventCallback {
 public:
-	virtual void StartEvent( float currenttime, CChoreoScene *scene, CChoreoEvent *event ) = 0;
+	virtual void StartEvent( float currenttime, CChoreoScene* scene, CChoreoEvent* event ) = 0;
 	// Only called for events with HasEndTime() == true
-	virtual void EndEvent( float currenttime, CChoreoScene *scene, CChoreoEvent *event ) = 0;
+	virtual void EndEvent( float currenttime, CChoreoScene* scene, CChoreoEvent* event ) = 0;
 	// Called for events which have been started but aren't done yet
-	virtual void ProcessEvent( float currenttime, CChoreoScene *scene, CChoreoEvent *event ) = 0;
+	virtual void ProcessEvent( float currenttime, CChoreoScene* scene, CChoreoEvent* event ) = 0;
 	// Called for events that are part of a pause condition
-	virtual bool CheckEvent( float currenttime, CChoreoScene *scene, CChoreoEvent *event ) = 0;
+	virtual bool CheckEvent( float currenttime, CChoreoScene* scene, CChoreoEvent* event ) = 0;
 };
-
-#endif // ICHOREOEVENTCALLBACK_H

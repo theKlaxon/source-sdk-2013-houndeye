@@ -1,28 +1,18 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef IDEDICATEDEXPORTS_H
-#define IDEDICATEDEXPORTS_H
-#if IsWindows()
 #pragma once
-#endif
-
-#include "interface.h"
 #include "appframework/IAppSystem.h"
+#include "interface.h"
 
 
-abstract_class IDedicatedExports : public IAppSystem
-{
+abstract_class IDedicatedExports : public IAppSystem {
 public:
-	virtual void Sys_Printf( char *text ) = 0;
+	virtual void Sys_Printf( char* text ) = 0;
 	virtual void RunServer() = 0;
 };
 
 #define VENGINE_DEDICATEDEXPORTS_API_VERSION "VENGINE_DEDICATEDEXPORTS_API_VERSION003"
-
-
-#endif // IDEDICATEDEXPORTS_H

@@ -1,31 +1,26 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef PCH_VGUI_CONTROLS_H
-#define PCH_VGUI_CONTROLS_H
-
-#if IsWindows()
 #pragma once
-#endif
 
 // general includes
-#include <ctype.h>
-#include <stdlib.h>
 #include "tier0/dbg.h"
 #include "tier0/valve_off.h"
 #include "tier1/KeyValues.h"
+#include <ctype.h>
+#include <stdlib.h>
 
-#include "tier0/valve_on.h"
 #include "tier0/memdbgon.h"
+#include "tier0/valve_on.h"
 
 #include "filesystem.h"
 #include "tier0/validator.h"
 
 // vgui includes
+#include "vgui/Cursor.h"
 #include "vgui/IBorder.h"
 #include "vgui/IInput.h"
 #include "vgui/ILocalize.h"
@@ -35,7 +30,6 @@
 #include "vgui/ISystem.h"
 #include "vgui/IVGui.h"
 #include "vgui/KeyCode.h"
-#include "vgui/Cursor.h"
 #include "vgui/MouseCode.h"
 
 // vgui controls includes
@@ -73,10 +67,10 @@
 #include "vgui_controls/MessageBox.h"
 #include "vgui_controls/Panel.h"
 #ifndef HL1
-#include "vgui_controls/PanelAnimationVar.h"
+	#include "vgui_controls/PanelAnimationVar.h"
 #endif
-#include "vgui_controls/PanelListPanel.h"
 #include "vgui_controls/PHandle.h"
+#include "vgui_controls/PanelListPanel.h"
 #include "vgui_controls/ProgressBar.h"
 #include "vgui_controls/ProgressBox.h"
 #include "vgui_controls/PropertyDialog.h"
@@ -90,26 +84,24 @@
 #include "vgui_controls/SectionedListPanel.h"
 #include "vgui_controls/Slider.h"
 #ifndef HL1
-#include "vgui_controls/Splitter.h"
+	#include "vgui_controls/Splitter.h"
 #endif
 #include "vgui_controls/TextEntry.h"
 #include "vgui_controls/TextImage.h"
 #include "vgui_controls/ToggleButton.h"
 #include "vgui_controls/Tooltip.h"
 #ifndef HL1
-#include "vgui_controls/ToolWindow.h"
+	#include "vgui_controls/ToolWindow.h"
 #endif
 #include "vgui_controls/TreeView.h"
 #ifndef HL1
-#include "vgui_controls/TreeViewListControl.h"
+	#include "vgui_controls/TreeViewListControl.h"
 #endif
 #include "vgui_controls/URLLabel.h"
 #include "vgui_controls/WizardPanel.h"
 #include "vgui_controls/WizardSubPanel.h"
 
 #ifndef HL1
-#include "vgui_controls/KeyBoardEditorDialog.h"
-#include "vgui_controls/InputDialog.h"
+	#include "vgui_controls/InputDialog.h"
+	#include "vgui_controls/KeyBoardEditorDialog.h"
 #endif
-
-#endif // PCH_VGUI_CONTROLS_H

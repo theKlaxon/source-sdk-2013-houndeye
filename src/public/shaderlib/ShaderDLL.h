@@ -1,18 +1,11 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Header: $
 // $NoKeywords: $
 //=============================================================================//
-
-#ifndef SHADERDLL_H
-#define SHADERDLL_H
-
-#if IsWindows()
 #pragma once
-#endif
-
 #include <materialsystem/IShader.h>
 
 //-----------------------------------------------------------------------------
@@ -24,26 +17,19 @@ class ICvar;
 //-----------------------------------------------------------------------------
 // The standard implementation of CShaderDLL
 //-----------------------------------------------------------------------------
-class IShaderDLL
-{
+class IShaderDLL {
 public:
 	// Adds a shader to the list of shaders
-	virtual void InsertShader( IShader *pShader ) = 0;
+	virtual void InsertShader( IShader* pShader ) = 0;
 };
 
 
 //-----------------------------------------------------------------------------
 // Singleton interface
 //-----------------------------------------------------------------------------
-IShaderDLL *GetShaderDLL();
+IShaderDLL* GetShaderDLL();
 
 //-----------------------------------------------------------------------------
 // Singleton interface for CVars
 //-----------------------------------------------------------------------------
-ICvar *GetCVar();
-
-
-
-
-
-#endif // SHADERDLL_H
+ICvar* GetCVar();

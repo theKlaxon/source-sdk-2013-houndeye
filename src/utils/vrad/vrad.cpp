@@ -12,21 +12,19 @@
 #include "loadcmdline.h"
 #include "macro_texture.h"
 #include "physdll.h"
+#include "tier0/icommandline.h"
 #include "tier1/strtools.h"
 #include "tools_minidump.h"
-#include "tier0/icommandline.h"
+#include <dlfcn.h>
 
 #define ALLOWDEBUGOPTIONS ( 0 || IsDebug() )
 
 static FileHandle_t pFpTrans = nullptr;
 
 /*
-
 NOTES
 -----
-
 every surface must be divided into at least two patches each axis
-
 */
 
 CUtlVector<CPatch> g_Patches;

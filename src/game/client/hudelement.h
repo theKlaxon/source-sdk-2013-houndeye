@@ -4,12 +4,7 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-#if !defined( HUDELEMENT_H )
-#define HUDELEMENT_H
-#if IsWindows()
 #pragma once
-#endif
-
 #include "hud.h"
 #include "hud_element_helper.h"
 #include "networkvar.h"
@@ -148,5 +143,3 @@ public:
 };
 
 #include "tier0/memdbgoff.h"
-
-#endif // HUDELEMENT_H
