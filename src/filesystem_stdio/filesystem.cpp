@@ -14,7 +14,7 @@
 
 static CFileSystemStdio g_FullFileSystem{};
 
-// TODO: Needed chars=['w', 'r', '+', 'b', 't', 'a']
+
 static constexpr auto parseOpenMode( const char *pMode ) -> OpenMode {
 	OpenMode mode{};
 	while ( *pMode != '\0' ) {
@@ -56,14 +56,16 @@ auto CFileSystemStdio::Connect( CreateInterfaceFn factory ) -> bool {
 }
 auto CFileSystemStdio::Disconnect() -> void { }
 auto CFileSystemStdio::QueryInterface( const char* pInterfaceName ) -> void* {
-	if ( strcmp( pInterfaceName, FILESYSTEM_INTERFACE_VERSION ) == 0 )
+	if ( strcmp( pInterfaceName, FILESYSTEM_INTERFACE_VERSION ) == 0 ) {
 		return &g_FullFileSystem;
+	}
 
 	return nullptr;
 }
 auto CFileSystemStdio::Init() -> InitReturnVal_t {
-	if ( this->m_bInitialized )
+	if ( this->m_bInitialized ) {
 		return InitReturnVal_t::INIT_OK;
+	}
 
 	return InitReturnVal_t::INIT_OK;
 }
@@ -75,8 +77,9 @@ auto CFileSystemStdio::Shutdown() -> void {
 // IBaseFilesystem
 // ---------------
 int CFileSystemStdio::Read( void* pOutput, int size, FileHandle_t file ) {
-	if (! (file && pOutput) )
+	if (! (file && pOutput) ) {
 		return -1;
+	}
 
 	auto desc{ static_cast<FileDescriptor*>( file ) };
 
@@ -84,8 +87,9 @@ int CFileSystemStdio::Read( void* pOutput, int size, FileHandle_t file ) {
 	return desc->m_System.lock()->Read( desc, pOutput, size );
 }
 int CFileSystemStdio::Write( const void* pInput, int size, FileHandle_t file ) {
-	if (! (file && pInput) )
+	if (! (file && pInput) ) {
 		return -1;
+	}
 
 	auto desc{ static_cast<FileDescriptor*>( file ) };
 
@@ -159,8 +163,9 @@ unsigned int CFileSystemStdio::Tell( FileHandle_t file ) {
 unsigned int CFileSystemStdio::Size( FileHandle_t file ) {
 	// if we already know the size, just return it
 	auto desc{ static_cast<FileDescriptor*>( file ) };
-	if ( desc->m_Size != -1 )
+	if ( desc->m_Size != -1 ) {
 		return desc->m_Size;
+	}
 
 	// stat the file, "handle" error
 	auto statMaybe{ desc->m_System.lock()->Stat( desc ) };
@@ -175,6 +180,9 @@ unsigned int CFileSystemStdio::Size( FileHandle_t file ) {
 unsigned int CFileSystemStdio::Size( const char* pFileName, const char* pPathID ) {
 	// open file
 	auto desc{ static_cast<FileDescriptor*>( Open( pFileName, "r", pPathID ) ) };
+	if (! desc ) {
+		return -1;
+	}
 
 	// get size
 	auto size{ Size( desc ) };
@@ -221,12 +229,16 @@ void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, Sea
 
 	// calculate base dir (current `-game` dir)
 	char absolute[1024];
-	AssertFatalMsg( _getcwd( absolute, sizeof(absolute) ), "V_MakeAbsolutePath: _getcwd failed." );
-	V_ComposeFileName( absolute, CommandLine()->ParmValue( "-game", "" ), absolute, sizeof(absolute) );
+	if (! V_IsAbsolutePath( pPath ) ) {
+		AssertFatalMsg( _getcwd( absolute, sizeof( absolute ) ), "V_MakeAbsolutePath: _getcwd failed." );
+		V_ComposeFileName( absolute, CommandLine()->ParmValue( "-game", "" ), absolute, sizeof( absolute ) );
 
-	// make absolute path of the thing
-	V_MakeAbsolutePath( absolute, 1024, pPath, absolute );
-
+		// make the absolute path of the thing
+		V_MakeAbsolutePath( absolute, 1024, pPath, absolute );
+	} else {
+		// already absolute, just copy
+		strncpy( absolute, pPath, 1024 );
+	}
 
 	// try all possibilities
 	auto system{ CPlainSystemClient::Open( this->m_iLastId, absolute, pPath ) };
@@ -245,8 +257,9 @@ void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, Sea
 	this->m_SearchPaths[ pathID ].m_ClientIDs.AddToTail( this->m_iLastId );
 }
 bool CFileSystemStdio::RemoveSearchPath( const char* pPath, const char* pathID ) {
-	if (! this->m_SearchPaths.contains( pathID ) )
+	if (! this->m_SearchPaths.contains( pathID ) ) {
 		return false;
+	}
 
 	auto& systems{ this->m_SearchPaths[pathID].m_Clients };
 	for ( int i{0}; i < systems.Count(); i += 1 ) {
@@ -281,8 +294,9 @@ void CFileSystemStdio::RemoveAllSearchPaths() {
 
 void CFileSystemStdio::RemoveSearchPaths( const char* szPathID ) {
 	// is it a real search path?
-	if (! this->m_SearchPaths.contains( szPathID ) )
+	if (! this->m_SearchPaths.contains( szPathID ) ) {
 		return;
+	}
 
 	auto& search{ this->m_SearchPaths[szPathID] };
 
@@ -311,8 +325,9 @@ void CFileSystemStdio::RemoveSearchPaths( const char* szPathID ) {
 }
 
 void CFileSystemStdio::MarkPathIDByRequestOnly( const char* pPathID, bool bRequestOnly ) {
-	if ( this->m_SearchPaths.contains( pPathID ) )
-		this->m_SearchPaths[pPathID].m_bRequestOnly = bRequestOnly;
+	if ( this->m_SearchPaths.contains( pPathID ) ) {
+		this->m_SearchPaths[ pPathID ].m_bRequestOnly = bRequestOnly;
+	}
 }
 
 const char* CFileSystemStdio::RelativePathToFullPath( const char* pFileName, const char* pPathID, char* pDest, int maxLenInChars, PathTypeFilter_t pathFilter, PathTypeQuery_t* pPathType ) { AssertUnreachable(); return {}; }
@@ -348,7 +363,12 @@ void CFileSystemStdio::UnloadModule( CSysModule * pModule ) { AssertUnreachable(
 
 // ---- File searching operations -----
 const char* CFileSystemStdio::FindFirst( const char* pWildCard, FileFindHandle_t* pHandle ) {
-	AssertMsg( false, "FindFirst: %s, %p", pWildCard, pHandle );
+	// TODO: For now, just support absolute paths
+	AssertMsg( V_IsAbsolutePath( pWildCard ), "FindFirst(not absolute!!): %s, %p", pWildCard, pHandle );
+
+
+
+
 	return {};
 }
 const char* CFileSystemStdio::FindNext( FileFindHandle_t handle ) {
@@ -372,11 +392,10 @@ bool CFileSystemStdio::FullPathToRelativePath( const char* pFullpath, char* pDes
 
 bool CFileSystemStdio::GetCurrentDirectory( char* pDirectory, int maxlen ) {
     #if IsWindows()
-        _getcwd(pDirectory, maxlen);
+        return _getcwd( pDirectory, maxlen ) != nullptr;
     #else
-    	getcwd( pDirectory, maxlen );
+    	return getcwd( pDirectory, maxlen ) != nullptr;
     #endif
-	return true;
 }
 
 // ---- Filename dictionary operations ----
@@ -419,7 +438,9 @@ bool CFileSystemStdio::IsFileImmediatelyAvailable( const char* pFileName ) { Ass
 void CFileSystemStdio::GetLocalCopy( const char* pFileName ) { AssertUnreachable(); }
 
 // ---- Debugging operations ----
-void CFileSystemStdio::PrintOpenedFiles() { AssertUnreachable(); }
+void CFileSystemStdio::PrintOpenedFiles() {
+
+}
 void CFileSystemStdio::PrintSearchPaths() {
 	Log( "---- Search Path table ----\n" );
 	for ( const auto& [searchPathId, searchPath] : this->m_SearchPaths ) {

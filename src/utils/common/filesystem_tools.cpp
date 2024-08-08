@@ -99,8 +99,9 @@ bool FileSystem_Init_Normal( const char* pFilename, FSInitType_t initType, bool 
 			return false;
 		}
 
-		if ( g_pFullFileSystem->Init() != INIT_OK )
+		if ( g_pFullFileSystem->Init() != INIT_OK ) {
 			return false;
+		}
 
 		g_pFullFileSystem->RemoveAllSearchPaths();
 		g_pFullFileSystem->AddSearchPath( "../platform", "PLATFORM" );

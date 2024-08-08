@@ -1337,14 +1337,14 @@ private:
 		SUPPORT_STOP_PROTOCOL = 1 << 0
 	};
 
-	// Thread initially runs this. param is actually 'this'. function
-	// just gets this and calls ThreadProc
 	struct ThreadInit_t {
 		CThread* pThread;
 		CThreadEvent* pInitCompleteEvent;
 		bool* pfInitSuccess;
 	};
 
+	// Thread initially runs this. param is actually 'this'. function
+	// just gets this and calls ThreadProc
 	static unsigned __stdcall ThreadProc( void* pv );
 
 	// make copy constructor and assignment operator inaccessible

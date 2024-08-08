@@ -337,7 +337,11 @@ bool CThreadEvent::Wait( uint32 dwTimeout ) {
 static thread_local CThread* g_hCurrentThread{ nullptr };
 CThread::CThread() { }
 CThread::~CThread() { }
-unsigned int CThread::ThreadProc( void* pv ) { AssertUnreachable(); return {}; }
+unsigned int CThread::ThreadProc( void* pv ) {
+	g_hCurrentThread = static_cast<CThread*>( pv );
+
+	return {};
+}
 
 const char* CThread::GetName() {
 	return this->m_szName;
@@ -356,13 +360,37 @@ void CThread::SetName( const char* pName ) {
 	this->m_szName[31] = '\0';
 }
 
-bool CThread::Start( unsigned nBytesStack ) { AssertUnreachable(); return {}; }
+bool CThread::Start( unsigned nBytesStack ) {
+	#if IsWindows()
+		#error "plz impl thx"
+	#elif IsPosix()
+		pthread_attr_t attrs;
+		if (! pthread_attr_init( &attrs ) ) {
+			return false;
+		}
+		if (! pthread_attr_setstacksize( &attrs, nBytesStack ) ) {
+			return false;
+		}
+		// FIXME: This will need to change when porting to x64
+		if (! pthread_create( &m_threadId, &attrs, reinterpret_cast<void*(*)( void* )>( ThreadProc ), reinterpret_cast<void*>( this ) ) ) {
+			return false;
+		}
+	#endif
+	return true;
+}
 
 bool CThread::IsAlive() const {
 	return this->m_result != -1;
 }
 
-bool CThread::Join( unsigned timeout ) { AssertUnreachable(); return {}; }
+bool CThread::Join( unsigned timeout ) {
+	#if IsWindows()
+		#error "plz impl thx"
+	#elif IsPosix()
+		// FIXME: This will need to change when porting to x64
+		return pthread_join( m_threadId, reinterpret_cast<void**>( &m_result ) ) == 0;
+	#endif
+}
 
 #if IsWindows()
 	HANDLE CThread::GetThreadHandle() {
