@@ -10,13 +10,14 @@
 #include <unistd.h>
 #include <utility>
 
+#include "strtools.h"
 #include "dbg.h"
 
 CPlainSystemClient::CPlainSystemClient( int pId, std::string pAbsolute, const char* pPath )
 	: m_iId( pId ), m_szNativePath( pPath ), m_szNativeAbsolutePath( std::move( pAbsolute ) ) { }
 auto CPlainSystemClient::Open( int pId, const std::string& pAbsolute, const char* pPath ) -> std::shared_ptr<ISystemClient> {
-	if ( !std::filesystem::exists( pAbsolute ) ) {
-		return {};
+	if (! std::filesystem::is_directory( pAbsolute ) ) {
+		return { };
 	}
 	return std::make_shared<CPlainSystemClient>( pId, pAbsolute, pPath );
 }
@@ -35,6 +36,10 @@ auto CPlainSystemClient::Shutdown() -> void {}
 auto CPlainSystemClient::Open( const char* pPath, OpenMode pMode ) -> FileDescriptor* {
 	AssertFatalMsg( pPath, "Was given a `NULL` file path!" );
 	AssertFatalMsg( pMode, "Was given an empty open mode!" );
+
+	// create full path
+	char buffer[1024];
+	V_ComposeFileName( m_szNativeAbsolutePath.c_str(), pPath, buffer, 1024 );
 
 	#if IsLinux()
 		int32_t mode2{ 0 };
@@ -60,7 +65,7 @@ auto CPlainSystemClient::Open( const char* pPath, OpenMode pMode ) -> FileDescri
 			mode2 |= O_APPEND;
 		}
 
-		int file{ open( pPath, mode2 ) };
+		int file{ open( buffer, mode2 ) };
 
 		// Check if we got a valid handle, TODO: Actual error handling
 		if ( file == -1 ) {
