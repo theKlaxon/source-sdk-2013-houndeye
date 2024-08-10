@@ -115,7 +115,7 @@ bool FileSystem_Init_Normal( const char* pFilename, FSInitType_t initType, bool 
 
 
 bool FileSystem_Init( const char* pBSPFilename, int maxMemoryUsage, FSInitType_t initType, bool bOnlyUseFilename ) {
-	Assert( CommandLine()->GetCmdLine() != nullptr );// Should have called CreateCmdLine by now.
+	Assert( CommandLine()->GetCmdLine() != nullptr );  // Should have called CreateCmdLine by now.
 
 	return FileSystem_Init_Normal( pBSPFilename, initType, bOnlyUseFilename );
 }
