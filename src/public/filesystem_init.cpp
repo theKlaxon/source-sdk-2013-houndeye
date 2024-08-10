@@ -34,7 +34,6 @@
 #include "tier0/memdbgon.h"
 
 #define GAMEINFO_FILENAME "gameinfo.txt"
-#define GAMEINFO_FILENAME_ALTERNATE "gameinfo.txt"
 
 static char g_FileSystemError[ 256 ];
 static bool s_bUseVProjectBinDir = false;
@@ -225,8 +224,9 @@ const char* FileSystem_GetLastErrorString() {
 KeyValues* ReadKeyValuesFile( const char* pFilename ) {
 	// Read in the gameinfo.txt file and null-terminate it.
 	FILE* fp = fopen( pFilename, "rb" );
-	if ( !fp )
+	if ( !fp ) {
 		return nullptr;
+	}
 	CUtlVector<char> buf;
 	fseek( fp, 0, SEEK_END );
 	buf.SetSize( ftell( fp ) + 1 );
@@ -276,8 +276,9 @@ bool FileSystem_GetExecutableDir( char* exedir, int exeDirLen ) {
 		return false;
 	}
 
-	if ( !Sys_GetExecutableName( exedir, exeDirLen ) )
+	if ( !Sys_GetExecutableName( exedir, exeDirLen ) ) {
 		return false;
+	}
 	Q_StripFilename( exedir );
 
 	Q_FixSlashes( exedir );
@@ -389,8 +390,9 @@ static void FileSystem_AddLoadedSearchPath(
 	if ( V_stricmp( pPathID, "game_lv" ) == 0 ) {
 
 		// Not in LV build, don't mount
-		if ( !initInfo.m_bLowViolence )
+		if ( !initInfo.m_bLowViolence ) {
 			return;
+		}
 
 		// Mount, as a game path
 		pPathID = "game";
@@ -400,8 +402,9 @@ static void FileSystem_AddLoadedSearchPath(
 	if ( V_stricmp( pPathID, "game_hd" ) == 0 ) {
 
 		// Not in LV build, don't mount
-		if ( !initInfo.m_bMountHDContent )
+		if ( !initInfo.m_bMountHDContent ) {
 			return;
+		}
 
 		// Mount, as a game path
 		pPathID = "game";
@@ -439,18 +442,21 @@ static int SortStricmp( char* const* sz1, char* const* sz2 ) {
 }
 
 FSReturnCode_t FileSystem_LoadSearchPaths( CFSSearchPathsInit& initInfo ) {
-	if ( !initInfo.m_pFileSystem || !initInfo.m_pDirectoryName )
+	if ( !initInfo.m_pFileSystem || !initInfo.m_pDirectoryName ) {
 		return SetupFileSystemError( false, FS_INVALID_PARAMETERS, "FileSystem_LoadSearchPaths: Invalid parameters specified." );
+	}
 
 	KeyValues *pMainFile, *pFileSystemInfo, *pSearchPaths;
 	FSReturnCode_t retVal = LoadGameInfoFile( initInfo.m_pDirectoryName, pMainFile, pFileSystemInfo, pSearchPaths );
-	if ( retVal != FS_OK )
+	if ( retVal != FS_OK ) {
 		return retVal;
+	}
 
 	// All paths except those marked with |gameinfo_path| are relative to the base dir.
 	char baseDir[ MAX_PATH ];
-	if ( !FileSystem_GetBaseDir( baseDir, sizeof( baseDir ) ) )
+	if ( !FileSystem_GetBaseDir( baseDir, sizeof( baseDir ) ) ) {
 		return SetupFileSystemError( false, FS_INVALID_PARAMETERS, "FileSystem_GetBaseDir failed." );
+	}
 
 	// The MOD directory is always the one that contains gameinfo.txt
 	Q_strncpy( initInfo.m_ModPath, initInfo.m_pDirectoryName, sizeof( initInfo.m_ModPath ) );
@@ -467,8 +473,9 @@ FSReturnCode_t FileSystem_LoadSearchPaths( CFSSearchPathsInit& initInfo ) {
 			Q_StripPrecedingAndTrailingWhitespace( vecPaths[ idxExtraPath ] );
 			V_MakeAbsolutePath( szAbsSearchPath, sizeof( szAbsSearchPath ), vecPaths[ idxExtraPath ], baseDir );
 			V_FixSlashes( szAbsSearchPath );
-			if ( !V_RemoveDotSlashes( szAbsSearchPath ) )
+			if ( !V_RemoveDotSlashes( szAbsSearchPath ) ) {
 				Error( "Bad -insert_search_path - Can't resolve pathname for '%s'", szAbsSearchPath );
+			}
 			V_StripTrailingSlash( szAbsSearchPath );
 			FileSystem_AddLoadedSearchPath( initInfo, "GAME", szAbsSearchPath, false );
 			FileSystem_AddLoadedSearchPath( initInfo, "MOD", szAbsSearchPath, false );
@@ -501,8 +508,9 @@ FSReturnCode_t FileSystem_LoadSearchPaths( CFSSearchPathsInit& initInfo ) {
 
 		// Now resolve any ./'s.
 		V_FixSlashes( szAbsSearchPath );
-		if ( !V_RemoveDotSlashes( szAbsSearchPath ) )
+		if ( !V_RemoveDotSlashes( szAbsSearchPath ) ) {
 			Error( "FileSystem_AddLoadedSearchPath - Can't resolve pathname for '%s'", szAbsSearchPath );
+		}
 		V_StripTrailingSlash( szAbsSearchPath );
 
 		// Don't bother doing any wildcard expansion unless it has wildcards.  This avoids the weird
@@ -675,8 +683,9 @@ static FSReturnCode_t TryLocateGameInfoFile( char* pOutDir, int outDirLen, bool 
 FSReturnCode_t LocateGameInfoFile( const CFSSteamSetupInfo& fsInfo, char* pOutDir, int outDirLen ) {
 	// Engine and Hammer don't want to search around for it.
 	if ( fsInfo.m_bOnlyUseDirectoryName ) {
-		if ( !fsInfo.m_pDirectoryName )
+		if ( !fsInfo.m_pDirectoryName ) {
 			return SetupFileSystemError( false, FS_MISSING_GAMEINFO_FILE, "bOnlyUseDirectoryName=1 and pDirectoryName=NULL." );
+		}
 
 		bool bExists = DoesFileExistIn( fsInfo.m_pDirectoryName, GAMEINFO_FILENAME );
 		if ( !bExists ) {
@@ -720,32 +729,37 @@ FSReturnCode_t LocateGameInfoFile( const CFSSteamSetupInfo& fsInfo, char* pOutDi
 		SuggestGameInfoDirFn_t pfnSuggestGameInfoDirFn = GetSuggestGameInfoDirFn();
 		if ( pfnSuggestGameInfoDirFn &&
 			 ( *pfnSuggestGameInfoDirFn )( &fsInfo, pOutDir, outDirLen, &bBubbleDir ) &&
-			 FS_OK == TryLocateGameInfoFile( pOutDir, outDirLen, bBubbleDir ) )
+			 FS_OK == TryLocateGameInfoFile( pOutDir, outDirLen, bBubbleDir ) ) {
 			return FS_OK;
+		}
 	}
 
 	// Try to use the environment variable / registry
 	if ( ( pProject = getenv( GAMEDIR_TOKEN ) ) != nullptr &&
 		 ( Q_MakeAbsolutePath( pOutDir, outDirLen, pProject ), 1 ) &&
-		 FS_OK == TryLocateGameInfoFile( pOutDir, outDirLen, false ) )
+		 FS_OK == TryLocateGameInfoFile( pOutDir, outDirLen, false ) ) {
 		return FS_OK;
+	}
 
 	if ( IsPC() ) {
 		Warning( "Warning: falling back to auto detection of vproject directory.\n" );
 
 		// Now look for it in the directory they passed in.
-		if ( fsInfo.m_pDirectoryName )
+		if ( fsInfo.m_pDirectoryName ) {
 			Q_MakeAbsolutePath( pOutDir, outDirLen, fsInfo.m_pDirectoryName );
-		else
+		} else {
 			Q_MakeAbsolutePath( pOutDir, outDirLen, "." );
+		}
 
-		if ( FS_OK == TryLocateGameInfoFile( pOutDir, outDirLen, true ) )
+		if ( FS_OK == TryLocateGameInfoFile( pOutDir, outDirLen, true ) ) {
 			return FS_OK;
+		}
 
 		// Use the CWD
 		Q_getwd( pOutDir, outDirLen );
-		if ( FS_OK == TryLocateGameInfoFile( pOutDir, outDirLen, true ) )
+		if ( FS_OK == TryLocateGameInfoFile( pOutDir, outDirLen, true ) ) {
 			return FS_OK;
+		}
 	}
 
 ShowError:
@@ -766,21 +780,24 @@ bool DoesPathExistAlready( const char* pPathEnvVar, const char* pTestPath ) {
 
 	Q_strncpy( correctedTestPath, pTestPath, sizeof( correctedTestPath ) );
 	Q_FixSlashes( correctedTestPath );
-	if ( strlen( correctedTestPath ) > 0 && PATHSEPARATOR( correctedTestPath[ strlen( correctedTestPath ) - 1 ] ) )
+	if ( strlen( correctedTestPath ) > 0 && PATHSEPARATOR( correctedTestPath[ strlen( correctedTestPath ) - 1 ] ) ) {
 		correctedTestPath[ strlen( correctedTestPath ) - 1 ] = 0;
+	}
 
 	pTestPath = correctedTestPath;
 
 	const char* pCurPos = pPathEnvVar;
-	while ( 1 ) {
+	while ( true ) {
 		const char* pTestPos = Q_stristr( pCurPos, pTestPath );
-		if ( !pTestPos )
+		if ( !pTestPos ) {
 			return false;
+		}
 
 		// Ok, we found pTestPath in the path, but it's only valid if it's followed by an optional slash and a semicolon.
 		pTestPos += strlen( pTestPath );
-		if ( pTestPos[ 0 ] == 0 || pTestPos[ 0 ] == ';' || ( PATHSEPARATOR( pTestPos[ 0 ] ) && pTestPos[ 1 ] == ';' ) )
+		if ( pTestPos[ 0 ] == 0 || pTestPos[ 0 ] == ';' || ( PATHSEPARATOR( pTestPos[ 0 ] ) && pTestPos[ 1 ] == ';' ) ) {
 			return true;
+		}
 
 		// Advance our marker..
 		pCurPos = pTestPos;
@@ -795,9 +812,10 @@ FSReturnCode_t GetSteamCfgPath( char* steamCfgPath, int steamCfgPathLen ) {
 		return SetupFileSystemError( false, FS_INVALID_PARAMETERS, "FileSystem_GetExecutableDir failed." );
 	}
 	Q_strncpy( steamCfgPath, executablePath, steamCfgPathLen );
-	while ( 1 ) {
-		if ( DoesFileExistIn( steamCfgPath, "steam.cfg" ) )
+	while ( true ) {
+		if ( DoesFileExistIn( steamCfgPath, "steam.cfg" ) ) {
 			break;
+		}
 
 		if ( !Q_StripLastDir( steamCfgPath, steamCfgPathLen ) ) {
 			// the file isnt found, thats ok, its not mandatory
@@ -814,8 +832,9 @@ void SetSteamAppUser( KeyValues* pSteamInfo, const char* steamInstallPath, CStea
 	// Always inherit the Steam user if it's already set, since it probably means we (or the
 	// the app that launched us) were launched from Steam.
 	char appUser[ MAX_PATH ];
-	if ( steamEnvVars.m_SteamAppUser.GetValue( appUser, sizeof( appUser ) ) )
+	if ( steamEnvVars.m_SteamAppUser.GetValue( appUser, sizeof( appUser ) ) ) {
 		return;
+	}
 
 	const char* pTempAppUser = nullptr;
 	if ( pSteamInfo && ( pTempAppUser = pSteamInfo->GetString( "SteamAppUser", nullptr ) ) != nullptr ) {
@@ -845,8 +864,9 @@ void SetSteamUserPassphrase( KeyValues* pSteamInfo, CSteamEnvVars& steamEnvVars 
 	// Always inherit the passphrase if it's already set, since it probably means we (or the
 	// the app that launched us) were launched from Steam.
 	char szPassPhrase[ MAX_PATH ];
-	if ( steamEnvVars.m_SteamUserPassphrase.GetValue( szPassPhrase, sizeof( szPassPhrase ) ) )
+	if ( steamEnvVars.m_SteamUserPassphrase.GetValue( szPassPhrase, sizeof( szPassPhrase ) ) ) {
 		return;
+	}
 
 	// SteamUserPassphrase.
 	const char* pStr;
@@ -859,13 +879,15 @@ FSReturnCode_t FileSystem_SetBasePaths( IFileSystem* pFileSystem ) {
 	pFileSystem->RemoveSearchPaths( "EXECUTABLE_PATH" );
 
 	char executablePath[ MAX_PATH ];
-	if ( !FileSystem_GetExecutableDir( executablePath, sizeof( executablePath ) ) )
+	if ( !FileSystem_GetExecutableDir( executablePath, sizeof( executablePath ) ) ) {
 		return SetupFileSystemError( false, FS_INVALID_PARAMETERS, "FileSystem_GetExecutableDir failed." );
+	}
 
 	pFileSystem->AddSearchPath( executablePath, "EXECUTABLE_PATH" );
 
-	if ( !FileSystem_GetBaseDir( executablePath, sizeof( executablePath ) ) )
+	if ( !FileSystem_GetBaseDir( executablePath, sizeof( executablePath ) ) ) {
 		return SetupFileSystemError( false, FS_INVALID_PARAMETERS, "FileSystem_GetBaseDir failed." );
+	}
 
 	pFileSystem->AddSearchPath( executablePath, "BASE_PATH" );
 
@@ -881,8 +903,9 @@ FSReturnCode_t FileSystem_GetFileSystemDLLName( char* pFileSystemDLL, int nMaxLe
 	// Inside of here, we don't have a filesystem yet, so we have to assume that the filesystem_stdio or filesystem_steam
 	// is in this same directory with us.
 	char executablePath[ MAX_PATH ];
-	if ( !FileSystem_GetExecutableDir( executablePath, sizeof( executablePath ) ) )
+	if ( !FileSystem_GetExecutableDir( executablePath, sizeof( executablePath ) ) ) {
 		return SetupFileSystemError( false, FS_INVALID_PARAMETERS, "FileSystem_GetExecutableDir failed." );
+	}
 
 	// Assume we'll use local files
 	Q_snprintf( pFileSystemDLL, nMaxLen, "%s%cfilesystem_stdio" DLL_EXT_STRING, executablePath, CORRECT_PATH_SEPARATOR );
@@ -908,8 +931,9 @@ FSReturnCode_t FileSystem_GetFileSystemDLLName( char* pFileSystemDLL, int nMaxLe
 FSReturnCode_t FileSystem_SetupSteamEnvironment( CFSSteamSetupInfo& fsInfo ) {
 	// First, locate the directory with gameinfo.txt.
 	FSReturnCode_t ret = LocateGameInfoFile( fsInfo, fsInfo.m_GameInfoPath, sizeof( fsInfo.m_GameInfoPath ) );
-	if ( ret != FS_OK )
+	if ( ret != FS_OK ) {
 		return ret;
+	}
 
 	// This is so that processes spawned by this application will have the same VPROJECT
 	#if IsWindows()
@@ -930,8 +954,9 @@ FSReturnCode_t FileSystem_SetupSteamEnvironment( CFSSteamSetupInfo& fsInfo ) {
 FSReturnCode_t FileSystem_LoadFileSystemModule( CFSLoadModuleInfo& fsInfo ) {
 	// First, locate the directory with gameinfo.txt.
 	FSReturnCode_t ret = FileSystem_SetupSteamEnvironment( fsInfo );
-	if ( ret != FS_OK )
+	if ( ret != FS_OK ) {
 		return ret;
+	}
 
 	// Now that the environment is setup, load the filesystem module.
 	if ( !Sys_LoadInterface(
@@ -942,11 +967,13 @@ FSReturnCode_t FileSystem_LoadFileSystemModule( CFSLoadModuleInfo& fsInfo ) {
 		return SetupFileSystemError( false, FS_UNABLE_TO_INIT, "Can't load %s.", fsInfo.m_pFileSystemDLLName );
 	}
 
-	if ( !fsInfo.m_pFileSystem->Connect( fsInfo.m_ConnectFactory ) )
+	if ( !fsInfo.m_pFileSystem->Connect( fsInfo.m_ConnectFactory ) ) {
 		return SetupFileSystemError( false, FS_UNABLE_TO_INIT, "%s IFileSystem::Connect failed.", fsInfo.m_pFileSystemDLLName );
+	}
 
-	if ( fsInfo.m_pFileSystem->Init() != INIT_OK )
+	if ( fsInfo.m_pFileSystem->Init() != INIT_OK ) {
 		return SetupFileSystemError( false, FS_UNABLE_TO_INIT, "%s IFileSystem::Init failed.", fsInfo.m_pFileSystemDLLName );
+	}
 
 	return FS_OK;
 }
