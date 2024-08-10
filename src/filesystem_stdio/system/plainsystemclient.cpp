@@ -94,8 +94,11 @@ auto CPlainSystemClient::Write( const FileDescriptor* pDesc, const void* pBuffer
 auto CPlainSystemClient::Flush( const FileDescriptor* pDesc ) -> bool {
 	AssertFatalMsg( pDesc, "Was given a `NULL` file handle!" );
 
-	AssertUnreachable();
-	return {};
+	#if IsWindows()
+		AssertUnreachable();
+	#endif
+
+	return true;
 }
 auto CPlainSystemClient::Close( const FileDescriptor* pDesc ) -> void { }
 
