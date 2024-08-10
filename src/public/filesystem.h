@@ -471,6 +471,12 @@ public:
 	virtual void Flush( FileHandle_t file ) = 0;
 	virtual bool Precache( const char* pFileName, const char* pPathID = nullptr ) = 0;
 
+	/**
+	 * Checks whether a path points to a valid entry on the fs; if the given path is absolute,
+	 * the pathId is ignored and un-sandboxed fs is checked for the path's validity.
+	 * @param pFileName the path to check for
+	 * @param pPathID the pathId to search the path in if relative.
+	 */
 	virtual bool FileExists( const char* pFileName, const char* pPathID = nullptr ) = 0;
 	virtual bool IsFileWritable( char const* pFileName, const char* pPathID = nullptr ) = 0;
 	virtual bool SetFileWritable( char const* pFileName, bool writable, const char* pPathID = nullptr ) = 0;
