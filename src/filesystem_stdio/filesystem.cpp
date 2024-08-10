@@ -3,7 +3,7 @@
 //
 #include "platform.h"
 #if IsWindows()
-	#include <direct.h>
+	#include <shlwapi.h>
 #endif
 #include <utility>
 #include "../tier0/commandline.hpp"
@@ -11,9 +11,11 @@
 #include "interface.h"
 #include "system/packsystemclient.hpp"
 #include "system/plainsystemclient.hpp"
+#include "system/rootsystemclient.hpp"
+
 
 static CFileSystemStdio g_FullFileSystem{};
-
+static auto g_RootSystemClient{ std::make_shared<CRootSystemClient>() };
 
 static constexpr auto parseOpenMode( const char *pMode ) -> OpenMode {
 	OpenMode mode{};
@@ -46,7 +48,6 @@ static constexpr auto parseOpenMode( const char *pMode ) -> OpenMode {
 
 	return mode;
 }
-
 
 // ---------------
 // AppSystem
@@ -100,6 +101,18 @@ int CFileSystemStdio::Write( const void* pInput, int size, FileHandle_t file ) {
 FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions, const char* pathID ) {
 	// parse the options
 	auto mode{ parseOpenMode( pOptions ) };
+
+	// absolute paths get special treatment
+	if ( V_IsAbsolutePath( pFileName ) ) {
+		auto desc{ g_RootSystemClient->Open( pFileName, mode ) };
+		// only add to vector if we actually got an open file
+		if ( desc != nullptr ) {
+			desc->m_System = { g_RootSystemClient };
+			this->m_Descriptors.AddToTail( desc );
+			return desc;
+		}
+		return nullptr;
+	}
 
 	// if we got a pathID, only look into that SearchPath
 	if ( pathID != nullptr ) {
@@ -194,10 +207,24 @@ unsigned int CFileSystemStdio::Size( const char* pFileName, const char* pPathID 
 	return size;
 }
 
-void CFileSystemStdio::Flush( FileHandle_t file ) { AssertUnreachable(); }
+void CFileSystemStdio::Flush( FileHandle_t file ) {
+	auto desc{ static_cast<FileDescriptor*>( file ) };
+	desc->m_System.lock()->Flush( desc );
+}
 bool CFileSystemStdio::Precache( const char* pFileName, const char* pPathID ) { AssertUnreachable(); return {}; }
 
-bool CFileSystemStdio::FileExists( const char* pFileName, const char* pPathID ) { AssertUnreachable(); return {}; }
+bool CFileSystemStdio::FileExists( const char* pFileName, const char* pPathID ) {
+	if ( V_IsAbsolutePath( pFileName ) ) {
+		#if IsWindows()
+			return PathFileExistsA( pFileName ) == TRUE;
+		#elif IsPosix()
+			return access( pFileName, F_OK ) == 0;
+		#endif
+	}
+	// TODO: Complete
+	AssertUnreachable();
+	return {};
+}
 bool CFileSystemStdio::IsFileWritable( char const* pFileName, const char* pPathID ) { AssertUnreachable(); return {}; }
 bool CFileSystemStdio::SetFileWritable( char const* pFileName, bool writable, const char* pPathID ) { AssertUnreachable(); return {}; }
 
@@ -240,13 +267,24 @@ void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, Sea
 		strncpy( absolute, pPath, 1024 );
 	}
 
+	// if the path is non-existent, do nothing
+	if (! this->FileExists( absolute ) ) {
+		return;
+	}
+
 	// try all possibilities
 	auto system{ CPlainSystemClient::Open( this->m_iLastId, absolute, pPath ) };
 	system = system ? system : CPackSystemClient::Open( this->m_iLastId, absolute, pPath );
 	AssertFatalMsg( system, "Unsupported path entry: %s", absolute );
 
+	// make a new alloc of the string
+	// TODO: Use string interning if possible
+	pathID = V_strlower( V_strdup( pathID ) );
+	auto clear{ true };
+
 	if (! this->m_SearchPaths.contains( pathID ) ) {
 		this->m_SearchPaths[ pathID ] = SearchPath{};
+		clear = false;
 	}
 
 	if ( addType == SearchPathAdd_t::PATH_ADD_TO_HEAD ) {
@@ -255,6 +293,9 @@ void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, Sea
 		this->m_SearchPaths[ pathID ].m_Clients.AddToTail( system );
 	}
 	this->m_SearchPaths[ pathID ].m_ClientIDs.AddToTail( this->m_iLastId );
+	if ( clear ) {
+		delete[] pathID;
+	}
 }
 bool CFileSystemStdio::RemoveSearchPath( const char* pPath, const char* pathID ) {
 	if (! this->m_SearchPaths.contains( pathID ) ) {
@@ -325,8 +366,20 @@ void CFileSystemStdio::RemoveSearchPaths( const char* szPathID ) {
 }
 
 void CFileSystemStdio::MarkPathIDByRequestOnly( const char* pPathID, bool bRequestOnly ) {
-	if ( this->m_SearchPaths.contains( pPathID ) ) {
-		this->m_SearchPaths[ pPathID ].m_bRequestOnly = bRequestOnly;
+	// make a new alloc of the string
+	// TODO: Use string interning if possible
+	auto pathID{ V_strlower( V_strdup( pPathID ) ) };
+	auto clear{ true };
+
+	if (! this->m_SearchPaths.contains( pathID ) ) {
+		this->m_SearchPaths[ pathID ] = SearchPath{};
+		clear = false;
+	}
+
+	this->m_SearchPaths[ pathID ].m_bRequestOnly = bRequestOnly;
+
+	if ( clear ) {
+		delete[] pathID;
 	}
 }
 
@@ -438,15 +491,15 @@ bool CFileSystemStdio::IsFileImmediatelyAvailable( const char* pFileName ) { Ass
 void CFileSystemStdio::GetLocalCopy( const char* pFileName ) { AssertUnreachable(); }
 
 // ---- Debugging operations ----
-void CFileSystemStdio::PrintOpenedFiles() {
-
-}
+void CFileSystemStdio::PrintOpenedFiles() { AssertUnreachable(); }
 void CFileSystemStdio::PrintSearchPaths() {
 	Log( "---- Search Path table ----\n" );
 	for ( const auto& [searchPathId, searchPath] : this->m_SearchPaths ) {
 		Log( "%s:\n", searchPathId );
 		for ( const auto& path : searchPath.m_Clients ) {
-			Log( "  - %s\n", path->GetNativePath() );
+			if ( strcmp( path->GetNativePath(), "" ) != 0 ) {
+				Log( "  - %s\n", path->GetNativePath() );
+			}
 		}
 	}
 }

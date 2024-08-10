@@ -7,6 +7,7 @@ set( FILESYSTEM_STDIO_SOURCE_FILES
 	"${FILESYSTEM_STDIO_DIR}/system/isystemclient.cpp"
 	"${FILESYSTEM_STDIO_DIR}/system/packsystemclient.cpp"
 	"${FILESYSTEM_STDIO_DIR}/system/plainsystemclient.cpp"
+	"${FILESYSTEM_STDIO_DIR}/system/rootsystemclient.cpp"
 
 	# Header files
 	"${FILESYSTEM_STDIO_DIR}/basefilesystem.hpp"
@@ -14,6 +15,7 @@ set( FILESYSTEM_STDIO_SOURCE_FILES
 	"${FILESYSTEM_STDIO_DIR}/system/isystemclient.hpp"
 	"${FILESYSTEM_STDIO_DIR}/system/packsystemclient.hpp"
 	"${FILESYSTEM_STDIO_DIR}/system/plainsystemclient.hpp"
+	"${FILESYSTEM_STDIO_DIR}/system/rootsystemclient.hpp"
 
 	# Public
 	"${SRCDIR}/public/filesystem.h"
