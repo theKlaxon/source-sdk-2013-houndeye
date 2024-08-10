@@ -413,8 +413,9 @@ private:
 			this->m_bRequestOnly = other.m_bRequestOnly;
 		}
 		~SearchPath() {
-			for ( auto& system : this->m_Clients )
+			for ( auto& system : this->m_Clients ) {
 				system->Shutdown();
+			}
 			this->m_Clients.Purge();
 			this->m_ClientIDs.Purge();
 		}
@@ -428,6 +429,6 @@ private:
 	std::unordered_map<const char*, SearchPath> m_SearchPaths{};
 	// All open descriptors
 	CUtlVector<FileDescriptor*> m_Descriptors{ 10 };
-	int m_iLastId{ 0 };
+	int m_iLastId{ 1 };  // 0 is reserved for the root
 	bool m_bInitialized{ false };
 };
