@@ -426,7 +426,7 @@ private:
 	};
 
 	// The named search paths
-	std::unordered_map<const char*, SearchPath> m_SearchPaths{};
+	CUtlDict<SearchPath> m_SearchPaths{};
 	// All open descriptors
 	CUtlVector<FileDescriptor*> m_Descriptors{ 10 };
 	int m_iLastId{ 1 };  // 0 is reserved for the root

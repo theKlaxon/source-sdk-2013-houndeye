@@ -116,7 +116,7 @@ FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions
 
 	// if we got a pathID, only look into that SearchPath
 	if ( pathID != nullptr ) {
-		AssertFatalMsg( this->m_SearchPaths.contains( pathID ), "Was given pathID not loaded" );
+		AssertFatalMsg( this->m_SearchPaths.Find( pathID ) == CUtlDict<SearchPath>::InvalidIndex(), "Was given pathID not loaded" );
 
 		for ( const auto& system : this->m_SearchPaths[pathID].m_Clients ) {
 			auto desc{ system->Open( pFileName, mode ) };
@@ -192,7 +192,7 @@ unsigned int CFileSystemStdio::Size( FileHandle_t file ) {
 }
 unsigned int CFileSystemStdio::Size( const char* pFileName, const char* pPathID ) {
 	// open file
-	auto desc{ static_cast<FileDescriptor*>( Open( pFileName, "r", pPathID ) ) };
+	auto desc{ static_cast<FileDescriptor*>( this->Open( pFileName, "r", pPathID ) ) };
 	if (! desc ) {
 		return -1;
 	}
@@ -221,9 +221,15 @@ bool CFileSystemStdio::FileExists( const char* pFileName, const char* pPathID ) 
 			return access( pFileName, F_OK ) == 0;
 		#endif
 	}
-	// TODO: Complete
-	AssertUnreachable();
-	return {};
+
+	// try to open the file
+	auto handle{ this->Open( pFileName, "r", pPathID ) };
+	if ( handle ) {
+		this->Close( handle );
+		return true;
+	}
+
+	return false;
 }
 bool CFileSystemStdio::IsFileWritable( char const* pFileName, const char* pPathID ) { AssertUnreachable(); return {}; }
 bool CFileSystemStdio::SetFileWritable( char const* pFileName, bool writable, const char* pPathID ) { AssertUnreachable(); return {}; }
@@ -280,11 +286,9 @@ void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, Sea
 	// make a new alloc of the string
 	// TODO: Use string interning if possible
 	pathID = V_strlower( V_strdup( pathID ) );
-	auto clear{ true };
 
-	if (! this->m_SearchPaths.contains( pathID ) ) {
-		this->m_SearchPaths[ pathID ] = SearchPath{};
-		clear = false;
+	if ( this->m_SearchPaths.Find( pathID ) == CUtlDict<SearchPath>::InvalidIndex() ) {
+		this->m_SearchPaths.Insert( pathID );
 	}
 
 	if ( addType == SearchPathAdd_t::PATH_ADD_TO_HEAD ) {
@@ -293,12 +297,10 @@ void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, Sea
 		this->m_SearchPaths[ pathID ].m_Clients.AddToTail( system );
 	}
 	this->m_SearchPaths[ pathID ].m_ClientIDs.AddToTail( this->m_iLastId );
-	if ( clear ) {
-		delete[] pathID;
-	}
+	delete[] pathID;
 }
 bool CFileSystemStdio::RemoveSearchPath( const char* pPath, const char* pathID ) {
-	if (! this->m_SearchPaths.contains( pathID ) ) {
+	if ( m_SearchPaths.Find( pathID ) == CUtlDict<SearchPath>::InvalidIndex() ) {
 		return false;
 	}
 
@@ -330,12 +332,12 @@ void CFileSystemStdio::RemoveAllSearchPaths() {
 		}
 		searchPath.m_Clients.Purge();
 	}
-	this->m_SearchPaths.clear();
+	this->m_SearchPaths.Purge();
 }
 
 void CFileSystemStdio::RemoveSearchPaths( const char* szPathID ) {
 	// is it a real search path?
-	if (! this->m_SearchPaths.contains( szPathID ) ) {
+	if ( m_SearchPaths.Find( szPathID ) == CUtlDict<SearchPath>::InvalidIndex() ) {
 		return;
 	}
 
@@ -362,30 +364,49 @@ void CFileSystemStdio::RemoveSearchPaths( const char* szPathID ) {
 	search.m_ClientIDs.Purge();
 
 	// delete search path
-	this->m_SearchPaths.erase( szPathID );
+	this->m_SearchPaths.Remove( szPathID );
 }
 
 void CFileSystemStdio::MarkPathIDByRequestOnly( const char* pPathID, bool bRequestOnly ) {
 	// make a new alloc of the string
 	// TODO: Use string interning if possible
 	auto pathID{ V_strlower( V_strdup( pPathID ) ) };
-	auto clear{ true };
 
-	if (! this->m_SearchPaths.contains( pathID ) ) {
-		this->m_SearchPaths[ pathID ] = SearchPath{};
-		clear = false;
+	if ( this->m_SearchPaths.Find( pathID ) == CUtlDict<SearchPath>::InvalidIndex() ) {
+		this->m_SearchPaths.Insert( pathID );
 	}
 
 	this->m_SearchPaths[ pathID ].m_bRequestOnly = bRequestOnly;
-
-	if ( clear ) {
-		delete[] pathID;
-	}
+	delete[] pathID;
 }
 
 const char* CFileSystemStdio::RelativePathToFullPath( const char* pFileName, const char* pPathID, char* pDest, int maxLenInChars, PathTypeFilter_t pathFilter, PathTypeQuery_t* pPathType ) { AssertUnreachable(); return {}; }
 
-int CFileSystemStdio::GetSearchPath( const char* pathID, bool bGetPackFiles, char* pDest, int maxLenInChars ) { AssertUnreachable(); return {}; }
+int CFileSystemStdio::GetSearchPath( const char* pathID, bool bGetPackFiles, char* pDest, int maxLenInChars ) {
+	if ( m_SearchPaths.Find( pathID ) == CUtlDict<SearchPath>::InvalidIndex() ) {
+		return 0;
+	}
+
+	int length{0};
+	for ( const auto& client : m_SearchPaths[pathID].m_Clients ) {
+		if ( V_strcmp( client->GetType(), "pack" ) == 0 && !bGetPackFiles ) {
+			// pack files disabled...
+			continue;
+		}
+
+		auto len{ static_cast<int32>( strlen( client->GetNativePath() ) ) };
+
+		if ( length + len + 1 >= maxLenInChars ) {
+			// can't do another one
+			break;
+		}
+
+		memcpy( pDest + length, client->GetNativePath(), len );
+		*(pDest + length) = ';';
+		length += len + 1;
+	}
+	return length;
+}
 
 bool CFileSystemStdio::AddPackFile( const char* fullpath, const char* pathID ) { AssertUnreachable(); return {}; }
 
@@ -497,7 +518,7 @@ void CFileSystemStdio::PrintSearchPaths() {
 	for ( const auto& [searchPathId, searchPath] : this->m_SearchPaths ) {
 		Log( "%s:\n", searchPathId );
 		for ( const auto& path : searchPath.m_Clients ) {
-			if ( strcmp( path->GetNativePath(), "" ) != 0 ) {
+			if ( path->GetNativePath() && strcmp( path->GetNativePath(), "" ) != 0 ) {
 				Log( "  - %s\n", path->GetNativePath() );
 			}
 		}
@@ -544,7 +565,19 @@ bool CFileSystemStdio::GetFileTypeForFullPath( char const* pFullPath, wchar_t* b
 bool CFileSystemStdio::ReadToBuffer( FileHandle_t hFile, CUtlBuffer& buf, int nMaxBytes, FSAllocFunc_t pfnAlloc ) { AssertUnreachable(); return {}; }
 
 // ---- Optimal IO operations ----
-bool CFileSystemStdio::GetOptimalIOConstraints( FileHandle_t hFile, unsigned* pOffsetAlign, unsigned* pSizeAlign, unsigned* pBufferAlign ) { AssertUnreachable(); return {}; }
+bool CFileSystemStdio::GetOptimalIOConstraints( FileHandle_t hFile, unsigned* pOffsetAlign, unsigned* pSizeAlign, unsigned* pBufferAlign ) {
+	if ( pOffsetAlign ) {
+		*pOffsetAlign = 1;
+	}
+	if ( pSizeAlign ) {
+		*pSizeAlign = 1;
+	}
+	if ( pBufferAlign ) {
+		*pBufferAlign = 1;
+	}
+
+	return false;
+}
 inline unsigned CFileSystemStdio::GetOptimalReadSize( FileHandle_t hFile, unsigned nLogicalSize ) { AssertUnreachable(); return {}; }
 void* CFileSystemStdio::AllocOptimalReadBuffer( FileHandle_t hFile, unsigned nSize, unsigned nOffset ) { AssertUnreachable(); return {}; }
 void CFileSystemStdio::FreeOptimalReadBuffer( void* pBuffer ) { AssertUnreachable(); }
