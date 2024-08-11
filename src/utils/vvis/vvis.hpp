@@ -98,8 +98,6 @@ extern byte *vismap, *vismap_p, *vismap_end;// past visfile
 
 extern int testlevel;
 
-extern byte* uncompressed;
-
 extern int leafbytes, leaflongs;
 extern int portalbytes, portallongs;
 

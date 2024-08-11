@@ -58,8 +58,9 @@ bool FileSystem_Init_Normal( const char* pFilename, FSInitType_t initType, bool 
 		// First, get the name of the module
 		char fileSystemDLLName[ MAX_PATH ];
 		bool bSteam;
-		if ( FileSystem_GetFileSystemDLLName( fileSystemDLLName, MAX_PATH, bSteam ) != FS_OK )
+		if ( FileSystem_GetFileSystemDLLName( fileSystemDLLName, MAX_PATH, bSteam ) != FS_OK ) {
 			return false;
+		}
 
 		// Next, load the module, call Connect/Init.
 		CFSLoadModuleInfo loadModuleInfo;
@@ -69,23 +70,26 @@ bool FileSystem_Init_Normal( const char* pFilename, FSInitType_t initType, bool 
 		loadModuleInfo.m_ConnectFactory = Sys_GetFactoryThis();
 		loadModuleInfo.m_bSteam = bSteam;
 		loadModuleInfo.m_bToolsMode = true;
-		if ( FileSystem_LoadFileSystemModule( loadModuleInfo ) != FS_OK )
+		if ( FileSystem_LoadFileSystemModule( loadModuleInfo ) != FS_OK ) {
 			return false;
+		}
 
 		// Next, mount the content
 		CFSMountContentInfo mountContentInfo;
 		mountContentInfo.m_pDirectoryName = loadModuleInfo.m_GameInfoPath;
 		mountContentInfo.m_pFileSystem = loadModuleInfo.m_pFileSystem;
 		mountContentInfo.m_bToolsMode = true;
-		if ( FileSystem_MountContent( mountContentInfo ) != FS_OK )
+		if ( FileSystem_MountContent( mountContentInfo ) != FS_OK ) {
 			return false;
+		}
 
 		// Finally, load the search paths.
 		CFSSearchPathsInit searchPathsInit;
 		searchPathsInit.m_pDirectoryName = loadModuleInfo.m_GameInfoPath;
 		searchPathsInit.m_pFileSystem = loadModuleInfo.m_pFileSystem;
-		if ( FileSystem_LoadSearchPaths( searchPathsInit ) != FS_OK )
+		if ( FileSystem_LoadSearchPaths( searchPathsInit ) != FS_OK ) {
 			return false;
+		}
 
 		// Store the data we got from filesystem_init.
 		g_pFileSystem = g_pFullFileSystem = loadModuleInfo.m_pFileSystem;

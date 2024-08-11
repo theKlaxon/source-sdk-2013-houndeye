@@ -69,14 +69,12 @@ NewWinding
 ==================
 */
 winding_t* NewWinding( int points ) {
-	winding_t* w;
-	int size;
-
-	if ( points > MAX_POINTS_ON_WINDING )
+	if ( points > MAX_POINTS_ON_WINDING ) {
 		Error( "NewWinding: %i points, max %d", points, MAX_POINTS_ON_WINDING );
+	}
 
-	size = (int) ( &( (winding_t*) 0 )->points[ points ] );
-	w = (winding_t*) std::malloc( size );
+	auto size = (int) ( &( (winding_t*) nullptr )->points[ points ] );
+	auto* w = static_cast<winding_t*>( std::malloc( size ) );
 	memset( w, 0, size );
 
 	return w;
@@ -84,8 +82,9 @@ winding_t* NewWinding( int points ) {
 
 void pw( winding_t* w ) {
 	int i;
-	for ( i = 0; i < w->numpoints; i++ )
+	for ( i = 0; i < w->numpoints; i++ ) {
 		Msg( "(%5.1f, %5.1f, %5.1f)\n", w->points[ i ][ 0 ], w->points[ i ][ 1 ], w->points[ i ][ 2 ] );
+	}
 }
 
 void prl( leaf_t* l ) {
@@ -113,10 +112,12 @@ the earlier information.
 =============
 */
 int PComp( const void* a, const void* b ) {
-	if ( ( *(portal_t**) a )->nummightsee == ( *(portal_t**) b )->nummightsee )
+	if ( ( *(portal_t**) a )->nummightsee == ( *(portal_t**) b )->nummightsee ) {
 		return 0;
-	if ( ( *(portal_t**) a )->nummightsee < ( *(portal_t**) b )->nummightsee )
+	}
+	if ( ( *(portal_t**) a )->nummightsee < ( *(portal_t**) b )->nummightsee ) {
 		return -1;
+	}
 
 	return 1;
 }
@@ -132,11 +133,13 @@ void BuildTracePortals( int clusterStart ) {
 void SortPortals() {
 	int i;
 
-	for ( i = 0; i < g_numportals * 2; i++ )
+	for ( i = 0; i < g_numportals * 2; i++ ) {
 		sorted_portals[ i ] = &portals[ i ];
+	}
 
-	if ( nosort )
+	if ( nosort ) {
 		return;
+	}
 	qsort( sorted_portals, g_numportals * 2, sizeof( sorted_portals[ 0 ] ), PComp );
 }
 
@@ -146,7 +149,7 @@ void SortPortals() {
 LeafVectorFromPortalVector
 ==============
 */
-int LeafVectorFromPortalVector( byte* portalbits, byte* leafbits ) {
+int LeafVectorFromPortalVector( const byte* portalbits, byte* leafbits ) {
 	int i;
 	portal_t* p;
 	int c_leafs;
@@ -190,10 +193,12 @@ void ClusterMerge( int clusternum ) {
 	leaf = &leafs[ clusternum ];
 	for ( i = 0; i < leaf->portals.Count(); i++ ) {
 		p = leaf->portals[ i ];
-		if ( p->status != vstatus_t::stat_done )
+		if ( p->status != vstatus_t::stat_done ) {
 			Error( "portal not done %d %p %p\n", i, p, portals );
-		for ( j = 0; j < portallongs; j++ )
+		}
+		for ( j = 0; j < portallongs; j++ ) {
 			( (long*) portalvector )[ j ] |= ( (long*) p->portalvis )[ j ];
+		}
 		pnum = p - portals;
 		SetBit( portalvector, pnum );
 	}
@@ -226,8 +231,9 @@ static int CompressAndCrosscheckClusterVis( int clusternum ) {
 	//
 	byte* uncompressed = uncompressedvis + clusternum * leafbytes;
 	for ( int i = 0; i < portalclusters; i++ ) {
-		if ( i == clusternum )
+		if ( i == clusternum ) {
 			continue;
+		}
 
 		if ( CheckBit( uncompressed, i ) ) {
 			byte* other = uncompressedvis + i * leafbytes;
@@ -242,8 +248,9 @@ static int CompressAndCrosscheckClusterVis( int clusternum ) {
 	byte* dest = vismap_p;
 	vismap_p += numbytes;
 
-	if ( vismap_p > vismap_end )
+	if ( vismap_p > vismap_end ) {
 		Error( "Vismap expansion overflow" );
+	}
 
 	dvis->bitofs[ clusternum ][ DVIS_PVS ] = dest - vismap;
 
@@ -332,15 +339,17 @@ void SetPortalSphere( portal_t* p ) {
 		VectorAdd( total, w->points[ i ], total );
 	}
 
-	for ( i = 0; i < 3; i++ )
+	for ( i = 0; i < 3; i++ ) {
 		total[ i ] /= w->numpoints;
+	}
 
 	bestr = 0;
 	for ( i = 0; i < w->numpoints; i++ ) {
 		VectorSubtract( w->points[ i ], total, dist );
 		r = VectorLength( dist );
-		if ( r > bestr )
+		if ( r > bestr ) {
 			bestr = r;
+		}
 	}
 	VectorCopy( total, p->origin );
 	p->radius = bestr;
@@ -364,13 +373,16 @@ void LoadPortals( char* name ) {
 	// Open the portal file.
 	FILE* f = fopen( name, "r" );
 
-	if ( !f )
+	if ( !f ) {
 		Error( "LoadPortals: couldn't read %s\n", name );
+	}
 
-	if ( fscanf( f, "%79s\n%i\n%i\n", magic, &portalclusters, &g_numportals ) != 3 )
+	if ( fscanf( f, "%79s\n%i\n%i\n", magic, &portalclusters, &g_numportals ) != 3 ) {
 		Error( "LoadPortals %s: failed to read header", name );
-	if ( stricmp( magic, PORTALFILE ) != 0 )
+	}
+	if ( stricmp( magic, PORTALFILE ) != 0 ) {
 		Error( "LoadPortals %s: not a portal file", name );
+	}
 
 	Msg( "%4i portalclusters\n", portalclusters );
 	Msg( "%4i numportals\n", g_numportals );
@@ -407,8 +419,9 @@ void LoadPortals( char* name ) {
 			Error( "LoadPortals: reading portal %i", i );
 		if ( numpoints > MAX_POINTS_ON_WINDING )
 			Error( "LoadPortals: portal %i has too many points", i );
-		if ( (unsigned) leafnums[ 0 ] > portalclusters || (unsigned) leafnums[ 1 ] > portalclusters )
+		if ( (unsigned) leafnums[ 0 ] > portalclusters || (unsigned) leafnums[ 1 ] > portalclusters ) {
 			Error( "LoadPortals: reading portal %i", i );
+		}
 
 		w = p->winding = NewWinding( numpoints );
 		w->original = true;
@@ -420,10 +433,12 @@ void LoadPortals( char* name ) {
 
 			// scanf into double, then assign to vec_t
 			// so we don't care what size vec_t is
-			if ( fscanf( f, "(%lf %lf %lf ) ", &v[ 0 ], &v[ 1 ], &v[ 2 ] ) != 3 )
+			if ( fscanf( f, "(%lf %lf %lf ) ", &v[ 0 ], &v[ 1 ], &v[ 2 ] ) != 3 ) {
 				Error( "LoadPortals: reading portal %i", i );
-			for ( k = 0; k < 3; k++ )
+			}
+			for ( k = 0; k < 3; k++ ) {
 				w->points[ j ][ k ] = v[ k ];
+			}
 		}
 		fscanf( f, "\n" );
 
@@ -486,19 +501,23 @@ void CalcPAS() {
 		memcpy( uncompressed, scan, leafbytes );
 		for ( j = 0; j < leafbytes; j++ ) {
 			bitbyte = scan[ j ];
-			if ( !bitbyte )
+			if ( !bitbyte ) {
 				continue;
+			}
 			for ( k = 0; k < 8; k++ ) {
-				if ( !( bitbyte & ( 1 << k ) ) )
+				if ( !( bitbyte & ( 1 << k ) ) ) {
 					continue;
+				}
 				// OR this pvs row into the phs
 				index = ( ( j << 3 ) + k );
-				if ( index >= portalclusters )
+				if ( index >= portalclusters ) {
 					Error( "Bad bit in PVS" );// pad bits should be 0
+				}
 				src = (long*) ( uncompressedvis + index * leafbytes );
 				dest = (long*) uncompressed;
-				for ( l = 0; l < leaflongs; l++ )
+				for ( l = 0; l < leaflongs; l++ ) {
 					( (long*) uncompressed )[ l ] |= src[ l ];
+				}
 			}
 		}
 		for ( j = 0; j < portalclusters; j++ ) {
@@ -515,8 +534,9 @@ void CalcPAS() {
 		dest = (long*) vismap_p;
 		vismap_p += j;
 
-		if ( vismap_p > vismap_end )
+		if ( vismap_p > vismap_end ) {
 			Error( "Vismap expansion overflow" );
+		}
 
 		dvis->bitofs[ i ][ DVIS_PAS ] = (byte*) dest - vismap;
 
@@ -577,14 +597,14 @@ static float CalcDistanceFromLeafToWater( int leafNum ) {
 	int j, k;
 
 	// If we know that this one doesn't see a water surface then don't bother doing anything.
-	if ( ( ( dleafs[ leafNum ].contents & CONTENTS_TESTFOGVOLUME ) == 0 ) && ( dleafs[ leafNum ].leafWaterDataID == -1 ) )
-		return 65535;// FIXME: make a define for this.
-
+	if ( ( ( dleafs[ leafNum ].contents & CONTENTS_TESTFOGVOLUME ) == 0 ) && ( dleafs[ leafNum ].leafWaterDataID == -1 ) ) {
+		return 65535;// FIXME: make a define for this.}
+	}
 	// First get the vis data..
 	int cluster = dleafs[ leafNum ].cluster;
-	if ( cluster < 0 )
-		return 65535;// FIXME: make a define for this.
-
+	if ( cluster < 0 ) {
+		return 65535;// FIXME: make a define for this.}
+	}
 	DecompressVis( &dvisdata[ dvis->bitofs[ cluster ][ DVIS_PVS ] ], uncompressed );
 
 	float minDist = 65535.0f;// FIXME: make a define for this.
@@ -620,12 +640,14 @@ static float CalcDistanceFromLeafToWater( int leafNum ) {
 	// Iterate over all potentially visible clusters from this leaf
 	for ( j = 0; j < dvis->numclusters; ++j ) {
 		// Don't need to bother if this is the same as the current cluster
-		if ( j == cluster )
+		if ( j == cluster ) {
 			continue;
+		}
 
 		// If the cluster isn't in our current pvs, then get out of here.
-		if ( !CheckBit( uncompressed, j ) )
+		if ( !CheckBit( uncompressed, j ) ) {
 			continue;
+		}
 
 		// Found a visible cluster, now iterate over all leaves
 		// inside that cluster
@@ -633,8 +655,9 @@ static float CalcDistanceFromLeafToWater( int leafNum ) {
 			int nClusterLeaf = g_ClusterLeaves[ j ].leafs[ k ];
 
 			// Don't bother testing the ones that don't see a water boundary.
-			if ( ( ( dleafs[ nClusterLeaf ].contents & CONTENTS_TESTFOGVOLUME ) == 0 ) && ( dleafs[ nClusterLeaf ].leafWaterDataID == -1 ) )
+			if ( ( ( dleafs[ nClusterLeaf ].contents & CONTENTS_TESTFOGVOLUME ) == 0 ) && ( dleafs[ nClusterLeaf ].leafWaterDataID == -1 ) ) {
 				continue;
+			}
 
 			// Find the minimum distance between each surface on the boundary of the leaf
 			// that we have the pvs for and each water surface in the leaf that we are testing.
@@ -642,8 +665,9 @@ static float CalcDistanceFromLeafToWater( int leafNum ) {
 			for ( int leafFaceID = 0; leafFaceID < dleafs[ nClusterLeaf ].numleaffaces; ++leafFaceID ) {
 				int faceID = dleaffaces[ nFirstFaceID + leafFaceID ];
 				dface_t* pFace = &dfaces[ faceID ];
-				if ( pFace->texinfo == -1 )
+				if ( pFace->texinfo == -1 ) {
 					continue;
+				}
 
 				texinfo_t* pTexInfo = &texinfo[ pFace->texinfo ];
 				if ( pTexInfo->flags & SURF_WARP ) {
@@ -698,33 +722,39 @@ static void CalcVisibleFogVolumes() {
 		}
 
 		// Don't bother checking fog volumes from solid leaves
-		if ( dleafs[ i ].contents & CONTENTS_SOLID )
+		if ( dleafs[ i ].contents & CONTENTS_SOLID ) {
 			continue;
+		}
 
 		// Look only for leaves which are visible from leaves that have fluid in them.
-		if ( dleafs[ i ].leafWaterDataID == -1 )
+		if ( dleafs[ i ].leafWaterDataID == -1 ) {
 			continue;
+		}
 
 		// Don't bother about looking from CONTENTS_SLIME; we're not going to treat that as interesting.
 		// because slime is opaque
-		if ( dleafs[ i ].contents & CONTENTS_SLIME )
+		if ( dleafs[ i ].contents & CONTENTS_SLIME ) {
 			continue;
+		}
 
 		// First get the vis data..
 		int cluster = dleafs[ i ].cluster;
-		if ( cluster < 0 )
+		if ( cluster < 0 ) {
 			continue;
+		}
 
 		DecompressVis( &dvisdata[ dvis->bitofs[ cluster ][ DVIS_PVS ] ], uncompressed );
 
 		// Iterate over all potentially visible clusters from this leaf
 		for ( j = 0; j < dvis->numclusters; ++j ) {
 			// Don't need to bother if this is the same as the current cluster
-			if ( j == cluster )
+			if ( j == cluster ) {
 				continue;
+			}
 
-			if ( !CheckBit( uncompressed, j ) )
+			if ( !CheckBit( uncompressed, j ) ) {
 				continue;
+			}
 
 			// Found a visible cluster, now iterate over all leaves
 			// inside that cluster
@@ -732,12 +762,14 @@ static void CalcVisibleFogVolumes() {
 				int nClusterLeaf = g_ClusterLeaves[ j ].leafs[ k ];
 
 				// Don't bother checking fog volumes from solid leaves
-				if ( dleafs[ nClusterLeaf ].contents & CONTENTS_SOLID )
+				if ( dleafs[ nClusterLeaf ].contents & CONTENTS_SOLID ) {
 					continue;
+				}
 
 				// Don't bother checking from any leaf that's got fluid in it
-				if ( dleafs[ nClusterLeaf ].leafWaterDataID != -1 )
+				if ( dleafs[ nClusterLeaf ].leafWaterDataID != -1 ) {
 					continue;
+				}
 
 				// Here, we've found a case where a non-liquid leaf is visible from a liquid leaf
 				// So, in this case, we have to do the expensive test during rendering.
@@ -759,8 +791,9 @@ float DetermineVisRadius() {
 		const char* pEntity = ValueForKey( &entities[ i ], "classname" );
 		if ( !stricmp( pEntity, "env_fog_controller" ) ) {
 			flRadius = FloatForKey( &entities[ i ], "farz" );
-			if ( flRadius == 0.0f )
+			if ( flRadius == 0.0f ) {
 				flRadius = -1.0f;
+			}
 			break;
 		}
 	}
@@ -802,9 +835,9 @@ int ParseCommandLine( int argc, char** argv ) {
 		} else if ( !Q_stricmp( argv[ i ], "-nosort" ) ) {
 			Msg( "nosort = true\n" );
 			nosort = true;
-		} else if ( !Q_stricmp( argv[ i ], "-tmpin" ) )
+		} else if ( !Q_stricmp( argv[ i ], "-tmpin" ) ) {
 			strcpy( inbase, "/tmp" );
-		else if ( !Q_stricmp( argv[ i ], "-low" ) ) {
+		} else if ( !Q_stricmp( argv[ i ], "-low" ) ) {
 			g_bLowPriority = true;
 		} else if ( !Q_stricmp( argv[ i ], "-FullMinidumps" ) ) {
 			EnableFullMinidumps( true );
@@ -817,8 +850,9 @@ int ParseCommandLine( int argc, char** argv ) {
 			Warning( "VVIS: Unknown option \"%s\"\n\n", argv[ i ] );
 			i = 100000;// force it to print the usage
 			break;
-		} else
+		} else {
 			break;
+		}
 	}
 	return i;
 }
@@ -915,8 +949,9 @@ int RunVVis( int argc, char** argv ) {
 
 	Msg( "reading %s\n", mapFile );
 	LoadBSPFile( mapFile );
-	if ( numnodes == 0 || numfaces == 0 )
+	if ( numnodes == 0 || numfaces == 0 ) {
 		Error( "Empty map" );
+	}
 	ParseEntities();
 
 	// Check the VMF for a vis radius
@@ -981,28 +1016,20 @@ int RunVVis( int argc, char** argv ) {
 }
 
 
-/* =========== main =========== */
-int main( int argc, char** argv ) {
-	CommandLine()->CreateCmdLine( argc, argv );
-
-	FileSystem_Init(nullptr, 0, FSInitType_t::FS_INIT_COMPATIBILITY_MODE);
-	MathLib_Init( 2.2f, 2.2f, 0.0f, 1.0f, false, false, false, false );
-	InstallAllocationFunctions();
-	InstallSpewFunction();
-
-	// Install an exception handler.
-	SetupDefaultToolsMinidumpHandler();
-
-	return RunVVis( argc, argv );
-}
-
-
-// When VVIS is used as a DLL (makes debugging vmpi vvis a lot easier), this is used to
-// get it going.
 class CVVisDLL : public ILaunchableDLL {
 public:
 	int main( int argc, char** argv ) override {
-		return ::main( argc, argv );
+		CommandLine()->CreateCmdLine( argc, argv );
+
+		FileSystem_Init( nullptr, 0, FSInitType_t::FS_INIT_COMPATIBILITY_MODE );
+		MathLib_Init( 2.2f, 2.2f, 0.0f, 1.0f, false, false, false, false );
+		InstallAllocationFunctions();
+		InstallSpewFunction();
+
+		// Install an exception handler.
+		SetupDefaultToolsMinidumpHandler();
+
+		return RunVVis( argc, argv );
 	}
 };
 

@@ -21,10 +21,11 @@ static struct {
 
 
 void SpewOutputFunc( SpewOutputFunc_t func ) {
-	if ( func )
+	if ( func ) {
 		g_pSpewOutFunction = func;
-	else
+	} else {
 		g_pSpewOutFunction = DefaultSpewFunc;
+	}
 }
 
 SpewOutputFunc_t GetSpewOutputFunc() {
@@ -57,8 +58,9 @@ SpewRetval_t DefaultSpewFunc( SpewType_t pSpewType, const tchar* pMsg ) {
 
 SpewRetval_t DefaultSpewFuncAbortOnAsserts( SpewType_t pSpewType, const tchar* pMsg ) {
 	auto res{ DefaultSpewFunc( pSpewType, pMsg ) };
-	if ( pSpewType == SpewType_t::SPEW_ASSERT )
+	if ( pSpewType == SpewType_t::SPEW_ASSERT ) {
 		return SpewRetval_t::SPEW_DEBUGGER;
+	}
 
 	return res;
 }
@@ -132,8 +134,9 @@ void SetAssertFailedNotifyFunc( AssertFailedNotifyFunc_t pFunc ) {
 	g_pAssertFailedListener = pFunc;
 }
 void CallAssertFailedNotifyFunc( const char* pchFile, int nLine, const char* pchMessage ) {
-	if ( g_pAssertFailedListener )
+	if ( g_pAssertFailedListener ) {
 		g_pAssertFailedListener( pchFile, nLine, pchMessage );
+	}
 }
 
 bool HushAsserts() {
@@ -153,8 +156,9 @@ static void SpewInternal( SpewType_t pType, const tchar* pMsg, const va_list& ar
 	vsnprintf( buffer, sizeof( buffer ), pMsg, args );
 	auto res{ g_pSpewOutFunction( pType, buffer ) };
 
-	if ( res == SpewRetval_t::SPEW_CONTINUE )
+	if ( res == SpewRetval_t::SPEW_CONTINUE ) {
 		return;
+	}
 
 	if ( res == SpewRetval_t::SPEW_ABORT ) {
 		puts( "Fatal spew! Aborting execution." );
@@ -196,7 +200,7 @@ void Error( const tchar* pMsg, ... ) {
 
 // ---- Dev*
 // TODO: Actually implement these
-/* These looked at the "developer" group */
+/* These locked at the "developer" group */
 void DevMsg( int level, const tchar* pMsg, ... ) {
 	va_list args;
 	va_start( args, pMsg );
@@ -248,7 +252,7 @@ void DevLog( const tchar* pMsg, ... ) {
 	va_end( args );
 }
 
-/* These looked at the "console" group */
+/* These locked at the "console" group */
 void ConColorMsg( int level, const Color& clr, const tchar* pMsg, ... ) {
 	va_list args;
 	va_start( args, pMsg );
@@ -322,7 +326,7 @@ void ConDMsg( const tchar* pMsg, ... );
 void ConDWarning( const tchar* pMsg, ... );
 void ConDLog( const tchar* pMsg, ... );
 
-/* These looked at the "network" group */
+/* These locked at the "network" group */
 void NetMsg( int level, const tchar* pMsg, ... );
 void NetWarning( int level, const tchar* pMsg, ... );
 void NetLog( int level, const tchar* pMsg, ... );
