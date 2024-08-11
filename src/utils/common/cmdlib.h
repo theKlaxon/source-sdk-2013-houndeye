@@ -116,15 +116,15 @@ void InstallAllocationFunctions();
 
 // This shuts down mgrs that use threads gracefully. If you just call exit(), the threads can
 // get in a state where you can't tell if they are shutdown or not, and it can stall forever.
-typedef void ( *CleanupFn )();
+using CleanupFn = void(*)();
 void CmdLib_AtCleanup( CleanupFn pFn );// register a callback when Cleanup() is called.
 void CmdLib_Cleanup();
 void CmdLib_Exit( int exitCode );// Use this to cleanup and call exit().
 
 // entrypoint if chaining spew functions
 SpewRetval_t CmdLib_SpewOutputFunc( SpewType_t type, char const* pMsg );
-unsigned short SetConsoleTextColor( int red, int green, int blue, int intensity );
-void RestoreConsoleTextColor( unsigned short color );
+WORD SetConsoleTextColor( int red, int green, int blue, int intensity );
+void RestoreConsoleTextColor( WORD color );
 
 // Append all spew output to the specified file.
 void SetSpewFunctionLogFile( char const* pFilename );
