@@ -1,9 +1,24 @@
 # VMPI
 VMPI is a Message Passing Interface library written by Valve, it is used to handle compile clusters for maps.
 Its original code is mostly broken and/or lost, which means it needs to go; although we still want this functionality.
-It will be replaced by the OpenMPI MPI implementation, which hopefully will not be abandoned like its Valve cousin.
+It will be replaced by a custom implementation, which hopefully will not be abandoned like its Valve cousin.
 Additionally, VMPI also handled a MySQL database with statistics on compile times and general custer info, would be nice to still have it.
 
+
+# Additional compiler args file (`cfg/commandline.cfg`)
+All the map compilers accept additional arguments via this file, which should be located inside the mod's `cfg` directory.
+It consists in kv1-formatted data, with a main key `CommandLine` with child kv-pairs with the compiler's name as key and additional args as value.
+
+### Example
+```kdl
+// mod_hl2mp/cfg/commandline.cfg
+"CommandLine" {
+    "vvis" "-fast"
+    "vbsp" "-game hl2"
+}
+```
+In this example, we added the `-fast` flag to the vvis compiler, and a `-game hl2` arg to vbsp,
+which will cause for vvis to compile in fast mode and for vbsp to add hl2 as a search path respectively.
 
 
 # Exception handling
