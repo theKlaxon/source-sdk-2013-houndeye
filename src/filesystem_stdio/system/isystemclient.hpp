@@ -91,6 +91,8 @@ public: // metadata
 	virtual auto GetNativeAbsolutePath() const -> const char* = 0;
 	[[nodiscard]]
 	virtual auto GetIdentifier() const -> int = 0;
+	[[nodiscard]]
+	virtual auto GetType() const -> const char* = 0;
 	virtual auto Shutdown() -> void = 0;
 	auto operator==( ISystemClient& pOther ) const -> bool { return this == &pOther || this->GetIdentifier() == pOther.GetIdentifier(); }
 	auto operator==( const ISystemClient& pOther ) const -> bool { return this == &pOther || this->GetIdentifier() == pOther.GetIdentifier(); }

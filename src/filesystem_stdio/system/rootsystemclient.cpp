@@ -25,6 +25,9 @@ auto CRootSystemClient::GetNativeAbsolutePath() const -> const char* {
 auto CRootSystemClient::GetIdentifier() const -> int {
 	return 0;
 }
+auto CRootSystemClient::GetType() const -> const char* {
+	return "root";
+}
 auto CRootSystemClient::Shutdown() -> void { }
 
 // FS interaction

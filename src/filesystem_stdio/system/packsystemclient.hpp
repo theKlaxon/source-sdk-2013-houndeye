@@ -13,6 +13,8 @@ public:
 	[[nodiscard]] auto GetNativePath() const -> const char* override;
 	[[nodiscard]] auto GetNativeAbsolutePath() const -> const char* override;
 	[[nodiscard]] auto GetIdentifier() const -> int override;
+	[[nodiscard]]
+	auto GetType() const -> const char* override;
 	auto Shutdown() -> void override;
 public: // FS interaction
 	// file ops

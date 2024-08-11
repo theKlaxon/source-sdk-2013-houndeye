@@ -32,6 +32,9 @@ auto CPackSystemClient::GetNativeAbsolutePath() const -> const char* {
 auto CPackSystemClient::GetIdentifier() const -> int {
 	return this->m_iId;
 }
+auto CPackSystemClient::GetType() const -> const char* {
+	return "pack";
+}
 auto CPackSystemClient::Shutdown() -> void { }
 
 // FS interaction

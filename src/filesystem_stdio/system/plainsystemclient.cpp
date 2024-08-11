@@ -30,6 +30,9 @@ auto CPlainSystemClient::GetNativeAbsolutePath() const -> const char* {
 auto CPlainSystemClient::GetIdentifier() const -> int {
 	return this->m_iId;
 }
+auto CPlainSystemClient::GetType() const -> const char* {
+	return "plain";
+}
 auto CPlainSystemClient::Shutdown() -> void {}
 
 // FS interaction
