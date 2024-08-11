@@ -39,6 +39,7 @@ game/**/downloadlists/
 game/**/videoconfig*
 game/**/*_temp.*
 game/**/*.cache
+game/**/cfg/commandline.cfg*
 config.cfg
 voice_ban.dt
 *.tmp
