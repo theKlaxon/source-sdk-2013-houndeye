@@ -82,7 +82,7 @@ void LoadCmdLineFromFile( int& argc, char**& argv, const char* keyname, const ch
 		KeyValues* appKey = kv->FindKey( keyname );
 		if ( appKey ) {
 			const char* str = appKey->GetString( appname );
-			Msg( "Command Line found: %s\n", str );
+			Msg( "Additional Command Line arguments found: %s\n", str );
 
 			AddArguments( argc, argv, str );
 		}
