@@ -4,10 +4,9 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
 #include "KeyValues.h"
-#include "tier1/strtools.h"
 #include "filesystem_tools.h"
+#include "tier1/strtools.h"
 #include "tier1/utlstring.h"
 
 // So we know whether or not we own argv's memory
@@ -16,44 +15,36 @@ static bool sFoundConfigArgs = false;
 //-----------------------------------------------------------------------------
 // Purpose: Parses arguments and adds them to argv and argc
 //-----------------------------------------------------------------------------
-static void AddArguments( int &argc, char **&argv, const char *str )
-{
-	char  **args	 = 0;
-	char   *argList	 = 0;
-	int		argCt	 = argc;
-
-	argList = V_strdup( str );
+static void AddArguments( int& argc, char**& argv, const char* str ) {
+	char* argList = V_strdup( str );
+	int argCt = argc;
 
 	// Parse the arguments out of the string
-	char *token = strtok( argList, " " );
-	while( token )
-	{
+	char* token = strtok( argList, " " );
+	while ( token ) {
 		++argCt;
-		token = strtok( NULL, " " );
+		token = strtok( nullptr, " " );
 	}
 
 	// Make sure someting was actually found in the file
-	if( argCt > argc )
-	{
+	if ( argCt > argc ) {
 		sFoundConfigArgs = true;
 
 		// Allocate a new array for argv
-		args = new char*[ argCt ];
+		char** args = new char*[ argCt ];
 
 		// Copy original arguments, up to the last one
 		int i;
-		for( i = 0; i < argc - 1; ++i )
-		{
+		for ( i = 0; i < argc - 1; ++i ) {
 			args[ i ] = V_strdup( argv[ i ] );
 		}
 
 		// copy new arguments
 		Q_strcpy( argList, str );
 		token = strtok( argList, " " );
-		for( ; i < argCt - 1; ++i )
-		{
+		for ( ; i < argCt - 1; ++i ) {
 			args[ i ] = V_strdup( token );
-			token = strtok( NULL, " " );
+			token = strtok( nullptr, " " );
 		}
 
 		// Copy the last original argument
@@ -63,7 +54,7 @@ static void AddArguments( int &argc, char **&argv, const char *str )
 		argv = args;
 	}
 
-	delete [] argList;
+	delete[] argList;
 }
 
 //-----------------------------------------------------------------------------
@@ -72,27 +63,25 @@ static void AddArguments( int &argc, char **&argv, const char *str )
 // keyname: Name of the block containing the key/args pairs (ie map or model name)
 // appname: Keyname for the commandline arguments to be loaded - typically the exe name.
 //-----------------------------------------------------------------------------
-void LoadCmdLineFromFile( int &argc, char **&argv, const char *keyname, const char *appname )
-{
+void LoadCmdLineFromFile( int& argc, char**& argv, const char* keyname, const char* appname ) {
 	sFoundConfigArgs = false;
 
 	Assert( g_pFileSystem );
-	if( !g_pFileSystem )
+	if ( !g_pFileSystem ) {
 		return;
+	}
 
 	// Load the cfg file, and find the keyname
-	KeyValues *kv = new KeyValues( "CommandLine" );
+	auto* kv = new KeyValues( "CommandLine" );
 
-	char filename[512];
+	char filename[ 512 ];
 	Q_snprintf( filename, sizeof( filename ), "%s/cfg/commandline.cfg", gamedir );
 
-	if ( kv->LoadFromFile( g_pFileSystem, filename ) )
-	{
+	if ( kv->LoadFromFile( g_pFileSystem, filename ) ) {
 		// Load the commandline arguments for this app
-		KeyValues  *appKey	= kv->FindKey( keyname );
-		if( appKey )
-		{
-			const char *str	= appKey->GetString( appname );
+		KeyValues* appKey = kv->FindKey( keyname );
+		if ( appKey ) {
+			const char* str = appKey->GetString( appname );
 			Msg( "Command Line found: %s\n", str );
 
 			AddArguments( argc, argv, str );
@@ -106,14 +95,13 @@ void LoadCmdLineFromFile( int &argc, char **&argv, const char *keyname, const ch
 // Purpose: Cleans up any memory allocated for the new argv.  Pass in the app's
 // argc and argv - this is safe even if no extra arguments were loaded.
 //-----------------------------------------------------------------------------
-void DeleteCmdLine( int argc, char **argv )
-{
-	if( !sFoundConfigArgs )
+void DeleteCmdLine( int argc, char** argv ) {
+	if ( !sFoundConfigArgs ) {
 		return;
-
-	for( int i = 0; i < argc; ++i )
-	{
-		delete [] argv[i];
 	}
-	delete [] argv;
+
+	for ( int i = 0; i < argc; ++i ) {
+		delete[] argv[ i ];
+	}
+	delete[] argv;
 }

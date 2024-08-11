@@ -570,8 +570,9 @@ FSReturnCode_t FileSystem_LoadSearchPaths( CFSSearchPathsInit& initInfo ) {
 					*szDirVpk = '\0';
 					while ( idx >= 0 ) {
 						char* pszPath = vecFullLocationPaths[ idx ];
-						if ( V_stristr( pszPath, szTemp ) != pszPath )
+						if ( V_stristr( pszPath, szTemp ) != pszPath ) {
 							break;
+						}
 						delete pszPath;
 						vecFullLocationPaths.Remove( idx );
 						--idx;
