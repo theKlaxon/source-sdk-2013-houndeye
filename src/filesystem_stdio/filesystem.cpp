@@ -535,7 +535,15 @@ const FileSystemStatistics* CFileSystemStdio::GetFilesystemStatistics() { Assert
 // ---- Start of new functions after Lost Coast release (7/05) ----
 FileHandle_t CFileSystemStdio::OpenEx( const char* pFileName, const char* pOptions, unsigned flags, const char* pathID, char** ppszResolvedFilename ) { AssertUnreachable(); return {}; }
 
-int CFileSystemStdio::ReadEx( void* pOutput, int sizeDest, int size, FileHandle_t file ) { AssertUnreachable(); return {}; }
+int CFileSystemStdio::ReadEx( void* pOutput, int sizeDest, int size, FileHandle_t file ) {
+	// TODO: DO the `Ex` part :P
+	if (! (file && pOutput) ) {
+		return -1;
+	}
+
+	auto desc{ static_cast<FileDescriptor*>( file ) };
+	return desc->m_System.lock()->Read( desc, pOutput, size );
+}
 int CFileSystemStdio::ReadFileEx( const char* pFileName, const char* pPath, void** ppBuf, bool bNullTerminate, bool bOptimalAlloc, int nMaxBytes, int nStartingByte, FSAllocFunc_t pfnAlloc ) { AssertUnreachable(); return {}; }
 
 FileNameHandle_t CFileSystemStdio::FindFileName( char const* pFileName ) { AssertUnreachable(); return {}; }
@@ -579,8 +587,13 @@ bool CFileSystemStdio::GetOptimalIOConstraints( FileHandle_t hFile, unsigned* pO
 	return false;
 }
 inline unsigned CFileSystemStdio::GetOptimalReadSize( FileHandle_t hFile, unsigned nLogicalSize ) { AssertUnreachable(); return {}; }
-void* CFileSystemStdio::AllocOptimalReadBuffer( FileHandle_t hFile, unsigned nSize, unsigned nOffset ) { AssertUnreachable(); return {}; }
-void CFileSystemStdio::FreeOptimalReadBuffer( void* pBuffer ) { AssertUnreachable(); }
+void* CFileSystemStdio::AllocOptimalReadBuffer( FileHandle_t hFile, unsigned nSize, unsigned nOffset ) {
+	// FIXME: Actually do the thing
+	return new char[nSize];
+}
+void CFileSystemStdio::FreeOptimalReadBuffer( void* pBuffer ) {
+	delete[] static_cast<char*>( pBuffer );
+}
 
 void CFileSystemStdio::BeginMapAccess() { AssertUnreachable(); }
 void CFileSystemStdio::EndMapAccess() { AssertUnreachable(); }
