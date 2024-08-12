@@ -13,9 +13,9 @@
 #include "strtools.h"
 #include "dbg.h"
 
-CPlainSystemClient::CPlainSystemClient( int pId, std::string pAbsolute, const char* pPath )
+CPlainSystemClient::CPlainSystemClient( int32 pId, std::string pAbsolute, const char* pPath )
 	: m_iId( pId ), m_szNativePath( pPath ), m_szNativeAbsolutePath( std::move( pAbsolute ) ) { }
-auto CPlainSystemClient::Open( int pId, const std::string& pAbsolute, const char* pPath ) -> std::shared_ptr<ISystemClient> {
+auto CPlainSystemClient::Open( int32 pId, const std::string& pAbsolute, const char* pPath ) -> std::shared_ptr<ISystemClient> {
 	if (! std::filesystem::is_directory( pAbsolute ) ) {
 		return { };
 	}
@@ -27,7 +27,7 @@ auto CPlainSystemClient::GetNativePath() const -> const char* {
 auto CPlainSystemClient::GetNativeAbsolutePath() const -> const char* {
 	return this->m_szNativeAbsolutePath.c_str();
 }
-auto CPlainSystemClient::GetIdentifier() const -> int {
+auto CPlainSystemClient::GetIdentifier() const -> int32 {
 	return this->m_iId;
 }
 auto CPlainSystemClient::GetType() const -> const char* {
@@ -82,13 +82,13 @@ auto CPlainSystemClient::Open( const char* pPath, OpenMode pMode ) -> FileDescri
 	desc->m_Handle = file;
 	return desc;
 }
-auto CPlainSystemClient::Read( const FileDescriptor* pDesc, void* pBuffer, uint32_t pCount ) -> int32_t {
+auto CPlainSystemClient::Read( const FileDescriptor* pDesc, void* pBuffer, uint32 pCount ) -> int32 {
 	AssertFatalMsg( pDesc, "Was given a `NULL` file handle!" );
 	AssertFatalMsg( pBuffer, "Was given a `NULL` buffer ptr!" );
 
 	return pread64( static_cast<int>( pDesc->m_Handle ), pBuffer, pCount, static_cast<__off64_t>( pDesc->m_Offset ) );
 }
-auto CPlainSystemClient::Write( const FileDescriptor* pDesc, const void* pBuffer, uint32_t pCount ) -> int32_t {
+auto CPlainSystemClient::Write( const FileDescriptor* pDesc, const void* pBuffer, uint32 pCount ) -> int32 {
 	AssertFatalMsg( pDesc, "Was given a `NULL` file handle!" );
 	AssertFatalMsg( pBuffer, "Was given a `NULL` buffer ptr!" );
 

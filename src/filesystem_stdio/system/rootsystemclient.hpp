@@ -12,15 +12,15 @@ public:
 	[[nodiscard]]
 	auto GetNativeAbsolutePath() const -> const char* override;
 	[[nodiscard]]
-	auto GetIdentifier() const -> int override;
+	auto GetIdentifier() const -> int32 override;
 	[[nodiscard]]
 	auto GetType() const -> const char* override;
 	auto Shutdown() -> void override;
 public: // FS interaction
 	// file ops
 	auto Open  ( const char* pPath, OpenMode pMode ) -> FileDescriptor* override;
-	auto Read  ( const FileDescriptor* pDesc, void* pBuffer, uint32_t pCount ) -> int32_t override;
-	auto Write ( const FileDescriptor* pDesc, const void* pBuffer, uint32_t pCount ) -> int32_t override;
+	auto Read  ( const FileDescriptor* pDesc, void* pBuffer, uint32 pCount ) -> int32 override;
+	auto Write ( const FileDescriptor* pDesc, const void* pBuffer, uint32 pCount ) -> int32 override;
 	auto Flush ( const FileDescriptor* pDesc ) -> bool override;
 	auto Close ( const FileDescriptor* pDesc ) -> void override;
 	// generic ops

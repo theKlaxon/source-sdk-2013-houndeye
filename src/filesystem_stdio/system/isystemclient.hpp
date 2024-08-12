@@ -90,7 +90,7 @@ public: // metadata
 	[[nodiscard]]
 	virtual auto GetNativeAbsolutePath() const -> const char* = 0;
 	[[nodiscard]]
-	virtual auto GetIdentifier() const -> int = 0;
+	virtual auto GetIdentifier() const -> int32 = 0;
 	[[nodiscard]]
 	virtual auto GetType() const -> const char* = 0;
 	virtual auto Shutdown() -> void = 0;
@@ -99,8 +99,8 @@ public: // metadata
 public: // fs interactions
 	// file ops
 	virtual auto Open  ( const char* pPath, OpenMode pMode ) -> FileDescriptor* = 0;
-	virtual auto Read  ( const FileDescriptor* pDesc, void* pBuffer, uint32_t pCount ) -> int32_t = 0;
-	virtual auto Write ( const FileDescriptor* pDesc, const void* pBuffer, uint32_t pCount ) -> int32_t = 0;
+	virtual auto Read  ( const FileDescriptor* pDesc, void* pBuffer, uint32 pCount ) -> int32 = 0;
+	virtual auto Write ( const FileDescriptor* pDesc, const void* pBuffer, uint32 pCount ) -> int32 = 0;
 	virtual auto Flush ( const FileDescriptor* pDesc ) -> bool = 0;
 	virtual auto Close ( const FileDescriptor* pDesc ) -> void = 0;
 	// generic ops

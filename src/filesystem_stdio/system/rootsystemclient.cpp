@@ -22,7 +22,7 @@ auto CRootSystemClient::GetNativeAbsolutePath() const -> const char* {
 		return nullptr;
 	#endif
 }
-auto CRootSystemClient::GetIdentifier() const -> int {
+auto CRootSystemClient::GetIdentifier() const -> int32 {
 	return 0;
 }
 auto CRootSystemClient::GetType() const -> const char* {
@@ -36,7 +36,7 @@ auto CRootSystemClient::Open( const char* pPath, OpenMode pMode ) -> FileDescrip
 	AssertFatalMsg( pMode, "Was given an empty open mode!" );
 
 	#if IsLinux()
-		int32_t mode2{ 0 };
+		int32 mode2{ 0 };
 		// read/write combos
 		if ( pMode.read && !pMode.write ) {
 			mode2 |= O_RDONLY;
@@ -73,13 +73,13 @@ auto CRootSystemClient::Open( const char* pPath, OpenMode pMode ) -> FileDescrip
 	desc->m_Handle = file;
 	return desc;
 }
-auto CRootSystemClient::Read( const FileDescriptor* pDesc, void* pBuffer, uint32_t pCount ) -> int32_t {
+auto CRootSystemClient::Read( const FileDescriptor* pDesc, void* pBuffer, uint32 pCount ) -> int32 {
 	AssertFatalMsg( pDesc, "Was given a `NULL` file handle!" );
 	AssertFatalMsg( pBuffer, "Was given a `NULL` buffer ptr!" );
 
 	return pread64( static_cast<int>( pDesc->m_Handle ), pBuffer, pCount, static_cast<__off64_t>( pDesc->m_Offset ) );
 }
-auto CRootSystemClient::Write( const FileDescriptor* pDesc, const void* pBuffer, uint32_t pCount ) -> int32_t {
+auto CRootSystemClient::Write( const FileDescriptor* pDesc, const void* pBuffer, uint32 pCount ) -> int32 {
 	AssertFatalMsg( pDesc, "Was given a `NULL` file handle!" );
 	AssertFatalMsg( pBuffer, "Was given a `NULL` buffer ptr!" );
 
