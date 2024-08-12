@@ -1,4 +1,4 @@
-# inputsystem.cmake
+# appframework.cmake
 
 set( APPFRAMEWORK_DIR ${CMAKE_CURRENT_LIST_DIR} )
 set( APPFRAMEWORK_SOURCE_FILES
