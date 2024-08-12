@@ -2446,8 +2446,9 @@ void WriteBSPFile( const char* filename, char* pUnused ) {
 	AddLump( LUMP_PRIMVERTS, g_primverts, g_numprimverts );
 	AddLump( LUMP_PRIMINDICES, g_primindices, g_numprimindices );
 	AddLump( LUMP_FACES, dfaces, numfaces, LUMP_FACES_VERSION );
-	if ( numfaces_hdr )
+	if ( numfaces_hdr ) {
 		AddLump( LUMP_FACES_HDR, dfaces_hdr, numfaces_hdr, LUMP_FACES_VERSION );
+	}
 	AddLump( LUMP_FACEIDS, dfaceids, numfaceids );
 
 	AddLump( LUMP_ORIGINALFACES, dorigfaces, numorigfaces );// original faces lump
@@ -2476,13 +2477,13 @@ void WriteBSPFile( const char* filename, char* pUnused ) {
 	AddLump( LUMP_MAP_FLAGS, &flags_lump, 1 );
 
 	// NOTE: This is just for debugging, so it is disabled in release maps
-#if 0
-	// add the vis portals to the BSP for visualization
-	AddLump( LUMP_PORTALS, dportals, numportals );
-	AddLump( LUMP_CLUSTERS, dclusters, numclusters );
-	AddLump( LUMP_PORTALVERTS, dportalverts, numportalverts );
-	AddLump( LUMP_CLUSTERPORTALS, dclusterportals, numclusterportals );
-#endif
+	#if 0
+		// add the vis portals to the BSP for visualization
+		AddLump( LUMP_PORTALS, dportals, numportals );
+		AddLump( LUMP_CLUSTERS, dclusters, numclusters );
+		AddLump( LUMP_PORTALVERTS, dportalverts, numportalverts );
+		AddLump( LUMP_CLUSTERPORTALS, dclusterportals, numclusterportals );
+	#endif
 
 	AddLump( LUMP_CLIPPORTALVERTS, (float*) g_ClipPortalVerts, g_nClipPortalVerts * 3 );
 	AddLump( LUMP_CUBEMAPS, g_CubemapSamples, g_nCubemapSamples );
