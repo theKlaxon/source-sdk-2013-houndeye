@@ -82,20 +82,34 @@ int CFileSystemStdio::Read( void* pOutput, int size, FileHandle_t file ) {
 		return -1;
 	}
 
-	auto desc{ static_cast<FileDescriptor*>( file ) };
+	auto* desc{ static_cast<FileDescriptor*>( file ) };
+
+	int32 count{ desc->m_System.lock()->Read( desc, pOutput, size ) };
+	if ( count > 0 ) {
+		desc->m_Offset += count;
+	}
 
 	// should return -1 on read failure,
-	return desc->m_System.lock()->Read( desc, pOutput, size );
+	return count;
 }
 int CFileSystemStdio::Write( const void* pInput, int size, FileHandle_t file ) {
+	// special case for `size=0`, as might happen (bsplib) with a 1NULL `pInput`
+	if ( size == 0 ) {
+		return 0;
+	}
 	if (! (file && pInput) ) {
 		return -1;
 	}
 
-	auto desc{ static_cast<FileDescriptor*>( file ) };
+	auto* desc{ static_cast<FileDescriptor*>( file ) };
+
+	int32 count{ desc->m_System.lock()->Write( desc, pInput, size ) };
+	if ( count > 0 ) {
+		desc->m_Offset += count;
+	}
 
 	// should return -1 on read failure,
-	return desc->m_System.lock()->Write( desc, pInput, size );
+	return count;
 }
 
 FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions, const char* pathID ) {
@@ -592,6 +606,7 @@ void* CFileSystemStdio::AllocOptimalReadBuffer( FileHandle_t hFile, unsigned nSi
 	return new char[nSize];
 }
 void CFileSystemStdio::FreeOptimalReadBuffer( void* pBuffer ) {
+	// FIXME: Actually do the thing
 	delete[] static_cast<char*>( pBuffer );
 }
 
@@ -631,9 +646,9 @@ bool CFileSystemStdio::IsFileCacheFileLoaded( FileCacheHandle_t cacheId, const c
 bool CFileSystemStdio::IsFileCacheLoaded( FileCacheHandle_t cacheId ) { AssertUnreachable(); return {}; }
 void CFileSystemStdio::DestroyFileCache( FileCacheHandle_t cacheId ) { AssertUnreachable(); }
 
-bool CFileSystemStdio::RegisterMemoryFile( CMemoryFileBacking * pFile, CMemoryFileBacking * *ppExistingFileWithRef ) { AssertUnreachable(); return {}; }
+bool CFileSystemStdio::RegisterMemoryFile( CMemoryFileBacking* pFile, CMemoryFileBacking** ppExistingFileWithRef ) { AssertUnreachable(); return {}; }
 
-void CFileSystemStdio::UnregisterMemoryFile( CMemoryFileBacking * pFile ) { AssertUnreachable(); }
+void CFileSystemStdio::UnregisterMemoryFile( CMemoryFileBacking* pFile ) { AssertUnreachable(); }
 
 void CFileSystemStdio::CacheAllVPKFileHashes( bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes ) { AssertUnreachable(); }
 bool CFileSystemStdio::CheckVPKFileHash( int PackFileID, int nPackFileNumber, int nFileFraction, MD5Value_t& md5Value ) { AssertUnreachable(); return {}; }
