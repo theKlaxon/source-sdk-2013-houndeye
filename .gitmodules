@@ -1,6 +1,6 @@
 [submodule "thirdparty/SDL"]
 	path = thirdparty/SDL
-	url = git@github.com:libsdl-org/SDL.git
+	url = https://github.com/libsdl-org/SDL.git
 [submodule "thirdparty/sourcepp"]
 	path = thirdparty/sourcepp
-	url = git@github.com:craftablescience/sourcepp.git
+	url = https://github.com/craftablescience/sourcepp.git
