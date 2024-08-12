@@ -23,6 +23,7 @@ elseif ( ${BUILD_GROUP} STREQUAL "everything" )
 	include( "${SRCDIR}/raytrace/raytrace.cmake" )
 	include( "${SRCDIR}/vgui2/vgui_controls/vgui_controls.cmake" )
 	include( "${SRCDIR}/fgdlib/fgdlib.cmake" )
+	include( "${SRCDIR}/bitmap/bitmap.cmake" )
 
 	include( "${SRCDIR}/utils/vbsp/vbsp.cmake" )
 	include( "${SRCDIR}/utils/vrad/vrad_dll.cmake" )

@@ -5,7 +5,6 @@
 // $NoKeywords: $
 //===========================================================================//
 #pragma once
-
 #include <climits>
 
 #include "appframework/IAppSystem.h"
