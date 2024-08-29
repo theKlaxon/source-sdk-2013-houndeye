@@ -26,7 +26,7 @@ void Bitmap_t::Clear() { AssertUnreachable(); }
 
 bool Bitmap_t::IsValid() const {
 	// TODO: Maybe do a better check?
-	return m_pBits == nullptr;
+	return m_pBits != nullptr && m_ImageFormat != IMAGE_FORMAT_UNKNOWN;
 }
 
 Color Bitmap_t::GetColor( int32 x, int32 y ) const {

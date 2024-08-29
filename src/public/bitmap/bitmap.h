@@ -59,9 +59,11 @@ struct Bitmap_t {
 
 	/// Get pointer to raw pixel data.
 	uint8* GetPixel( int32 x, int32 y );
+	[[nodiscard]]
 	const uint8* GetPixel( int32 x, int32 y ) const;
 
 	/// Get pixel value at specified coordinates
+	[[nodiscard]]
 	Color GetColor( int32 x, int32 y ) const;
 
 	/// Set pixel value at specified coordinates
