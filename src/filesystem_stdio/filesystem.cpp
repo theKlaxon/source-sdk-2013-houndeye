@@ -588,14 +588,19 @@ bool CFileSystemStdio::ReadToBuffer( FileHandle_t hFile, CUtlBuffer& buf, int nM
 
 // ---- Optimal IO operations ----
 bool CFileSystemStdio::GetOptimalIOConstraints( FileHandle_t hFile, unsigned* pOffsetAlign, unsigned* pSizeAlign, unsigned* pBufferAlign ) {
+	if (! hFile ) {
+		return false;
+	}
+	const uint32 value{ strcmp( static_cast<FileDescriptor*>( hFile )->m_System.lock()->GetType(), "pack" ) != 0 };
+
 	if ( pOffsetAlign ) {
-		*pOffsetAlign = 1;
+		*pOffsetAlign = value;
 	}
 	if ( pSizeAlign ) {
-		*pSizeAlign = 1;
+		*pSizeAlign = value;
 	}
 	if ( pBufferAlign ) {
-		*pBufferAlign = 1;
+		*pBufferAlign = value;
 	}
 
 	return false;
