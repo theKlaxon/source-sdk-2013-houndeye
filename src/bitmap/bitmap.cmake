@@ -6,6 +6,7 @@ set( BITMAP_SOURCE_FILES
 	"${BITMAP_DIR}/bitmap.cpp"
 	"${BITMAP_DIR}/tgaloader.cpp"
 	"${BITMAP_DIR}/tgawriter.cpp"
+	"${BITMAP_DIR}/tgaspec.hpp"
 
 	# Public units
 
