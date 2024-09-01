@@ -12,8 +12,6 @@
 // $NoKeywords: $
 //=============================================================================
 #pragma once
-
-
 #include "IAppSystem.h"
 #include "tier1/interface.h"
 #include "tier1/utldict.h"
@@ -50,7 +48,7 @@ public:
 	virtual bool Create() = 0;
 
 	// Allow the application to do some work after AppSystems are connected but
-	// they are all Initialized.
+	// before they are all Initialized.
 	// Return false if there's any problems and the app will abort
 	virtual bool PreInit() = 0;
 
@@ -111,6 +109,7 @@ public:
 	virtual void Shutdown();
 
 	// Returns the stage at which the app system group ran into an error
+	[[nodiscard]]
 	AppSystemGroupStage_t GetErrorStage() const;
 
 protected:
@@ -175,11 +174,10 @@ private:
 	CUtlVector<Module_t> m_Modules;
 	// TODO: Check if unifying these two is a possible move
 	CUtlVector<IAppSystem*> m_Systems;
-	CUtlDict<int, unsigned short> m_SystemDict;
+	CUtlDict<int, uint16> m_SystemDict;
 	CAppSystemGroup* m_pParentAppSystem{ nullptr };
 	AppSystemGroupStage_t m_nErrorStage{ AppSystemGroupStage_t::NONE };
 
-	friend void* AppSystemCreateInterfaceFn( const char* pInterfaceName, int* pReturnCode );
 	friend class CSteamAppSystemGroup;
 };
 
@@ -189,7 +187,7 @@ private:
 //-----------------------------------------------------------------------------
 class CSteamAppSystemGroup : public CAppSystemGroup {
 public:
-	CSteamAppSystemGroup( IFileSystem* pFileSystem = NULL, CAppSystemGroup* pParentAppSystem = NULL );
+	explicit CSteamAppSystemGroup( IFileSystem* pFileSystem = nullptr, CAppSystemGroup* pParentAppSystem = nullptr );
 
 	// Used by CSteamApplication to set up necessary pointers if we can't do it in the constructor
 	void Setup( IFileSystem* pFileSystem, CAppSystemGroup* pParentAppSystem );

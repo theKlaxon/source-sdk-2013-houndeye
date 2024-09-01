@@ -6,14 +6,14 @@
 // $NoKeywords: $
 //===========================================================================//
 #pragma once
-
 #include "appframework/IAppSystemGroup.h"
 
 
 //-----------------------------------------------------------------------------
 // Gets the application instance..
 //-----------------------------------------------------------------------------
-[[nodiscard]] void* GetAppInstance();
+[[nodiscard]]
+void* GetAppInstance();
 
 
 //-----------------------------------------------------------------------------
@@ -75,27 +75,24 @@ void AppShutdown( CAppSystemGroup* pAppSystemGroup );
 // required modules from steam.
 //-----------------------------------------------------------------------------
 class CSteamApplication : public CAppSystemGroup {
-	typedef CAppSystemGroup BaseClass;
-
+	using BaseClass = CAppSystemGroup;
 public:
-	CSteamApplication( CSteamAppSystemGroup* pAppSystemGroup );
-
-	// Implementation of IAppSystemGroup
+	explicit CSteamApplication( CSteamAppSystemGroup* pAppSystemGroup );
+public:  // IAppSystemGroup
 	virtual bool Create();
 	virtual bool PreInit();
 	virtual int Main();
 	virtual void PostShutdown();
 	virtual void Destroy();
-
+public:
 	// Use this version in cases where you can't control the main loop and
 	// expect to be ticked
 	virtual int Startup();
 	virtual void Shutdown();
-
 protected:
-	IFileSystem* m_pFileSystem;
+	IFileSystem* m_pFileSystem{ nullptr };
 	CSteamAppSystemGroup* m_pChildAppSystemGroup;
-	bool m_bSteam;
+	bool m_bSteam{ false };
 };
 
 

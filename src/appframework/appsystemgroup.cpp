@@ -4,21 +4,9 @@
 //
 #include "appframework/IAppSystemGroup.h"
 
-static CAppSystemGroup* g_pRootAppSystem{ nullptr };
-
-void* AppSystemCreateInterfaceFn( const char* pInterfaceName, int* pRetCode ) {
-	AssertMsg( g_pRootAppSystem != nullptr, "RootFactory was asked for an interface when no AppSystemGroup was ran!" );
-	auto index = g_pRootAppSystem->m_SystemDict.Find( pInterfaceName );
-	if ( index != CUtlDict<int, unsigned short>::InvalidIndex() )
-		return g_pRootAppSystem->m_Systems[index];
-
-	for ( const auto& system : g_pRootAppSystem->m_Systems ) {
-		auto iface = system->QueryInterface( pInterfaceName );
-		if ( iface )
-			return iface;
-	}
-
-	return nullptr;
+namespace {
+	CAppSystemGroup* s_pRootAppSystem{ nullptr };
+	int s_FailedSystemIndex{ -1 };
 }
 
 // public
@@ -27,18 +15,22 @@ CAppSystemGroup::CAppSystemGroup( CAppSystemGroup* pParentAppSystem )
 }
 
 int CAppSystemGroup::Run() {
-	g_pRootAppSystem = this;
-	InitReturnVal_t res{};
+	s_pRootAppSystem = this;
 
 	// Load
+	((void)0);
 	// Connect
-	if (! this->ConnectSystems() );
+	this->ConnectSystems();
+	// Pre Init
+	this->PreInit();
 	// Initialize
-	res = this->InitSystems();
+	this->InitSystems();
 	// Run main
 	this->Main();
 	// Shutdown
 	this->ShutdownSystems();
+	// Post Shutdown
+	this->PostShutdown();
 	// Disconnect
 	this->DisconnectSystems();
 	// Unload
@@ -57,8 +49,9 @@ CAppSystemGroup::AppSystemGroupStage_t CAppSystemGroup::GetErrorStage() const {
 // protected
 AppModule_t CAppSystemGroup::LoadModule( const char* pDLLName ) {
 	for (  auto i{0}; i < this->m_Modules.Count(); i += 1 ) {
-		if ( V_strcmp( this->m_Modules[i].m_pModuleName, pDLLName ) == 0 )
+		if ( V_strcmp( this->m_Modules[i].m_pModuleName, pDLLName ) == 0 ) {
 			return i;
+		}
 	}
 
 	CSysModule* sysModule{ Sys_LoadModule( pDLLName ) };
@@ -78,8 +71,9 @@ AppModule_t CAppSystemGroup::LoadModule( const char* pDLLName ) {
 }
 AppModule_t CAppSystemGroup::LoadModule( CreateInterfaceFn factory ) {
 	for ( int i{ 0 }; i < this->m_Modules.Count(); i += 1 ) {
-		if ( this->m_Modules[i].m_Factory == factory )
+		if ( this->m_Modules[i].m_Factory == factory ) {
 			return i;
+		}
 	}
 
 	AssertMsg( false, "Not implemented, if you need this, ask a programmer to add it." );
@@ -88,7 +82,7 @@ AppModule_t CAppSystemGroup::LoadModule( CreateInterfaceFn factory ) {
 
 IAppSystem* CAppSystemGroup::AddSystem( AppModule_t module, const char* pInterfaceName ) {
 	auto index{ this->m_SystemDict.Find( pInterfaceName ) };
-	if ( index == CUtlDict<int, unsigned short>::InvalidIndex() ) {
+	if ( index == CUtlDict<int, uint16>::InvalidIndex() ) {
 		index = this->m_Systems.AddToTail();
 	} else {
 		Warning( "System `%s` has been added multiple times! This will overrides the last value!", pInterfaceName );
@@ -111,21 +105,58 @@ void CAppSystemGroup::AddSystem( IAppSystem* pAppSystem, const char* pInterfaceN
 }
 
 bool CAppSystemGroup::AddSystems( AppSystemInfo_t* pSystems ) {
-	int i{ 0 };
-	while ( pSystems[i].m_pModuleName ) {
+	for ( int i{0}; pSystems[i].m_pModuleName; i += 1 ) {
+		auto info{ pSystems[i] };
+		auto module{ LoadModule( info.m_pModuleName ) };
+		if ( module == CUtlVector<Module_t>::InvalidIndex() ) {
+			s_FailedSystemIndex = i;
+			m_nErrorStage = AppSystemGroupStage_t::CREATION;
+			return false;
+		}
 
-		i += 1;
+		if (! AddSystem( module,  info.m_pInterfaceName ) ) {
+			s_FailedSystemIndex = i;
+			m_nErrorStage = AppSystemGroupStage_t::CREATION;
+			return false;
+		}
 	}
 
-    return false; //TODO: fixme
+    return true;
 }
 
 void* CAppSystemGroup::FindSystem( const char* pInterfaceName ) {
-    return {};
+	auto index = s_pRootAppSystem->m_SystemDict.Find( pInterfaceName );
+	if ( index != CUtlDict<int, uint16>::InvalidIndex() ) {
+		return s_pRootAppSystem->m_Systems[index];
+	}
+	return {};
 }
 
 CreateInterfaceFn CAppSystemGroup::GetFactory() {
-	return AppSystemCreateInterfaceFn;
+	return []( const char* pInterfaceName, int* pRetCode ) -> void* {
+		AssertMsg( s_pRootAppSystem != nullptr, "RootFactory was asked for an interface when no AppSystemGroup was ran!" );
+		auto index = s_pRootAppSystem->m_SystemDict.Find( pInterfaceName );
+		if ( index != CUtlDict<int, uint16>::InvalidIndex() ) {
+			if ( pRetCode ) {
+				*pRetCode = IFACE_OK;
+			}
+			return s_pRootAppSystem->m_Systems[index];
+		}
+
+		for ( const auto& system : s_pRootAppSystem->m_Systems ) {
+			if ( auto* iface = system->QueryInterface( pInterfaceName ) ) {
+				if ( pRetCode ) {
+					*pRetCode = IFACE_OK;
+				}
+				return iface;
+			}
+		}
+
+		if ( pRetCode ) {
+			*pRetCode = IFACE_FAILED;
+		}
+		return nullptr;
+	};
 }
 
 // private
@@ -135,7 +166,19 @@ void CAppSystemGroup::OnShutdown() { }
 void CAppSystemGroup::UnloadAllModules() { }
 void CAppSystemGroup::RemoveAllSystems() { }
 
-bool CAppSystemGroup::ConnectSystems() { return {}; }
+bool CAppSystemGroup::ConnectSystems() {
+	const auto factory{ GetFactory() };
+
+	for ( int i{0}; i < m_Systems.Size(); i += 1 ) {
+		if (! m_Systems[i]->Connect( factory ) ) {
+			s_FailedSystemIndex = i;
+			m_nErrorStage = AppSystemGroupStage_t::CONNECTION;
+			return false;
+		}
+	}
+
+	return true;
+}
 void CAppSystemGroup::DisconnectSystems() { }
 
 InitReturnVal_t CAppSystemGroup::InitSystems() { return {}; }
@@ -145,7 +188,9 @@ CAppSystemGroup* CAppSystemGroup::GetParent() {
 	return this->m_pParentAppSystem;
 }
 
-CSysModule* CAppSystemGroup::LoadModuleDLL( const char* pDLLName ) { return {}; }
+CSysModule* CAppSystemGroup::LoadModuleDLL( const char* pDLLName ) {
+	return Sys_LoadModule( pDLLName );
+}
 
 void CAppSystemGroup::ReportStartupFailure( int nErrorStage, int nSysIndex ) { }
 
