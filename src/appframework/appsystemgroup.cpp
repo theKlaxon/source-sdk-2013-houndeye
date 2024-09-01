@@ -5,7 +5,8 @@
 #include "appframework/IAppSystemGroup.h"
 
 namespace {
-	CAppSystemGroup* s_pRootAppSystem{ nullptr };
+	CAppSystemGroup* s_RootAppSystem{ nullptr };
+	// TODO: Use this to give better error messages
 	int s_FailedSystemIndex{ -1 };
 }
 
@@ -15,32 +16,43 @@ CAppSystemGroup::CAppSystemGroup( CAppSystemGroup* pParentAppSystem )
 }
 
 int CAppSystemGroup::Run() {
-	s_pRootAppSystem = this;
+	s_RootAppSystem = this;
+	int res{1};
 
-	// Load
-	((void)0);
-	// Connect
-	this->ConnectSystems();
-	// Pre Init
-	this->PreInit();
-	// Initialize
-	this->InitSystems();
-	// Run main
-	this->Main();
-	// Shutdown
-	this->ShutdownSystems();
-	// Post Shutdown
-	this->PostShutdown();
-	// Disconnect
-	this->DisconnectSystems();
-	// Unload
+	// modules are already loaded when we get here
+	if ( this->ConnectSystems() ) {
+		if ( this->PreInit() ) {
+			if ( this->InitSystems() != InitReturnVal_t::INIT_FAILED ) {
+				res = this->Main();
+				this->ShutdownSystems();  // TODO: Figure out if this can be pulled out of the if
+			}
+			this->PostShutdown();
+		}
+		this->DisconnectSystems();
+	}
 	this->UnloadAllModules();
 
-    return 0;
+    return res;
 }
 
-int CAppSystemGroup::Startup() { return 0; }
-void CAppSystemGroup::Shutdown() { }
+int CAppSystemGroup::Startup() {
+	if (! this->ConnectSystems() ) {
+		return 1;
+	}
+	if (! this->PreInit() ) {
+		return 2;
+	}
+	if ( InitSystems() == InitReturnVal_t::INIT_FAILED ) {
+		return 3;
+	}
+	return 0;
+}
+void CAppSystemGroup::Shutdown() {
+	this->ShutdownSystems();
+	this->PostShutdown();
+	this->DisconnectSystems();
+	this->UnloadAllModules();
+}
 
 CAppSystemGroup::AppSystemGroupStage_t CAppSystemGroup::GetErrorStage() const {
 	return this->m_nErrorStage;
@@ -125,25 +137,25 @@ bool CAppSystemGroup::AddSystems( AppSystemInfo_t* pSystems ) {
 }
 
 void* CAppSystemGroup::FindSystem( const char* pInterfaceName ) {
-	auto index = s_pRootAppSystem->m_SystemDict.Find( pInterfaceName );
+	auto index = s_RootAppSystem->m_SystemDict.Find( pInterfaceName );
 	if ( index != CUtlDict<int, uint16>::InvalidIndex() ) {
-		return s_pRootAppSystem->m_Systems[index];
+		return s_RootAppSystem->m_Systems[index];
 	}
 	return {};
 }
 
 CreateInterfaceFn CAppSystemGroup::GetFactory() {
 	return []( const char* pInterfaceName, int* pRetCode ) -> void* {
-		AssertMsg( s_pRootAppSystem != nullptr, "RootFactory was asked for an interface when no AppSystemGroup was ran!" );
-		auto index = s_pRootAppSystem->m_SystemDict.Find( pInterfaceName );
+		AssertMsg( s_RootAppSystem != nullptr, "RootFactory was asked for an interface when no AppSystemGroup was ran!" );
+		auto index = s_RootAppSystem->m_SystemDict.Find( pInterfaceName );
 		if ( index != CUtlDict<int, uint16>::InvalidIndex() ) {
 			if ( pRetCode ) {
 				*pRetCode = IFACE_OK;
 			}
-			return s_pRootAppSystem->m_Systems[index];
+			return s_RootAppSystem->m_Systems[index];
 		}
 
-		for ( const auto& system : s_pRootAppSystem->m_Systems ) {
+		for ( const auto& system : s_RootAppSystem->m_Systems ) {
 			if ( auto* iface = system->QueryInterface( pInterfaceName ) ) {
 				if ( pRetCode ) {
 					*pRetCode = IFACE_OK;
@@ -160,11 +172,15 @@ CreateInterfaceFn CAppSystemGroup::GetFactory() {
 }
 
 // private
-int CAppSystemGroup::OnStartup() { return {}; }
-void CAppSystemGroup::OnShutdown() { }
+int CAppSystemGroup::OnStartup() { AssertUnreachable(); return {}; }
+void CAppSystemGroup::OnShutdown() { AssertUnreachable(); }
 
-void CAppSystemGroup::UnloadAllModules() { }
-void CAppSystemGroup::RemoveAllSystems() { }
+void CAppSystemGroup::UnloadAllModules() {
+	for ( const auto& module : m_Modules ) {
+		Sys_UnloadModule( module.m_pModule );
+	}
+}
+void CAppSystemGroup::RemoveAllSystems() { AssertUnreachable(); }
 
 bool CAppSystemGroup::ConnectSystems() {
 	const auto factory{ GetFactory() };
@@ -179,10 +195,28 @@ bool CAppSystemGroup::ConnectSystems() {
 
 	return true;
 }
-void CAppSystemGroup::DisconnectSystems() { }
+void CAppSystemGroup::DisconnectSystems() {
+	for ( int i{0}; i < m_Systems.Size(); i += 1 ) {
+		m_Systems[i]->Disconnect();
+	}
+}
 
-InitReturnVal_t CAppSystemGroup::InitSystems() { return {}; }
-void CAppSystemGroup::ShutdownSystems() { }
+InitReturnVal_t CAppSystemGroup::InitSystems() {
+	for ( int i{0}; i < m_Systems.Size(); i += 1 ) {
+		if ( m_Systems[i]->Init() != InitReturnVal_t::INIT_OK ) {
+			s_FailedSystemIndex = i;
+			m_nErrorStage = AppSystemGroupStage_t::INITIALIZATION;
+			return InitReturnVal_t::INIT_FAILED;
+		}
+	}
+
+	return InitReturnVal_t::INIT_OK;
+}
+void CAppSystemGroup::ShutdownSystems() {
+	for ( int i{0}; i < m_Systems.Size(); i += 1 ) {
+		m_Systems[i]->Shutdown();
+	}
+}
 
 CAppSystemGroup* CAppSystemGroup::GetParent() {
 	return this->m_pParentAppSystem;
@@ -192,7 +226,7 @@ CSysModule* CAppSystemGroup::LoadModuleDLL( const char* pDLLName ) {
 	return Sys_LoadModule( pDLLName );
 }
 
-void CAppSystemGroup::ReportStartupFailure( int nErrorStage, int nSysIndex ) { }
+void CAppSystemGroup::ReportStartupFailure( int nErrorStage, int nSysIndex ) { AssertUnreachable(); }
 
 
 

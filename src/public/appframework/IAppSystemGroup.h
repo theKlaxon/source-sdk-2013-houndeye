@@ -21,7 +21,6 @@
 //-----------------------------------------------------------------------------
 // forward declarations
 //-----------------------------------------------------------------------------
-class IAppSystem;
 class CSysModule;
 class IBaseInterface;
 class IFileSystem;
