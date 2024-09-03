@@ -21,15 +21,22 @@ set( BITMAP_SOURCE_FILES
 	"${SRCDIR}/public/filesystem.h"
 )
 
-add_library( bitmap STATIC ${BITMAP_SOURCE_FILES} )
+add_library( bitmap2 STATIC ${BITMAP_SOURCE_FILES} )
 
-target_include_directories( bitmap
+target_include_directories( bitmap2
 	PRIVATE
 		"${SRCDIR}/common"
 		"${SRCDIR}/public"
 )
-target_link_libraries( bitmap
+target_link_libraries( bitmap2
 	PRIVATE
 		tier0
 		vstdlib
+)
+
+add_library( bitmap IMPORTED STATIC )
+
+set_target_properties( bitmap
+	PROPERTIES
+		IMPORTED_LOCATION "${LIBPUBLIC}/bitmap.a"
 )
