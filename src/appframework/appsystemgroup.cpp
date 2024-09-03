@@ -10,7 +10,7 @@ namespace {
 	int s_FailedSystemIndex{ -1 };
 }
 
-// public
+// -- CAppSystemGroup --
 CAppSystemGroup::CAppSystemGroup( CAppSystemGroup* pParentAppSystem )
 	: m_Modules(), m_Systems(), m_SystemDict(), m_pParentAppSystem(pParentAppSystem) {
 }
@@ -229,5 +229,26 @@ CSysModule* CAppSystemGroup::LoadModuleDLL( const char* pDLLName ) {
 void CAppSystemGroup::ReportStartupFailure( int nErrorStage, int nSysIndex ) { AssertUnreachable(); }
 
 
+// -- CSteamAppSystemGroup --
+CSteamAppSystemGroup::CSteamAppSystemGroup( IFileSystem* pFileSystem, CAppSystemGroup* pParentAppSystem )
+	: m_pFileSystem{pFileSystem}, CAppSystemGroup( pParentAppSystem ) {
+	AssertUnreachable();
+}
 
+void CSteamAppSystemGroup::Setup( IFileSystem* pFileSystem, CAppSystemGroup* pParentAppSystem ) {
+	AssertUnreachable();
+}
 
+bool CSteamAppSystemGroup::SetupSearchPaths( const char* pStartingDir, bool bOnlyUseStartingDir, bool bIsTool ) {
+	AssertUnreachable();
+	return {};
+}
+
+const char* CSteamAppSystemGroup::GetGameInfoPath() const {
+	AssertUnreachable();
+	return {};
+}
+
+CSysModule* CSteamAppSystemGroup::LoadModuleDLL( const char* pDLLName ) {
+	return Sys_LoadModule( pDLLName );
+}

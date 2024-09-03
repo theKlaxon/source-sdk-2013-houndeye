@@ -214,8 +214,8 @@ class CDefaultAppSystemGroup : public CBaseClass {
 public:
 	virtual bool Create() { return true; }
 	virtual bool PreInit() { return true; }
-	virtual void PostShutdown() {}
-	virtual void Destroy() {}
+	virtual void PostShutdown() { }
+	virtual void Destroy() { }
 };
 
 
@@ -223,7 +223,7 @@ public:
 // Special helper for game info directory suggestion
 //-----------------------------------------------------------------------------
 
-class CFSSteamSetupInfo;// Forward declaration
+class CFSSteamSetupInfo;  // Forward declaration
 
 //
 // SuggestGameInfoDirFn_t
