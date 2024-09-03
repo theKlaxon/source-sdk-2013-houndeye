@@ -25,7 +25,14 @@ IDedicatedServerAPI* g_pDedicatedServerApi{nullptr};
 IStudioDataCache* g_pStudioDataCache{nullptr};
 CDedicatedExports g_DedicatedExports{};
 
-ModInfo_t s_modInfo{ nullptr, nullptr, nullptr, nullptr, nullptr, false };
+ModInfo_t s_modInfo{
+	.m_pInstance=nullptr,
+	.m_pBaseDirectory=nullptr,
+	.m_pInitialMod=nullptr,
+	.m_pInitialGame=nullptr,
+	.m_pParentAppSystemGroup=nullptr,
+	.m_bTextMode=false
+};
 char g_szBaseDir[ MAX_PATH ];
 char g_szGameInfoDir[ MAX_PATH ];
 bool g_bDedicatedServer{ false };
@@ -39,8 +46,9 @@ DLL_EXPORT int LauncherMain( int argc, char* argv[] ) {
 
 	SpewOutputFunc( LauncherSpewFunc );
 
-	if ( Plat_IsInDebugSession() )
-		ConLog( "[I] running with debugger attached!\n" );
+	if ( Plat_IsInDebugSession() ) {
+		Log( "running with debugger attached!\n" );
+	}
 
 	g_bDedicatedServer = CommandLine()->FindParm( "-dedicated" ) != 0;
 
@@ -56,17 +64,19 @@ DLL_EXPORT int LauncherMain( int argc, char* argv[] ) {
 	return err;
 }
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "modernize-use-designated-initializers"
 void Init() {
 	// module loading
 	std::array<SourceApp::systemReq_t, 9> appSystems {{
-		{ "materialsystem", MATERIAL_SYSTEM_INTERFACE_VERSION },
-		{ "studiorender", STUDIO_RENDER_INTERFACE_VERSION },
-		{ "vphysics", VPHYSICS_INTERFACE_VERSION },
-		{ "datacache", DATACACHE_INTERFACE_VERSION },
-		{ "datacache", MDLCACHE_INTERFACE_VERSION },
-		{ "datacache", STUDIO_DATA_CACHE_INTERFACE_VERSION },
+		{ "materialsystem",   MATERIAL_SYSTEM_INTERFACE_VERSION },
+		{ "studiorender",     STUDIO_RENDER_INTERFACE_VERSION },
+		{ "vphysics",         VPHYSICS_INTERFACE_VERSION },
+		{ "datacache",        DATACACHE_INTERFACE_VERSION },
+		{ "datacache",        MDLCACHE_INTERFACE_VERSION },
+		{ "datacache",        STUDIO_DATA_CACHE_INTERFACE_VERSION },
 		{ "filesystem_stdio", QUEUEDLOADER_INTERFACE_VERSION },
-		{ "inputsystem", INPUTSYSTEM_INTERFACE_VERSION },
+		{ "inputsystem",      INPUTSYSTEM_INTERFACE_VERSION },
 		{ "engine", g_bDedicatedServer ? VENGINE_HLDS_API_VERSION : VENGINE_LAUNCHER_API_VERSION }
 	}};
 
@@ -74,7 +84,7 @@ void Init() {
 
 	int err{ SourceApp::Load() };
 	if ( err ) {
-		Error( "Failed to load %d modules!\n", err );
+		Error( "Failed to load module at index %d!\n", err - 1 );
 	}
 
 	SourceApp::AddSystem( &g_DedicatedExports, VENGINE_DEDICATEDEXPORTS_API_VERSION );
@@ -82,7 +92,7 @@ void Init() {
 	// interconnection between modules
 	err = SourceApp::Connect();
 	if ( err ) {
-		Error( "Failed to connect %d systems!\n", err );
+		Error( "Failed to connect system at index %d\n", err - 1 );
 	}
 
 	// globals setup
@@ -109,6 +119,7 @@ void Init() {
 		Error( "Failed to setup search paths! (stage: %d)", err );
 	}
 }
+#pragma clang diagnostic pop
 
 int SetupSearchPaths() {
 	// environment info
@@ -118,23 +129,26 @@ int SetupSearchPaths() {
 	steamInfo.m_bToolsMode = false;
 	steamInfo.m_bSetSteamDLLPath = true;
 	steamInfo.m_bSteam = g_pFileSystem->IsSteam();
-	if ( FileSystem_SetupSteamEnvironment( steamInfo ) != FS_OK )
+	if ( FileSystem_SetupSteamEnvironment( steamInfo ) != FS_OK ) {
 		return 1;
+	}
 
 	// gameinfo mounts
 	CFSMountContentInfo fsInfo;
 	fsInfo.m_pFileSystem = g_pFileSystem;
 	fsInfo.m_bToolsMode = false;
 	fsInfo.m_pDirectoryName = steamInfo.m_GameInfoPath;
-	if ( FileSystem_MountContent( fsInfo ) != FS_OK )
+	if ( FileSystem_MountContent( fsInfo ) != FS_OK ) {
 		return 2;
+	}
 
 	// search paths
 	CFSSearchPathsInit searchPathsInit;
 	searchPathsInit.m_pDirectoryName = steamInfo.m_GameInfoPath;
 	searchPathsInit.m_pFileSystem = fsInfo.m_pFileSystem;
-	if ( FileSystem_LoadSearchPaths( searchPathsInit ) != FS_OK )
+	if ( FileSystem_LoadSearchPaths( searchPathsInit ) != FS_OK ) {
 		return 3;
+	}
 
 	// add platform folder to search path
 	char platform[ MAX_PATH ];
@@ -211,7 +225,8 @@ void CDedicatedExports::Sys_Printf( char* text ) {
 
 void CDedicatedExports::RunServer() {
 	// Main Server loop
-	for ( ;; )
+	for ( ;; ) {
 		g_pDedicatedServerApi->RunFrame();
+	}
 }
 

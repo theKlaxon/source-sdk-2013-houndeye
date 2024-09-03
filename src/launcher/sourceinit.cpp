@@ -15,30 +15,40 @@ struct loadInfo_t {
 	CreateInterfaceFn factory;
 };
 struct systemInfo_t {
-	unsigned short originModule;
+	uint16 originModule;
 	IAppSystem* app;
 };
 
-static CUtlDict<systemInfo_t, unsigned short> s_systemDict;
-static CUtlDict<loadInfo_t, unsigned short> s_moduleDict;
+static CUtlDict<systemInfo_t, uint16> s_systemDict;
+static CUtlDict<loadInfo_t, uint16> s_moduleDict;
 
 void* Factory( const char* interfaceName, int* retCode ) {
 	// Return the interface if we know it
-	unsigned short id = s_systemDict.Find( interfaceName );
-	if ( id != s_systemDict.InvalidIndex() )
+	uint16 id = s_systemDict.Find( interfaceName );
+	if ( id != CUtlDict<systemInfo_t, uint16>::InvalidIndex() ) {
+		if ( retCode ) {
+			*retCode = IFACE_OK;
+		}
 		return s_systemDict[ id ].app;
+	}
 
 	// Do any of our apps know it?
 	for ( unsigned int i = 0; i < s_systemDict.Count(); i++ ) {
-		void* q = s_systemDict.Element( i ).app->QueryInterface( interfaceName );
-		if ( q )
+		if ( void* q = s_systemDict.Element( i ).app->QueryInterface( interfaceName ) ) {
+			if ( retCode ) {
+				*retCode = IFACE_OK;
+			}
 			return q;
+		}
 	}
 
 	// Should we check the modules' factories?
 
 	// Dunno what you're looking for
-	return 0;
+	if ( retCode ) {
+		*retCode = IFACE_FAILED;
+	}
+	return nullptr;
 }
 
 
@@ -50,22 +60,22 @@ void SourceApp::SetSystemRequest( std::span<SourceApp::systemReq_t> requests ) {
 int SourceApp::Load() {
 	// Load all modules for each request, once
 	for ( unsigned int i = 0; i < s_requestCount; i++ ) {
-		unsigned short moduleId = 0;
+		uint16 moduleId = 0;
 
-		unsigned short idx = s_moduleDict.Find( s_request[ i ].moduleName );
-		if ( idx == s_moduleDict.InvalidIndex() ) {
+		uint16 idx = s_moduleDict.Find( s_request[ i ].moduleName );
+		if ( idx == CUtlDict<loadInfo_t, uint16>::InvalidIndex() ) {
 			// We don't have this one yet. Load it
 			CSysModule* module = Sys_LoadModule( s_request[ i ].moduleName );
 			if ( !module ) {
-				printf( "Failed to load module %s!\n", s_request[ i ].moduleName );
-				return i + 1;
+				Warning( "Failed to load module %s!\n", s_request[ i ].moduleName );
+				return static_cast<int>( i + 1 );
 			}
 
 			// We need every module's factory
 			CreateInterfaceFn factory = Sys_GetFactory( module );
 			if ( !factory ) {
-				printf( "Failed to load module factory %s!\n", s_request[ i ].moduleName );
-				return i + 1;
+				Warning( "Failed to load module factory %s!\n", s_request[ i ].moduleName );
+				return static_cast<int>( i + 1 );
 			}
 
 			// Store it
@@ -77,24 +87,24 @@ int SourceApp::Load() {
 
 
 		if ( s_systemDict.HasElement( s_request[ i ].interfaceName ) ) {
-			printf( "Interface %s listed twice!", s_request[ i ].interfaceName );
-			return i + 1;
+			Warning( "Interface %s listed twice!", s_request[ i ].interfaceName );
+			return static_cast<int>( i + 1 );
 		}
-		s_systemDict.Insert( s_request[ i ].interfaceName, { moduleId, 0 } );
+		s_systemDict.Insert( s_request[ i ].interfaceName, { moduleId, nullptr } );
 	}
 
 	// Add in cvars first
-	SourceApp::AddSystem( VStdLib_GetICVarFactory()( CVAR_INTERFACE_VERSION, 0 ), CVAR_INTERFACE_VERSION );
+	SourceApp::AddSystem( VStdLib_GetICVarFactory()( CVAR_INTERFACE_VERSION, nullptr ), CVAR_INTERFACE_VERSION );
 
 	// Load interfaces
-	for ( unsigned int i = 0; i < s_requestCount; i++ ) {
+	for ( uint32 i = 0; i < s_requestCount; i++ ) {
 		systemInfo_t& sys = s_systemDict.Element( i );
 		// Ordered, so we can just access without lookup.
 		int ret = 0;
 		void* app = s_moduleDict[ sys.originModule ].factory( s_request[ i ].interfaceName, &ret );
 		if ( !app || ret ) {
-			printf( "Failed to load app %s!\n", s_request[ i ].interfaceName );
-			return i + 1;
+			Warning( "Failed to load system `%s` from module `%s`\n", s_request[ i ].interfaceName, s_request[ i ].moduleName );
+			return static_cast<int>( i + 1 );
 		}
 		sys.app = reinterpret_cast<IAppSystem*>( app );
 	}
@@ -103,7 +113,7 @@ int SourceApp::Load() {
 }
 
 void SourceApp::AddSystem( void* system, const char* interfaceName ) {
-	s_systemDict.Insert( interfaceName, { s_systemDict.InvalidIndex(), reinterpret_cast<IAppSystem*>( system ) } );
+	s_systemDict.Insert( interfaceName, { CUtlDict<systemInfo_t, uint16>::InvalidIndex(), reinterpret_cast<IAppSystem*>( system ) } );
 }
 
 int SourceApp::Connect() {
@@ -115,8 +125,8 @@ int SourceApp::Connect() {
 
 	for ( unsigned int i = 0; i < s_systemDict.Count(); i++ ) {
 		if ( !s_systemDict.Element( i ).app->Connect( factory ) ) {
-			printf( "Failed to connect %s!\n", s_systemDict.GetElementName( i ) );
-			return i + 1;
+			Warning( "Failed to connect %s!\n", s_systemDict.GetElementName( i ) );
+			return static_cast<int>( i + 1 );
 		}
 	}
 
@@ -126,8 +136,8 @@ int SourceApp::Connect() {
 int SourceApp::Init() {
 	for ( unsigned int i = 0; i < s_systemDict.Count(); i++ ) {
 		if ( s_systemDict.Element( i ).app->Init() != INIT_OK ) {
-			printf( "Failed to init %s!\n", s_systemDict.GetElementName( i ) );
-			return i + 1;
+			Warning( "Failed to init %s!\n", s_systemDict.GetElementName( i ) );
+			return static_cast<int>( i + 1 );
 		}
 	}
 	return 0;
@@ -153,7 +163,7 @@ void SourceApp::Shutdown() {
 //	DisconnectTier1Libraries();
 
 	// Unload all modules
-	for ( int i = s_moduleDict.Count() - 1; i >= 0; i-- ) {
+	for ( int i = static_cast<int>( s_moduleDict.Count() - 1 ); i >= 0; i-- ) {
 		Sys_UnloadModule( s_moduleDict.Element( i ).sysModule );
 	}
 }
