@@ -1,10 +1,9 @@
 # client_hl2mp.cmake
 
-include("${CMAKE_CURRENT_LIST_DIR}/client_base.cmake")
+include( "${CMAKE_CURRENT_LIST_DIR}/client_base.cmake" )
 
-set(CLIENT_HL2MP_DIR ${CMAKE_CURRENT_LIST_DIR})
-set(
-	CLIENT_HL2MP_SOURCE_FILES
+set( CLIENT_HL2MP_DIR ${CMAKE_CURRENT_LIST_DIR} )
+set( CLIENT_HL2MP_SOURCE_FILES
 
 	# Source Files
 	"${CLIENT_HL2MP_DIR}/c_team_objectiveresource.cpp"
@@ -146,34 +145,33 @@ set(
 	"${CLIENT_HL2MP_DIR}/hl2mp/hud_deathnotice.cpp"
 )
 
-set(
-	CLIENT_HL2MP_EXCLUDE_SOURCES
+set( CLIENT_HL2MP_EXCLUDE_SOURCES
 	"${SRCDIR}/game/shared/weapon_parse_default.cpp"
 )
 
-add_library(client_hl2mp MODULE ${CLIENT_HL2MP_SOURCE_FILES})
+add_library( client_hl2mp MODULE ${CLIENT_HL2MP_SOURCE_FILES} )
 
-set_target_properties(
-	client_hl2mp PROPERTIES
-	OUTPUT_NAME "client"
-	PREFIX ""
-	LIBRARY_OUTPUT_DIRECTORY "${GAMEDIR}/mod_hl2mp/bin"
+set_target_properties( client_hl2mp
+	PROPERTIES
+		OUTPUT_NAME "client"
+		PREFIX ""
+		LIBRARY_OUTPUT_DIRECTORY "${GAMEDIR}/mod_hl2mp/bin"
 )
 
-target_use_client_base(client_hl2mp CLIENT_HL2MP_EXCLUDE_SOURCES)
+target_use_client_base( client_hl2mp CLIENT_HL2MP_EXCLUDE_SOURCES )
 
-target_include_directories(
-	client_hl2mp PRIVATE
-	"${CLIENT_HL2MP_DIR}/hl2mp/ui"
-	"${CLIENT_HL2MP_DIR}/hl2mp"
-	"${SRCDIR}/game/shared/hl2mp"
-	"${CLIENT_HL2MP_DIR}/hl2"
-	"${CLIENT_HL2MP_DIR}/hl2/elements"
-	"${SRCDIR}/game/shared/hl2"
+target_include_directories( client_hl2mp
+	PRIVATE
+		"${CLIENT_HL2MP_DIR}/hl2mp/ui"
+		"${CLIENT_HL2MP_DIR}/hl2mp"
+		"${SRCDIR}/game/shared/hl2mp"
+		"${CLIENT_HL2MP_DIR}/hl2"
+		"${CLIENT_HL2MP_DIR}/hl2/elements"
+		"${SRCDIR}/game/shared/hl2"
 )
 
-target_compile_definitions(
-	client_hl2mp PRIVATE
-	HL2MP
-	HL2_CLIENT_DLL
+target_compile_definitions( client_hl2mp
+	PRIVATE
+		HL2MP
+		HL2_CLIENT_DLL
 )
