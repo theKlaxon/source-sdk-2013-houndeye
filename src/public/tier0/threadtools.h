@@ -1230,7 +1230,7 @@ public:
 	virtual bool Start( unsigned nBytesStack = 0 );
 
 	// Returns true if thread has been created and hasn't yet exited
-	bool IsAlive() const;
+	bool IsAlive();
 
 	// This method causes the current thread to wait until this thread
 	// is no longer alive.

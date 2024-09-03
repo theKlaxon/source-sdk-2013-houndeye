@@ -268,7 +268,7 @@ bool CThreadSyncObject::Wait( uint32 dwTimeoutMs ) {
         gettimeofday( &val, nullptr );
         timespec spec{
             .tv_sec = val.tv_sec,
-            .tv_nsec = static_cast<long>( dwTimeoutMs * 1000 ) + val.tv_usec / 1000
+            .tv_nsec = static_cast<int32>( dwTimeoutMs * 1000 ) + val.tv_usec / 1000
         };
         auto res{ pthread_cond_timedwait( &this->m_Condition, &this->m_Mutex, &spec ) };
         pthread_mutex_unlock( &this->m_Mutex );
@@ -362,7 +362,10 @@ void CThread::SetName( const char* pName ) {
 
 bool CThread::Start( unsigned nBytesStack ) {
 	#if IsWindows()
-		#error "plz impl thx"
+		m_hThread = CreateThread( nullptr, nBytesStack, CThread::ThreadProc, this, 0, &m_threadId );
+		if (! m_hThread ) {
+			return false;
+		}
 	#elif IsPosix()
 		pthread_attr_t attrs;
 		if (! pthread_attr_init( &attrs ) ) {
@@ -379,16 +382,26 @@ bool CThread::Start( unsigned nBytesStack ) {
 	return true;
 }
 
-bool CThread::IsAlive() const {
+bool CThread::IsAlive() {
 	return this->m_result != -1;
 }
 
-bool CThread::Join( unsigned timeout ) {
+bool CThread::Join( uint32 timeout ) {
 	#if IsWindows()
-		#error "plz impl thx"
+		auto res{ WaitForSingleObject( m_hThread, timeout ) };
+		if ( res == /*WAIT_TIMEOUT*/0x00000102L || res == /*WAIT_FAILED*/-1 ) {
+			return false;
+		}
+		GetExitCodeThread( m_hThread, m_result );
+		return true;
 	#elif IsPosix()
+		// TODO: Is this correct?
+		timespec spec{};
+		clock_gettime( CLOCK_MONOTONIC, &spec );
+		spec.tv_sec += static_cast<int32>( timeout ) / 1000;
+		spec.tv_nsec += (static_cast<int32>( timeout ) % 1000) * 1000 * 1000;
 		// FIXME: This will need to change when porting to x64
-		return pthread_join( m_threadId, reinterpret_cast<void**>( &m_result ) ) == 0;
+		return pthread_timedjoin_np( m_threadId, reinterpret_cast<void**>( &m_result ), &spec ) == 0;
 	#endif
 }
 
