@@ -1,5 +1,6 @@
 # groups.cmake
 
+include( "${SRCDIR}/lib/statics.cmake" )  # TODO: Remove when not needed anymore
 if ( ${BUILD_GROUP} STREQUAL "game" )
 	include( "${SRCDIR}/game/client/client_${BUILD_GAME}.cmake" )
 	include( "${SRCDIR}/game/server/server_${BUILD_GAME}.cmake" )

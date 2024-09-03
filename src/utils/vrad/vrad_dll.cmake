@@ -2,7 +2,6 @@
 
 set(VRAD_DLL_DIR ${CMAKE_CURRENT_LIST_DIR})
 set(VRAD_DLL_SOURCE_FILES
-
 	"${SRCDIR}/public/bsptreedata.cpp"
 	"${SRCDIR}/public/disp_common.cpp"
 	"${SRCDIR}/public/disp_powerinfo.cpp"
@@ -185,12 +184,12 @@ target_link_libraries( vrad_dll
 		$<${IS_WINDOWS}:ws2_32>
 
 		raytrace
-		"${LIBPUBLIC}/bitmap${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		bitmap
 		tier2
 		tier0
 		vstdlib
 		tier1
 		lzma
 		mathlib
-		"${LIBPUBLIC}/vtf${CMAKE_STATIC_LIBRARY_SUFFIX}"
+		vtf
 )
