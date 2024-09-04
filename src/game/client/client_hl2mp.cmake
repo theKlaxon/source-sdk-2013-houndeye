@@ -4,7 +4,6 @@ include( "${CMAKE_CURRENT_LIST_DIR}/client_base.cmake" )
 
 set( CLIENT_HL2MP_DIR ${CMAKE_CURRENT_LIST_DIR} )
 set( CLIENT_HL2MP_SOURCE_FILES
-
 	# Source Files
 	"${CLIENT_HL2MP_DIR}/c_team_objectiveresource.cpp"
 	"${CLIENT_HL2MP_DIR}/c_team_objectiveresource.h"

@@ -1195,20 +1195,22 @@ function( target_use_client_base target EXCLUDE_SOURCES )
 			$<${IS_LINUX}:rt>
 			$<${IS_WINDOWS}:winmm>
 			"$<$<AND:${IS_WINDOWS},${BUILD_REPLAY}>:wsock32;Ws2_32>"
-			"${LIBPUBLIC}/particles${CMAKE_STATIC_LIBRARY_SUFFIX}"
+			particles
 
-			"${LIBPUBLIC}/bitmap${CMAKE_STATIC_LIBRARY_SUFFIX}"
-			"${LIBPUBLIC}/choreoobjects${CMAKE_STATIC_LIBRARY_SUFFIX}"
-			"${LIBPUBLIC}/dmxloader${CMAKE_STATIC_LIBRARY_SUFFIX}"
-			${ASRC_tier02}
+			bitmap
+			choreoobjects
+			dmxloader
+#			${ASRC_tier02}
+			tier0
 			mathlib
-			"${LIBPUBLIC}/matsys_controls${CMAKE_STATIC_LIBRARY_SUFFIX}"
+			matsys_controls
 			tier1
 			tier2
-			${ASRC_vstdlib2}
+#			${ASRC_vstdlib2}
+			vstdlib
 			tier3
 			vgui_controls
-			"${LIBPUBLIC}/vtf${CMAKE_STATIC_LIBRARY_SUFFIX}"
+			vtf
 			steam_api
 
 			#"$<${IS_POSIX}:${LIBCOMMON}/libcrypto${CMAKE_STATIC_LIBRARY_SUFFIX}>"
