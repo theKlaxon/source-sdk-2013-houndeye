@@ -74,9 +74,9 @@ public:
 
 // Default implementation
 class CResourcePreload : public IResourcePreload {
-	void PurgeUnreferencedResources() {}
-	void OnEndMapLoading( bool bAbort ) {}
-	void PurgeAll() {}
+	void PurgeUnreferencedResources() { }
+	void OnEndMapLoading( bool bAbort ) { }
+	void PurgeAll() { }
 };
 
 // UI can install progress notification
