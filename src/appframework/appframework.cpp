@@ -4,11 +4,14 @@
 #include "appframework/AppFramework.h"
 #include "tier0/icommandline.h"
 #include "filesystem_init.h"
+// This must be the final include in a .cpp file!!!
+#include "memdbgon.h"
+#include "vstdlib/cvar.h"
+
 
 namespace {
 	void* s_AppInstance{ nullptr };
 }
-
 
 void* GetAppInstance() {
 	return s_AppInstance;
@@ -57,6 +60,9 @@ void CSteamApplication::Shutdown() {
 
 // CSteamApplication - IAppSystem
 bool CSteamApplication::Create() {
+	// load ICVar/cvar factory
+	this->AddSystem( this->LoadModule( "libvstdlib" ), CVAR_INTERFACE_VERSION );
+
 	char fsDllName[1024];
 	bool steam;
 	FileSystem_SetErrorMode( FSErrorMode_t::FS_ERRORMODE_AUTO );
@@ -74,17 +80,33 @@ bool CSteamApplication::Create() {
 		return false;
 	}
 
-	return this->m_pChildAppSystemGroup->Create();
+	// actually load the fs module
+	CFSLoadModuleInfo loadModuleInfo{};
+	loadModuleInfo.m_pFileSystemDLLName = fsDllName;
+	loadModuleInfo.m_pDirectoryName = nullptr;
+	loadModuleInfo.m_bOnlyUseDirectoryName = false;
+	loadModuleInfo.m_ConnectFactory = GetFactory();
+	loadModuleInfo.m_bSteam = steam;
+	loadModuleInfo.m_bToolsMode = false;
+	if ( FileSystem_LoadFileSystemModule( loadModuleInfo ) != FS_OK ) {
+		return false;
+	}
+	m_pFileSystem = g_pFullFileSystem = loadModuleInfo.m_pFileSystem;
+	// give the fs module to child group, so it can play with it
+	m_pChildAppSystemGroup->Setup( m_pFileSystem, this );
+	this->AddSystem( m_pFileSystem, FILESYSTEM_INTERFACE_VERSION );
+
+	return m_pChildAppSystemGroup->Create();
 }
 bool CSteamApplication::PreInit() {
-	return this->m_pChildAppSystemGroup->PreInit();
+	return m_pChildAppSystemGroup->PreInit();
 }
 int CSteamApplication::Main() {
-	return this->m_pChildAppSystemGroup->Main();
+	return m_pChildAppSystemGroup->Main();
 }
 void CSteamApplication::PostShutdown() {
-	this->m_pChildAppSystemGroup->PostShutdown();
+	m_pChildAppSystemGroup->PostShutdown();
 }
 void CSteamApplication::Destroy() {
-	this->m_pChildAppSystemGroup->Destroy();
+	m_pChildAppSystemGroup->Destroy();
 }

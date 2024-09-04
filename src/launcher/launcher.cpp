@@ -20,6 +20,17 @@ DLL_EXPORT int LauncherMain( int argc, char* argv[] ) {
 	// then set the Spew function, so we can log stuff as soon as possible
 	SpewOutputFunc( LauncherSpewFunc );
 
+	// are we in a debug session?
+	if ( Plat_IsInDebugSession() ) {
+		Log( "running with debugger attached!\n" );
+	}
+
+	// check we have a game in our hands
+	if (! CommandLine()->FindParm( "-game" ) ) {
+		Warning( "was not given a game to load!! defaulting to `Half-Life 2`" );
+		CommandLine()->AppendParm( "-game", "hl2" );
+	}
+
 	// then init and launch Source
 	CSteamAppLoader loader;
 	CSteamApplication app{ &loader };

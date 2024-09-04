@@ -3,6 +3,10 @@
 //   Based on code by OzxyBox: https://github.com/Source-SDK-Resources/source-sdk-example-qt
 //
 #include "appframework/IAppSystemGroup.h"
+#include "filesystem_init.h"
+// This must be the final include in a .cpp file!!!
+#include "memdbgon.h"
+
 
 namespace {
 	CAppSystemGroup* s_RootAppSystem{ nullptr };
@@ -21,7 +25,10 @@ int CAppSystemGroup::Run() {
 	s_RootAppSystem = this;
 	int res{1};
 
-	// modules are already loaded when we get here
+	if (! this->Create() ) {
+		Error( "AppSystemGroup::Create() returned `false`, this is usually because modules are missing or corrupt, check log for possibly more info." );
+		return 1;
+	}
 	if ( this->ConnectSystems() ) {
 		if ( this->PreInit() ) {
 			if ( this->InitSystems() != InitReturnVal_t::INIT_FAILED ) {
@@ -105,7 +112,7 @@ IAppSystem* CAppSystemGroup::AddSystem( AppModule_t module, const char* pInterfa
 	int retCode;
 	const auto mod{ this->m_Modules[ module ] };
 	auto system{ reinterpret_cast<IAppSystem*>( mod.m_Factory( pInterfaceName, &retCode ) ) };
-	if (! retCode ) {
+	if ( retCode != IFACE_OK ) {
 		Warning( "Failed to load system for interface `%s` from module `%s`.", pInterfaceName, mod.m_pModuleName );
 		return nullptr;
 	}
@@ -139,11 +146,7 @@ bool CAppSystemGroup::AddSystems( AppSystemInfo_t* pSystems ) {
 }
 
 void* CAppSystemGroup::FindSystem( const char* pInterfaceName ) {
-	auto index = s_RootAppSystem->m_SystemDict.Find( pInterfaceName );
-	if ( index != CUtlDict<int, uint16>::InvalidIndex() ) {
-		return s_RootAppSystem->m_Systems[index];
-	}
-	return {};
+	return GetFactory()( pInterfaceName, nullptr );
 }
 
 CreateInterfaceFn CAppSystemGroup::GetFactory() {
@@ -235,22 +238,63 @@ void CAppSystemGroup::ReportStartupFailure( int nErrorStage, int nSysIndex ) { A
 // CSteamAppSystemGroup
 // ----------------------
 CSteamAppSystemGroup::CSteamAppSystemGroup( IFileSystem* pFileSystem, CAppSystemGroup* pParentAppSystem )
-	: m_pFileSystem{pFileSystem}, CAppSystemGroup( pParentAppSystem ) {
-	AssertUnreachable();
-}
+	: m_pFileSystem{pFileSystem}, CAppSystemGroup( pParentAppSystem ) { }
 
 void CSteamAppSystemGroup::Setup( IFileSystem* pFileSystem, CAppSystemGroup* pParentAppSystem ) {
-	AssertUnreachable();
+	if ( pFileSystem ) {
+		m_pFileSystem = pFileSystem;
+	}
+	if ( pParentAppSystem ) {
+		m_pParentAppSystem = pParentAppSystem;
+	}
 }
 
 bool CSteamAppSystemGroup::SetupSearchPaths( const char* pStartingDir, bool bOnlyUseStartingDir, bool bIsTool ) {
-	AssertUnreachable();
-	return {};
+	// find the `gameinfo.txt`
+	CFSSteamSetupInfo steamInfo;
+	steamInfo.m_pDirectoryName = pStartingDir;
+	steamInfo.m_bOnlyUseDirectoryName = bOnlyUseStartingDir;
+	steamInfo.m_bToolsMode = bIsTool;
+	steamInfo.m_bSetSteamDLLPath = true;
+	steamInfo.m_bSteam = m_pFileSystem->IsSteam();
+	if ( FileSystem_SetupSteamEnvironment( steamInfo ) != FS_OK ) {
+		Error( "Failed to find `gameinfo.txt`! aborting." );
+		return false;
+	}
+	V_strcpy_safe( m_pGameInfoPath, steamInfo.m_GameInfoPath );
+
+	// mount the game
+	CFSMountContentInfo fsInfo;
+	fsInfo.m_pFileSystem = m_pFileSystem;
+	fsInfo.m_bToolsMode = bIsTool;
+	fsInfo.m_pDirectoryName = steamInfo.m_GameInfoPath;
+	if ( FileSystem_MountContent( fsInfo ) != FS_OK ) {
+		Error( "Failed to mount gameinfo! aborting." );
+		return false;
+	}
+
+	// add `GAME` search paths
+	CFSSearchPathsInit searchPathsInit;
+	searchPathsInit.m_pDirectoryName = steamInfo.m_GameInfoPath;
+	searchPathsInit.m_pFileSystem = fsInfo.m_pFileSystem;
+	// TODO: Rest of params
+	if ( FileSystem_LoadSearchPaths( searchPathsInit ) != FS_OK ) {
+		Error( "Failed to load game search paths! aborting." );
+		return false;
+	}
+
+	// add platform folder to search path
+	char platform[ MAX_PATH ];
+	V_strncpy( platform, steamInfo.m_GameInfoPath, MAX_PATH );
+	V_StripTrailingSlash( platform );
+	V_strncat( platform, "/../platform", MAX_PATH, MAX_PATH );
+	fsInfo.m_pFileSystem->AddSearchPath( platform, "PLATFORM" );
+
+	return true;
 }
 
 const char* CSteamAppSystemGroup::GetGameInfoPath() const {
-	AssertUnreachable();
-	return {};
+	return m_pGameInfoPath;
 }
 
 CSysModule* CSteamAppSystemGroup::LoadModuleDLL( const char* pDLLName ) {

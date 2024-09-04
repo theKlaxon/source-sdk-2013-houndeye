@@ -119,19 +119,15 @@ protected:
 
 	// Simpler method of doing the LoadModule/AddSystem thing.
 	// Make sure the last AppSystemInfo has a NULL module name
-//	[[deprecated( "Use span-based method instead." )]]
 	bool AddSystems( AppSystemInfo_t* pSystems );
-
-	// Simpler method of doing the LoadModule/AddSystem thing.
-//	bool AddSystems( const std::span<AppSystemInfo_t> pSystems );
 
 	// Method to look up a particular named system...
 	void* FindSystem( const char* pInterfaceName );
 	// Method to look up a named system, in a somewhat typesafe manner.
-//	template<class T>
-//	T* FindSystem( const char* pInterfaceName ) {
-//		return dynamic_cast<T*>( this->FindSystem( pInterfaceName ) );
-//	}
+	template<class T>
+	T* FindSystem( const char* pInterfaceName ) {
+		return static_cast<T*>( this->FindSystem( pInterfaceName ) );
+	}
 
 	// Gets at a class factory for the topmost appsystem group in an appsystem stack
 	static CreateInterfaceFn GetFactory();
@@ -195,10 +191,10 @@ protected:
 	const char* GetGameInfoPath() const;
 
 private:
-	virtual CSysModule* LoadModuleDLL( const char* pDLLName );
+	CSysModule* LoadModuleDLL( const char* pDLLName ) override;
 
 	IFileSystem* m_pFileSystem;
-	char m_pGameInfoPath[ MAX_PATH ];
+	char m_pGameInfoPath[MAX_PATH] { 0 };
 };
 
 

@@ -3,7 +3,6 @@
 // Purpose:
 //
 //=============================================================================
-
 #undef PROTECTED_THINGS_ENABLE
 #undef PROTECT_FILEIO_FUNCTIONS
 #if !defined( PLATFORM_POSIX )
@@ -178,7 +177,7 @@ void Q_getwd( char* out, int outSize ) {
 		getcwd( out, outSize );
 		strcat( out, "/" );
 	#endif
-	Q_FixSlashes( out );
+	V_FixSlashes( out );
 }
 
 // ---------------------------------------------------------------------------------------------------- //
@@ -621,9 +620,8 @@ bool DoesFileExistIn( const char* pDirectoryName, const char* pFilename ) {
 	Q_AppendSlash( filename, sizeof( filename ) );
 	Q_strncat( filename, pFilename, sizeof( filename ), COPY_ALL_CHARACTERS );
 	Q_FixSlashes( filename );
-	bool bExist = ( _access( filename, 0 ) == 0 );
 
-	return ( bExist );
+	return _access( filename, 0 ) == 0;
 }
 
 namespace {
@@ -831,7 +829,7 @@ FSReturnCode_t GetSteamCfgPath( char* steamCfgPath, int steamCfgPathLen ) {
 
 void SetSteamAppUser( KeyValues* pSteamInfo, const char* steamInstallPath, CSteamEnvVars& steamEnvVars ) {
 	// Always inherit the Steam user if it's already set, since it probably means we (or the
-	// the app that launched us) were launched from Steam.
+	// app that launched us) were launched from Steam.
 	char appUser[ MAX_PATH ];
 	if ( steamEnvVars.m_SteamAppUser.GetValue( appUser, sizeof( appUser ) ) ) {
 		return;

@@ -4,7 +4,6 @@
 //
 //=============================================================================//
 #pragma once
-
 #include "appframework/IAppSystem.h"
 #include "interface.h"
 
