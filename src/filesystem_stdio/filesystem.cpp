@@ -13,40 +13,41 @@
 #include "system/plainsystemclient.hpp"
 #include "system/rootsystemclient.hpp"
 
+namespace {
+	CFileSystemStdio g_FullFileSystem{};
+	auto g_RootSystemClient{ std::make_shared<CRootSystemClient>() };
 
-static CFileSystemStdio g_FullFileSystem{};
-static auto g_RootSystemClient{ std::make_shared<CRootSystemClient>() };
+	constexpr auto parseOpenMode( const char* pMode ) -> OpenMode {
+		OpenMode mode{};
+		while ( *pMode != '\0' ) {
+			switch ( *pMode ) {
+				case 'r':
+					mode.read = true;
+					break;
+				case 'w':
+					mode.write = true;
+					break;
+				case 'b':
+					mode.binary = true;
+					break;
+				case 't':
+					mode.truncate = true;
+					break;
+				case 'a':
+					mode.append = true;
+					break;
+				case '+':
+					mode.update = true;
+					break;
+				default:
+					std::unreachable();
+			}
 
-static constexpr auto parseOpenMode( const char *pMode ) -> OpenMode {
-	OpenMode mode{};
-	while ( *pMode != '\0' ) {
-		switch ( *pMode ) {
-			case 'r':
-				mode.read = true;
-				break;
-			case 'w':
-				mode.write = true;
-				break;
-			case 'b':
-				mode.binary = true;
-				break;
-			case 't':
-				mode.truncate = true;
-				break;
-			case 'a':
-				mode.append = true;
-				break;
-			case '+':
-				mode.update = true;
-				break;
-			default:
-				std::unreachable();
+			pMode += 1;
 		}
 
-		pMode += 1;
+		return mode;
 	}
-
-	return mode;
 }
 
 // ---------------
