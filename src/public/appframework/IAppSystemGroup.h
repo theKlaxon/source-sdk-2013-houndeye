@@ -12,27 +12,22 @@
 // $NoKeywords: $
 //=============================================================================
 #pragma once
+#include <span>
 #include "IAppSystem.h"
 #include "tier1/interface.h"
 #include "tier1/utldict.h"
 #include "tier1/utlvector.h"
-#include <span>
 
 //-----------------------------------------------------------------------------
 // forward declarations
 //-----------------------------------------------------------------------------
-class CSysModule;
-class IBaseInterface;
 class IFileSystem;
 
 //-----------------------------------------------------------------------------
 // Handle to a DLL
 //-----------------------------------------------------------------------------
-typedef int AppModule_t;
-
-enum {
-	APP_MODULE_INVALID = (AppModule_t) ~0
-};
+using AppModule_t = int32;
+static constexpr inline auto APP_MODULE_INVALID{ static_cast<AppModule_t>( ~0 ) };
 
 
 //-----------------------------------------------------------------------------
@@ -124,19 +119,19 @@ protected:
 
 	// Simpler method of doing the LoadModule/AddSystem thing.
 	// Make sure the last AppSystemInfo has a NULL module name
-	[[deprecated( "Use span-based method instead." )]]
+//	[[deprecated( "Use span-based method instead." )]]
 	bool AddSystems( AppSystemInfo_t* pSystems );
 
 	// Simpler method of doing the LoadModule/AddSystem thing.
-	bool AddSystems( const std::span<AppSystemInfo_t> pSystems );
+//	bool AddSystems( const std::span<AppSystemInfo_t> pSystems );
 
 	// Method to look up a particular named system...
 	void* FindSystem( const char* pInterfaceName );
 	// Method to look up a named system, in a somewhat typesafe manner.
-	template<class T>
-	T* FindSystem( const char* pInterfaceName ) {
-		return dynamic_cast<T*>( this->FindSystem( pInterfaceName ) );
-	}
+//	template<class T>
+//	T* FindSystem( const char* pInterfaceName ) {
+//		return dynamic_cast<T*>( this->FindSystem( pInterfaceName ) );
+//	}
 
 	// Gets at a class factory for the topmost appsystem group in an appsystem stack
 	static CreateInterfaceFn GetFactory();
@@ -196,6 +191,7 @@ protected:
 	bool SetupSearchPaths( const char* pStartingDir, bool bOnlyUseStartingDir, bool bIsTool );
 
 	// Returns the game info path. Only works if you've called SetupSearchPaths first
+	[[nodiscard]]
 	const char* GetGameInfoPath() const;
 
 private:

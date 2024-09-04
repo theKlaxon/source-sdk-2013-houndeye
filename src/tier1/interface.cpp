@@ -187,14 +187,15 @@ HMODULE Sys_LoadLibrary( const char* pLibraryName, Sys_Flags flags ) {
 #elif IsPosix()
 	int dlopen_mode = RTLD_NOW;
 
-	if ( flags & SYS_NOLOAD )
+	if ( flags & SYS_NOLOAD ) {
 		dlopen_mode |= RTLD_NOLOAD;
+	}
 
 	auto ret = reinterpret_cast<HMODULE>( dlopen( str, dlopen_mode ) );
 	if ( !ret && !( flags & SYS_NOLOAD ) ) {
 		const char* pError = dlerror();
 		if ( pError && ( strstr( pError, "No such file" ) == nullptr || strstr( pError, "image not found" ) == nullptr ) ) {
-			Msg( " failed to dlopen `%s`, error=%s\n", str, pError );
+			Warning( " failed to dlopen `%s`, error=%s\n", str, pError );
 		}
 	}
 

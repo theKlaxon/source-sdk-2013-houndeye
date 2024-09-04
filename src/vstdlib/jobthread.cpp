@@ -499,3 +499,8 @@ JobStatus_t CJob::Abort( bool bDiscard ) {
 	return result;
 }
 */
+
+namespace {
+	CThreadPool s_ThreadPool{};
+}
+IThreadPool* g_pThreadPool{ &s_ThreadPool };

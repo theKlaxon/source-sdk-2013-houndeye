@@ -9,6 +9,7 @@
 
 #include "xbox/xboxstubs.h"
 
+
 class KeyValues;
 
 enum SESSION_NOTIFY {

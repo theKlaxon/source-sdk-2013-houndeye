@@ -10,7 +10,9 @@ namespace {
 	int s_FailedSystemIndex{ -1 };
 }
 
-// -- CAppSystemGroup --
+// ----------------------
+// CAppSystemGroup
+// ----------------------
 CAppSystemGroup::CAppSystemGroup( CAppSystemGroup* pParentAppSystem )
 	: m_Modules(), m_Systems(), m_SystemDict(), m_pParentAppSystem(pParentAppSystem) {
 }
@@ -229,7 +231,9 @@ CSysModule* CAppSystemGroup::LoadModuleDLL( const char* pDLLName ) {
 void CAppSystemGroup::ReportStartupFailure( int nErrorStage, int nSysIndex ) { AssertUnreachable(); }
 
 
-// -- CSteamAppSystemGroup --
+// ----------------------
+// CSteamAppSystemGroup
+// ----------------------
 CSteamAppSystemGroup::CSteamAppSystemGroup( IFileSystem* pFileSystem, CAppSystemGroup* pParentAppSystem )
 	: m_pFileSystem{pFileSystem}, CAppSystemGroup( pParentAppSystem ) {
 	AssertUnreachable();
