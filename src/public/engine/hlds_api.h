@@ -32,9 +32,9 @@ public:
 	// Initialize the engine with the specified base directory and interface factories
 	virtual bool ModInit( ModInfo_t& info ) = 0;
 	// Shutdown the engine
-	virtual void ModShutdown( void ) = 0;
+	virtual void ModShutdown() = 0;
 	// Run a frame
-	virtual bool RunFrame( void ) = 0;
+	virtual bool RunFrame() = 0;
 	// Insert text into console
 	virtual void AddConsoleText( char* text ) = 0;
 	// Get current status to display in the hlds UI (console window title bar, e.g. )
