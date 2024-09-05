@@ -7,12 +7,11 @@
 #include "inputsystem.hpp"
 
 InitReturnVal_t CInputSystem::Init() {
-	if ( CommandLine()->CheckParm( "-nojoy" ) ) { }
+	int res{ SDL_InitSubSystem( SDL_INIT_EVENTS | SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD | SDL_INIT_HAPTIC ) };
 
-	auto res = SDL_InitSubSystem( SDL_INIT_EVENTS | SDL_INIT_GAMEPAD | SDL_INIT_HAPTIC );
-
-	if ( res < 0 ) {
-		// TODO: Finish this
+	if ( res != 0 ) {
+		Error( "[AuroraSource|InputSystem] Failed to initialize SDL (%s)", SDL_GetError() );
+		return InitReturnVal_t::INIT_FAILED;
 	}
 
 	return BaseClass::Init();
@@ -30,7 +29,7 @@ void CInputSystem::AttachToWindow( void* hWnd ) {
 		Error( "Called `CInputSystem::AttachToWindow` with a `nullptr`!" );
 	}
 
-	if ( this->m_pSdlWindow ) {
+	if ( m_SdlWindow ) {
 		Error( "`CInputSystem::AttachToWindow`: Cannot attach to two windows at once!" );
 	}
 
@@ -42,45 +41,49 @@ void CInputSystem::AttachToWindow( void* hWnd ) {
 		SDL_SetNumberProperty( props, SDL_PROPERTY_WINDOW_X11_WINDOW_NUMBER, reinterpret_cast<int>( hWnd ) );
 	#endif
 
-	this->m_pSdlWindow = SDL_CreateWindowWithProperties( props );
-	AssertMsg( this->m_pSdlWindow != nullptr, "%s", SDL_GetError() );
+		m_SdlWindow = SDL_CreateWindowWithProperties( props );
+	AssertMsg( m_SdlWindow != nullptr, "%s", SDL_GetError() );
 }
 
 void CInputSystem::DetachFromWindow() {
-	if ( this->m_pSdlWindow == nullptr ) {
+	if ( m_SdlWindow == nullptr ) {
 		DevWarning( "Called `CInputSystem::DetachFromWindow` when not attached to a window!" );
 		return;
 	}
 
-	SDL_DestroyWindow( this->m_pSdlWindow );
+	SDL_DestroyWindow( m_SdlWindow );
+	m_SdlWindow = nullptr;
 }
 
 void CInputSystem::EnableInput( bool bEnable ) {
-	AssertMsg( false, "TODO: `CInputSystem::EnableInput( %d )` not implemented", bEnable );
+	m_Enabled = bEnable;
 }
 
 void CInputSystem::EnableMessagePump( bool bEnable ) {
 	// asked to disable
 	if ( bEnable ) {
 		// if are we already disabled skip
-		if ( !this->m_bRunning ) {
+		if (! m_Running ) {
 			return;
 		}
 		// disable the pump
-		this->m_bRunning = false;
-		this->m_pEventPump.Join();
+		m_Running = false;
+		m_EventPump.Join();
 	} else {
 		// if are we already enabled skip
-		if ( this->m_bRunning ) {
+		if ( m_Running ) {
 			return;
 		}
 		// enable the pump
-		this->m_bRunning = true;
-		this->m_pEventPump.Start();
+		m_Running = true;
+		m_EventPump.Start();
 	}
 }
 
 void CInputSystem::PollInputState() {
+	if (! m_Enabled ) {
+		return;
+	}
 	AssertMsg( false, "TODO: `CInputSystem::PollInputState()` not implemented" );
 }
 
@@ -96,7 +99,7 @@ bool CInputSystem::IsButtonDown( ButtonCode_t code ) const {
 		return false;
 	}
 
-	return this->m_cState.m_bButtons[ code ];
+	return m_State.m_Buttons[ code ];
 }
 
 int CInputSystem::GetButtonPressedTick( ButtonCode_t code ) const {
@@ -168,10 +171,10 @@ void CInputSystem::StopRumble() {
 void CInputSystem::ResetInputState() {
 	AssertMsg( false, "TODO: `CInputSystem::ResetInputState()` not implemented" );
 	// reset button states
-	V_memset( &this->m_cState.m_bButtons, 0, ButtonCode_t::BUTTON_CODE_COUNT );
+	V_memset( &m_State.m_Buttons, 0, ButtonCode_t::BUTTON_CODE_COUNT );
 	// reset mouse motion accumulators
-	this->m_cState.m_nMouseAccX = 0;
-	this->m_cState.m_nMouseAccY = 0;
+	m_State.m_MouseAccX = 0;
+	m_State.m_MouseAccY = 0;
 }
 
 void CInputSystem::SetPrimaryUserId( int userId ) {
@@ -247,27 +250,27 @@ void CInputSystem::SetNovintPure( bool bPure ) {
 }
 
 bool CInputSystem::GetRawMouseAccumulators( int& accumX, int& accumY ) {
-	accumX = this->m_cState.m_nMouseAccX;
-	this->m_cState.m_nMouseAccX = 0;
+	accumX = m_State.m_MouseAccX;
+	m_State.m_MouseAccX = 0;
 
-	accumY = this->m_cState.m_nMouseAccY;
-	this->m_cState.m_nMouseAccY = 0;
+	accumY = m_State.m_MouseAccY;
+	m_State.m_MouseAccY = 0;
 
 	return true;
 }
 
 void CInputSystem::SetConsoleTextMode( bool bConsoleTextMode ) {
-	this->m_bConsoleTextMode = bConsoleTextMode;
+	m_ConsoleTextMode = bConsoleTextMode;
 }
 
-
-CInputSystem gInputSystem{};
-
-EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CInputSystem, IInputSystem, INPUTSYSTEM_INTERFACE_VERSION, gInputSystem )
+namespace {
+	CInputSystem s_InputSystem{};
+}
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CInputSystem, IInputSystem, INPUTSYSTEM_INTERFACE_VERSION, s_InputSystem )
 
 int CInputSystem::CMessagePumpThread::Run() {
 	SDL_Event sdlEvent;
-	while ( gInputSystem.m_bRunning ) {
+	while ( s_InputSystem.m_Running ) {
 
 		while ( SDL_PollEvent( &sdlEvent ) ) {
 			InputEvent_t inputEvent{};
@@ -277,7 +280,7 @@ int CInputSystem::CMessagePumpThread::Run() {
 					break;
 			}
 
-			gInputSystem.m_cEventQueue.QueueMessage( inputEvent );
+			s_InputSystem.m_EventQueue.QueueMessage( inputEvent );
 		}
 	}
 	return 0;
