@@ -125,7 +125,7 @@ protected:
 	void* FindSystem( const char* pInterfaceName );
 	// Method to look up a named system, in a somewhat typesafe manner.
 	template<class T>
-	T* FindSystem( const char* pInterfaceName ) {
+	inline T* FindSystem( const char* pInterfaceName ) {
 		return static_cast<T*>( this->FindSystem( pInterfaceName ) );
 	}
 

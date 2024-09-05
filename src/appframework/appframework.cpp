@@ -4,9 +4,9 @@
 #include "appframework/AppFramework.h"
 #include "tier0/icommandline.h"
 #include "filesystem_init.h"
+#include "vstdlib/cvar.h"
 // This must be the final include in a .cpp file!!!
 #include "memdbgon.h"
-#include "vstdlib/cvar.h"
 
 
 namespace {
@@ -45,11 +45,9 @@ void AppShutdown( CAppSystemGroup* pAppSystemGroup ) {
 }
 
 
-
 // --- CSteamApplication ---
 CSteamApplication::CSteamApplication( CSteamAppSystemGroup* pAppSystemGroup )
-	: m_pChildAppSystemGroup{ pAppSystemGroup }, CAppSystemGroup() {
-}
+	: m_pChildAppSystemGroup{ pAppSystemGroup }, CAppSystemGroup() { }
 
 int CSteamApplication::Startup() {
 	return this->m_pChildAppSystemGroup->Startup();
@@ -61,12 +59,14 @@ void CSteamApplication::Shutdown() {
 // CSteamApplication - IAppSystem
 bool CSteamApplication::Create() {
 	// load ICVar/cvar factory
-	this->AddSystem( this->LoadModule( "libvstdlib" ), CVAR_INTERFACE_VERSION );
+	if (! AddSystem( LoadModule( VStdLib_GetICVarFactory() ), CVAR_INTERFACE_VERSION ) ) {
+		return false;
+	}
 
+	// load the fs module
 	char fsDllName[1024];
-	bool steam;
 	FileSystem_SetErrorMode( FSErrorMode_t::FS_ERRORMODE_AUTO );
-	const auto res{ FileSystem_GetFileSystemDLLName( fsDllName, 1024, steam ) };
+	const auto res{ FileSystem_GetFileSystemDLLName( fsDllName, 1024, m_bSteam ) };
 	if ( res != FSReturnCode_t::FS_OK ) {
 		const char* error{ "N/D" };
 		switch ( res ) {
@@ -76,25 +76,17 @@ bool CSteamApplication::Create() {
 			case FS_UNABLE_TO_INIT: error = "UNABLE_TO_INIT"; break;
 			case FS_MISSING_STEAM_DLL: error = "MISSING_STEAM_DLL"; break;
 		}
-		Warning( "Failed to find filesystem module. (%s)", error );
+		Warning( "Failed to find filesystem module. (%s)\n", error );
+		return false;
+	}
+	m_pFileSystem = dynamic_cast<IFileSystem*>( AddSystem( LoadModule( fsDllName ), FILESYSTEM_INTERFACE_VERSION ) );
+	if (! m_pFileSystem ) {
 		return false;
 	}
 
-	// actually load the fs module
-	CFSLoadModuleInfo loadModuleInfo{};
-	loadModuleInfo.m_pFileSystemDLLName = fsDllName;
-	loadModuleInfo.m_pDirectoryName = nullptr;
-	loadModuleInfo.m_bOnlyUseDirectoryName = false;
-	loadModuleInfo.m_ConnectFactory = GetFactory();
-	loadModuleInfo.m_bSteam = steam;
-	loadModuleInfo.m_bToolsMode = false;
-	if ( FileSystem_LoadFileSystemModule( loadModuleInfo ) != FS_OK ) {
-		return false;
-	}
-	m_pFileSystem = g_pFullFileSystem = loadModuleInfo.m_pFileSystem;
+	g_pFullFileSystem = m_pFileSystem;
 	// give the fs module to child group, so it can play with it
 	m_pChildAppSystemGroup->Setup( m_pFileSystem, this );
-	this->AddSystem( m_pFileSystem, FILESYSTEM_INTERFACE_VERSION );
 
 	return m_pChildAppSystemGroup->Create();
 }

@@ -69,8 +69,8 @@ CAppSystemGroup::AppSystemGroupStage_t CAppSystemGroup::GetErrorStage() const {
 
 // protected
 AppModule_t CAppSystemGroup::LoadModule( const char* pDLLName ) {
-	for (  auto i{0}; i < this->m_Modules.Count(); i += 1 ) {
-		if ( V_strcmp( this->m_Modules[i].m_pModuleName, pDLLName ) == 0 ) {
+	for (  auto i{0}; i < m_Modules.Count(); i += 1 ) {
+		if ( m_Modules[i].m_pModuleName && V_strcmp( m_Modules[i].m_pModuleName, pDLLName ) == 0 ) {
 			return i;
 		}
 	}
@@ -97,8 +97,8 @@ AppModule_t CAppSystemGroup::LoadModule( CreateInterfaceFn factory ) {
 		}
 	}
 
-	AssertMsg( false, "Not implemented, if you need this, ask a programmer to add it." );
-	return -1;
+	Module_t module{ .m_pModule = nullptr, .m_Factory = factory, .m_pModuleName = nullptr };
+	return this->m_Modules.AddToTail( module );
 }
 
 IAppSystem* CAppSystemGroup::AddSystem( AppModule_t module, const char* pInterfaceName ) {
@@ -113,7 +113,7 @@ IAppSystem* CAppSystemGroup::AddSystem( AppModule_t module, const char* pInterfa
 	const auto mod{ this->m_Modules[ module ] };
 	auto system{ reinterpret_cast<IAppSystem*>( mod.m_Factory( pInterfaceName, &retCode ) ) };
 	if ( retCode != IFACE_OK ) {
-		Warning( "Failed to load system for interface `%s` from module `%s`.", pInterfaceName, mod.m_pModuleName );
+		Warning( "Failed to load system for interface `%s` from module `%s`.\n", pInterfaceName, mod.m_pModuleName ? mod.m_pModuleName : "N/A" );
 		return nullptr;
 	}
 
@@ -152,7 +152,7 @@ void* CAppSystemGroup::FindSystem( const char* pInterfaceName ) {
 CreateInterfaceFn CAppSystemGroup::GetFactory() {
 	return []( const char* pInterfaceName, int* pRetCode ) -> void* {
 		AssertMsg( s_RootAppSystem != nullptr, "RootFactory was asked for an interface when no AppSystemGroup was ran!" );
-		auto index = s_RootAppSystem->m_SystemDict.Find( pInterfaceName );
+		uint16 index{ s_RootAppSystem->m_SystemDict.Find( pInterfaceName ) };
 		if ( index != CUtlDict<int, uint16>::InvalidIndex() ) {
 			if ( pRetCode ) {
 				*pRetCode = IFACE_OK;
@@ -160,19 +160,16 @@ CreateInterfaceFn CAppSystemGroup::GetFactory() {
 			return s_RootAppSystem->m_Systems[index];
 		}
 
-		for ( const auto& system : s_RootAppSystem->m_Systems ) {
-			if ( auto* iface = system->QueryInterface( pInterfaceName ) ) {
-				if ( pRetCode ) {
-					*pRetCode = IFACE_OK;
-				}
-				return iface;
-			}
-		}
+//		for ( const auto system : s_RootAppSystem->m_Systems ) {
+//			if ( auto* iface = system->QueryInterface( pInterfaceName ) ) {
+//				if ( pRetCode ) {
+//					*pRetCode = IFACE_OK;
+//				}
+//				return iface;
+//			}
+//		}
 
-		if ( pRetCode ) {
-			*pRetCode = IFACE_FAILED;
-		}
-		return nullptr;
+		return Sys_GetFactoryThis()( pInterfaceName, pRetCode );
 	};
 }
 

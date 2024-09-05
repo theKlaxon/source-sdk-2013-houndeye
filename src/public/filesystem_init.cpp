@@ -958,11 +958,7 @@ FSReturnCode_t FileSystem_LoadFileSystemModule( CFSLoadModuleInfo& fsInfo ) {
 	}
 
 	// Now that the environment is setup, load the filesystem module.
-	if ( !Sys_LoadInterface(
-			 fsInfo.m_pFileSystemDLLName,
-			 FILESYSTEM_INTERFACE_VERSION,
-			 &fsInfo.m_pModule,
-			 (void**) &fsInfo.m_pFileSystem ) ) {
+	if (! Sys_LoadInterface( fsInfo.m_pFileSystemDLLName, FILESYSTEM_INTERFACE_VERSION, &fsInfo.m_pModule, (void**) &fsInfo.m_pFileSystem ) ) {
 		return SetupFileSystemError( false, FS_UNABLE_TO_INIT, "Can't load %s.", fsInfo.m_pFileSystemDLLName );
 	}
 

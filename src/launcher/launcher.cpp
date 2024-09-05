@@ -1,9 +1,9 @@
 //
 // Created by ENDERZOMBI102 on 22/07/2023.
 //
-#include "steamapploader.hpp"
-#include "tier0/icommandline.h"
 #include "appframework/AppFramework.h"
+#include "gameapploader.hpp"
+#include "tier0/icommandline.h"
 // This must be the final include in a .cpp file!!!
 #include "memdbgon.h"
 
@@ -32,7 +32,7 @@ DLL_EXPORT int LauncherMain( int argc, char* argv[] ) {
 	}
 
 	// then init and launch Source
-	CSteamAppLoader loader;
+	CGameAppLoader loader;
 	CSteamApplication app{ &loader };
 	return app.Run();
 }

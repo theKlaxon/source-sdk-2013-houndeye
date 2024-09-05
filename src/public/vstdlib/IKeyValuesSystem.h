@@ -5,8 +5,8 @@
 // $NoKeywords: $
 //=============================================================================//
 #pragma once
-
 #include "vstdlib/vstdlib.h"
+
 
 // handle to a KeyValues key name symbol
 typedef int HKeySymbol;
@@ -47,4 +47,4 @@ public:
 
 VSTDLIB_INTERFACE IKeyValuesSystem* KeyValuesSystem();
 
-// #define KEYVALUESSYSTEM_INTERFACE_VERSION "KeyValuesSystem002"
+//#define KEYVALUESSYSTEM_INTERFACE_VERSION "KeyValuesSystem002"

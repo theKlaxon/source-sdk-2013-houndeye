@@ -1,20 +1,21 @@
 //
 // Created by ENDERZOMBI102 on 03/09/2024.
 //
-#include "steamapploader.hpp"
+#include "gameapploader.hpp"
+#include "appframework/AppFramework.h"
 #include "datacache/idatacache.h"
+#include "engine/hlds_api.h"
 #include "engine/launcher_api.hpp"
+#include "filesystem.h"
+#include "filesystem/IQueuedLoader.h"
 #include "filesystem_init.h"
+#include "icommandline.h"
 #include "inputsystem/iinputsystem.h"
+#include "istudiorender.h"
 #include "materialsystem/imaterialsystem.h"
 #include "tier3/tier3.h"
-#include "icommandline.h"
-#include "engine/hlds_api.h"
-#include "filesystem.h"
-#include "istudiorender.h"
 #include "vphysics_interface.h"
-#include "appframework/AppFramework.h"
-#include "filesystem/IQueuedLoader.h"
+#include "vstdlib/cvar.h"
 #include "vstdlib/iprocessutils.h"
 // This must be the final include in a .cpp file!!!
 #include "memdbgon.h"
@@ -33,7 +34,7 @@ namespace {
 // ------------------
 // CSteamAppLoader
 // ------------------
-bool CSteamAppLoader::Create() {
+bool CGameAppLoader::Create() {
 	// are we running a dedicated server?
 	m_Dedicated = CommandLine()->FindParm( "-dedicated" ) != 0;
 
@@ -46,25 +47,28 @@ bool CSteamAppLoader::Create() {
 		{ "datacache"     , MDLCACHE_INTERFACE_VERSION        },
 		{ nullptr, nullptr }
 	};
-	if (! this->AddSystems( appSystems ) ) {
+	if (! AddSystems( appSystems ) ) {
 		return false;
 	}
 
-	AddSystem( LoadModule( "vstdlib" ), PROCESS_UTILS_INTERFACE_VERSION );
-	AddSystem( LoadModule( "filesystem_stdio" ), QUEUEDLOADER_INTERFACE_VERSION );
+	Assert( AddSystem( LoadModule( "filesystem_stdio" ), QUEUEDLOADER_INTERFACE_VERSION ) );
 	if ( m_Dedicated ) {
 		// the following are only needed for the dedicated (for now, gotta research more)
-		this->AddSystem( this->LoadModule( "datacache" ), STUDIO_DATA_CACHE_INTERFACE_VERSION );
-		this->AddSystem( this->LoadModule( "inputsystem" ), INPUTSYSTEM_INTERFACE_VERSION );
-		this->AddSystem( this->LoadModule( "engine" ), VENGINE_HLDS_API_VERSION );
+		Assert( AddSystem( LoadModule( "datacache" ), STUDIO_DATA_CACHE_INTERFACE_VERSION ) );
+		Assert( AddSystem( LoadModule( "inputsystem" ), INPUTSYSTEM_INTERFACE_VERSION ) );
+		Assert( AddSystem( LoadModule( "engine" ), VENGINE_HLDS_API_VERSION ) );
 	} else {
-		this->AddSystem( this->LoadModule( "engine" ), VENGINE_LAUNCHER_API_VERSION );
+		Assert( AddSystem( LoadModule( "engine" ), VENGINE_LAUNCHER_API_VERSION ) );
 	}
 
-	auto factory{ GetFactory() };
-	ConnectTier1Libraries( &factory, 1 );
-	ConnectTier2Libraries( &factory, 1 );
+	if ( auto* matSys = FindSystem<IMaterialSystem>( MATERIAL_SYSTEM_INTERFACE_VERSION ) ) {
+		auto loadEmpty{ m_Dedicated || CommandLine()->FindParm( "-noshaderapi" ) != 0 };
+		matSys->SetShaderAPI( loadEmpty ? "shaderapiempty" : "shaderapidx9" );
+	}
 
+	return true;
+}
+bool CGameAppLoader::PreInit() {
 	// set side-aware globals
 	if ( m_Dedicated ) {
 		QUEUEDLOADER_INTERFACE_VERSION;
@@ -73,22 +77,18 @@ bool CSteamAppLoader::Create() {
 		s_LauncherApi = FindSystem<ILauncherAPI>( VENGINE_LAUNCHER_API_VERSION );
 	}
 
-
-	if (! (g_pFileSystem && g_pMaterialSystem && g_pStudioRender && g_pMDLCache && (s_DedicatedApi || s_LauncherApi)) ) {
-		Error( "Unable to load required library interface(s)!\n" );
-		return false;
-	}
-
-	auto loadEmpty{ m_Dedicated || CommandLine()->FindParm( "-noshaderapi" ) != 0 };
-	g_pMaterialSystem->SetShaderAPI( loadEmpty ? "shaderapiempty" : "shaderapidx9" );
+	auto factory{ GetFactory() };
+	ConnectTier1Libraries( &factory, 1 );
+	ConnectTier2Libraries( &factory, 1 );
 	g_pMaterialSystem->Connect( factory );
 
 	// Must be done after material system is connected up!
 	g_pMaterialSystemHardwareConfig = FindSystem<IMaterialSystemHardwareConfig>( MATERIALSYSTEM_HARDWARECONFIG_INTERFACE_VERSION );
 
-	return true;
-}
-bool CSteamAppLoader::PreInit() {
+	if (! g_pMaterialSystemHardwareConfig ) {
+		return false;
+	}
+
 	// load globals
 	// generally-useful globals
 	g_pFileSystem = FindSystem<IFileSystem>( FILESYSTEM_INTERFACE_VERSION );
@@ -97,13 +97,18 @@ bool CSteamAppLoader::PreInit() {
 	g_pDataCache = FindSystem<IDataCache>( DATACACHE_INTERFACE_VERSION );
 	g_pMDLCache = FindSystem<IMDLCache>( MDLCACHE_INTERFACE_VERSION );
 
-//	MathLib_Init();
+	if (! (g_pFileSystem && g_pMaterialSystem && g_pStudioRender && g_pMDLCache && (s_DedicatedApi || s_LauncherApi)) ) {
+		Error( "Unable to load required library interface(s)!\n" );
+		return false;
+	}
+
+	MathLib_Init();
 	g_pMaterialSystem->SetAdapter(0, 0);
 
 	g_pMaterialSystem->ModInit();
 	return true;
 }
-int CSteamAppLoader::Main() {
+int CGameAppLoader::Main() {
 
 	if ( m_Dedicated ) [[unlikely]] {
 		FileSystem_GetExecutableDir( s_BaseDir, MAX_PATH );
@@ -126,10 +131,10 @@ int CSteamAppLoader::Main() {
 
 	return 0;
 }
-void CSteamAppLoader::PostShutdown() {
+void CGameAppLoader::PostShutdown() {
 	g_pMaterialSystem->ModShutdown();
 }
-void CSteamAppLoader::Destroy() {
+void CGameAppLoader::Destroy() {
 	DisconnectTier1Libraries();
 	DisconnectTier2Libraries();
 

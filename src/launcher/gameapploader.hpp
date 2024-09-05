@@ -6,7 +6,7 @@
 #include "idedicatedexports.h"
 
 
-class CSteamAppLoader : public CSteamAppSystemGroup {
+class CGameAppLoader : public CSteamAppSystemGroup {
 public:  // IAppSystem
 	bool Create() override;
 	bool PreInit() override;

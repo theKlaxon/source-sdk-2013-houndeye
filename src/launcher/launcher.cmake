@@ -4,8 +4,8 @@ set( LAUNCHER_DIR ${CMAKE_CURRENT_LIST_DIR} )
 set( LAUNCHER_SOURCE_FILES
 	# Project files
 	"${LAUNCHER_DIR}/launcher.cpp"
-	"${LAUNCHER_DIR}/steamapploader.cpp"
-	"${LAUNCHER_DIR}/steamapploader.hpp"
+	"${LAUNCHER_DIR}/gameapploader.cpp"
+	"${LAUNCHER_DIR}/gameapploader.hpp"
 
 	# Common files
 	"${SRCDIR}/public/filesystem_init.cpp"
@@ -32,5 +32,6 @@ target_link_libraries( launcher
 		tier1
 		tier2
 		tier3
+		mathlib
 		vstdlib
 )
