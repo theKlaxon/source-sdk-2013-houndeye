@@ -2,16 +2,17 @@
 // Created by ENDERZOMBI102 on 22/02/2024.
 //
 #include "platform.h"
-#if IsWindows()
-	#include <shlwapi.h>
-#endif
 #include <utility>
-#include "../tier0/commandline.hpp"
+#include <algorithm>
+#include "tier0/icommandline.h"
 #include "filesystem.hpp"
 #include "interface.h"
+#include "utlbuffer.h"
 #include "system/packsystemclient.hpp"
 #include "system/plainsystemclient.hpp"
 #include "system/rootsystemclient.hpp"
+// memdbgon must be the last include file in a .cpp file!!!
+#include "tier0/memdbgon.h"
 
 namespace {
 	CFileSystemStdio g_FullFileSystem{};
@@ -65,7 +66,7 @@ auto CFileSystemStdio::QueryInterface( const char* pInterfaceName ) -> void* {
 	return nullptr;
 }
 auto CFileSystemStdio::Init() -> InitReturnVal_t {
-	if ( this->m_bInitialized ) {
+	if ( this->m_Initialized ) {
 		return InitReturnVal_t::INIT_OK;
 	}
 
@@ -131,7 +132,10 @@ FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions
 
 	// if we got a pathID, only look into that SearchPath
 	if ( pathID != nullptr ) {
-		AssertFatalMsg( this->m_SearchPaths.Find( pathID ) == CUtlDict<SearchPath>::InvalidIndex(), "Was given pathID not loaded" );
+		if ( this->m_SearchPaths.Find( pathID ) == CUtlDict<SearchPath>::InvalidIndex() ) {
+			Warning( "[AuroraSource|FileSystem] `Open()` Was given a pathID which wasn't loaded, may be a bug!\n" );
+			return nullptr;
+		}
 
 		for ( const auto& system : this->m_SearchPaths[pathID].m_Clients ) {
 			auto desc{ system->Open( pFileName, mode ) };
@@ -156,8 +160,7 @@ FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions
 			}
 		}
 	}
-
-	AssertFatalMsg( false, "Open: %s, %s, %s", pFileName, pOptions, pathID ); return {};
+	return nullptr;
 }
 void CFileSystemStdio::Close( FileHandle_t file ) {
 	auto desc{ static_cast<FileDescriptor*>( file ) };
@@ -251,7 +254,16 @@ bool CFileSystemStdio::SetFileWritable( char const* pFileName, bool writable, co
 
 long CFileSystemStdio::GetFileTime( const char* pFileName, const char* pPathID ) { AssertUnreachable(); return {}; }
 
-bool CFileSystemStdio::ReadFile( const char* pFileName, const char* pPath, CUtlBuffer& buf, int nMaxBytes, int nStartingByte, FSAllocFunc_t pfnAlloc ) { AssertUnreachable(); return {}; }
+bool CFileSystemStdio::ReadFile( const char* pFileName, const char* pPath, CUtlBuffer& buf, int nMaxBytes, int nStartingByte, FSAllocFunc_t pfnAlloc ) {
+	// FIXME: Probably not very "optimal" performance
+	const auto handle{ Open( pFileName, "r", pPath ) };
+	if ( handle == nullptr ) {
+		return false;
+	}
+	const auto res{ ReadToBuffer( handle, buf, nMaxBytes, pfnAlloc ) };
+	Close( handle );
+	return res;
+}
 bool CFileSystemStdio::WriteFile( const char* pFileName, const char* pPath, CUtlBuffer& buf ) { AssertUnreachable(); return {}; }
 bool CFileSystemStdio::UnzipFile( const char* pFileName, const char* pPath, const char* pDestination ) { AssertUnreachable(); return {}; }
 
@@ -273,7 +285,7 @@ FilesystemMountRetval_t CFileSystemStdio::MountSteamContent( int nExtraAppId ) {
 void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, SearchPathAdd_t addType ) {
 	AssertFatalMsg( pPath, "Was given an empty path!!" );
 
-	this->m_iLastId += 1;
+	this->m_LastId += 1;
 
 	// calculate base dir (current `-game` dir)
 	char absolute[1024];
@@ -294,8 +306,8 @@ void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, Sea
 	}
 
 	// try all possibilities
-	auto system{ CPlainSystemClient::Open( this->m_iLastId, absolute, pPath ) };
-	system = system ? system : CPackSystemClient::Open( this->m_iLastId, absolute, pPath );
+	auto system{ CPlainSystemClient::Open( this->m_LastId, absolute, pPath ) };
+	system = system ? system : CPackSystemClient::Open( this->m_LastId, absolute, pPath );
 	AssertFatalMsg( system, "Unsupported path entry: %s", absolute );
 
 	// make a new alloc of the string
@@ -311,7 +323,7 @@ void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, Sea
 	} else {
 		this->m_SearchPaths[ pathID ].m_Clients.AddToTail( system );
 	}
-	this->m_SearchPaths[ pathID ].m_ClientIDs.AddToTail( this->m_iLastId );
+	this->m_SearchPaths[ pathID ].m_ClientIDs.AddToTail( this->m_LastId );
 	delete[] pathID;
 }
 bool CFileSystemStdio::RemoveSearchPath( const char* pPath, const char* pathID ) {
@@ -391,7 +403,7 @@ void CFileSystemStdio::MarkPathIDByRequestOnly( const char* pPathID, bool bReque
 		this->m_SearchPaths.Insert( pathID );
 	}
 
-	this->m_SearchPaths[ pathID ].m_bRequestOnly = bRequestOnly;
+	this->m_SearchPaths[ pathID ].m_RequestOnly = bRequestOnly;
 	delete[] pathID;
 }
 
@@ -439,16 +451,44 @@ void CFileSystemStdio::FileTimeToString( char* pStrip, int maxCharsIncludingTerm
 // ---- Open file operations ----
 void CFileSystemStdio::SetBufferSize( FileHandle_t file, unsigned nBytes ) { AssertUnreachable(); }
 
-bool CFileSystemStdio::IsOk( FileHandle_t file ) { AssertUnreachable(); return {}; }
+bool CFileSystemStdio::IsOk( FileHandle_t file ) {
+	return file != nullptr;
+}
 
-bool CFileSystemStdio::EndOfFile( FileHandle_t file ) { AssertUnreachable(); return {}; }
+bool CFileSystemStdio::EndOfFile( FileHandle_t file ) {
+	return static_cast<FileDescriptor*>( file )->m_Offset == Size( file );
+}
 
 char* CFileSystemStdio::ReadLine( char* pOutput, int maxChars, FileHandle_t file ) { AssertUnreachable(); return {}; }
 int CFileSystemStdio::FPrintf( FileHandle_t file, PRINTF_FORMAT_STRING const char* pFormat, ... ) { AssertUnreachable(); return {}; }
 
 // ---- Dynamic library operations ----
-CSysModule* CFileSystemStdio::LoadModule( const char* pFileName, const char* pPathID, bool bValidatedDllOnly ) { AssertUnreachable(); return {}; }
-void CFileSystemStdio::UnloadModule( CSysModule * pModule ) { AssertUnreachable(); }
+CSysModule* CFileSystemStdio::LoadModule( const char* pFileName, const char* pPathID, bool bValidatedDllOnly ) {
+	// try from search paths TODO: Handle extraction if needed
+	char* absolute;
+	const auto handle{ OpenEx( pFileName, "rb", 0, pPathID, &absolute ) };
+	if ( handle ) {
+		Close( handle );
+		const auto res{ Sys_LoadModule( absolute ) };
+		delete[] absolute;
+		return res;
+	}
+
+	// not in search paths, must be in `bin/`
+	char path[MAX_PATH] { };
+
+	GetCurrentDirectory( path, MAX_PATH );
+	V_MakeAbsolutePath( path, MAX_PATH, "bin/", path );
+	V_MakeAbsolutePath( path, MAX_PATH, pFileName, path );
+
+	if ( FileExists( path ) ) {
+		return Sys_LoadModule( path );
+	}
+	return nullptr;
+}
+void CFileSystemStdio::UnloadModule( CSysModule* pModule ) {
+	Sys_UnloadModule( pModule );
+}
 
 // ---- File searching operations -----
 const char* CFileSystemStdio::FindFirst( const char* pWildCard, FileFindHandle_t* pHandle ) {
@@ -475,7 +515,13 @@ void CFileSystemStdio::FindClose( FileFindHandle_t handle ) {
 const char* CFileSystemStdio::FindFirstEx( const char* pWildCard, const char* pPathID, FileFindHandle_t* pHandle ) { AssertUnreachable(); return {}; }
 
 // ---- File name and directory operations ----
-const char* CFileSystemStdio::GetLocalPath( const char* pFileName, char* pDest, int maxLenInChars ) { AssertUnreachable(); return {}; }
+const char* CFileSystemStdio::GetLocalPath( const char* pFileName, char* pDest, int maxLenInChars ) {
+	// TODO: Check if correct
+	GetCurrentDirectory( pDest, maxLenInChars );
+	V_MakeAbsolutePath( pDest, maxLenInChars, "bin/", pDest );
+	V_MakeAbsolutePath( pDest, maxLenInChars, pFileName, pDest );
+	return pDest;
+}
 
 bool CFileSystemStdio::FullPathToRelativePath( const char* pFullpath, char* pDest, int maxLenInChars ) { AssertUnreachable(); return {}; }
 
@@ -524,7 +570,10 @@ void CFileSystemStdio::CancelWaitForResources( WaitForResourcesHandle_t handle )
 int CFileSystemStdio::HintResourceNeed( const char* hintlist, int forgetEverything ) { AssertUnreachable(); return {}; }
 bool CFileSystemStdio::IsFileImmediatelyAvailable( const char* pFileName ) { AssertUnreachable(); return {}; }
 
-void CFileSystemStdio::GetLocalCopy( const char* pFileName ) { AssertUnreachable(); }
+void CFileSystemStdio::GetLocalCopy( const char* pFileName ) {
+	// FIXME: Must work in conjunction with GetLocalPath()!!!
+	AssertUnreachable();
+}
 
 // ---- Debugging operations ----
 void CFileSystemStdio::PrintOpenedFiles() { AssertUnreachable(); }
@@ -540,7 +589,9 @@ void CFileSystemStdio::PrintSearchPaths() {
 	}
 }
 
-void CFileSystemStdio::SetWarningFunc( void ( *pfnWarning )( PRINTF_FORMAT_STRING const char* fmt, ... ) ) { AssertUnreachable(); }
+void CFileSystemStdio::SetWarningFunc( void ( *pfnWarning )( PRINTF_FORMAT_STRING const char* fmt, ... ) ) {
+	m_Warning = pfnWarning;
+}
 void CFileSystemStdio::SetWarningLevel( FileWarningLevel_t level ) { AssertUnreachable(); }
 void CFileSystemStdio::AddLoggingFunc( void ( *pfnLogFunc )( const char* fileName, const char* accessType ) ) { AssertUnreachable(); }
 void CFileSystemStdio::RemoveLoggingFunc( FileSystemLoggingFunc_t logFunc ) { AssertUnreachable(); }
@@ -548,7 +599,24 @@ void CFileSystemStdio::RemoveLoggingFunc( FileSystemLoggingFunc_t logFunc ) { As
 const FileSystemStatistics* CFileSystemStdio::GetFilesystemStatistics() { AssertUnreachable(); return {}; }
 
 // ---- Start of new functions after Lost Coast release (7/05) ----
-FileHandle_t CFileSystemStdio::OpenEx( const char* pFileName, const char* pOptions, unsigned flags, const char* pathID, char** ppszResolvedFilename ) { AssertUnreachable(); return {}; }
+FileHandle_t CFileSystemStdio::OpenEx( const char* pFileName, const char* pOptions, unsigned flags, const char* pathID, char** ppszResolvedFilename ) {
+	// TODO: DO the `Ex` part :P
+	if (! (pFileName && pOptions) ) {
+		return nullptr;
+	}
+	Warning( "CFileSystemStdio::OpenEx(%s, %s, %d, %s)\n", pFileName, pOptions, flags, pathID );
+
+	const auto desc{ static_cast<FileDescriptor*>( Open( pFileName, pOptions, pathID ) ) };
+	if ( desc && ppszResolvedFilename ) {
+		const auto parent{ desc->m_System.lock()->GetNativeAbsolutePath() };
+		const auto len{ V_strlen( parent ) + V_strlen( pFileName ) + 2 };
+		const auto dest{ new char[len] };
+		V_MakeAbsolutePath( dest, len, pFileName, parent );
+		*ppszResolvedFilename = dest;
+	}
+
+	return desc;
+}
 
 int CFileSystemStdio::ReadEx( void* pOutput, int sizeDest, int size, FileHandle_t file ) {
 	// TODO: DO the `Ex` part :P
@@ -585,7 +653,13 @@ FSAsyncStatus_t CFileSystemStdio::AsyncReadMultipleCreditAlloc( const FileAsyncR
 
 bool CFileSystemStdio::GetFileTypeForFullPath( char const* pFullPath, wchar_t* buf, size_t bufSizeInBytes ) { AssertUnreachable(); return {}; }
 
-bool CFileSystemStdio::ReadToBuffer( FileHandle_t hFile, CUtlBuffer& buf, int nMaxBytes, FSAllocFunc_t pfnAlloc ) { AssertUnreachable(); return {}; }
+bool CFileSystemStdio::ReadToBuffer( FileHandle_t hFile, CUtlBuffer& buf, int nMaxBytes, FSAllocFunc_t pfnAlloc ) {
+	AssertMsg( !buf.IsReadOnly(), "was given a read-only buffer!" );
+	int total{ static_cast<int>( Size( hFile ) ) };
+
+	buf.EnsureCapacity( std::min( total, nMaxBytes ) );
+	return Read( buf.Base(), buf.Size(), hFile ) == total;
+}
 
 // ---- Optimal IO operations ----
 bool CFileSystemStdio::GetOptimalIOConstraints( FileHandle_t hFile, unsigned* pOffsetAlign, unsigned* pSizeAlign, unsigned* pBufferAlign ) {
@@ -606,7 +680,6 @@ bool CFileSystemStdio::GetOptimalIOConstraints( FileHandle_t hFile, unsigned* pO
 
 	return false;
 }
-inline unsigned CFileSystemStdio::GetOptimalReadSize( FileHandle_t hFile, unsigned nLogicalSize ) { AssertUnreachable(); return {}; }
 void* CFileSystemStdio::AllocOptimalReadBuffer( FileHandle_t hFile, unsigned nSize, unsigned nOffset ) {
 	// FIXME: Actually do the thing
 	return new char[nSize];
@@ -629,7 +702,9 @@ DVDMode_t CFileSystemStdio::GetDVDMode() {
 }
 
 // ---- Whitelisting for pure servers. ----
-void CFileSystemStdio::EnableWhitelistFileTracking( bool bEnable, bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes ) { AssertUnreachable(); }
+void CFileSystemStdio::EnableWhitelistFileTracking( bool bEnable, bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes ) {
+	Warning( "CFileSystemStdio::EnableWhitelistFileTracking: not implemented\n" );
+}
 
 void CFileSystemStdio::RegisterFileWhitelist( IPureServerWhitelist * pWhiteList, IFileList * *pFilesToReload ) { AssertUnreachable(); }
 
@@ -638,12 +713,14 @@ void CFileSystemStdio::MarkAllCRCsUnverified() { AssertUnreachable(); }
 void CFileSystemStdio::CacheFileCRCs( const char* pPathname, ECacheCRCType eType, IFileList* pFilter ) { AssertUnreachable(); }
 EFileCRCStatus CFileSystemStdio::CheckCachedFileHash( const char* pPathID, const char* pRelativeFilename, int nFileFraction, FileHash_t* pFileHash ) { AssertUnreachable(); return {}; }
 
-int CFileSystemStdio::GetUnverifiedFileHashes( CUnverifiedFileHash * pFiles, int nMaxFiles ) { AssertUnreachable(); return {}; }
+int CFileSystemStdio::GetUnverifiedFileHashes( CUnverifiedFileHash* pFiles, int nMaxFiles ) { AssertUnreachable(); return {}; }
 
 int CFileSystemStdio::GetWhitelistSpewFlags() { AssertUnreachable(); return {}; }
 void CFileSystemStdio::SetWhitelistSpewFlags( int flags ) { AssertUnreachable(); }
 
-void CFileSystemStdio::InstallDirtyDiskReportFunc( FSDirtyDiskReportFunc_t func ) { AssertUnreachable(); }
+void CFileSystemStdio::InstallDirtyDiskReportFunc( FSDirtyDiskReportFunc_t func ) {
+	m_DirtyDiskReporter = func;
+}
 
 // ---- Low-level file caching ----
 FileCacheHandle_t CFileSystemStdio::CreateFileCache() { AssertUnreachable(); return {}; }
@@ -659,7 +736,9 @@ void CFileSystemStdio::UnregisterMemoryFile( CMemoryFileBacking* pFile ) { Asser
 void CFileSystemStdio::CacheAllVPKFileHashes( bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes ) { AssertUnreachable(); }
 bool CFileSystemStdio::CheckVPKFileHash( int PackFileID, int nPackFileNumber, int nFileFraction, MD5Value_t& md5Value ) { AssertUnreachable(); return {}; }
 
-void CFileSystemStdio::NotifyFileUnloaded( const char* pszFilename, const char* pPathId ) { AssertUnreachable(); }
+void CFileSystemStdio::NotifyFileUnloaded( const char* pszFilename, const char* pPathId ) {
+	AssertMsg( false, "CFileSystemStdio::NotifyFileUnloaded(%s, %s)", pszFilename, pPathId );
+}
 
 bool CFileSystemStdio::GetCaseCorrectFullPath_Ptr( const char* pFullPath, char* pDest, int maxLenInChars ) { AssertUnreachable(); return {}; }
 

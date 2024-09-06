@@ -6,8 +6,6 @@
 #include "system/isystemclient.hpp"
 #include "tier1/utldict.h"
 #include <memory>
-#include <optional>
-#include <unordered_map>
 
 
 #undef AsyncRead
@@ -311,7 +309,6 @@ public: // IFileSystem
 	// Optimal IO operations
 	//--------------------------------------------------------
 	bool GetOptimalIOConstraints( FileHandle_t hFile, unsigned* pOffsetAlign, unsigned* pSizeAlign, unsigned* pBufferAlign ) override;
-	inline unsigned GetOptimalReadSize( FileHandle_t hFile, unsigned nLogicalSize );
 	void* AllocOptimalReadBuffer( FileHandle_t hFile, unsigned nSize = 0, unsigned nOffset = 0 ) override;
 	void FreeOptimalReadBuffer( void* ) override;
 
@@ -410,7 +407,7 @@ private:
 		SearchPath( const SearchPath& other ) { // copy-constructor
 			this->m_Clients = other.m_Clients;
 			this->m_ClientIDs = other.m_ClientIDs;
-			this->m_bRequestOnly = other.m_bRequestOnly;
+			this->m_RequestOnly = other.m_RequestOnly;
 		}
 		~SearchPath() {
 			for ( auto& system : this->m_Clients ) {
@@ -422,13 +419,15 @@ private:
 
 		CUtlVector<std::shared_ptr<ISystemClient>> m_Clients{};
 		CUtlVector<int> m_ClientIDs{};
-		bool m_bRequestOnly{ false };
+		bool m_RequestOnly{ false };
 	};
 
 	// The named search paths
 	CUtlDict<SearchPath> m_SearchPaths{};
 	// All open descriptors
 	CUtlVector<FileDescriptor*> m_Descriptors{ 10 };
-	int m_iLastId{ 1 };  // 0 is reserved for the root
-	bool m_bInitialized{ false };
+	int m_LastId{ 1 };  // 0 is reserved for the root
+	bool m_Initialized{ false };
+	FSDirtyDiskReportFunc_t m_DirtyDiskReporter{ nullptr };
+	void ( *m_Warning )( PRINTF_FORMAT_STRING const char* fmt, ... ){ nullptr };
 };
