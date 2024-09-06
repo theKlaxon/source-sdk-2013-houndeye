@@ -779,7 +779,7 @@ public:
 	// Optimal IO operations
 	//--------------------------------------------------------
 	virtual bool GetOptimalIOConstraints( FileHandle_t hFile, unsigned* pOffsetAlign, unsigned* pSizeAlign, unsigned* pBufferAlign ) = 0;
-	inline unsigned GetOptimalReadSize( FileHandle_t hFile, unsigned nLogicalSize );
+	inline uint32 GetOptimalReadSize( FileHandle_t hFile, unsigned nLogicalSize );
 	virtual void* AllocOptimalReadBuffer( FileHandle_t hFile, unsigned nSize = 0, unsigned nOffset = 0 ) = 0;
 	virtual void FreeOptimalReadBuffer( void* ) = 0;
 
@@ -915,12 +915,12 @@ private:
 
 //-----------------------------------------------------------------------------
 
-inline unsigned IFileSystem::GetOptimalReadSize( FileHandle_t hFile, unsigned nLogicalSize ) {
-	unsigned align;
-	if ( GetOptimalIOConstraints( hFile, &align, nullptr, nullptr ) )
+inline uint32 IFileSystem::GetOptimalReadSize( FileHandle_t hFile, unsigned nLogicalSize ) {
+	uint32 align;
+	if ( GetOptimalIOConstraints( hFile, &align, nullptr, nullptr ) ) {
 		return AlignValue( nLogicalSize, align );
-	else
-		return nLogicalSize;
+	}
+	return nLogicalSize;
 }
 
 //-----------------------------------------------------------------------------
