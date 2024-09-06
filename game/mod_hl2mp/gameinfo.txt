@@ -2,7 +2,7 @@
 	game	"AuroraSource mod"
 	title	"AuroraSource"
 	title2	"AuroraSource mod"
-	type multiplayer_only
+	type	 multiplayer_only
 	nomodels 0
 	nohimodel 1
 	nocrosshair 1
@@ -47,8 +47,8 @@
 			// Now search loose files.  We'll set the directory containing the gameinfo.txt file
 			// as the first "mod" search path (after any user customizations).
 			// This is also the one that's used when writing to the "mod" path.
-			game+mod+mod_write+default_write_path		|gameinfo_path|.
-			gamebin				|gameinfo_path|bin
+			mod+mod_write+default_write_path		|gameinfo_path|.
+			gamebin									|gameinfo_path|bin
 
 			// We search VPK files before ordinary folders, because most files will be found in
 			// VPKs, and we can avoid making thousands of file system calls to attempt to open files
