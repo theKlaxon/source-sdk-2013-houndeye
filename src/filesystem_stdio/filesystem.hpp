@@ -404,26 +404,22 @@ public: // IFileSystem
 private:
 	struct SearchPath {
 		SearchPath() = default;
-		SearchPath( const SearchPath& other ) { // copy-constructor
-			this->m_Clients = other.m_Clients;
-			this->m_ClientIDs = other.m_ClientIDs;
-			this->m_RequestOnly = other.m_RequestOnly;
-		}
 		~SearchPath() {
-			for ( auto& system : this->m_Clients ) {
-				system->Shutdown();
-			}
-			this->m_Clients.Purge();
-			this->m_ClientIDs.Purge();
+			Warning( "called" );
+		}
+		SearchPath( const SearchPath& other ) {// copy-constructor-but-actually-move
+			m_Clients = other.m_Clients;
+			m_ClientIDs = other.m_ClientIDs;
+			m_RequestOnly = other.m_RequestOnly;
 		}
 
-		CUtlVector<std::shared_ptr<ISystemClient>> m_Clients{};
+		CUtlVector<ISystemClient*> m_Clients{};
 		CUtlVector<int> m_ClientIDs{};
 		bool m_RequestOnly{ false };
 	};
 
 	// The named search paths
-	CUtlDict<SearchPath> m_SearchPaths{};
+	CUtlDict<SearchPath*> m_SearchPaths{};
 	// All open descriptors
 	CUtlVector<FileDescriptor*> m_Descriptors{ 10 };
 	int m_LastId{ 1 };  // 0 is reserved for the root

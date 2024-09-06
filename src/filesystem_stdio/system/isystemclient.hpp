@@ -2,14 +2,8 @@
 // Created by ENDERZOMBI102 on 23/02/2024.
 //
 #pragma once
-#include "mempool.h"
+#include "refcount.h"
 #include "tier0/platform.h"
-
-#include <functional>
-#include <memory>
-
-
-class ISystemClient;
 
 
 enum class FileType {
@@ -53,7 +47,7 @@ static_assert( sizeof( OpenMode ) == sizeof( uint8_t ) );
  * Uses a memory arena to avoid sparse allocations.
  */
 struct FileDescriptor {
-	std::weak_ptr<ISystemClient> m_System;
+	class ISystemClient* m_System;
 	uintptr_t m_Handle;
 	uint64 m_Offset{0};
 	int64 m_Size{ -1 };
@@ -83,8 +77,9 @@ struct WalkEntry {
 };
 
 
-abstract_class ISystemClient {
-public: // metadata
+abstract_class ISystemClient : public CRefCounted<> {
+public:
+	// metadata
 	[[nodiscard]]
 	virtual auto GetNativePath() const -> const char* = 0;
 	[[nodiscard]]
@@ -96,7 +91,6 @@ public: // metadata
 	virtual auto Shutdown() -> void = 0;
 	auto operator==( ISystemClient& pOther ) const -> bool { return this == &pOther || this->GetIdentifier() == pOther.GetIdentifier(); }
 	auto operator==( const ISystemClient& pOther ) const -> bool { return this == &pOther || this->GetIdentifier() == pOther.GetIdentifier(); }
-public: // fs interactions
 	// file ops
 	virtual auto Open  ( const char* pPath, OpenMode pMode ) -> FileDescriptor* = 0;
 	virtual auto Read  ( const FileDescriptor* pDesc, void* pBuffer, uint32 pCount ) -> int32 = 0;
@@ -109,3 +103,5 @@ public: // fs interactions
 	virtual auto Remove( const FileDescriptor* pDesc ) -> void = 0;
 	virtual auto Stat  ( const FileDescriptor* pDesc ) -> std::optional<StatData> = 0;
 };
+
+auto CreateSystemClient( int pId, const char* pAbsolute, const char* pPath ) -> ISystemClient*;

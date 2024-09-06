@@ -13,14 +13,8 @@
 #include "strtools.h"
 #include "dbg.h"
 
-CPlainSystemClient::CPlainSystemClient( int32 pId, std::string pAbsolute, const char* pPath )
-	: m_iId( pId ), m_szNativePath( pPath ), m_szNativeAbsolutePath( std::move( pAbsolute ) ) { }
-auto CPlainSystemClient::Open( int32 pId, const std::string& pAbsolute, const char* pPath ) -> std::shared_ptr<ISystemClient> {
-	if (! std::filesystem::is_directory( pAbsolute ) ) {
-		return { };
-	}
-	return std::make_shared<CPlainSystemClient>( pId, pAbsolute, pPath );
-}
+CPlainSystemClient::CPlainSystemClient( int32 pId, const char* pAbsolute, const char* pPath )
+	: m_iId( pId ), m_szNativePath( V_strdup( pPath ) ), m_szNativeAbsolutePath( V_strdup( pAbsolute ) ) { }
 auto CPlainSystemClient::GetNativePath() const -> const char* {
 	return this->m_szNativePath;
 }
@@ -103,7 +97,9 @@ auto CPlainSystemClient::Flush( const FileDescriptor* pDesc ) -> bool {
 
 	return true;
 }
-auto CPlainSystemClient::Close( const FileDescriptor* pDesc ) -> void { }
+auto CPlainSystemClient::Close( const FileDescriptor* pDesc ) -> void {
+	close( static_cast<int>( pDesc->m_Handle ) );
+}
 
 auto CPlainSystemClient::Walk( const FileDescriptor* pDesc, const WalkEntry*& pEntry ) -> void {
 //	getdents64( static_cast<int>( pDesc->m_Handle ), , );
@@ -118,7 +114,7 @@ auto CPlainSystemClient::Stat( const FileDescriptor* pDesc ) -> std::optional<St
 	}
 
 		// find the type
-	FileType fileType{ FileType::Unknown };
+	auto fileType{ FileType::Unknown };
 	if ( S_ISDIR( it.st_mode ) ) {
 		fileType = FileType::Directory;
 	} else if ( S_ISREG( it.st_mode ) ) {
@@ -128,5 +124,5 @@ auto CPlainSystemClient::Stat( const FileDescriptor* pDesc ) -> std::optional<St
 	}
 
 	// return value
-	return { StatData{ fileType, it.st_atim.tv_nsec, it.st_mtim.tv_nsec, it.st_size } };
+	return { StatData{ fileType, static_cast<uint64>( it.st_atim.tv_nsec ), static_cast<uint64>( it.st_mtim.tv_nsec ), static_cast<uint64>( it.st_size ) } };
 }

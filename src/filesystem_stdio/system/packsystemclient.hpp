@@ -7,16 +7,14 @@
 
 class CPackSystemClient : public ISystemClient {
 public:
-	// NOTE: This is PRIVATE
-	CPackSystemClient( int32 pId, const char* pPath, std::unique_ptr<vpkpp::PackFile>&& pPack );
-	static auto Open( int32 pId, const std::string& pAbsolute, const char* pPath ) -> std::shared_ptr<ISystemClient>;
+	// metadata
+	CPackSystemClient( int32 pId, const char* pAbsolute, const char* pPath );
 	[[nodiscard]] auto GetNativePath() const -> const char* override;
 	[[nodiscard]] auto GetNativeAbsolutePath() const -> const char* override;
 	[[nodiscard]] auto GetIdentifier() const -> int32 override;
 	[[nodiscard]]
 	auto GetType() const -> const char* override;
 	auto Shutdown() -> void override;
-public: // FS interaction
 	// file ops
 	auto Open  ( const char* pPath, OpenMode pMode ) -> FileDescriptor* override;
 	auto Read  ( const FileDescriptor* pDesc, void* pBuffer, uint32 pCount ) -> int32 override;
@@ -32,4 +30,5 @@ private:
 	int32 m_iId;
 	const char* m_szNativePath;
 	std::unique_ptr<vpkpp::PackFile> m_PackFile;
+	friend auto CreateSystemClient() -> ISystemClient*;
 };

@@ -2,26 +2,15 @@
 // Created by ENDERZOMBI102 on 23/02/2024.
 //
 #include "packsystemclient.hpp"
-#include <utility>
+#include "strtools.h"
+// memdbgon must be the last include file in a .cpp file!!!
+#include "tier0/memdbgon.h"
 
-CPackSystemClient::CPackSystemClient( int32 pId, const char* pPath, std::unique_ptr<vpkpp::PackFile>&& pPack ) {
+
+CPackSystemClient::CPackSystemClient( int32 pId, const char* pAbsolute, const char* pPath ) {
 	this->m_iId = pId;
-	this->m_szNativePath = pPath;
-	this->m_PackFile = std::move( pPack );
-}
-auto CPackSystemClient::Open( int32 pId, const std::string& pAbsolute, const char* pPath ) -> std::shared_ptr<ISystemClient> {
-	auto pack{ vpkpp::PackFile::open( pAbsolute, {} ) };
-	if (! pack ) {
-		return {};
-	}
-
-	switch ( pack->getType() ) {
-		case vpkpp::PackFileType::VPK:
-		case vpkpp::PackFileType::BSP:
-			return std::make_shared<CPackSystemClient>( pId, pPath, std::move( pack ) );
-		default:
-			return {};
-	}
+	this->m_szNativePath = V_strdup( pPath );
+	this->m_PackFile = vpkpp::PackFile::open( pAbsolute, {} );
 }
 auto CPackSystemClient::GetNativePath() const -> const char* {
 	return this->m_szNativePath;
@@ -38,7 +27,7 @@ auto CPackSystemClient::GetType() const -> const char* {
 auto CPackSystemClient::Shutdown() -> void { }
 
 // FS interaction
-auto CPackSystemClient::Flush( const FileDescriptor* desc ) -> bool {
+auto CPackSystemClient::Flush( const FileDescriptor* pDesc ) -> bool {
 	AssertFatalMsg( false, "Not supported!!" );
 	std::unreachable();
 }
@@ -49,24 +38,43 @@ auto CPackSystemClient::Open( const char* pPath, OpenMode pMode ) -> FileDescrip
 	AssertFatalMsg( pPath, "Was given a `NULL` file path!" );
 	AssertFatalMsg( pMode, "Was given an empty open mode!" );
 
-	return nullptr;
+	auto maybeEntry{ m_PackFile->findEntry( pPath ) };
+	if (! maybeEntry ) {
+		return nullptr;
+	}
+	const auto& entry{ *maybeEntry };
+
+	auto desc{ FileDescriptor::Make() };
+	desc->m_Handle = reinterpret_cast<uintptr_t>( V_strdup( pPath ) );
+	desc->m_Size = static_cast<int64>( entry.length );
+	return desc;
 }
-auto CPackSystemClient::Close( const FileDescriptor* desc ) -> void { }
+auto CPackSystemClient::Close( const FileDescriptor* pDesc ) -> void {
+	delete[] reinterpret_cast<const char*>( pDesc->m_Handle );
+}
 auto CPackSystemClient::Create( const char* pPath, FileType pType, OpenMode pMode ) -> FileDescriptor* {
 	AssertFatalMsg( false, "Not supported!!" );
-	std::unreachable();
+	return nullptr;
 }
-auto CPackSystemClient::Read( const FileDescriptor* desc, void* buffer, uint32 count ) -> int32 {
-	AssertFatalMsg( desc, "Was given a `NULL` file handle!" );
-	AssertFatalMsg( buffer, "Was given a `NULL` buffer ptr!" );
+auto CPackSystemClient::Read( const FileDescriptor* pDesc, void* pBuffer, uint32 pCount ) -> int32 {
+	AssertFatalMsg( pDesc, "Was given a `NULL` file handle!" );
+	AssertFatalMsg( pBuffer, "Was given a `NULL` buffer ptr!" );
 
-	return pread64( static_cast<int>( desc->m_Handle ), buffer, count, desc->m_Offset );
+	const auto maybeData{ m_PackFile->readEntry( reinterpret_cast<const char*>( pDesc->m_Handle ) ) };
+	if (! maybeData ) {
+		return -1;
+	}
+
+	const auto size{ std::min( static_cast<int32>( pCount ), static_cast<int32>( pDesc->m_Size ) ) };
+	const auto& data{ *maybeData };
+	V_memcpy( pBuffer,  data.data(), size );
+	return size;
 }
-auto CPackSystemClient::Write( const FileDescriptor* desc, void const* buffer, uint32 count ) -> int32 {
+auto CPackSystemClient::Write( const FileDescriptor* pDesc, void const* pBuffer, uint32 pCount ) -> int32 {
 	AssertFatalMsg( false, "Not supported!!" );
 	std::unreachable();
 }
-auto CPackSystemClient::Remove( const FileDescriptor* desc ) -> void {
+auto CPackSystemClient::Remove( const FileDescriptor* pDesc ) -> void {
 	AssertFatalMsg( false, "Not supported!!" );
 	std::unreachable();
 }

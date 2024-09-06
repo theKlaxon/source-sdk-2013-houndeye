@@ -8,15 +8,13 @@
 #include "filesystem.hpp"
 #include "interface.h"
 #include "utlbuffer.h"
-#include "system/packsystemclient.hpp"
-#include "system/plainsystemclient.hpp"
 #include "system/rootsystemclient.hpp"
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
 namespace {
-	CFileSystemStdio g_FullFileSystem{};
-	auto g_RootSystemClient{ std::make_shared<CRootSystemClient>() };
+	CFileSystemStdio s_FullFileSystem{};
+	auto s_RootSystemClient{ new CRootSystemClient };
 
 	constexpr auto parseOpenMode( const char* pMode ) -> OpenMode {
 		OpenMode mode{};
@@ -60,7 +58,7 @@ auto CFileSystemStdio::Connect( CreateInterfaceFn factory ) -> bool {
 auto CFileSystemStdio::Disconnect() -> void { }
 auto CFileSystemStdio::QueryInterface( const char* pInterfaceName ) -> void* {
 	if ( strcmp( pInterfaceName, FILESYSTEM_INTERFACE_VERSION ) == 0 ) {
-		return &g_FullFileSystem;
+		return &s_FullFileSystem;
 	}
 
 	return nullptr;
@@ -85,8 +83,7 @@ int CFileSystemStdio::Read( void* pOutput, int size, FileHandle_t file ) {
 	}
 
 	auto* desc{ static_cast<FileDescriptor*>( file ) };
-
-	int32 count{ desc->m_System.lock()->Read( desc, pOutput, size ) };
+	const int32 count{ desc->m_System->Read( desc, pOutput, size ) };
 	if ( count > 0 ) {
 		desc->m_Offset += count;
 	}
@@ -104,8 +101,7 @@ int CFileSystemStdio::Write( const void* pInput, int size, FileHandle_t file ) {
 	}
 
 	auto* desc{ static_cast<FileDescriptor*>( file ) };
-
-	int32 count{ desc->m_System.lock()->Write( desc, pInput, size ) };
+	const int32 count{ desc->m_System->Write( desc, pInput, size ) };
 	if ( count > 0 ) {
 		desc->m_Offset += count;
 	}
@@ -120,10 +116,11 @@ FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions
 
 	// absolute paths get special treatment
 	if ( V_IsAbsolutePath( pFileName ) ) {
-		auto desc{ g_RootSystemClient->Open( pFileName, mode ) };
+		auto desc{ s_RootSystemClient->Open( pFileName, mode ) };
 		// only add to vector if we actually got an open file
 		if ( desc != nullptr ) {
-			desc->m_System = { g_RootSystemClient };
+			desc->m_System = s_RootSystemClient;
+			s_RootSystemClient->AddRef();  // This makes sure we're only `delete`-ing if there are no open files
 			this->m_Descriptors.AddToTail( desc );
 			return desc;
 		}
@@ -132,16 +129,17 @@ FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions
 
 	// if we got a pathID, only look into that SearchPath
 	if ( pathID != nullptr ) {
-		if ( this->m_SearchPaths.Find( pathID ) == CUtlDict<SearchPath>::InvalidIndex() ) {
-			Warning( "[AuroraSource|FileSystem] `Open()` Was given a pathID which wasn't loaded, may be a bug!\n" );
+		if ( m_SearchPaths.Find( pathID ) == CUtlDict<SearchPath>::InvalidIndex() ) {
+			Warning( "[AuroraSource|FileSystem] `Open()` Was given a pathID (%s) which wasn't loaded, may be a bug!\n", pathID );
 			return nullptr;
 		}
 
-		for ( const auto& system : this->m_SearchPaths[pathID].m_Clients ) {
+		for ( const auto& system : m_SearchPaths[pathID]->m_Clients ) {
 			auto desc{ system->Open( pFileName, mode ) };
 			// only add to vector if we actually got an open file
 			if ( desc != nullptr ) {
-				desc->m_System = { system };
+				desc->m_System = system;
+				system->AddRef();  // This makes sure we're only `delete`-ing if there are no open files
 				this->m_Descriptors.AddToTail( desc );
 				return desc;
 			}
@@ -149,11 +147,12 @@ FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions
 	} else {
 		// else, look into all clients
 		for ( const auto& [_, searchPath] : this->m_SearchPaths ) {
-			for ( const auto& system : searchPath.m_Clients ) {
-				auto desc{ system->Open( pFileName, mode ) };
+			for ( const auto& system : searchPath->m_Clients ) {
+				const auto desc{ system->Open( pFileName, mode ) };
 				// only add to vector if we actually got an open file
 				if ( desc != nullptr ) {
-					desc->m_System = { system };
+					desc->m_System = system;
+					system->AddRef();  // This makes sure we're only `delete`-ing if there are no open files
 					this->m_Descriptors.AddToTail( desc );
 					return desc;
 				}
@@ -163,15 +162,16 @@ FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions
 	return nullptr;
 }
 void CFileSystemStdio::Close( FileHandle_t file ) {
-	auto desc{ static_cast<FileDescriptor*>( file ) };
-	desc->m_System.lock()->Close( desc );
+	const auto desc{ static_cast<FileDescriptor*>( file ) };
+	desc->m_System->Close( desc );
+	desc->m_System->Release();  // remove this file's ref
 	this->m_Descriptors.FindAndRemove( desc );
 	FileDescriptor::Free( desc );
 }
 
 void CFileSystemStdio::Seek( FileHandle_t file, int pos, FileSystemSeek_t seekType ) {
-	auto desc{ const_cast<FileDescriptor*>( static_cast<const FileDescriptor*>( file ) ) };
-	auto size{ desc->m_System.lock()->Stat( desc )->m_Length };
+	const auto desc{ static_cast<FileDescriptor*>( file ) };
+	const auto size{ desc->m_System->Stat( desc )->m_Length };
 
 	switch ( seekType ) {
 		case FILESYSTEM_SEEK_CURRENT:
@@ -186,20 +186,18 @@ void CFileSystemStdio::Seek( FileHandle_t file, int pos, FileSystemSeek_t seekTy
 			break;
 	}
 }
-unsigned int CFileSystemStdio::Tell( FileHandle_t file ) {
-	auto desc{ static_cast<FileDescriptor*>( file ) };
-
-	return static_cast<int32>( desc->m_Offset );
+uint32 CFileSystemStdio::Tell( FileHandle_t file ) {
+	return static_cast<int32>( static_cast<FileDescriptor*>( file )->m_Offset );
 }
-unsigned int CFileSystemStdio::Size( FileHandle_t file ) {
+uint32 CFileSystemStdio::Size( FileHandle_t file ) {
 	// if we already know the size, just return it
-	auto desc{ static_cast<FileDescriptor*>( file ) };
+	const auto desc{ static_cast<FileDescriptor*>( file ) };
 	if ( desc->m_Size != -1 ) {
 		return desc->m_Size;
 	}
 
 	// stat the file, "handle" error
-	auto statMaybe{ desc->m_System.lock()->Stat( desc ) };
+	const auto statMaybe{ desc->m_System->Stat( desc ) };
 	if (! statMaybe ) {
 		return -1;
 	}
@@ -208,7 +206,7 @@ unsigned int CFileSystemStdio::Size( FileHandle_t file ) {
 	desc->m_Size = static_cast<int64>( statMaybe.value().m_Length );
 	return desc->m_Size;
 }
-unsigned int CFileSystemStdio::Size( const char* pFileName, const char* pPathID ) {
+uint32 CFileSystemStdio::Size( const char* pFileName, const char* pPathID ) {
 	// open file
 	auto desc{ static_cast<FileDescriptor*>( this->Open( pFileName, "r", pPathID ) ) };
 	if (! desc ) {
@@ -226,8 +224,8 @@ unsigned int CFileSystemStdio::Size( const char* pFileName, const char* pPathID 
 }
 
 void CFileSystemStdio::Flush( FileHandle_t file ) {
-	auto desc{ static_cast<FileDescriptor*>( file ) };
-	desc->m_System.lock()->Flush( desc );
+	const auto desc{ static_cast<FileDescriptor*>( file ) };
+	desc->m_System->Flush( desc );
 }
 bool CFileSystemStdio::Precache( const char* pFileName, const char* pPathID ) { AssertUnreachable(); return {}; }
 
@@ -241,9 +239,9 @@ bool CFileSystemStdio::FileExists( const char* pFileName, const char* pPathID ) 
 	}
 
 	// try to open the file
-	auto handle{ this->Open( pFileName, "r", pPathID ) };
+	const auto handle{ Open( pFileName, "r", pPathID ) };
 	if ( handle ) {
-		this->Close( handle );
+		Close( handle );
 		return true;
 	}
 
@@ -285,8 +283,6 @@ FilesystemMountRetval_t CFileSystemStdio::MountSteamContent( int nExtraAppId ) {
 void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, SearchPathAdd_t addType ) {
 	AssertFatalMsg( pPath, "Was given an empty path!!" );
 
-	this->m_LastId += 1;
-
 	// calculate base dir (current `-game` dir)
 	char absolute[1024];
 	if (! V_IsAbsolutePath( pPath ) ) {
@@ -297,7 +293,7 @@ void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, Sea
 		V_MakeAbsolutePath( absolute, 1024, pPath, absolute );
 	} else {
 		// already absolute, just copy
-		strncpy( absolute, pPath, 1024 );
+		V_strcpy_safe( absolute, pPath );
 	}
 
 	// if the path is non-existent, do nothing
@@ -305,25 +301,31 @@ void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, Sea
 		return;
 	}
 
+	m_LastId += 1;
+
 	// try all possibilities
-	auto system{ CPlainSystemClient::Open( this->m_LastId, absolute, pPath ) };
-	system = system ? system : CPackSystemClient::Open( this->m_LastId, absolute, pPath );
+	auto system{ CreateSystemClient( m_LastId, absolute, pPath ) };
 	AssertFatalMsg( system, "Unsupported path entry: %s", absolute );
+	if (! system ) {
+		return;
+	}
+
+	Log( "CFileSystemStdio::AddSearchPath(%s, %s, prepend=%d)\n", absolute, pathID, addType == PATH_ADD_TO_HEAD );
 
 	// make a new alloc of the string
 	// TODO: Use string interning if possible
 	pathID = V_strlower( V_strdup( pathID ) );
 
-	if ( this->m_SearchPaths.Find( pathID ) == CUtlDict<SearchPath>::InvalidIndex() ) {
-		this->m_SearchPaths.Insert( pathID );
+	if ( m_SearchPaths.Find( pathID ) == CUtlDict<SearchPath*>::InvalidIndex() ) {
+		m_SearchPaths.Insert( pathID, new SearchPath );
 	}
 
 	if ( addType == SearchPathAdd_t::PATH_ADD_TO_HEAD ) {
-		this->m_SearchPaths[ pathID ].m_Clients.AddToHead( system );
+		m_SearchPaths[pathID]->m_Clients.AddToHead( system );
 	} else {
-		this->m_SearchPaths[ pathID ].m_Clients.AddToTail( system );
+		m_SearchPaths[pathID]->m_Clients.AddToTail( system );
 	}
-	this->m_SearchPaths[ pathID ].m_ClientIDs.AddToTail( this->m_LastId );
+	m_SearchPaths[pathID]->m_ClientIDs.AddToTail( m_LastId );
 	delete[] pathID;
 }
 bool CFileSystemStdio::RemoveSearchPath( const char* pPath, const char* pathID ) {
@@ -331,10 +333,11 @@ bool CFileSystemStdio::RemoveSearchPath( const char* pPath, const char* pathID )
 		return false;
 	}
 
-	auto& systems{ this->m_SearchPaths[pathID].m_Clients };
+	auto& systems{ m_SearchPaths[pathID]->m_Clients };
 	for ( int i{0}; i < systems.Count(); i += 1 ) {
 		if ( V_strcmp( systems[i]->GetNativePath(), pPath ) == 0 ) {
 			systems[i]->Shutdown();
+			systems[i]->Release();  // if this is the last ref, the driver will be removed
 			systems.Remove( i );
 			return true;
 		}
@@ -344,20 +347,22 @@ bool CFileSystemStdio::RemoveSearchPath( const char* pPath, const char* pathID )
 
 void CFileSystemStdio::RemoveAllSearchPaths() {
 	// close all descriptors
-	for ( auto desc : this->m_Descriptors ) {
-		desc->m_System.lock()->Close( desc );
+	for ( const auto desc : m_Descriptors ) {
+		desc->m_System->Close( desc );
+		desc->m_System->Release();
 	}
 	// clear descriptor cache
-	this->m_Descriptors.Purge();
+	m_Descriptors.Purge();
 	// free the memory arena
 	FileDescriptor::CleanupArena();
 
 	// close all systems
-	for ( auto& [pathId, searchPath] : this->m_SearchPaths ) {
-		for ( auto& system : searchPath.m_Clients ) {
+	for ( auto& [pathId, searchPath] : m_SearchPaths ) {
+		for ( const auto& system : searchPath->m_Clients ) {
 			system->Shutdown();
+			system->Release();
 		}
-		searchPath.m_Clients.Purge();
+		searchPath->m_Clients.Purge();
 	}
 	this->m_SearchPaths.Purge();
 }
@@ -367,31 +372,33 @@ void CFileSystemStdio::RemoveSearchPaths( const char* szPathID ) {
 	if ( m_SearchPaths.Find( szPathID ) == CUtlDict<SearchPath>::InvalidIndex() ) {
 		return;
 	}
-
-	auto& search{ this->m_SearchPaths[szPathID] };
+	auto* search{ m_SearchPaths[szPathID] };
 
 	// close all open descriptors the path's clients own
-	for ( auto i{this->m_Descriptors.Count()}; i > 0; i -= 1 ) {
-		auto client{ this->m_Descriptors[i]->m_System.lock() };
-		if ( search.m_ClientIDs.Find( client->GetIdentifier() ) != CUtlVector<int>::InvalidIndex() ) {
+	for ( auto i{m_Descriptors.Count()}; i > 0; i -= 1 ) {
+		const auto system{ m_Descriptors[i]->m_System };
+		if ( search->m_ClientIDs.Find( system->GetIdentifier() ) != CUtlVector<int>::InvalidIndex() ) {
 			// close descriptor
-			client->Close( this->m_Descriptors[ i ] );
+			system->Close( m_Descriptors[ i ] );
+			system->Release();
 			// remove from cache
-			this->m_Descriptors.FindAndRemove( this->m_Descriptors[i] );
+			m_Descriptors.FindAndRemove( m_Descriptors[i] );
 			// free it
-			FileDescriptor::Free( this->m_Descriptors[i] );
+			FileDescriptor::Free( m_Descriptors[i] );
 		}
 	}
 
 	// remove the clients
-	for ( auto& system : search.m_Clients ) {
+	for ( const auto& system : search->m_Clients ) {
 		system->Shutdown();
+		system->Release();
 	}
-	search.m_Clients.Purge();
-	search.m_ClientIDs.Purge();
+	search->m_Clients.Purge();
+	search->m_ClientIDs.Purge();
 
 	// delete search path
-	this->m_SearchPaths.Remove( szPathID );
+	delete m_SearchPaths[szPathID];
+	m_SearchPaths.Remove( szPathID );
 }
 
 void CFileSystemStdio::MarkPathIDByRequestOnly( const char* pPathID, bool bRequestOnly ) {
@@ -399,11 +406,11 @@ void CFileSystemStdio::MarkPathIDByRequestOnly( const char* pPathID, bool bReque
 	// TODO: Use string interning if possible
 	auto pathID{ V_strlower( V_strdup( pPathID ) ) };
 
-	if ( this->m_SearchPaths.Find( pathID ) == CUtlDict<SearchPath>::InvalidIndex() ) {
-		this->m_SearchPaths.Insert( pathID );
+	if ( m_SearchPaths.Find( pathID ) == CUtlDict<SearchPath>::InvalidIndex() ) {
+		m_SearchPaths.Insert( pathID, new SearchPath );
 	}
 
-	this->m_SearchPaths[ pathID ].m_RequestOnly = bRequestOnly;
+	m_SearchPaths[pathID]->m_RequestOnly = bRequestOnly;
 	delete[] pathID;
 }
 
@@ -415,7 +422,7 @@ int CFileSystemStdio::GetSearchPath( const char* pathID, bool bGetPackFiles, cha
 	}
 
 	int length{0};
-	for ( const auto& client : m_SearchPaths[pathID].m_Clients ) {
+	for ( const auto& client : m_SearchPaths[pathID]->m_Clients ) {
 		if ( V_strcmp( client->GetType(), "pack" ) == 0 && !bGetPackFiles ) {
 			// pack files disabled...
 			continue;
@@ -495,9 +502,6 @@ const char* CFileSystemStdio::FindFirst( const char* pWildCard, FileFindHandle_t
 	// TODO: For now, just support absolute paths
 	AssertMsg( V_IsAbsolutePath( pWildCard ), "FindFirst(not absolute!!): %s, %p", pWildCard, pHandle );
 
-
-
-
 	return {};
 }
 const char* CFileSystemStdio::FindNext( FileFindHandle_t handle ) {
@@ -512,13 +516,16 @@ void CFileSystemStdio::FindClose( FileFindHandle_t handle ) {
 	AssertUnreachable();
 }
 
-const char* CFileSystemStdio::FindFirstEx( const char* pWildCard, const char* pPathID, FileFindHandle_t* pHandle ) { AssertUnreachable(); return {}; }
+const char* CFileSystemStdio::FindFirstEx( const char* pWildCard, const char* pPathID, FileFindHandle_t* pHandle ) {
+	AssertUnreachable();
+	return {};
+}
 
 // ---- File name and directory operations ----
 const char* CFileSystemStdio::GetLocalPath( const char* pFileName, char* pDest, int maxLenInChars ) {
 	// TODO: Check if correct
 	GetCurrentDirectory( pDest, maxLenInChars );
-	V_MakeAbsolutePath( pDest, maxLenInChars, "bin/", pDest );
+	V_MakeAbsolutePath( pDest, maxLenInChars, ".temp/", pDest );
 	V_MakeAbsolutePath( pDest, maxLenInChars, pFileName, pDest );
 	return pDest;
 }
@@ -571,17 +578,16 @@ int CFileSystemStdio::HintResourceNeed( const char* hintlist, int forgetEverythi
 bool CFileSystemStdio::IsFileImmediatelyAvailable( const char* pFileName ) { AssertUnreachable(); return {}; }
 
 void CFileSystemStdio::GetLocalCopy( const char* pFileName ) {
-	// FIXME: Must work in conjunction with GetLocalPath()!!!
-	AssertUnreachable();
+	Warning( "CFileSystemStdio::GetLocalCopy(%s)\n", pFileName );
 }
 
 // ---- Debugging operations ----
 void CFileSystemStdio::PrintOpenedFiles() { AssertUnreachable(); }
 void CFileSystemStdio::PrintSearchPaths() {
 	Log( "---- Search Path table ----\n" );
-	for ( const auto& [searchPathId, searchPath] : this->m_SearchPaths ) {
-		Log( "%s:\n", searchPathId );
-		for ( const auto& path : searchPath.m_Clients ) {
+	for ( const auto& [searchPathId, searchPath] : m_SearchPaths ) {
+		Log( "%s(reqOnly=%d):\n", searchPathId, searchPath->m_RequestOnly );
+		for ( const auto& path : searchPath->m_Clients ) {
 			if ( path->GetNativePath() && strcmp( path->GetNativePath(), "" ) != 0 ) {
 				Log( "  - %s\n", path->GetNativePath() );
 			}
@@ -608,7 +614,7 @@ FileHandle_t CFileSystemStdio::OpenEx( const char* pFileName, const char* pOptio
 
 	const auto desc{ static_cast<FileDescriptor*>( Open( pFileName, pOptions, pathID ) ) };
 	if ( desc && ppszResolvedFilename ) {
-		const auto parent{ desc->m_System.lock()->GetNativeAbsolutePath() };
+		const auto parent{ desc->m_System->GetNativeAbsolutePath() };
 		const auto len{ V_strlen( parent ) + V_strlen( pFileName ) + 2 };
 		const auto dest{ new char[len] };
 		V_MakeAbsolutePath( dest, len, pFileName, parent );
@@ -624,8 +630,8 @@ int CFileSystemStdio::ReadEx( void* pOutput, int sizeDest, int size, FileHandle_
 		return -1;
 	}
 
-	auto desc{ static_cast<FileDescriptor*>( file ) };
-	return desc->m_System.lock()->Read( desc, pOutput, size );
+	const auto desc{ static_cast<FileDescriptor*>( file ) };
+	return desc->m_System->Read( desc, pOutput, size );
 }
 int CFileSystemStdio::ReadFileEx( const char* pFileName, const char* pPath, void** ppBuf, bool bNullTerminate, bool bOptimalAlloc, int nMaxBytes, int nStartingByte, FSAllocFunc_t pfnAlloc ) { AssertUnreachable(); return {}; }
 
@@ -666,7 +672,7 @@ bool CFileSystemStdio::GetOptimalIOConstraints( FileHandle_t hFile, unsigned* pO
 	if (! hFile ) {
 		return false;
 	}
-	const uint32 value{ strcmp( static_cast<FileDescriptor*>( hFile )->m_System.lock()->GetType(), "pack" ) != 0 };
+	const uint32 value{ strcmp( static_cast<FileDescriptor*>( hFile )->m_System->GetType(), "pack" ) != 0 };
 
 	if ( pOffsetAlign ) {
 		*pOffsetAlign = value;
@@ -737,10 +743,10 @@ void CFileSystemStdio::CacheAllVPKFileHashes( bool bCacheAllVPKHashes, bool bRec
 bool CFileSystemStdio::CheckVPKFileHash( int PackFileID, int nPackFileNumber, int nFileFraction, MD5Value_t& md5Value ) { AssertUnreachable(); return {}; }
 
 void CFileSystemStdio::NotifyFileUnloaded( const char* pszFilename, const char* pPathId ) {
-	AssertMsg( false, "CFileSystemStdio::NotifyFileUnloaded(%s, %s)", pszFilename, pPathId );
+	Warning( "CFileSystemStdio::NotifyFileUnloaded(%s, %s)\n", pszFilename, pPathId );
 }
 
 bool CFileSystemStdio::GetCaseCorrectFullPath_Ptr( const char* pFullPath, char* pDest, int maxLenInChars ) { AssertUnreachable(); return {}; }
 
 
-EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CFileSystemStdio, IFileSystem, FILESYSTEM_INTERFACE_VERSION, g_FullFileSystem );
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CFileSystemStdio, IFileSystem, FILESYSTEM_INTERFACE_VERSION, s_FullFileSystem );

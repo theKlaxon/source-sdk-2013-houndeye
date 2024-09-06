@@ -7,8 +7,7 @@
 
 class CPlainSystemClient : public ISystemClient {
 public:
-	CPlainSystemClient( int32 pId, std::string pAbsolute, const char* pPath );
-	static auto Open( int32 pId, const std::string& pAbsolute, const char* pPath ) -> std::shared_ptr<ISystemClient>;
+	CPlainSystemClient( int32 pId, const char* pAbsolute, const char* pPath );
 	[[nodiscard]]
 	auto GetNativePath() const -> const char* override;
 	[[nodiscard]]
@@ -34,4 +33,5 @@ private:
 	const int m_iId;
 	const char* m_szNativePath;
 	const std::string m_szNativeAbsolutePath;
+	friend auto CreateSystemClient() -> ISystemClient*;
 };
