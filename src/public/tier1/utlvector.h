@@ -73,11 +73,13 @@ public:
 	// Returns the number of elements in the vector
 	// SIZE IS DEPRECATED!
 	int Count() const;
-	int Size() const;// don't use me!
+	[[deprecated("don't use me! use `Count()`")]]
+	int Size() const;
 
 	/// are there no elements? For compatibility with lists.
-	inline bool IsEmpty( void ) const {
-		return ( Count() == 0 );
+	[[nodiscard]]
+	inline bool IsEmpty() const {
+		return Count() == 0;
 	}
 
 	// Is element index valid?
@@ -153,7 +155,7 @@ public:
 
 	void Sort( int( __cdecl* pfnCompare )( const T*, const T* ) );
 
-	void Shuffle( IUniformRandomStream* pSteam = NULL );
+	void Shuffle( IUniformRandomStream* pSteam = nullptr );
 
 #ifdef DBGFLAG_VALIDATE
 	void Validate( CValidator& validator, char* pchName );// Validate our internal structures
@@ -1067,7 +1069,7 @@ void CUtlVector<T, A>::Validate( CValidator& validator, char* pchName ) {
 template<class T>
 class CUtlVectorAutoPurge : public CUtlVector<T, CUtlMemory<T, int>> {
 public:
-	~CUtlVectorAutoPurge( void ) {
+	~CUtlVectorAutoPurge() {
 		this->PurgeAndDeleteElements();
 	}
 };
@@ -1094,7 +1096,7 @@ public:
 		Purge();
 	}
 
-	~CUtlStringList( void ) {
+	~CUtlStringList() {
 		this->PurgeAndDeleteElements();
 	}
 };
