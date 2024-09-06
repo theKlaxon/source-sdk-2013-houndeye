@@ -31,4 +31,5 @@ set( SDL_MISC   OFF )
 submodule( SDL "SDL" )
 # ----- SourcePP -----
 set( SOURCEPP_BUILD_C_WRAPPERS OFF CACHE INTERNAL "" )
+set( XZ_ASM_I386 OFF CACHE INTERNAL "" )
 submodule( SourcePP "sourcepp" )
