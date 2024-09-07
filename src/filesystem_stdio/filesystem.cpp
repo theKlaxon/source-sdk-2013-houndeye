@@ -606,7 +606,7 @@ const FileSystemStatistics* CFileSystemStdio::GetFilesystemStatistics() { Assert
 
 // ---- Start of new functions after Lost Coast release (7/05) ----
 FileHandle_t CFileSystemStdio::OpenEx( const char* pFileName, const char* pOptions, unsigned flags, const char* pathID, char** ppszResolvedFilename ) {
-	// TODO: DO the `Ex` part :P
+	// TODO: handle the flags
 	if (! (pFileName && pOptions) ) {
 		return nullptr;
 	}
