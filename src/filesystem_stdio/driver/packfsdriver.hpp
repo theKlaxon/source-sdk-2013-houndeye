@@ -2,13 +2,14 @@
 // Created by ENDERZOMBI102 on 23/02/2024.
 //
 #pragma once
-#include "isystemclient.hpp"
+#include "ifsdriver.hpp"
 #include "vpkpp/PackFile.h"
 
-class CPackSystemClient : public ISystemClient {
+
+class CPackFsDriver : public IFsDriver {
 public:
 	// metadata
-	CPackSystemClient( int32 pId, const char* pAbsolute, const char* pPath );
+	CPackFsDriver( int32 pId, const char* pAbsolute, const char* pPath );
 	[[nodiscard]] auto GetNativePath() const -> const char* override;
 	[[nodiscard]] auto GetNativeAbsolutePath() const -> const char* override;
 	[[nodiscard]] auto GetIdentifier() const -> int32 override;
@@ -30,5 +31,5 @@ private:
 	int32 m_iId;
 	const char* m_szNativePath;
 	std::unique_ptr<vpkpp::PackFile> m_PackFile;
-	friend auto CreateSystemClient() -> ISystemClient*;
+	friend auto CreateSystemClient() -> IFsDriver*;
 };

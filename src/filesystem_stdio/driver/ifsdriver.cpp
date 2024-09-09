@@ -1,10 +1,10 @@
 //
 // Created by ENDERZOMBI102 on 30/06/2024.
 //
-#include "isystemclient.hpp"
+#include "ifsdriver.hpp"
+#include "packfsdriver.hpp"
+#include "plainfsdriver.hpp"
 #include "tier1/mempool.h"
-#include "packsystemclient.hpp"
-#include "plainsystemclient.hpp"
 #include <filesystem>
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -18,6 +18,7 @@ auto FileDescriptor::Make() -> FileDescriptor* {
 }
 
 auto FileDescriptor::Free( FileDescriptor* desc ) -> void {
+	delete[] desc->m_Path;  // make sure we delete the duped path
 	g_DescriptorArena.Free( desc );
 }
 
@@ -25,13 +26,13 @@ auto FileDescriptor::CleanupArena() -> void {
 	g_DescriptorArena.Clear();
 }
 
-auto CreateSystemClient( int pId, const char* pAbsolute, const char* pPath ) -> ISystemClient* {
+auto CreateFsDriver( int pId, const char* pAbsolute, const char* pPath ) -> IFsDriver* {
 	if ( std::filesystem::is_directory( pAbsolute ) ) {
-		return new CPlainSystemClient( pId, pAbsolute, pPath );
+		return new CPlainFsDriver( pId, pAbsolute, pPath );
 	}
 
 	if ( V_strcmp( V_GetFileExtension( pPath ), "vpk" ) == 0 || V_strcmp( V_GetFileExtension( pPath ), "bsp" ) == 0 ) {
-		return new CPackSystemClient( pId, pAbsolute, pPath );
+		return new CPackFsDriver( pId, pAbsolute, pPath );
 	}
 
 	return {};

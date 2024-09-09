@@ -2,12 +2,12 @@
 // Created by ENDERZOMBI102 on 23/02/2024.
 //
 #pragma once
-#include "isystemclient.hpp"
+#include "ifsdriver.hpp"
 
 
-class CPlainSystemClient : public ISystemClient {
+class CPlainFsDriver : public IFsDriver {
 public:
-	CPlainSystemClient( int32 pId, const char* pAbsolute, const char* pPath );
+	CPlainFsDriver( int32 pId, const char* pAbsolute, const char* pPath );
 	[[nodiscard]]
 	auto GetNativePath() const -> const char* override;
 	[[nodiscard]]
@@ -33,5 +33,5 @@ private:
 	const int m_iId;
 	const char* m_szNativePath;
 	const std::string m_szNativeAbsolutePath;
-	friend auto CreateSystemClient() -> ISystemClient*;
+	friend auto CreateSystemClient() -> IFsDriver*;
 };

@@ -3,14 +3,13 @@
 //
 #pragma once
 #include "basefilesystem.hpp"
-#include "system/isystemclient.hpp"
+#include "driver/ifsdriver.hpp"
 #include "tier1/utldict.h"
-#include <memory>
 
 
 #undef AsyncRead
 class CFileSystemStdio : public IFileSystem {
-public: // AppSystem
+public: // IAppSystem
 	// Here's where the app systems get to learn about each other
 	 virtual bool Connect( CreateInterfaceFn factory ) override;
 	 virtual void Disconnect() override;
@@ -408,12 +407,12 @@ private:
 			Warning( "called" );
 		}
 		SearchPath( const SearchPath& other ) {// copy-constructor-but-actually-move
-			m_Clients = other.m_Clients;
+			m_Drivers = other.m_Drivers;
 			m_ClientIDs = other.m_ClientIDs;
 			m_RequestOnly = other.m_RequestOnly;
 		}
 
-		CUtlVector<ISystemClient*> m_Clients{};
+		CUtlVector<IFsDriver*> m_Drivers{};
 		CUtlVector<int> m_ClientIDs{};
 		bool m_RequestOnly{ false };
 	};

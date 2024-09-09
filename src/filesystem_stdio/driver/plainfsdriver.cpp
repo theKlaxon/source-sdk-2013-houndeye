@@ -1,7 +1,7 @@
 //
 // Created by ENDERZOMBI102 on 23/02/2024.
 //
-#include "plainsystemclient.hpp"
+#include "plainfsdriver.hpp"
 
 #include <dirent.h>
 #include <fcntl.h>
@@ -13,24 +13,25 @@
 #include "strtools.h"
 #include "dbg.h"
 
-CPlainSystemClient::CPlainSystemClient( int32 pId, const char* pAbsolute, const char* pPath )
+
+CPlainFsDriver::CPlainFsDriver( int32 pId, const char* pAbsolute, const char* pPath )
 	: m_iId( pId ), m_szNativePath( V_strdup( pPath ) ), m_szNativeAbsolutePath( V_strdup( pAbsolute ) ) { }
-auto CPlainSystemClient::GetNativePath() const -> const char* {
+auto CPlainFsDriver::GetNativePath() const -> const char* {
 	return this->m_szNativePath;
 }
-auto CPlainSystemClient::GetNativeAbsolutePath() const -> const char* {
+auto CPlainFsDriver::GetNativeAbsolutePath() const -> const char* {
 	return this->m_szNativeAbsolutePath.c_str();
 }
-auto CPlainSystemClient::GetIdentifier() const -> int32 {
+auto CPlainFsDriver::GetIdentifier() const -> int32 {
 	return this->m_iId;
 }
-auto CPlainSystemClient::GetType() const -> const char* {
+auto CPlainFsDriver::GetType() const -> const char* {
 	return "plain";
 }
-auto CPlainSystemClient::Shutdown() -> void {}
+auto CPlainFsDriver::Shutdown() -> void {}
 
 // FS interaction
-auto CPlainSystemClient::Open( const char* pPath, OpenMode pMode ) -> FileDescriptor* {
+auto CPlainFsDriver::Open( const char* pPath, OpenMode pMode ) -> FileDescriptor* {
 	AssertFatalMsg( pPath, "Was given a `NULL` file path!" );
 	AssertFatalMsg( pMode, "Was given an empty open mode!" );
 
@@ -76,19 +77,19 @@ auto CPlainSystemClient::Open( const char* pPath, OpenMode pMode ) -> FileDescri
 	desc->m_Handle = file;
 	return desc;
 }
-auto CPlainSystemClient::Read( const FileDescriptor* pDesc, void* pBuffer, uint32 pCount ) -> int32 {
+auto CPlainFsDriver::Read( const FileDescriptor* pDesc, void* pBuffer, uint32 pCount ) -> int32 {
 	AssertFatalMsg( pDesc, "Was given a `NULL` file handle!" );
 	AssertFatalMsg( pBuffer, "Was given a `NULL` buffer ptr!" );
 
 	return pread64( static_cast<int>( pDesc->m_Handle ), pBuffer, pCount, static_cast<__off64_t>( pDesc->m_Offset ) );
 }
-auto CPlainSystemClient::Write( const FileDescriptor* pDesc, const void* pBuffer, uint32 pCount ) -> int32 {
+auto CPlainFsDriver::Write( const FileDescriptor* pDesc, const void* pBuffer, uint32 pCount ) -> int32 {
 	AssertFatalMsg( pDesc, "Was given a `NULL` file handle!" );
 	AssertFatalMsg( pBuffer, "Was given a `NULL` buffer ptr!" );
 
 	return pwrite64( static_cast<int>( pDesc->m_Handle ), pBuffer, pCount, static_cast<__off64_t>( pDesc->m_Offset ) );
 }
-auto CPlainSystemClient::Flush( const FileDescriptor* pDesc ) -> bool {
+auto CPlainFsDriver::Flush( const FileDescriptor* pDesc ) -> bool {
 	AssertFatalMsg( pDesc, "Was given a `NULL` file handle!" );
 
 	#if IsWindows()
@@ -97,16 +98,16 @@ auto CPlainSystemClient::Flush( const FileDescriptor* pDesc ) -> bool {
 
 	return true;
 }
-auto CPlainSystemClient::Close( const FileDescriptor* pDesc ) -> void {
+auto CPlainFsDriver::Close( const FileDescriptor* pDesc ) -> void {
 	close( static_cast<int>( pDesc->m_Handle ) );
 }
 
-auto CPlainSystemClient::Walk( const FileDescriptor* pDesc, const WalkEntry*& pEntry ) -> void {
+auto CPlainFsDriver::Walk( const FileDescriptor* pDesc, const WalkEntry*& pEntry ) -> void {
 //	getdents64( static_cast<int>( pDesc->m_Handle ), , );
 }
-auto CPlainSystemClient::Create( const char* pPath, FileType pType, OpenMode pMode ) -> FileDescriptor* { return {}; }
-auto CPlainSystemClient::Remove( const FileDescriptor* pDesc ) -> void { }
-auto CPlainSystemClient::Stat( const FileDescriptor* pDesc ) -> std::optional<StatData> {
+auto CPlainFsDriver::Create( const char* pPath, FileType pType, OpenMode pMode ) -> FileDescriptor* { return {}; }
+auto CPlainFsDriver::Remove( const FileDescriptor* pDesc ) -> void { }
+auto CPlainFsDriver::Stat( const FileDescriptor* pDesc ) -> std::optional<StatData> {
 	// get stat data
 	struct stat64 it {};
 	if ( fstat64( static_cast<int>( pDesc->m_Handle ), &it ) != 0 ) {

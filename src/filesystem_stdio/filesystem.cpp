@@ -8,13 +8,14 @@
 #include "filesystem.hpp"
 #include "interface.h"
 #include "utlbuffer.h"
-#include "system/rootsystemclient.hpp"
+#include "driver/ifsdriver.hpp"
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+
 namespace {
 	CFileSystemStdio s_FullFileSystem{};
-	auto s_RootSystemClient{ new CRootSystemClient };
+	IFsDriver* s_RootFsDriver{nullptr};
 
 	constexpr auto parseOpenMode( const char* pMode ) -> OpenMode {
 		OpenMode mode{};
@@ -68,6 +69,8 @@ auto CFileSystemStdio::Init() -> InitReturnVal_t {
 		return InitReturnVal_t::INIT_OK;
 	}
 
+	s_RootFsDriver = CreateFsDriver( 0, "/", "/" );
+
 	return InitReturnVal_t::INIT_OK;
 }
 auto CFileSystemStdio::Shutdown() -> void {
@@ -116,11 +119,12 @@ FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions
 
 	// absolute paths get special treatment
 	if ( V_IsAbsolutePath( pFileName ) ) {
-		auto desc{ s_RootSystemClient->Open( pFileName, mode ) };
+		auto desc{ s_RootFsDriver->Open( pFileName, mode ) };
 		// only add to vector if we actually got an open file
 		if ( desc != nullptr ) {
-			desc->m_System = s_RootSystemClient;
-			s_RootSystemClient->AddRef();  // This makes sure we're only `delete`-ing if there are no open files
+			desc->m_System = s_RootFsDriver;
+			desc->m_Path = V_strdup( pFileName );
+			s_RootFsDriver->AddRef();  // This makes sure we're only `delete`-ing if there are no open files
 			this->m_Descriptors.AddToTail( desc );
 			return desc;
 		}
@@ -134,11 +138,12 @@ FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions
 			return nullptr;
 		}
 
-		for ( const auto& system : m_SearchPaths[pathID]->m_Clients ) {
+		for ( const auto& system : m_SearchPaths[pathID]->m_Drivers ) {
 			auto desc{ system->Open( pFileName, mode ) };
 			// only add to vector if we actually got an open file
 			if ( desc != nullptr ) {
 				desc->m_System = system;
+				desc->m_Path = V_strdup( pFileName );
 				system->AddRef();  // This makes sure we're only `delete`-ing if there are no open files
 				this->m_Descriptors.AddToTail( desc );
 				return desc;
@@ -147,11 +152,12 @@ FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions
 	} else {
 		// else, look into all clients
 		for ( const auto& [_, searchPath] : this->m_SearchPaths ) {
-			for ( const auto& system : searchPath->m_Clients ) {
+			for ( const auto& system : searchPath->m_Drivers ) {
 				const auto desc{ system->Open( pFileName, mode ) };
 				// only add to vector if we actually got an open file
 				if ( desc != nullptr ) {
 					desc->m_System = system;
+					desc->m_Path = V_strdup( pFileName );
 					system->AddRef();  // This makes sure we're only `delete`-ing if there are no open files
 					this->m_Descriptors.AddToTail( desc );
 					return desc;
@@ -304,7 +310,7 @@ void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, Sea
 	m_LastId += 1;
 
 	// try all possibilities
-	auto system{ CreateSystemClient( m_LastId, absolute, pPath ) };
+	auto system{ CreateFsDriver( m_LastId, absolute, pPath ) };
 	AssertFatalMsg( system, "Unsupported path entry: %s", absolute );
 	if (! system ) {
 		return;
@@ -321,9 +327,9 @@ void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, Sea
 	}
 
 	if ( addType == SearchPathAdd_t::PATH_ADD_TO_HEAD ) {
-		m_SearchPaths[pathID]->m_Clients.AddToHead( system );
+		m_SearchPaths[pathID]->m_Drivers.AddToHead( system );
 	} else {
-		m_SearchPaths[pathID]->m_Clients.AddToTail( system );
+		m_SearchPaths[pathID]->m_Drivers.AddToTail( system );
 	}
 	m_SearchPaths[pathID]->m_ClientIDs.AddToTail( m_LastId );
 	delete[] pathID;
@@ -333,7 +339,7 @@ bool CFileSystemStdio::RemoveSearchPath( const char* pPath, const char* pathID )
 		return false;
 	}
 
-	auto& systems{ m_SearchPaths[pathID]->m_Clients };
+	auto& systems{ m_SearchPaths[pathID]->m_Drivers };
 	for ( int i{0}; i < systems.Count(); i += 1 ) {
 		if ( V_strcmp( systems[i]->GetNativePath(), pPath ) == 0 ) {
 			systems[i]->Shutdown();
@@ -358,11 +364,11 @@ void CFileSystemStdio::RemoveAllSearchPaths() {
 
 	// close all systems
 	for ( auto& [pathId, searchPath] : m_SearchPaths ) {
-		for ( const auto& system : searchPath->m_Clients ) {
+		for ( const auto& system : searchPath->m_Drivers ) {
 			system->Shutdown();
 			system->Release();
 		}
-		searchPath->m_Clients.Purge();
+		searchPath->m_Drivers.Purge();
 	}
 	this->m_SearchPaths.Purge();
 }
@@ -389,11 +395,11 @@ void CFileSystemStdio::RemoveSearchPaths( const char* szPathID ) {
 	}
 
 	// remove the clients
-	for ( const auto& system : search->m_Clients ) {
+	for ( const auto& system : search->m_Drivers ) {
 		system->Shutdown();
 		system->Release();
 	}
-	search->m_Clients.Purge();
+	search->m_Drivers.Purge();
 	search->m_ClientIDs.Purge();
 
 	// delete search path
@@ -422,7 +428,7 @@ int CFileSystemStdio::GetSearchPath( const char* pathID, bool bGetPackFiles, cha
 	}
 
 	int length{0};
-	for ( const auto& client : m_SearchPaths[pathID]->m_Clients ) {
+	for ( const auto& client : m_SearchPaths[pathID]->m_Drivers ) {
 		if ( V_strcmp( client->GetType(), "pack" ) == 0 && !bGetPackFiles ) {
 			// pack files disabled...
 			continue;
@@ -499,8 +505,9 @@ void CFileSystemStdio::UnloadModule( CSysModule* pModule ) {
 
 // ---- File searching operations -----
 const char* CFileSystemStdio::FindFirst( const char* pWildCard, FileFindHandle_t* pHandle ) {
-	// TODO: For now, just support absolute paths
-	AssertMsg( V_IsAbsolutePath( pWildCard ), "FindFirst(not absolute!!): %s, %p", pWildCard, pHandle );
+	for ( const auto& [_, system] : m_SearchPaths ) {
+		system->m_Drivers
+	}
 
 	return {};
 }
@@ -587,7 +594,7 @@ void CFileSystemStdio::PrintSearchPaths() {
 	Log( "---- Search Path table ----\n" );
 	for ( const auto& [searchPathId, searchPath] : m_SearchPaths ) {
 		Log( "%s(reqOnly=%d):\n", searchPathId, searchPath->m_RequestOnly );
-		for ( const auto& path : searchPath->m_Clients ) {
+		for ( const auto& path : searchPath->m_Drivers ) {
 			if ( path->GetNativePath() && strcmp( path->GetNativePath(), "" ) != 0 ) {
 				Log( "  - %s\n", path->GetNativePath() );
 			}
