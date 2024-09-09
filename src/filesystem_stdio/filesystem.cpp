@@ -86,16 +86,18 @@ int CFileSystemStdio::Read( void* pOutput, int size, FileHandle_t file ) {
 	}
 
 	auto* desc{ static_cast<FileDescriptor*>( file ) };
-	const int32 count{ desc->m_System->Read( desc, pOutput, size ) };
+	const int32 count{ desc->m_Driver->Read( desc, pOutput, size ) };
 	if ( count > 0 ) {
 		desc->m_Offset += count;
+		m_Stats.nReads += 1;
+		m_Stats.nBytesRead += count;
 	}
 
 	// should return -1 on read failure,
 	return count;
 }
 int CFileSystemStdio::Write( const void* pInput, int size, FileHandle_t file ) {
-	// special case for `size=0`, as might happen (bsplib) with a 1NULL `pInput`
+	// special case for `size=0`, as might happen (bsplib) with a NULL `pInput`
 	if ( size == 0 ) {
 		return 0;
 	}
@@ -104,25 +106,27 @@ int CFileSystemStdio::Write( const void* pInput, int size, FileHandle_t file ) {
 	}
 
 	auto* desc{ static_cast<FileDescriptor*>( file ) };
-	const int32 count{ desc->m_System->Write( desc, pInput, size ) };
+	const int32 count{ desc->m_Driver->Write( desc, pInput, size ) };
 	if ( count > 0 ) {
 		desc->m_Offset += count;
+		m_Stats.nWrites += 1;
+		m_Stats.nBytesWritten += count;
 	}
 
-	// should return -1 on read failure,
+	// should return -1 on write failure,
 	return count;
 }
 
 FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions, const char* pathID ) {
 	// parse the options
-	auto mode{ parseOpenMode( pOptions ) };
+	const auto mode{ parseOpenMode( pOptions ) };
 
 	// absolute paths get special treatment
 	if ( V_IsAbsolutePath( pFileName ) ) {
-		auto desc{ s_RootFsDriver->Open( pFileName, mode ) };
+		const auto desc{ s_RootFsDriver->Open( pFileName, mode ) };
 		// only add to vector if we actually got an open file
 		if ( desc != nullptr ) {
-			desc->m_System = s_RootFsDriver;
+			desc->m_Driver = s_RootFsDriver;
 			desc->m_Path = V_strdup( pFileName );
 			s_RootFsDriver->AddRef();  // This makes sure we're only `delete`-ing if there are no open files
 			this->m_Descriptors.AddToTail( desc );
@@ -138,13 +142,13 @@ FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions
 			return nullptr;
 		}
 
-		for ( const auto& system : m_SearchPaths[pathID]->m_Drivers ) {
-			auto desc{ system->Open( pFileName, mode ) };
+		for ( const auto& driver : m_SearchPaths[pathID]->m_Drivers ) {
+			const auto desc{ driver->Open( pFileName, mode ) };
 			// only add to vector if we actually got an open file
 			if ( desc != nullptr ) {
-				desc->m_System = system;
+				desc->m_Driver = driver;
 				desc->m_Path = V_strdup( pFileName );
-				system->AddRef();  // This makes sure we're only `delete`-ing if there are no open files
+				driver->AddRef();  // This makes sure we're only `delete`-ing if there are no open files
 				this->m_Descriptors.AddToTail( desc );
 				return desc;
 			}
@@ -152,13 +156,13 @@ FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions
 	} else {
 		// else, look into all clients
 		for ( const auto& [_, searchPath] : this->m_SearchPaths ) {
-			for ( const auto& system : searchPath->m_Drivers ) {
-				const auto desc{ system->Open( pFileName, mode ) };
+			for ( const auto& driver : searchPath->m_Drivers ) {
+				const auto desc{ driver->Open( pFileName, mode ) };
 				// only add to vector if we actually got an open file
 				if ( desc != nullptr ) {
-					desc->m_System = system;
+					desc->m_Driver = driver;
 					desc->m_Path = V_strdup( pFileName );
-					system->AddRef();  // This makes sure we're only `delete`-ing if there are no open files
+					driver->AddRef();  // This makes sure we're only `delete`-ing if there are no open files
 					this->m_Descriptors.AddToTail( desc );
 					return desc;
 				}
@@ -169,28 +173,29 @@ FileHandle_t CFileSystemStdio::Open( const char* pFileName, const char* pOptions
 }
 void CFileSystemStdio::Close( FileHandle_t file ) {
 	const auto desc{ static_cast<FileDescriptor*>( file ) };
-	desc->m_System->Close( desc );
-	desc->m_System->Release();  // remove this file's ref
+	desc->m_Driver->Close( desc );
+	desc->m_Driver->Release();  // remove this file's ref
 	this->m_Descriptors.FindAndRemove( desc );
 	FileDescriptor::Free( desc );
 }
 
 void CFileSystemStdio::Seek( FileHandle_t file, int pos, FileSystemSeek_t seekType ) {
 	const auto desc{ static_cast<FileDescriptor*>( file ) };
-	const auto size{ desc->m_System->Stat( desc )->m_Length };
+	const auto size{ desc->m_Driver->Stat( desc )->m_Length };
 
 	switch ( seekType ) {
 		case FILESYSTEM_SEEK_CURRENT:
 			// FIXME: This is dumb
-			desc->m_Offset = Clamp( desc->m_Offset + pos, static_cast<uint64>( 0 ), size );
+			desc->m_Offset = Clamp( desc->m_Offset + pos, 0ull, size );
 			break;
 		case FILESYSTEM_SEEK_HEAD:
-			desc->m_Offset = Clamp( static_cast<uint64>( pos ), static_cast<uint64>( 0 ), size );
+			desc->m_Offset = Clamp( static_cast<uint64>( pos ), 0ull, size );
 			break;
 		case FILESYSTEM_SEEK_TAIL:
-			desc->m_Offset = Clamp( size - pos, static_cast<uint64>( 0 ), size );
+			desc->m_Offset = Clamp( size - pos, 0ull, size );
 			break;
 	}
+	m_Stats.nSeeks += 1;
 }
 uint32 CFileSystemStdio::Tell( FileHandle_t file ) {
 	return static_cast<int32>( static_cast<FileDescriptor*>( file )->m_Offset );
@@ -203,7 +208,7 @@ uint32 CFileSystemStdio::Size( FileHandle_t file ) {
 	}
 
 	// stat the file, "handle" error
-	const auto statMaybe{ desc->m_System->Stat( desc ) };
+	const auto statMaybe{ desc->m_Driver->Stat( desc ) };
 	if (! statMaybe ) {
 		return -1;
 	}
@@ -214,13 +219,13 @@ uint32 CFileSystemStdio::Size( FileHandle_t file ) {
 }
 uint32 CFileSystemStdio::Size( const char* pFileName, const char* pPathID ) {
 	// open file
-	auto desc{ static_cast<FileDescriptor*>( this->Open( pFileName, "r", pPathID ) ) };
+	const auto desc{ static_cast<FileDescriptor*>( this->Open( pFileName, "r", pPathID ) ) };
 	if (! desc ) {
 		return -1;
 	}
 
 	// get size
-	auto size{ Size( desc ) };
+	const auto size{ Size( desc ) };
 
 	// close file
 	Close( desc );
@@ -231,7 +236,7 @@ uint32 CFileSystemStdio::Size( const char* pFileName, const char* pPathID ) {
 
 void CFileSystemStdio::Flush( FileHandle_t file ) {
 	const auto desc{ static_cast<FileDescriptor*>( file ) };
-	desc->m_System->Flush( desc );
+	desc->m_Driver->Flush( desc );
 }
 bool CFileSystemStdio::Precache( const char* pFileName, const char* pPathID ) { AssertUnreachable(); return {}; }
 
@@ -310,9 +315,9 @@ void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, Sea
 	m_LastId += 1;
 
 	// try all possibilities
-	auto system{ CreateFsDriver( m_LastId, absolute, pPath ) };
-	AssertFatalMsg( system, "Unsupported path entry: %s", absolute );
-	if (! system ) {
+	auto driver{ CreateFsDriver( m_LastId, absolute, pPath ) };
+	AssertFatalMsg( driver, "Unsupported path entry: %s", absolute );
+	if (! driver ) {
 		return;
 	}
 
@@ -327,9 +332,9 @@ void CFileSystemStdio::AddSearchPath( const char* pPath, const char* pathID, Sea
 	}
 
 	if ( addType == SearchPathAdd_t::PATH_ADD_TO_HEAD ) {
-		m_SearchPaths[pathID]->m_Drivers.AddToHead( system );
+		m_SearchPaths[pathID]->m_Drivers.AddToHead( driver );
 	} else {
-		m_SearchPaths[pathID]->m_Drivers.AddToTail( system );
+		m_SearchPaths[pathID]->m_Drivers.AddToTail( driver );
 	}
 	m_SearchPaths[pathID]->m_ClientIDs.AddToTail( m_LastId );
 	delete[] pathID;
@@ -339,12 +344,12 @@ bool CFileSystemStdio::RemoveSearchPath( const char* pPath, const char* pathID )
 		return false;
 	}
 
-	auto& systems{ m_SearchPaths[pathID]->m_Drivers };
-	for ( int i{0}; i < systems.Count(); i += 1 ) {
-		if ( V_strcmp( systems[i]->GetNativePath(), pPath ) == 0 ) {
-			systems[i]->Shutdown();
-			systems[i]->Release();  // if this is the last ref, the driver will be removed
-			systems.Remove( i );
+	auto& drivers{ m_SearchPaths[pathID]->m_Drivers };
+	for ( int i{0}; i < drivers.Count(); i += 1 ) {
+		if ( V_strcmp( drivers[i]->GetNativePath(), pPath ) == 0 ) {
+			drivers[i]->Shutdown();
+			drivers[i]->Release();  // if this is the last ref, the driver will be removed
+			drivers.Remove( i );
 			return true;
 		}
 	}
@@ -354,8 +359,8 @@ bool CFileSystemStdio::RemoveSearchPath( const char* pPath, const char* pathID )
 void CFileSystemStdio::RemoveAllSearchPaths() {
 	// close all descriptors
 	for ( const auto desc : m_Descriptors ) {
-		desc->m_System->Close( desc );
-		desc->m_System->Release();
+		desc->m_Driver->Close( desc );
+		desc->m_Driver->Release();
 	}
 	// clear descriptor cache
 	m_Descriptors.Purge();
@@ -364,9 +369,9 @@ void CFileSystemStdio::RemoveAllSearchPaths() {
 
 	// close all systems
 	for ( auto& [pathId, searchPath] : m_SearchPaths ) {
-		for ( const auto& system : searchPath->m_Drivers ) {
-			system->Shutdown();
-			system->Release();
+		for ( const auto& driver : searchPath->m_Drivers ) {
+			driver->Shutdown();
+			driver->Release();
 		}
 		searchPath->m_Drivers.Purge();
 	}
@@ -382,11 +387,11 @@ void CFileSystemStdio::RemoveSearchPaths( const char* szPathID ) {
 
 	// close all open descriptors the path's clients own
 	for ( auto i{m_Descriptors.Count()}; i > 0; i -= 1 ) {
-		const auto system{ m_Descriptors[i]->m_System };
-		if ( search->m_ClientIDs.Find( system->GetIdentifier() ) != CUtlVector<int>::InvalidIndex() ) {
+		const auto driver{ m_Descriptors[i]->m_Driver };
+		if ( search->m_ClientIDs.Find( driver->GetIdentifier() ) != CUtlVector<int>::InvalidIndex() ) {
 			// close descriptor
-			system->Close( m_Descriptors[ i ] );
-			system->Release();
+			driver->Close( m_Descriptors[ i ] );
+			driver->Release();
 			// remove from cache
 			m_Descriptors.FindAndRemove( m_Descriptors[i] );
 			// free it
@@ -395,9 +400,9 @@ void CFileSystemStdio::RemoveSearchPaths( const char* szPathID ) {
 	}
 
 	// remove the clients
-	for ( const auto& system : search->m_Drivers ) {
-		system->Shutdown();
-		system->Release();
+	for ( const auto& driver : search->m_Drivers ) {
+		driver->Shutdown();
+		driver->Release();
 	}
 	search->m_Drivers.Purge();
 	search->m_ClientIDs.Purge();
@@ -410,7 +415,7 @@ void CFileSystemStdio::RemoveSearchPaths( const char* szPathID ) {
 void CFileSystemStdio::MarkPathIDByRequestOnly( const char* pPathID, bool bRequestOnly ) {
 	// make a new alloc of the string
 	// TODO: Use string interning if possible
-	auto pathID{ V_strlower( V_strdup( pPathID ) ) };
+	const auto pathID{ V_strlower( V_strdup( pPathID ) ) };
 
 	if ( m_SearchPaths.Find( pathID ) == CUtlDict<SearchPath>::InvalidIndex() ) {
 		m_SearchPaths.Insert( pathID, new SearchPath );
@@ -434,7 +439,7 @@ int CFileSystemStdio::GetSearchPath( const char* pathID, bool bGetPackFiles, cha
 			continue;
 		}
 
-		auto len{ static_cast<int32>( strlen( client->GetNativePath() ) ) };
+		const auto len{ static_cast<int32>( strlen( client->GetNativePath() ) ) };
 
 		if ( length + len + 1 >= maxLenInChars ) {
 			// can't do another one
@@ -505,8 +510,8 @@ void CFileSystemStdio::UnloadModule( CSysModule* pModule ) {
 
 // ---- File searching operations -----
 const char* CFileSystemStdio::FindFirst( const char* pWildCard, FileFindHandle_t* pHandle ) {
-	for ( const auto& [_, system] : m_SearchPaths ) {
-		system->m_Drivers
+	for ( const auto& [_, serchPath] : m_SearchPaths ) {
+		serchPath->m_Drivers
 	}
 
 	return {};
@@ -609,7 +614,9 @@ void CFileSystemStdio::SetWarningLevel( FileWarningLevel_t level ) { AssertUnrea
 void CFileSystemStdio::AddLoggingFunc( void ( *pfnLogFunc )( const char* fileName, const char* accessType ) ) { AssertUnreachable(); }
 void CFileSystemStdio::RemoveLoggingFunc( FileSystemLoggingFunc_t logFunc ) { AssertUnreachable(); }
 
-const FileSystemStatistics* CFileSystemStdio::GetFilesystemStatistics() { AssertUnreachable(); return {}; }
+const FileSystemStatistics* CFileSystemStdio::GetFilesystemStatistics() {
+	return &m_Stats;
+}
 
 // ---- Start of new functions after Lost Coast release (7/05) ----
 FileHandle_t CFileSystemStdio::OpenEx( const char* pFileName, const char* pOptions, unsigned flags, const char* pathID, char** ppszResolvedFilename ) {
@@ -621,7 +628,7 @@ FileHandle_t CFileSystemStdio::OpenEx( const char* pFileName, const char* pOptio
 
 	const auto desc{ static_cast<FileDescriptor*>( Open( pFileName, pOptions, pathID ) ) };
 	if ( desc && ppszResolvedFilename ) {
-		const auto parent{ desc->m_System->GetNativeAbsolutePath() };
+		const auto parent{ desc->m_Driver->GetNativeAbsolutePath() };
 		const auto len{ V_strlen( parent ) + V_strlen( pFileName ) + 2 };
 		const auto dest{ new char[len] };
 		V_MakeAbsolutePath( dest, len, pFileName, parent );
@@ -638,7 +645,15 @@ int CFileSystemStdio::ReadEx( void* pOutput, int sizeDest, int size, FileHandle_
 	}
 
 	const auto desc{ static_cast<FileDescriptor*>( file ) };
-	return desc->m_System->Read( desc, pOutput, size );
+	const int32 count{ desc->m_Driver->Read( desc, pOutput, size ) };
+	if ( count > 0 ) {
+		desc->m_Offset += count;
+		m_Stats.nWrites += 1;
+		m_Stats.nBytesWritten += count;
+	}
+
+	// should return -1 on read failure,
+	return count;
 }
 int CFileSystemStdio::ReadFileEx( const char* pFileName, const char* pPath, void** ppBuf, bool bNullTerminate, bool bOptimalAlloc, int nMaxBytes, int nStartingByte, FSAllocFunc_t pfnAlloc ) { AssertUnreachable(); return {}; }
 
@@ -679,7 +694,7 @@ bool CFileSystemStdio::GetOptimalIOConstraints( FileHandle_t hFile, unsigned* pO
 	if (! hFile ) {
 		return false;
 	}
-	const uint32 value{ strcmp( static_cast<FileDescriptor*>( hFile )->m_System->GetType(), "pack" ) != 0 };
+	const uint32 value{ strcmp( static_cast<FileDescriptor*>( hFile )->m_Driver->GetType(), "pack" ) != 0 };
 
 	if ( pOffsetAlign ) {
 		*pOffsetAlign = value;

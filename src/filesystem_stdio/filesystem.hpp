@@ -424,5 +424,6 @@ private:
 	int m_LastId{ 1 };  // 0 is reserved for the root
 	bool m_Initialized{ false };
 	FSDirtyDiskReportFunc_t m_DirtyDiskReporter{ nullptr };
+	FileSystemStatistics m_Stats{};
 	void ( *m_Warning )( PRINTF_FORMAT_STRING const char* fmt, ... ){ nullptr };
 };
