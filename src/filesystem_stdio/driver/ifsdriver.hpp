@@ -47,7 +47,7 @@ static_assert( sizeof( OpenMode ) == sizeof( uint8_t ) );
  * Uses a memory arena to avoid sparse allocations.
  */
 struct FileDescriptor {
-	class IFsDriver* m_System;
+	class IFsDriver* m_Driver;
 	const char* m_Path{nullptr};
 	uintptr_t m_Handle;
 	uint64 m_Offset{0};
