@@ -6,6 +6,13 @@
 #include "tier0/platform.h"
 
 
+// forward decls
+template<class T, class I = int>
+class CUtlMemory;
+template<class T, class A = CUtlMemory<T>>
+class CUtlVector;
+
+
 enum class FileType {
 	Regular = 1,
 	Socket,
@@ -70,7 +77,6 @@ struct FileDescriptor {
 	static auto CleanupArena() -> void;
 };
 
-struct WalkEntry;
 
 abstract_class IFsDriver : public CRefCounted<> {
 public:
@@ -87,16 +93,16 @@ public:
 	auto operator==( IFsDriver& pOther ) const -> bool { return this == &pOther || this->GetIdentifier() == pOther.GetIdentifier(); }
 	auto operator==( const IFsDriver& pOther ) const -> bool { return this == &pOther || this->GetIdentifier() == pOther.GetIdentifier(); }
 	// file ops
-	virtual auto Open  ( const char* pPath, OpenMode pMode ) -> FileDescriptor* = 0;
-	virtual auto Read  ( const FileDescriptor* pDesc, void* pBuffer, uint32 pCount ) -> int32 = 0;
-	virtual auto Write ( const FileDescriptor* pDesc, const void* pBuffer, uint32 pCount ) -> int32 = 0;
-	virtual auto Flush ( const FileDescriptor* pDesc ) -> bool = 0;
-	virtual auto Close ( const FileDescriptor* pDesc ) -> void = 0;
+	virtual auto Open ( const char* pPath, OpenMode pMode ) -> FileDescriptor* = 0;
+	virtual auto Read ( const FileDescriptor* pDesc, void* pBuffer, uint32 pCount ) -> int32 = 0;
+	virtual auto Write( const FileDescriptor* pDesc, const void* pBuffer, uint32 pCount ) -> int32 = 0;
+	virtual auto Flush( const FileDescriptor* pDesc ) -> bool = 0;
+	virtual auto Close( const FileDescriptor* pDesc ) -> void = 0;
 	// generic ops
-	virtual auto Walk  ( const FileDescriptor* pDesc, const WalkEntry*& pEntry ) -> void = 0;
-	virtual auto Create( const char* pPath, FileType pType, OpenMode pMode ) -> FileDescriptor* = 0;
-	virtual auto Remove( const FileDescriptor* pDesc ) -> void = 0;
-	virtual auto Stat  ( const FileDescriptor* pDesc ) -> std::optional<StatData> = 0;
+	virtual auto ListDir( const char* pWildcard, CUtlVector<const char*>& pResult ) -> void;
+	virtual auto Create ( const char* pPath, FileType pType, OpenMode pMode ) -> FileDescriptor* = 0;
+	virtual auto Remove ( const FileDescriptor* pDesc ) -> void = 0;
+	virtual auto Stat   ( const FileDescriptor* pDesc ) -> std::optional<StatData> = 0;
 };
 
 auto CreateFsDriver( int pId, const char* pAbsolute, const char* pPath ) -> IFsDriver*;

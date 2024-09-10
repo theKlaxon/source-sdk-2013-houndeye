@@ -30,7 +30,8 @@ class CMemoryFileBacking;
 typedef void* FileHandle_t;
 typedef void* FileCacheHandle_t;
 typedef int FileFindHandle_t;
-typedef void ( *FileSystemLoggingFunc_t )( const char* fileName, const char* accessType );
+using FileSystemLoggingFunc_t =  void (*)( const char* fileName, const char* accessType );
+using FileWarningFunc_t = void (*)( PRINTF_FORMAT_STRING const char* fmt, ... );
 typedef int WaitForResourcesHandle_t;
 
 #define USE_CRC_FILE_TRACKING 0
@@ -717,9 +718,9 @@ public:
 	virtual void PrintSearchPaths() = 0;
 
 	// output
-	virtual void SetWarningFunc( void ( *pfnWarning )( PRINTF_FORMAT_STRING const char* fmt, ... ) ) = 0;
+	virtual void SetWarningFunc( FileWarningFunc_t pWarning ) = 0;
 	virtual void SetWarningLevel( FileWarningLevel_t level ) = 0;
-	virtual void AddLoggingFunc( void ( *pfnLogFunc )( const char* fileName, const char* accessType ) ) = 0;
+	virtual void AddLoggingFunc( FileSystemLoggingFunc_t pfnLogFunc ) = 0;
 	virtual void RemoveLoggingFunc( FileSystemLoggingFunc_t logFunc ) = 0;
 
 	// Returns the file system statistics retreived by the implementation.  Returns nullptr if not supported.

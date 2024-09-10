@@ -2,16 +2,17 @@
 // Created by ENDERZOMBI102 on 23/02/2024.
 //
 #include "plainfsdriver.hpp"
-
 #include <dirent.h>
 #include <fcntl.h>
 #include <filesystem>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <utility>
-
 #include "strtools.h"
 #include "dbg.h"
+// memdbgon must be the last include file in a .cpp file!!!
+#include "tier0/memdbgon.h"
+
 
 
 CPlainFsDriver::CPlainFsDriver( int32 pId, const char* pAbsolute, const char* pPath )
@@ -102,8 +103,15 @@ auto CPlainFsDriver::Close( const FileDescriptor* pDesc ) -> void {
 	close( static_cast<int>( pDesc->m_Handle ) );
 }
 
-auto CPlainFsDriver::Walk( const FileDescriptor* pDesc, const WalkEntry*& pEntry ) -> void {
-//	getdents64( static_cast<int>( pDesc->m_Handle ), , );
+auto CPlainFsDriver::ListDir( const char* pWildcard, CUtlVector<const char*>& pResult ) -> void {
+	auto path{ V_strdup( pWildcard ) };
+	V_StripFilename( path );
+	const auto dir{ opendir( path ) }; // FIXME: This errors for globs like `path/*/nom?.txt`
+	dirent* entry{ nullptr };
+	while ( (entry = readdir( dir )) != nullptr ) {  // TODO: Finish impl this
+		Log( "%s: %s", __FUNCTION__, entry->d_name );
+	}
+	closedir( dir );
 }
 auto CPlainFsDriver::Create( const char* pPath, FileType pType, OpenMode pMode ) -> FileDescriptor* { return {}; }
 auto CPlainFsDriver::Remove( const FileDescriptor* pDesc ) -> void { }

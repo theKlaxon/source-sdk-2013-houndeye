@@ -2,7 +2,9 @@
 // Created by ENDERZOMBI102 on 23/02/2024.
 //
 #include "packfsdriver.hpp"
+#include "utlvector.h"
 #include "strtools.h"
+#include "wildcard/wildcard.hpp"
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -31,8 +33,16 @@ auto CPackFsDriver::Flush( const FileDescriptor* pDesc ) -> bool {
 	AssertFatalMsg( false, "Not supported!!" );
 	std::unreachable();
 }
-auto CPackFsDriver::Walk( const FileDescriptor* pDesc, const WalkEntry*& pEntry ) -> void {
-
+auto CPackFsDriver::ListDir( const char* pWildcard, CUtlVector<const char*>& pResult ) -> void {
+	const auto& entries{ m_PackFile->getBakedEntries() };
+	const auto patternLen{ V_strlen( pWildcard ) };
+	std::string key;
+	for ( auto entry{ entries.cbegin() }; entry != entries.cend(); ++entry ) {
+		entry.key( key );
+		if ( Wildcard::SimpleMatch( key.c_str(), pWildcard, static_cast<int32>( key.size() ), patternLen ) ) {
+			pResult.AddToTail( V_strdup( key.c_str() ) );
+		}
+	}
 }
 auto CPackFsDriver::Open( const char* pPath, OpenMode pMode ) -> FileDescriptor* {
 	AssertFatalMsg( pPath, "Was given a `NULL` file path!" );

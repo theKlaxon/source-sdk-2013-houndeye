@@ -200,8 +200,8 @@ public: // IFileSystem
 	/// Add async fetcher interface.  This gives apps a hook to intercept async requests and
 	/// pull the data from a source of their choosing.  The immediate use case is to load
 	/// assets from the CDN via HTTP.
-	void AsyncAddFetcher( IAsyncFileFetch * pFetcher ) override;
-	void AsyncRemoveFetcher( IAsyncFileFetch * pFetcher ) override;
+	void AsyncAddFetcher( IAsyncFileFetch* pFetcher ) override;
+	void AsyncRemoveFetcher( IAsyncFileFetch* pFetcher ) override;
 
 	//------------------------------------
 	// Functions to hold a file open if planning on doing mutiple reads. Use is optional,
@@ -254,9 +254,9 @@ public: // IFileSystem
 	void PrintSearchPaths() override;
 
 	// output
-	void SetWarningFunc( void ( *pfnWarning )( PRINTF_FORMAT_STRING const char* fmt, ... ) ) override;
+	void SetWarningFunc( FileWarningFunc_t pWarning ) override;
 	void SetWarningLevel( FileWarningLevel_t level ) override;
-	void AddLoggingFunc( void ( *pfnLogFunc )( const char* fileName, const char* accessType ) ) override;
+	void AddLoggingFunc( FileSystemLoggingFunc_t pLogFunc ) override;
 	void RemoveLoggingFunc( FileSystemLoggingFunc_t logFunc ) override;
 
 	// Returns the file system statistics retreived by the implementation.  Returns nullptr if not supported.
@@ -274,12 +274,12 @@ public: // IFileSystem
 
 	FileNameHandle_t FindFileName( char const* pFileName ) override;
 
-#if defined( TRACK_BLOCKING_IO )
-	void EnableBlockingFileAccessTracking( bool state ) override;
-	bool IsBlockingFileAccessEnabled() const override;
+	#if defined( TRACK_BLOCKING_IO )
+		void EnableBlockingFileAccessTracking( bool state ) override;
+		bool IsBlockingFileAccessEnabled() const override;
 
-	IBlockingFileItemList* RetrieveBlockingFileAccessInfo() override;
-#endif
+		IBlockingFileItemList* RetrieveBlockingFileAccessInfo() override;
+	#endif
 
 	void SetupPreloadData() override;
 	void DiscardPreloadData() override;
@@ -289,7 +289,7 @@ public: // IFileSystem
 	// If the "PreloadedData" hasn't been purged, then this'll try and instance the KeyValues using the fast path of compiled keyvalues loaded during startup.
 	// Otherwise, it'll just fall through to the regular KeyValues loading routines
 	KeyValues* LoadKeyValues( KeyValuesPreloadType_t type, char const* filename, char const* pPathID = nullptr ) override;
-	bool LoadKeyValues( KeyValues & head, KeyValuesPreloadType_t type, char const* filename, char const* pPathID = nullptr ) override;
+	bool LoadKeyValues( KeyValues& head, KeyValuesPreloadType_t type, char const* filename, char const* pPathID = nullptr ) override;
 	bool ExtractRootKeyName( KeyValuesPreloadType_t type, char* outbuf, size_t bufsize, char const* filename, char const* pPathID = nullptr ) override;
 
 	FSAsyncStatus_t AsyncWrite( const char* pFileName, const void* pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend = false, FSAsyncControl_t* pControl = nullptr ) override;
@@ -302,7 +302,7 @@ public: // IFileSystem
 
 	//--------------------------------------------------------
 	//--------------------------------------------------------
-	bool ReadToBuffer( FileHandle_t hFile, CUtlBuffer & buf, int nMaxBytes = 0, FSAllocFunc_t pfnAlloc = nullptr ) override;
+	bool ReadToBuffer( FileHandle_t hFile, CUtlBuffer& buf, int nMaxBytes = 0, FSAllocFunc_t pfnAlloc = nullptr ) override;
 
 	//--------------------------------------------------------
 	// Optimal IO operations
@@ -335,7 +335,7 @@ public: // IFileSystem
 	void EnableWhitelistFileTracking( bool bEnable, bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes ) override;
 
 	// This is called when the client connects to a server using a pure_server_whitelist.txt file.
-	void RegisterFileWhitelist( IPureServerWhitelist * pWhiteList, IFileList * *pFilesToReload ) override;
+	void RegisterFileWhitelist( IPureServerWhitelist* pWhiteList, IFileList** pFilesToReload ) override;
 
 	// Called when the client logs onto a server. Any files that came off disk should be marked as
 	// unverified because this server may have a different set of files it wants to guarantee.
@@ -386,10 +386,10 @@ public: // IFileSystem
 	// Returns false and outputs an ref-bumped pointer to the existing entry
 	// if the same file has already been registered by someone else; this must
 	// be Unregistered to maintain the balance.
-	bool RegisterMemoryFile( CMemoryFileBacking * pFile, CMemoryFileBacking * *ppExistingFileWithRef ) override;
+	bool RegisterMemoryFile( CMemoryFileBacking* pFile, CMemoryFileBacking** ppExistingFileWithRef ) override;
 
 	// Unregister a CMemoryFileBacking; must balance with RegisterMemoryFile.
-	void UnregisterMemoryFile( CMemoryFileBacking * pFile ) override;
+	void UnregisterMemoryFile( CMemoryFileBacking* pFile ) override;
 
 	void CacheAllVPKFileHashes( bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes ) override;
 	bool CheckVPKFileHash( int PackFileID, int nPackFileNumber, int nFileFraction, MD5Value_t& md5Value ) override;
@@ -416,14 +416,38 @@ private:
 		CUtlVector<int> m_ClientIDs{};
 		bool m_RequestOnly{ false };
 	};
+	struct FindState {
+		FindState() = default;
+		~FindState() {
+			Warning( "called" );
+		}
+		FindState( const FindState& other ) {  // copy-constructor-but-actually-move
+			m_Paths = other.m_Paths;
+			m_Current = other.m_Current;
+		}
 
+		CUtlVector<const char*> m_Paths{};
+		int m_Current{0};
+	};
+
+	// Whether we were initialized
+	bool m_Initialized{ false };
+	// The last-used driver ID, 0 is reserved for the root
+	int m_LastId{ 1 };
 	// The named search paths
 	CUtlDict<SearchPath*> m_SearchPaths{};
 	// All open descriptors
 	CUtlVector<FileDescriptor*> m_Descriptors{ 10 };
-	int m_LastId{ 1 };  // 0 is reserved for the root
-	bool m_Initialized{ false };
+	// Open `FindFile*` states
+	CUtlVector<FindState> m_FindStates{ 10 };
+	// The logging functions which were registered
+	CUtlVector<FileSystemLoggingFunc_t> m_LoggingFuncs{ 5 };
+	// Used to display dirty disk error
 	FSDirtyDiskReportFunc_t m_DirtyDiskReporter{ nullptr };
+	// Filesystem stats, mostly read/write related
 	FileSystemStatistics m_Stats{};
-	void ( *m_Warning )( PRINTF_FORMAT_STRING const char* fmt, ... ){ nullptr };
+	// The log level for the `m_Warning` output
+	FileWarningLevel_t m_WarningLevel{ FileWarningLevel_t::FILESYSTEM_WARNING_QUIET };
+	// Warnings output
+	FileWarningFunc_t m_Warning{ nullptr };
 };

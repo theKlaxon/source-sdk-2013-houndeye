@@ -510,27 +510,57 @@ void CFileSystemStdio::UnloadModule( CSysModule* pModule ) {
 
 // ---- File searching operations -----
 const char* CFileSystemStdio::FindFirst( const char* pWildCard, FileFindHandle_t* pHandle ) {
-	for ( const auto& [_, serchPath] : m_SearchPaths ) {
-		serchPath->m_Drivers
+	CUtlVector<const char*> paths{ 10 };
+	for ( const auto& [_, searchPath] : m_SearchPaths ) {
+		for ( const auto driver : searchPath->m_Drivers ) {
+			driver->ListDir( pWildCard, paths );
+		}
 	}
-
-	return {};
+	*pHandle = m_FindStates.AddToTail();
+	m_FindStates[*pHandle].m_Paths.Swap( paths );
+	return paths[0];
 }
 const char* CFileSystemStdio::FindNext( FileFindHandle_t handle ) {
-	AssertUnreachable();
-	return {};
+	auto& state{ m_FindStates[handle] };
+	// check if there is a next path
+	if ( state.m_Paths.Count() <= state.m_Current + 1 ) {
+		return nullptr;
+	}
+	state.m_Current += 1;
+	return state.m_Paths[state.m_Current];
 }
 bool CFileSystemStdio::FindIsDirectory( FileFindHandle_t handle ) {
-	AssertUnreachable();
-	return {};
+	auto& state{ m_FindStates[handle] };
+	const auto desc{ static_cast<FileDescriptor*>( Open( state.m_Paths[state.m_Current], "r" ) ) };
+	if ( desc == nullptr ) {
+		return false;
+	}
+	desc->m_Driver->AddRef();
+	const auto stats{ desc->m_Driver->Stat( desc ) };
+	desc->m_Driver->Release();
+	if (! stats ) {
+		return false;
+	}
+	return stats->m_Type == FileType::Directory;
 }
 void CFileSystemStdio::FindClose( FileFindHandle_t handle ) {
-	AssertUnreachable();
+	auto& state{ m_FindStates[handle] };
+	for ( const auto path : state.m_Paths ) {
+		delete[] path;
+	}
+	state.m_Paths.Purge();
+	m_FindStates.Remove( handle );
 }
 
 const char* CFileSystemStdio::FindFirstEx( const char* pWildCard, const char* pPathID, FileFindHandle_t* pHandle ) {
-	AssertUnreachable();
-	return {};
+	const auto& searchPath{ m_SearchPaths[pPathID] };
+	CUtlVector<const char*> paths{ 10 };
+	for ( const auto driver : searchPath->m_Drivers ) {
+		driver->ListDir( pWildCard, paths );
+	}
+	*pHandle = m_FindStates.AddToTail();
+	m_FindStates[*pHandle].m_Paths.Swap( paths );
+	return paths[0];
 }
 
 // ---- File name and directory operations ----
@@ -594,7 +624,12 @@ void CFileSystemStdio::GetLocalCopy( const char* pFileName ) {
 }
 
 // ---- Debugging operations ----
-void CFileSystemStdio::PrintOpenedFiles() { AssertUnreachable(); }
+void CFileSystemStdio::PrintOpenedFiles() {
+	Log( "---- Open files table ----\n" );
+	for ( const auto& desc : m_Descriptors ) {
+		Log( "%s -> %s\n", desc->m_Path, desc->m_Driver->GetNativeAbsolutePath() );
+	}
+}
 void CFileSystemStdio::PrintSearchPaths() {
 	Log( "---- Search Path table ----\n" );
 	for ( const auto& [searchPathId, searchPath] : m_SearchPaths ) {
@@ -607,12 +642,18 @@ void CFileSystemStdio::PrintSearchPaths() {
 	}
 }
 
-void CFileSystemStdio::SetWarningFunc( void ( *pfnWarning )( PRINTF_FORMAT_STRING const char* fmt, ... ) ) {
-	m_Warning = pfnWarning;
+void CFileSystemStdio::SetWarningFunc( FileWarningFunc_t pWarning ) {
+	m_Warning = pWarning;
 }
-void CFileSystemStdio::SetWarningLevel( FileWarningLevel_t level ) { AssertUnreachable(); }
-void CFileSystemStdio::AddLoggingFunc( void ( *pfnLogFunc )( const char* fileName, const char* accessType ) ) { AssertUnreachable(); }
-void CFileSystemStdio::RemoveLoggingFunc( FileSystemLoggingFunc_t logFunc ) { AssertUnreachable(); }
+void CFileSystemStdio::SetWarningLevel( FileWarningLevel_t level ) {
+	m_WarningLevel = level;
+}
+void CFileSystemStdio::AddLoggingFunc( FileSystemLoggingFunc_t logFunc ) {
+	m_LoggingFuncs.AddToTail( logFunc );
+}
+void CFileSystemStdio::RemoveLoggingFunc( FileSystemLoggingFunc_t logFunc ) {
+	m_LoggingFuncs.FindAndRemove( logFunc );
+}
 
 const FileSystemStatistics* CFileSystemStdio::GetFilesystemStatistics() {
 	return &m_Stats;
