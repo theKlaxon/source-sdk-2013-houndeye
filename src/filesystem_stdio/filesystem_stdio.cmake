@@ -20,6 +20,8 @@ set( FILESYSTEM_STDIO_SOURCE_FILES
 	# Public
 	"${SRCDIR}/public/filesystem.h"
 	"${SRCDIR}/public/filesystem/IQueuedLoader.h"
+	"${SRCDIR}/public/wildcard/wildcard.cpp"
+	"${SRCDIR}/public/wildcard/wildcard.hpp"
 )
 
 add_library( filesystem_stdio MODULE ${FILESYSTEM_STDIO_SOURCE_FILES} )
