@@ -484,11 +484,13 @@ public:
 	}
 
 	T operator=( T newValue ) {
-		ThreadInterlockedExchange( (long*)( &m_value ), newValue );
+		ThreadInterlockedExchange( reinterpret_cast<volatile long*>( &m_value ), static_cast<long>( newValue ) );
 		return m_value;
 	}
 
-	void operator+=( T add ) { ThreadInterlockedExchangeAdd( static_cast<long*>( &m_value ), static_cast<long>( add ) ); }
+	void operator+=( T add ) {
+		ThreadInterlockedExchangeAdd( reinterpret_cast<volatile long*>( &m_value ), static_cast<long>( add ) );
+	}
 	void operator-=( T subtract ) { operator+=( -subtract ); }
 	void operator*=( T multiplier ) {
 		T original, result;
