@@ -4,13 +4,7 @@
 #pragma once
 #include "refcount.h"
 #include "tier0/platform.h"
-
-
-// forward decls
-template<class T, class I = int>
-class CUtlMemory;
-template<class T, class A = CUtlMemory<T>>
-class CUtlVector;
+#include "utlvector.h"
 
 
 enum class FileType {
@@ -53,7 +47,7 @@ static_assert( sizeof( OpenMode ) == sizeof( uint8_t ) );
  * Internal representation of an open file.
  * Uses a memory arena to avoid sparse allocations.
  */
-struct FileDescriptor {
+struct FileDescriptor { // NOLINT(*-pro-type-member-init)
 	class IFsDriver* m_Driver;
 	const char* m_Path{nullptr};
 	uintptr_t m_Handle;
