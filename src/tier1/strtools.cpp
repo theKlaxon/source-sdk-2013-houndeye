@@ -1594,14 +1594,12 @@ void V_SetExtension( char* path, const char* extension, int pathStringLength ) {
 // Output : void  V_StripFilename
 //-----------------------------------------------------------------------------
 void V_StripFilename( char* path ) {
-	int length;
-
-	length = V_strlen( path ) - 1;
-	if ( length <= 0 )
+	int length = V_strlen( path ) - 1;
+	if ( length <= 0 ) {
 		return;
+	}
 
-	while ( length > 0 &&
-			!PATHSEPARATOR( path[ length ] ) ) {
+	while ( length > 0 && !PATHSEPARATOR( path[ length ] ) ) {
 		length--;
 	}
 
