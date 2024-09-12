@@ -48,7 +48,7 @@ static_assert( sizeof( OpenMode ) == sizeof( uint8_t ) );
  * Uses a memory arena to avoid sparse allocations.
  */
 struct FileDescriptor { // NOLINT(*-pro-type-member-init)
-	class IFsDriver* m_Driver;
+	class CFsDriver* m_Driver;
 	const char* m_Path{nullptr};
 	uintptr_t m_Handle;
 	uint64 m_Offset{0};
@@ -72,8 +72,9 @@ struct FileDescriptor { // NOLINT(*-pro-type-member-init)
 };
 
 
-abstract_class IFsDriver : public CRefCounted<> {
+class CFsDriver : public CRefCounted<> {
 public:
+	~CFsDriver() override = 0;
 	// metadata
 	[[nodiscard]]
 	virtual auto GetNativePath() const -> const char* = 0;
@@ -84,8 +85,8 @@ public:
 	[[nodiscard]]
 	virtual auto GetType() const -> const char* = 0;
 	virtual auto Shutdown() -> void = 0;
-	auto operator==( IFsDriver& pOther ) const -> bool { return this == &pOther || this->GetIdentifier() == pOther.GetIdentifier(); }
-	auto operator==( const IFsDriver& pOther ) const -> bool { return this == &pOther || this->GetIdentifier() == pOther.GetIdentifier(); }
+	auto operator==( CFsDriver& pOther ) const -> bool { return this == &pOther || this->GetIdentifier() == pOther.GetIdentifier(); }
+	auto operator==( const CFsDriver& pOther ) const -> bool { return this == &pOther || this->GetIdentifier() == pOther.GetIdentifier(); }
 	// file ops
 	virtual auto Open ( const char* pPath, OpenMode pMode ) -> FileDescriptor* = 0;
 	virtual auto Read ( const FileDescriptor* pDesc, void* pBuffer, uint32 pCount ) -> int32 = 0;
@@ -99,4 +100,4 @@ public:
 	virtual auto Stat   ( const FileDescriptor* pDesc ) -> std::optional<StatData> = 0;
 };
 
-auto CreateFsDriver( int pId, const char* pAbsolute, const char* pPath ) -> IFsDriver*;
+auto CreateFsDriver( int pId, const char* pAbsolute, const char* pPath ) -> CFsDriver*;

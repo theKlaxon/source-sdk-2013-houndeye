@@ -1,21 +1,21 @@
 //
 // Created by ENDERZOMBI102 on 22/02/2024.
 //
-#include "platform.h"
-#include <utility>
-#include <algorithm>
-#include "tier0/icommandline.h"
 #include "filesystem.hpp"
+#include "driver/fsdriver.hpp"
 #include "interface.h"
+#include "platform.h"
+#include "tier0/icommandline.h"
 #include "utlbuffer.h"
-#include "driver/ifsdriver.hpp"
+#include <algorithm>
+#include <utility>
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
 
 namespace {
 	CFileSystemStdio s_FullFileSystem{};
-	IFsDriver* s_RootFsDriver{nullptr};
+	CFsDriver* s_RootFsDriver{nullptr};
 
 	constexpr auto parseOpenMode( const char* pMode ) -> OpenMode {
 		OpenMode mode{};

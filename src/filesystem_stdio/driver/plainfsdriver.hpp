@@ -2,12 +2,14 @@
 // Created by ENDERZOMBI102 on 23/02/2024.
 //
 #pragma once
-#include "ifsdriver.hpp"
+#include "fsdriver.hpp"
 
 
-class CPlainFsDriver : public IFsDriver {
+class CPlainFsDriver final : public CFsDriver {
 public:
 	CPlainFsDriver( int32 pId, const char* pAbsolute, const char* pPath );
+	~CPlainFsDriver() override = default;
+	// metadata
 	[[nodiscard]]
 	auto GetNativePath() const -> const char* override;
 	[[nodiscard]]
@@ -17,7 +19,6 @@ public:
 	[[nodiscard]]
 	auto GetType() const -> const char* override;
 	auto Shutdown() -> void override;
-public: // FS interaction
 	// file ops
 	auto Open ( const char* pPath, OpenMode pMode ) -> FileDescriptor* override;
 	auto Read ( const FileDescriptor* pDesc, void* pBuffer, uint32 pCount ) -> int32 override;
@@ -30,8 +31,8 @@ public: // FS interaction
 	auto Remove ( const FileDescriptor* pDesc ) -> void override;
 	auto Stat   ( const FileDescriptor* pDesc ) -> std::optional<StatData> override;
 private:
-	const int m_iId;
+	const int32 m_iId;
 	const char* m_szNativePath;
 	const std::string m_szNativeAbsolutePath;
-	friend auto CreateSystemClient() -> IFsDriver*;
+	friend auto CreateSystemClient() -> CFsDriver*;
 };

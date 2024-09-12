@@ -9,11 +9,8 @@
 #include "tier0/memdbgon.h"
 
 
-CPackFsDriver::CPackFsDriver( int32 pId, const char* pAbsolute, const char* pPath ) {
-	this->m_iId = pId;
-	this->m_szNativePath = V_strdup( pPath );
-	this->m_PackFile = vpkpp::PackFile::open( pAbsolute, {} );
-}
+CPackFsDriver::CPackFsDriver( int32 pId, const char* pAbsolute, const char* pPath )
+	: m_iId{ pId }, m_szNativePath{ V_strdup( pPath ) }, m_PackFile{ vpkpp::PackFile::open( pAbsolute, {} ) } { }
 auto CPackFsDriver::GetNativePath() const -> const char* {
 	return this->m_szNativePath;
 }
@@ -29,21 +26,6 @@ auto CPackFsDriver::GetType() const -> const char* {
 auto CPackFsDriver::Shutdown() -> void { }
 
 // FS interaction
-auto CPackFsDriver::Flush( const FileDescriptor* pDesc ) -> bool {
-	AssertFatalMsg( false, "Not supported!!" );
-	std::unreachable();
-}
-auto CPackFsDriver::ListDir( const char* pWildcard, CUtlVector<const char*>& pResult ) -> void {
-	const auto& entries{ m_PackFile->getBakedEntries() };
-	const auto patternLen{ V_strlen( pWildcard ) };
-	std::string key;
-	for ( auto entry{ entries.cbegin() }; entry != entries.cend(); ++entry ) {
-		entry.key( key );
-		if ( Wildcard::SimpleMatch( key.c_str(), pWildcard, static_cast<int32>( key.size() ), patternLen ) ) {
-			pResult.AddToTail( V_strdup( key.c_str() ) );
-		}
-	}
-}
 auto CPackFsDriver::Open( const char* pPath, OpenMode pMode ) -> FileDescriptor* {
 	AssertFatalMsg( pPath, "Was given a `NULL` file path!" );
 	AssertFatalMsg( pMode, "Was given an empty open mode!" );
@@ -58,13 +40,6 @@ auto CPackFsDriver::Open( const char* pPath, OpenMode pMode ) -> FileDescriptor*
 	desc->m_Handle = reinterpret_cast<uintptr_t>( V_strdup( pPath ) );
 	desc->m_Size = static_cast<int64>( entry.length );
 	return desc;
-}
-auto CPackFsDriver::Close( const FileDescriptor* pDesc ) -> void {
-	delete[] reinterpret_cast<const char*>( pDesc->m_Handle );
-}
-auto CPackFsDriver::Create( const char* pPath, FileType pType, OpenMode pMode ) -> FileDescriptor* {
-	AssertFatalMsg( false, "Not supported!!" );
-	return nullptr;
 }
 auto CPackFsDriver::Read( const FileDescriptor* pDesc, void* pBuffer, uint32 pCount ) -> int32 {
 	AssertFatalMsg( pDesc, "Was given a `NULL` file handle!" );
@@ -83,6 +58,29 @@ auto CPackFsDriver::Read( const FileDescriptor* pDesc, void* pBuffer, uint32 pCo
 auto CPackFsDriver::Write( const FileDescriptor* pDesc, void const* pBuffer, uint32 pCount ) -> int32 {
 	AssertFatalMsg( false, "Not supported!!" );
 	std::unreachable();
+}
+auto CPackFsDriver::Flush( const FileDescriptor* pDesc ) -> bool {
+	AssertFatalMsg( false, "Not supported!!" );
+	std::unreachable();
+}
+auto CPackFsDriver::Close( const FileDescriptor* pDesc ) -> void {
+	delete[] reinterpret_cast<const char*>( pDesc->m_Handle );
+}
+
+auto CPackFsDriver::ListDir( const char* pWildcard, CUtlVector<const char*>& pResult ) -> void {
+	const auto& entries{ m_PackFile->getBakedEntries() };
+	const auto patternLen{ V_strlen( pWildcard ) };
+	std::string key;
+	for ( auto entry{ entries.cbegin() }; entry != entries.cend(); ++entry ) {
+		entry.key( key );
+		if ( Wildcard::SimpleMatch( key.c_str(), pWildcard, static_cast<int32>( key.size() ), patternLen ) ) {
+			pResult.AddToTail( V_strdup( key.c_str() ) );
+		}
+	}
+}
+auto CPackFsDriver::Create( const char* pPath, FileType pType, OpenMode pMode ) -> FileDescriptor* {
+	AssertFatalMsg( false, "Not supported!!" );
+	return nullptr;
 }
 auto CPackFsDriver::Remove( const FileDescriptor* pDesc ) -> void {
 	AssertFatalMsg( false, "Not supported!!" );

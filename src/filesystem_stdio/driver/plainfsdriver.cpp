@@ -14,7 +14,6 @@
 #include "tier0/memdbgon.h"
 
 
-
 CPlainFsDriver::CPlainFsDriver( int32 pId, const char* pAbsolute, const char* pPath )
 	: m_iId( pId ), m_szNativePath( V_strdup( pPath ) ), m_szNativeAbsolutePath( V_strdup( pAbsolute ) ) { }
 auto CPlainFsDriver::GetNativePath() const -> const char* {

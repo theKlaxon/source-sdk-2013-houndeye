@@ -5,7 +5,7 @@ set( FILESYSTEM_STDIO_SOURCE_FILES
 	"${FILESYSTEM_STDIO_DIR}/basefilesystem.cpp"
 	"${FILESYSTEM_STDIO_DIR}/filesystem.cpp"
 	"${FILESYSTEM_STDIO_DIR}/queuedloader.cpp"
-	"${FILESYSTEM_STDIO_DIR}/driver/ifsdriver.cpp"
+	"${FILESYSTEM_STDIO_DIR}/driver/fsdriver.cpp"
 	"${FILESYSTEM_STDIO_DIR}/driver/packfsdriver.cpp"
 	"${FILESYSTEM_STDIO_DIR}/driver/plainfsdriver.cpp"
 
@@ -13,7 +13,7 @@ set( FILESYSTEM_STDIO_SOURCE_FILES
 	"${FILESYSTEM_STDIO_DIR}/basefilesystem.hpp"
 	"${FILESYSTEM_STDIO_DIR}/filesystem.hpp"
 	"${FILESYSTEM_STDIO_DIR}/queuedloader.hpp"
-	"${FILESYSTEM_STDIO_DIR}/driver/ifsdriver.hpp"
+	"${FILESYSTEM_STDIO_DIR}/driver/fsdriver.hpp"
 	"${FILESYSTEM_STDIO_DIR}/driver/packfsdriver.hpp"
 	"${FILESYSTEM_STDIO_DIR}/driver/plainfsdriver.hpp"
 

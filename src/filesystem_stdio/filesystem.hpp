@@ -3,7 +3,7 @@
 //
 #pragma once
 #include "basefilesystem.hpp"
-#include "driver/ifsdriver.hpp"
+#include "driver/fsdriver.hpp"
 #include "tier1/utldict.h"
 
 
@@ -412,7 +412,7 @@ private:
 			m_RequestOnly = other.m_RequestOnly;
 		}
 
-		CUtlVector<IFsDriver*> m_Drivers{};
+		CUtlVector<CFsDriver*> m_Drivers{};
 		CUtlVector<int> m_ClientIDs{};
 		bool m_RequestOnly{ false };
 	};

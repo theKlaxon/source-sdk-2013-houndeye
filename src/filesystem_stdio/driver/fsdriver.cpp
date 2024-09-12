@@ -1,7 +1,7 @@
 //
 // Created by ENDERZOMBI102 on 30/06/2024.
 //
-#include "ifsdriver.hpp"
+#include "fsdriver.hpp"
 #include "packfsdriver.hpp"
 #include "plainfsdriver.hpp"
 #include "tier1/mempool.h"
@@ -26,7 +26,7 @@ auto FileDescriptor::CleanupArena() -> void {
 	g_DescriptorArena.Clear();
 }
 
-auto CreateFsDriver( int pId, const char* pAbsolute, const char* pPath ) -> IFsDriver* {
+auto CreateFsDriver( const int pId, const char* pAbsolute, const char* pPath ) -> CFsDriver* {
 	if ( std::filesystem::is_directory( pAbsolute ) ) {
 		return new CPlainFsDriver( pId, pAbsolute, pPath );
 	}
